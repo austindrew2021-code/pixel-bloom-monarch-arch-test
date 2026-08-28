@@ -1,0 +1,20 @@
+Spoonful phone test (full live kitchen + photos)
+
+ANDROID
+1. Uninstall any older Spoonful first.
+2. Open Spoonful-Test.apk
+3. Allow install from this source if Android asks.
+4. Allow camera and activity if Android asks (Snap + Fuel).
+5. Sign in (email, Google, or X) so People, chat, and Family work.
+6. Needs internet for Chef, chat, and sign-in.
+
+IPHONE
+Apple does not allow sideloading an Android install. Send this Safari link instead:
+
+https://spoonful-kitchen-ruby.vercel.app/?key=PLATE-8F2R
+
+Open in Safari → Share → Add to Home Screen. Full steps: ON-IPHONE.txt
+
+This is the real published kitchen — recipes, photos, AI Chef, Snap, chats.
+Keep the kitchen key private: PLATE-8F2R
+Do not post the key or the invite link in public.

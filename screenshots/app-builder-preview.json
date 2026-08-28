@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Spoonful",
+      "hasCanvas": false,
+      "bodyTextLen": 1180,
+      "bodyTextHash": "e4600cd69be82c262d3c63c5fcee5aa0355f04bcfc64974f5ee5ade1cbae3e92",
+      "bodyTextPrefix": "SPOONFUL Dinner, decided. Huge plates. One shop. Snap the fridge",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Spoonful",
+      "hasCanvas": false,
+      "bodyTextLen": 1180,
+      "bodyTextHash": "e4600cd69be82c262d3c63c5fcee5aa0355f04bcfc64974f5ee5ade1cbae3e92",
+      "bodyTextPrefix": "SPOONFUL Dinner, decided. Huge plates. One shop. Snap the fridge",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

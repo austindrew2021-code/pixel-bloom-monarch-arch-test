@@ -1,0 +1,96 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="kitchen.spoonful"
+4    android:versionCode="6"
+5    android:versionName="1.5-live" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/workspace/android-test/app/src/main/AndroidManifest.xml:3:5-67
+11-->/workspace/android-test/app/src/main/AndroidManifest.xml:3:22-64
+12    <uses-permission android:name="android.permission.CAMERA" />
+12-->/workspace/android-test/app/src/main/AndroidManifest.xml:4:5-65
+12-->/workspace/android-test/app/src/main/AndroidManifest.xml:4:22-62
+13    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+13-->/workspace/android-test/app/src/main/AndroidManifest.xml:5:5-79
+13-->/workspace/android-test/app/src/main/AndroidManifest.xml:5:22-76
+14    <uses-permission android:name="android.permission.BODY_SENSORS" />
+14-->/workspace/android-test/app/src/main/AndroidManifest.xml:6:5-71
+14-->/workspace/android-test/app/src/main/AndroidManifest.xml:6:22-68
+15    <uses-permission android:name="android.permission.high_sampling_rate_sensors" />
+15-->/workspace/android-test/app/src/main/AndroidManifest.xml:7:5-85
+15-->/workspace/android-test/app/src/main/AndroidManifest.xml:7:22-82
+16    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+16-->/workspace/android-test/app/src/main/AndroidManifest.xml:8:5-76
+16-->/workspace/android-test/app/src/main/AndroidManifest.xml:8:22-73
+17    <uses-permission
+17-->/workspace/android-test/app/src/main/AndroidManifest.xml:9:5-107
+18        android:name="android.permission.READ_EXTERNAL_STORAGE"
+18-->/workspace/android-test/app/src/main/AndroidManifest.xml:9:22-77
+19        android:maxSdkVersion="32" />
+19-->/workspace/android-test/app/src/main/AndroidManifest.xml:9:78-104
+20
+21    <uses-feature
+21-->/workspace/android-test/app/src/main/AndroidManifest.xml:10:5-85
+22        android:name="android.hardware.camera"
+22-->/workspace/android-test/app/src/main/AndroidManifest.xml:10:19-57
+23        android:required="false" />
+23-->/workspace/android-test/app/src/main/AndroidManifest.xml:10:58-82
+24    <uses-feature
+24-->/workspace/android-test/app/src/main/AndroidManifest.xml:11:5-97
+25        android:name="android.hardware.sensor.stepcounter"
+25-->/workspace/android-test/app/src/main/AndroidManifest.xml:11:19-69
+26        android:required="false" />
+26-->/workspace/android-test/app/src/main/AndroidManifest.xml:11:70-94
+27    <uses-feature
+27-->/workspace/android-test/app/src/main/AndroidManifest.xml:12:5-95
+28        android:name="android.hardware.sensor.heartrate"
+28-->/workspace/android-test/app/src/main/AndroidManifest.xml:12:19-67
+29        android:required="false" />
+29-->/workspace/android-test/app/src/main/AndroidManifest.xml:12:68-92
+30
+31    <application
+31-->/workspace/android-test/app/src/main/AndroidManifest.xml:13:5-30:19
+32        android:allowBackup="true"
+32-->/workspace/android-test/app/src/main/AndroidManifest.xml:14:9-35
+33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+33-->[androidx.core:core:1.1.0] /root/.gradle/caches/transforms-4/78fde55e5a0e9d2c0c2f9f07cc5a3201/transformed/core-1.1.0/AndroidManifest.xml:24:18-86
+34        android:debuggable="true"
+35        android:extractNativeLibs="false"
+36        android:icon="@mipmap/ic_launcher"
+36-->/workspace/android-test/app/src/main/AndroidManifest.xml:15:9-43
+37        android:label="@string/app_name"
+37-->/workspace/android-test/app/src/main/AndroidManifest.xml:16:9-41
+38        android:supportsRtl="true"
+38-->/workspace/android-test/app/src/main/AndroidManifest.xml:17:9-35
+39        android:theme="@style/Theme.Spoonful"
+39-->/workspace/android-test/app/src/main/AndroidManifest.xml:18:9-46
+40        android:usesCleartextTraffic="false" >
+40-->/workspace/android-test/app/src/main/AndroidManifest.xml:19:9-45
+41        <activity
+41-->/workspace/android-test/app/src/main/AndroidManifest.xml:20:9-29:20
+42            android:name="kitchen.spoonful.MainActivity"
+42-->/workspace/android-test/app/src/main/AndroidManifest.xml:21:13-41
+43            android:configChanges="orientation|screenSize|keyboardHidden"
+43-->/workspace/android-test/app/src/main/AndroidManifest.xml:23:13-74
+44            android:exported="true"
+44-->/workspace/android-test/app/src/main/AndroidManifest.xml:22:13-36
+45            android:windowSoftInputMode="adjustResize" >
+45-->/workspace/android-test/app/src/main/AndroidManifest.xml:24:13-55
+46            <intent-filter>
+46-->/workspace/android-test/app/src/main/AndroidManifest.xml:25:13-28:29
+47                <action android:name="android.intent.action.MAIN" />
+47-->/workspace/android-test/app/src/main/AndroidManifest.xml:26:17-69
+47-->/workspace/android-test/app/src/main/AndroidManifest.xml:26:25-66
+48
+49                <category android:name="android.intent.category.LAUNCHER" />
+49-->/workspace/android-test/app/src/main/AndroidManifest.xml:27:17-77
+49-->/workspace/android-test/app/src/main/AndroidManifest.xml:27:27-74
+50            </intent-filter>
+51        </activity>
+52    </application>
+53
+54</manifest>

@@ -1,0 +1,9 @@
+kitchen.spoonful.app-core-1.1.0-0 /root/.gradle/caches/transforms-4/78fde55e5a0e9d2c0c2f9f07cc5a3201/transformed/core-1.1.0/res
+kitchen.spoonful.app-webkit-1.11.0-1 /root/.gradle/caches/transforms-4/f709ded67e4c4e53a767a02279603737/transformed/webkit-1.11.0/res
+kitchen.spoonful.app-pngs-2 /workspace/android-test/app/build/generated/res/pngs/debug
+kitchen.spoonful.app-resValues-3 /workspace/android-test/app/build/generated/res/resValues/debug
+kitchen.spoonful.app-packageDebugResources-4 /workspace/android-test/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+kitchen.spoonful.app-packageDebugResources-5 /workspace/android-test/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+kitchen.spoonful.app-debug-6 /workspace/android-test/app/build/intermediates/merged_res/debug/mergeDebugResources
+kitchen.spoonful.app-debug-7 /workspace/android-test/app/src/debug/res
+kitchen.spoonful.app-main-8 /workspace/android-test/app/src/main/res

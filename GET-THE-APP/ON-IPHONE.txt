@@ -1,0 +1,22 @@
+Spoonful on iPhone (private test)
+
+Send your friend this link. It opens Spoonful — not a builder page.
+
+https://spoonful-kitchen-ruby.vercel.app/?key=PLATE-8F2R
+
+On their iPhone
+1. Open the link in Safari (not Chrome, not inside Messages/Instagram).
+   If it opens in a mini browser, tap Open in Safari.
+2. Wait until the kitchen appears.
+3. Tap the Share button (square with an arrow).
+4. Scroll and tap Add to Home Screen.
+5. Keep the name Spoonful, tap Add.
+
+A Spoonful icon lands on the home screen and opens full-screen, like a real app.
+
+They can cook, plan, shop, Snap, and try Chef without an account.
+For People / chat / Family, they should make an email login on that same kitchen — not Google or X for this test.
+
+Keep the kitchen key private. Do not post the link in public.
+
+Android testers still install Spoonful-Test.apk from this folder.

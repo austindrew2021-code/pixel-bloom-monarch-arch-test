@@ -1,0 +1,1176 @@
+{
+  "ok": true,
+  "pages": {
+    "plan": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    "plan-filled": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    "recipes": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 375,
+            "right": 494,
+            "text": "Nova Scotia"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 500,
+            "right": 642,
+            "text": "New Brunswick"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 649,
+            "right": 825,
+            "text": "Prince Edward Island"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 832,
+            "right": 930,
+            "text": "Breakfast"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 937,
+            "right": 1030,
+            "text": "Desserts"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1036,
+            "right": 1142,
+            "text": "Old school"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1149,
+            "right": 1212,
+            "text": "USA"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1219,
+            "right": 1295,
+            "text": "Sauce"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1302,
+            "right": 1385,
+            "text": "Dry rub"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1391,
+            "right": 1466,
+            "text": "Greek"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1473,
+            "right": 1546,
+            "text": "Italian"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1553,
+            "right": 1643,
+            "text": "Mexican"
+          }
+        ],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "photos": {
+        "count": 24,
+        "unique": 24,
+        "rows": [
+          {
+            "name": "Lemon garlic roast chicken",
+            "src": "/food/lemon-garlic-chicken.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tomato basil pasta",
+            "src": "/food/tomato-basil-pasta.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Black bean tacos",
+            "src": "/food/black-bean-tacos.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sheet-pan salmon & asparagus",
+            "src": "/food/salmon-asparagus.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Ginger chicken stir-fry",
+            "src": "/food/chicken-stir-fry.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Red lentil soup",
+            "src": "/food/lentil-soup.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Turkey meatballs",
+            "src": "/food/turkey-meatballs.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Veggie fried rice",
+            "src": "/food/veggie-fried-rice.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sausage, peppers & onions",
+            "src": "/food/sausage-peppers.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Chickpea coconut curry",
+            "src": "/food/chickpea-curry.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Greek chicken bowls",
+            "src": "/food/greek-bowls.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Mushroom risotto",
+            "src": "/food/mushroom-risotto.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Weeknight beef chili",
+            "src": "/food/beef-chili.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Honey garlic shrimp",
+            "src": "/food/honey-garlic-shrimp.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Shakshuka",
+            "src": "/food/shakshuka.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Peanut noodle bowls",
+            "src": "/food/peanut-noodles.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tuna & white bean salad",
+            "src": "/food/tuna-white-bean.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Crispy chickpea wraps",
+            "src": "/food/crispy-chickpea-wraps.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Miso butter cod",
+            "src": "/food/miso-butter-cod.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Skillet pesto gnocchi",
+            "src": "/food/pesto-gnocchi.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Eggs over garlicky greens",
+            "src": "/food/egg-fried-greens.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Turkey taco skillet",
+            "src": "/food/turkey-taco-skillet.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sesame soba",
+            "src": "/food/sesame-soba.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Ham, pea & lemon pasta",
+            "src": "/food/ham-pea-pasta.jpg",
+            "clipped": true
+          }
+        ]
+      }
+    },
+    "usa": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -965,
+            "right": -853,
+            "text": "All catalogs"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -846,
+            "right": -759,
+            "text": "Atlantic"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -752,
+            "right": -617,
+            "text": "Newfoundland"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -610,
+            "right": -491,
+            "text": "Nova Scotia"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -485,
+            "right": -343,
+            "text": "New Brunswick"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -336,
+            "right": -160,
+            "text": "Prince Edward Island"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -153,
+            "right": -55,
+            "text": "Breakfast"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": -48,
+            "right": 45,
+            "text": "Desserts"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 317,
+            "right": 400,
+            "text": "Dry rub"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 406,
+            "right": 481,
+            "text": "Greek"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 488,
+            "right": 561,
+            "text": "Italian"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 568,
+            "right": 658,
+            "text": "Mexican"
+          }
+        ],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "photos": {
+        "count": 24,
+        "unique": 24,
+        "rows": [
+          {
+            "name": "Alabama white BBQ chicken",
+            "src": "/food/al-white-bbq-chicken.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Alaska salmon chowder",
+            "src": "/food/ak-salmon-chowder.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Arizona Navajo tacos",
+            "src": "/food/az-navajo-tacos.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Arkansas fried catfish",
+            "src": "/food/ar-fried-catfish.jpg",
+            "clipped": true
+          },
+          {
+            "name": "California fish tacos",
+            "src": "/food/ca-fish-tacos.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Colorado green chile stew",
+            "src": "/food/co-green-chile-stew.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Connecticut white clam pizza",
+            "src": "/food/ct-white-clam-pizza.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Delaware scrapple breakfast",
+            "src": "/food/de-scrapple-breakfast.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Florida key lime shrimp",
+            "src": "/food/fl-key-lime-shrimp.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Georgia peach skillet chicken",
+            "src": "/food/ga-peach-chicken.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Hawaii loco moco",
+            "src": "/food/hi-loco-moco.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Idaho finger steaks",
+            "src": "/food/id-finger-steaks.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Illinois Italian beef",
+            "src": "/food/il-italian-beef.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Indiana pork tenderloin sandwich",
+            "src": "/food/in-pork-tenderloin.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Iowa loose-meat sandwich",
+            "src": "/food/ia-loose-meat.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Kansas burnt ends",
+            "src": "/food/ks-burnt-ends.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Kentucky Hot Brown",
+            "src": "/food/ky-hot-brown.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Louisiana red beans and rice",
+            "src": "/food/la-red-beans-rice.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Maine lobster roll",
+            "src": "/food/me-lobster-roll.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Maryland crab cakes",
+            "src": "/food/md-crab-cakes.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Massachusetts clam chowder",
+            "src": "/food/ma-clam-chowder.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Michigan pasty",
+            "src": "/food/mi-pasty.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Minnesota wild rice soup",
+            "src": "/food/mn-wild-rice-soup.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Mississippi comeback shrimp",
+            "src": "/food/ms-come-back-shrimp.jpg",
+            "clipped": true
+          }
+        ]
+      }
+    },
+    "atlantic": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 375,
+            "right": 494,
+            "text": "Nova Scotia"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 500,
+            "right": 642,
+            "text": "New Brunswick"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 649,
+            "right": 825,
+            "text": "Prince Edward Island"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 832,
+            "right": 930,
+            "text": "Breakfast"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 937,
+            "right": 1030,
+            "text": "Desserts"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1036,
+            "right": 1142,
+            "text": "Old school"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1149,
+            "right": 1212,
+            "text": "USA"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1219,
+            "right": 1295,
+            "text": "Sauce"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1302,
+            "right": 1385,
+            "text": "Dry rub"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1391,
+            "right": 1466,
+            "text": "Greek"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1473,
+            "right": 1546,
+            "text": "Italian"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1553,
+            "right": 1643,
+            "text": "Mexican"
+          }
+        ],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "photos": {
+        "count": 24,
+        "unique": 24,
+        "rows": [
+          {
+            "name": "Jiggs dinner",
+            "src": "/food/jiggs-dinner.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Toutons",
+            "src": "/food/toutons.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Fish and brewis",
+            "src": "/food/fish-and-brewis.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Cod au gratin",
+            "src": "/food/cod-au-gratin.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Pea soup with doughboys",
+            "src": "/food/pea-soup-doughboys.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Newfoundland fish cakes",
+            "src": "/food/nl-fish-cakes.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Pan-fried cod",
+            "src": "/food/pan-fried-cod.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Moose stew",
+            "src": "/food/moose-stew.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Hodge podge",
+            "src": "/food/hodge-podge.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Halifax donair",
+            "src": "/food/halifax-donair.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Mom-and-pop donair sauce",
+            "src": "/food/donair-sauce-mom-pop.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Greco-style donair sauce",
+            "src": "/food/donair-sauce-greco.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Pizza Delight donair sauce",
+            "src": "/food/donair-sauce-pizza-delight.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tartar sauce",
+            "src": "/food/tartar-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Rappie pie",
+            "src": "/food/rappie-pie.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Nova Scotia lobster roll",
+            "src": "/food/ns-lobster-roll.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Cape Breton oatcakes",
+            "src": "/food/oatcakes.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Chicken fricot",
+            "src": "/food/chicken-fricot.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Poutine râpée",
+            "src": "/food/poutine-rapee.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Ployes",
+            "src": "/food/ployes.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Fiddleheads with garlic",
+            "src": "/food/fiddlehead-saute.jpg",
+            "clipped": true
+          },
+          {
+            "name": "PEI scalloped potatoes",
+            "src": "/food/pei-potato-scallop.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Malpeque mussels",
+            "src": "/food/malpeque-mussels.jpg",
+            "clipped": true
+          },
+          {
+            "name": "PEI lobster supper",
+            "src": "/food/pei-lobster-supper.jpg",
+            "clipped": true
+          }
+        ]
+      }
+    },
+    "sauces": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-4 text-sm shadow-[var(--shadow-border)]",
+            "left": 358,
+            "right": 434,
+            "text": "World"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-4 text-sm shadow-[var(--shadow-border)]",
+            "left": 441,
+            "right": 535,
+            "text": "Dry rubs"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-4 text-sm shadow-[var(--shadow-border)]",
+            "left": 542,
+            "right": 609,
+            "text": "Dips"
+          }
+        ],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "photos": {
+        "count": 24,
+        "unique": 24,
+        "rows": [
+          {
+            "name": "Mom-and-pop donair sauce",
+            "src": "/food/donair-sauce-mom-pop.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Greco-style donair sauce",
+            "src": "/food/donair-sauce-greco.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Pizza Delight donair sauce",
+            "src": "/food/donair-sauce-pizza-delight.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Memphis dry rub",
+            "src": "/food/memphis-dry-rub.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Texas brisket rub",
+            "src": "/food/texas-brisket-rub.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Montreal steak spice",
+            "src": "/food/montreal-steak-spice.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Jerk dry rub",
+            "src": "/food/jerk-dry-rub.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Cajun blackening rub",
+            "src": "/food/cajun-blackening-rub.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Kansas City BBQ sauce",
+            "src": "/food/kc-bbq-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Carolina vinegar sauce",
+            "src": "/food/carolina-vinegar-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Alabama white sauce",
+            "src": "/food/alabama-white-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Chimichurri",
+            "src": "/food/chimichurri.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Hollandaise",
+            "src": "/food/hollandaise.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tzatziki",
+            "src": "/food/tzatziki.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Romesco",
+            "src": "/food/romesco.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Buffalo sauce",
+            "src": "/food/buffalo-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tartar sauce",
+            "src": "/food/tartar-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Alfredo sauce",
+            "src": "/food/alfredo-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Peanut sauce",
+            "src": "/food/peanut-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sweet chili sauce",
+            "src": "/food/sweet-chili-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Ranch dressing",
+            "src": "/food/ranch-dressing.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Teriyaki sauce",
+            "src": "/food/teriyaki-sauce.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Basil pesto",
+            "src": "/food/basil-pesto.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Salsa verde",
+            "src": "/food/salsa-verde.jpg",
+            "clipped": true
+          }
+        ]
+      }
+    },
+    "desserts": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-4 text-sm shadow-[var(--shadow-border)]",
+            "left": 365,
+            "right": 449,
+            "text": "Chilled"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-4 text-sm shadow-[var(--shadow-border)]",
+            "left": 456,
+            "right": 532,
+            "text": "World"
+          }
+        ],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      },
+      "photos": {
+        "count": 14,
+        "unique": 14,
+        "rows": [
+          {
+            "name": "Blueberry grunt",
+            "src": "/food/blueberry-grunt.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Nanaimo bars",
+            "src": "/food/nanaimo-bars.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Butter tarts",
+            "src": "/food/butter-tarts.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Apple crisp",
+            "src": "/food/apple-crisp.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Molten chocolate cakes",
+            "src": "/food/molten-chocolate.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sea salt chocolate chip cookies",
+            "src": "/food/chip-cookies.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Honey yogurt and berries",
+            "src": "/food/yogurt-berries.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Coconut chia pudding",
+            "src": "/food/chia-pudding.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tiramisu",
+            "src": "/food/tiramisu.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Mango sticky rice",
+            "src": "/food/mango-sticky-rice.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Baklava",
+            "src": "/food/baklava.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Churros",
+            "src": "/food/churros.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Vanilla flan",
+            "src": "/food/flan.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Figgy duff",
+            "src": "/food/figgy-duff.jpg",
+            "clipped": true
+          }
+        ]
+      }
+    },
+    "shop": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    "extras": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    "fuel": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [],
+        "scrollWidth": 390,
+        "clientWidth": 390
+      }
+    },
+    "recipes-desktop": {
+      "overflow": {
+        "pageOverflow": false,
+        "leaked": [
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1228,
+            "right": 1323,
+            "text": "Old school"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1329,
+            "right": 1385,
+            "text": "USA"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1391,
+            "right": 1459,
+            "text": "Sauce"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1465,
+            "right": 1539,
+            "text": "Dry rub"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1545,
+            "right": 1612,
+            "text": "Greek"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1618,
+            "right": 1683,
+            "text": "Italian"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1689,
+            "right": 1770,
+            "text": "Mexican"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1776,
+            "right": 1842,
+            "text": "Indian"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1848,
+            "right": 1940,
+            "text": "East Asian"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 1946,
+            "right": 2067,
+            "text": "Middle Eastern"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 2073,
+            "right": 2146,
+            "text": "French"
+          },
+          {
+            "tag": "button",
+            "cls": "h-11 shrink-0 rounded-full bg-card px-3.5 text-sm shadow-[var(--shadow-border)]",
+            "left": 2152,
+            "right": 2230,
+            "text": "Spanish"
+          }
+        ],
+        "scrollWidth": 1280,
+        "clientWidth": 1280
+      },
+      "photos": {
+        "count": 24,
+        "unique": 24,
+        "rows": [
+          {
+            "name": "Lemon garlic roast chicken",
+            "src": "/food/lemon-garlic-chicken.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tomato basil pasta",
+            "src": "/food/tomato-basil-pasta.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Black bean tacos",
+            "src": "/food/black-bean-tacos.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sheet-pan salmon & asparagus",
+            "src": "/food/salmon-asparagus.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Ginger chicken stir-fry",
+            "src": "/food/chicken-stir-fry.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Red lentil soup",
+            "src": "/food/lentil-soup.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Turkey meatballs",
+            "src": "/food/turkey-meatballs.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Veggie fried rice",
+            "src": "/food/veggie-fried-rice.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sausage, peppers & onions",
+            "src": "/food/sausage-peppers.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Chickpea coconut curry",
+            "src": "/food/chickpea-curry.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Greek chicken bowls",
+            "src": "/food/greek-bowls.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Mushroom risotto",
+            "src": "/food/mushroom-risotto.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Weeknight beef chili",
+            "src": "/food/beef-chili.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Honey garlic shrimp",
+            "src": "/food/honey-garlic-shrimp.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Shakshuka",
+            "src": "/food/shakshuka.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Peanut noodle bowls",
+            "src": "/food/peanut-noodles.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Tuna & white bean salad",
+            "src": "/food/tuna-white-bean.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Crispy chickpea wraps",
+            "src": "/food/crispy-chickpea-wraps.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Miso butter cod",
+            "src": "/food/miso-butter-cod.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Skillet pesto gnocchi",
+            "src": "/food/pesto-gnocchi.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Eggs over garlicky greens",
+            "src": "/food/egg-fried-greens.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Turkey taco skillet",
+            "src": "/food/turkey-taco-skillet.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Sesame soba",
+            "src": "/food/sesame-soba.jpg",
+            "clipped": true
+          },
+          {
+            "name": "Ham, pea & lemon pasta",
+            "src": "/food/ham-pea-pasta.jpg",
+            "clipped": true
+          }
+        ]
+      }
+    }
+  }
+}

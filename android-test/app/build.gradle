@@ -1,0 +1,34 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "kitchen.spoonful"
+    compileSdk 34
+    defaultConfig {
+        applicationId "kitchen.spoonful"
+        minSdk 26
+        targetSdk 34
+        versionCode 6
+        versionName "1.5-live"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    androidResources {
+        noCompress += ["jpg", "jpeg", "png", "js"]
+    }
+}
+
+dependencies {
+    implementation "androidx.webkit:webkit:1.11.0"
+}

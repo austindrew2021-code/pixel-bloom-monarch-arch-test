@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Spoonful" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#E24A12</item>
+        <item name="android:navigationBarColor">#FFF6EA</item>
+        <item name="android:windowBackground">#F3E0C8</item>
+    </style>
+</resources>
