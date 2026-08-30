@@ -1,21 +1,38 @@
+export function prettyFrac(qty: number): string {
+  const table: [number, string][] = [
+    [0.125, "⅛"],
+    [0.25, "¼"],
+    [1 / 3, "⅓"],
+    [0.5, "½"],
+    [2 / 3, "⅔"],
+    [0.75, "¾"],
+  ];
+  for (const [n, s] of table) {
+    if (Math.abs(qty - n) < 0.02) return s;
+  }
+  const whole = Math.floor(qty);
+  const frac = qty - whole;
+  if (whole >= 1 && frac > 0.02) {
+    for (const [n, s] of table) {
+      if (Math.abs(frac - n) < 0.02) return `${whole}${s}`;
+    }
+  }
+  if (Number.isInteger(qty)) return String(qty);
+  return String(qty);
+}
+
 export function formatQty(qty: number, unit: string): string {
-  const n =
-    Number.isInteger(qty) || Math.abs(qty - Math.round(qty * 2) / 2) < 0.01
-      ? Number.isInteger(qty)
-        ? String(qty)
-        : String(qty)
-      : qty.toFixed(1).replace(/\.0$/, "");
-  const pretty =
-    qty === 0.25
-      ? "¼"
-      : qty === 0.33 || qty === 0.333
-        ? "⅓"
-        : qty === 0.5
-          ? "½"
-          : qty === 0.75
-            ? "¾"
-            : n;
-  return unit ? `${pretty} ${unit}` : pretty;
+  const pretty = prettyFrac(qty);
+  if (!unit) return pretty;
+  const raw = unit.trim();
+  if (Math.abs(qty - 1) > 0.02) return `${pretty} ${raw}`;
+  if (/^(tbsp|tsp|oz|lb|ml|g)$/i.test(raw)) return `${pretty} ${raw}`;
+  const singular = /ies$/i.test(raw)
+    ? raw.replace(/ies$/i, "y")
+    : /s$/i.test(raw) && !/ss$/i.test(raw)
+      ? raw.replace(/s$/i, "")
+      : raw;
+  return `${pretty} ${singular}`;
 }
 
 export function formatPrice(n: number): string {

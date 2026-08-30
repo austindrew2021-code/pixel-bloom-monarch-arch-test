@@ -517,8 +517,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("cilantro", 0.25, "cup", "Produce"),
     ],
     steps: [
-      "Brown onion. Add ginger, spices, and tomato. Simmer.",
-      "Add chickpeas and a splash of water. Cook 15 minutes. Cilantro.",
+      "Cook the 2 chopped onions in oil over medium heat 8 minutes, until gold.",
+      "Stir in the 1 tablespoon of fresh ginger, the 2 teaspoons of garam masala, and the 1 teaspoon of cumin for 30 seconds.",
+      "Add the 3 tomatoes. Cook 6 minutes, until they slump.",
+      "Add the 2 cans of chickpeas and ½ cup of water. Simmer 15 minutes, until the gravy thickens.",
+      "Scatter the ¼ cup of cilantro over. Serve hot.",
     ],
   }),
   dish({

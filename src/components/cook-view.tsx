@@ -2,7 +2,8 @@ import { Check, ChevronLeft, ChevronRight, Pause, Play, Timer, Volume2, VolumeX,
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { foodsUsedInStep } from "@/lib/cook-steps";
+import { foodsUsedInStep, scaleMethodSteps } from "@/lib/cook-steps";
+
 import { scaleQty } from "@/lib/cuisine";
 import { formatMinutes, formatQty } from "@/lib/format";
 import { resolveMeal, useSpoonful } from "@/lib/spoonful-store";
@@ -35,9 +36,11 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
   const household = useSpoonful((s) => s.household);
   const markCooked = useSpoonful((s) => s.markCooked);
   const saveLeftovers = useSpoonful((s) => s.saveLeftovers);
-  const steps = recipe?.steps ?? resolved.custom?.steps ?? (resolved.custom?.notes ? [resolved.custom.notes] : ["Cook it how you like."]);
+  const rawSteps = recipe?.steps ?? resolved.custom?.steps ?? (resolved.custom?.notes ? [resolved.custom.notes] : ["Cook it how you like."]);
   const ingredients = recipe?.ingredients ?? resolved.custom?.ingredients ?? [];
   const servings = recipe?.servings ?? household;
+  const steps = scaleMethodSteps(rawSteps, ingredients, household, servings);
+
   const [step, setStep] = useState(0);
   const [have, setHave] = useState<Record<string, boolean>>({});
   const [seconds, setSeconds] = useState(resolved.minutes * 60);

@@ -210,7 +210,7 @@ export function StoreView() {
       <section className="mt-6 rounded-3xl bg-spark p-4 text-spark-foreground">
         <h2 className="font-display text-2xl">Kitchen mode</h2>
         <p className="mt-1 text-sm opacity-90">
-          Simple is large type and Tonight first. Next Gen adds workouts, macros, and fuel-ranked dinners.
+          Simple is large type and Tonight first. Next Gen adds workouts, calories and protein, and dinners ranked for the body goal you set.
         </p>
         <Button
           className="mt-4 w-full bg-spark-foreground text-spark hover:opacity-95"

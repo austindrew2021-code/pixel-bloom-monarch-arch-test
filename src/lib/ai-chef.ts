@@ -1,8 +1,9 @@
+import { createHash } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { isBannedDishName, polishSteps } from "./cook-steps";
 import { chefGoalRules, fitsInventedGoal } from "./goal-fit";
-import type { Protein, Recipe } from "./types";
+import type { PlateKind, Protein, Recipe } from "./types";
 
 const PROTEINS = new Set<string>(["chicken", "beef", "pork", "fish", "seafood", "veg", "eggs", "turkey"]);
 
@@ -69,10 +70,91 @@ const inputSchema = z.object({
 
 export type ChefDish = z.infer<typeof dishSchema>;
 
+function plateFromInvented(name: string, steps: string[]): PlateKind {
+  const b = `${name} ${steps.join(" ")}`.toLowerCase();
+  if (/cake|pie|cookie|pudding|ice cream|affogato|custard|mousse|tiramisu|panna cotta/.test(b)) return "dessert";
+  if (/pasta|spaghetti|linguine|penne|noodle|lasagna|macaroni|gnocchi/.test(b)) return "pasta";
+  if (/soup|stew|chowder|gumbo|bisque|broth/.test(b)) return "soup";
+  if (/taco|burrito|quesadilla/.test(b)) return "taco";
+  if (/\bsalad\b|aspic/.test(b)) return "green";
+  if (/curry/.test(b)) return "curry";
+  if (/toast|sandwich|open-?face|tartine/.test(b)) return "toast";
+  if (/\b(salmon|cod|trout|halibut|mackerel|fish fillet|sea bass|snapper)\b/.test(b)) return "fish";
+  if (/roast|whole chicken|baked ham/.test(b)) return "roast";
+  return "skillet";
+}
+
+function cacheKey(data: z.infer<typeof inputSchema>): string {
+  return createHash("sha256")
+    .update(
+      JSON.stringify({
+        prompt: data.prompt.trim().toLowerCase(),
+        days: data.days,
+        household: data.household,
+        invent: Boolean(data.invent),
+        allergies: data.allergies ?? [],
+        prefs: data.prefs ?? [],
+        remaining: data.remaining ?? null,
+        goalKind: data.body?.goalKind ?? "",
+        kcal: data.body?.kcal ?? 0,
+        protein: data.body?.protein ?? 0,
+        scope: data.scope ?? "tonight",
+      }),
+    )
+    .digest("hex");
+}
+
+type ChefOk = {
+  ok: true;
+  days: { date: string; recipeId?: string; dish?: ChefDish }[];
+  note: string;
+};
+
+async function readChefCache(key: string): Promise<ChefOk | null> {
+  try {
+    const { getSql } = await import("./db");
+    const sql = await getSql();
+    const rows = await sql<{ payload: unknown }>`
+      select payload from chef_cache where prompt_key = ${key} limit 1
+    `;
+    const row = rows[0];
+    if (!row) return null;
+    const payload = typeof row.payload === "string" ? JSON.parse(row.payload) : row.payload;
+    if (payload && typeof payload === "object" && (payload as ChefOk).ok && Array.isArray((payload as ChefOk).days)) {
+      return payload as ChefOk;
+    }
+  } catch {
+    /* cache is optional */
+  }
+  return null;
+}
+
+async function writeChefCache(key: string, payload: ChefOk): Promise<void> {
+  try {
+    const { getSql } = await import("./db");
+    const sql = await getSql();
+    const json = JSON.stringify(payload);
+    await sql`
+      insert into chef_cache (prompt_key, payload, created_at)
+      values (${key}, ${json}::jsonb, now())
+      on conflict (prompt_key) do update set payload = excluded.payload, created_at = now()
+    `;
+  } catch {
+    /* cache is optional */
+  }
+}
+
+const STEP_RULE =
+  "Steps: as many full sentences as the dish actually needs (usually 4–12). Yeast bread, gumbo, beans, and braises need more than 5. A salad or sauce may need fewer. Never pad with dummy lines like 'taste for salt'. Never stop early if the food still has a rise, a second cook, or a rest.";
+
 export const planWeekWithChef = createServerFn({ method: "POST" })
   .validator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     const { kitchenJson } = await import("./kitchen-llm.server");
+
+    const key = cacheKey(data);
+    const cached = await readChefCache(key);
+    if (cached) return cached;
 
     const catalog = data.recipes
       .slice(0, 80)
@@ -84,8 +166,8 @@ export const planWeekWithChef = createServerFn({ method: "POST" })
     const goalLine = chefGoalRules(data.body?.goalKind);
     const system = invent
       ? tonight
-        ? `You are Spoonful's executive chef. Invent ONE real homemade dish from anywhere on earth that matches the request — any country, grandmother food, restaurant food cooked at home. Do not limit yourself to the catalog. Honor allergies as hard bans. ${goalLine} Hit the remaining protein and calories as closely as a home cook can. Nutrition per serving from typical USDA FoodData Central values, integers. JSON only: {"days":[{"date":"YYYY-MM-DD","dish":{"name":"","minutes":30,"description":"why this plate","protein":"chicken","ingredients":[{"name":"","qty":1,"unit":"","aisle":"Produce"}],"steps":["..."],"nutrition":{"cal":0,"protein":0,"carbs":0,"fat":0}}}],"note":"one short sentence"}. The dish name must be the real food name people would search (never "Ingredients", "Directions", or "Recipe"). Ingredients 6–12. Steps 5–8 full sentences a home cook can follow: prep, heat, cook, doneness, plate. No fragments.`
-        : `You are Spoonful's executive chef. You may pick a catalog id OR invent any real homemade dish from anywhere in the world — Japan, Peru, Senegal, Georgia, Korea, the Maritimes, grandmother food, restaurant food cooked at home. Never invent a catalog id. Honor allergies as hard bans. ${goalLine} Match the eater's remaining protein/calories when given. Nutrition must be per serving, estimated from typical USDA FoodData Central values, integers. JSON only: {"days":[{"date":"YYYY-MM-DD","recipeId":"optional-catalog-id","dish":{"name":"","minutes":30,"description":"","protein":"chicken","ingredients":[{"name":"","qty":1,"unit":"","aisle":"Produce"}],"steps":["..."],"nutrition":{"cal":0,"protein":0,"carbs":0,"fat":0}}}],"note":"one short sentence"}. Cover every date. Prefer inventing when the catalog cannot meet the request. Dish names must be real food names (never "Ingredients" or "Directions"). Keep ingredients 6–12 and steps 5–8 full sentences.`
+        ? `You are Spoonful's executive chef. Invent ONE real homemade dish from anywhere on earth that matches the request — any country, grandmother food, restaurant food cooked at home. Do not limit yourself to the catalog. Honor allergies as hard bans. ${goalLine} Hit the remaining protein and calories as closely as a home cook can. Nutrition per serving from typical USDA FoodData Central values, integers. JSON only: {"days":[{"date":"YYYY-MM-DD","dish":{"name":"","minutes":30,"description":"why this plate","protein":"chicken","ingredients":[{"name":"","qty":1,"unit":"","aisle":"Produce"}],"steps":["..."],"nutrition":{"cal":0,"protein":0,"carbs":0,"fat":0}}}],"note":"one short sentence"}. The dish name must be the real food name people would search (never "Ingredients", "Directions", or "Recipe"). Ingredients 6–12. ${STEP_RULE}`
+        : `You are Spoonful's executive chef. You may pick a catalog id OR invent any real homemade dish from anywhere in the world — Japan, Peru, Senegal, Georgia, Korea, the Maritimes, grandmother food, restaurant food cooked at home. Never invent a catalog id. Honor allergies as hard bans. ${goalLine} Match the eater's remaining protein/calories when given. Nutrition must be per serving, estimated from typical USDA FoodData Central values, integers. JSON only: {"days":[{"date":"YYYY-MM-DD","recipeId":"optional-catalog-id","dish":{"name":"","minutes":30,"description":"","protein":"chicken","ingredients":[{"name":"","qty":1,"unit":"","aisle":"Produce"}],"steps":["..."],"nutrition":{"cal":0,"protein":0,"carbs":0,"fat":0}}}],"note":"one short sentence"}. Cover every date. Prefer inventing when the catalog cannot meet the request. Dish names must be real food names (never "Ingredients" or "Directions"). Keep ingredients 6–12. ${STEP_RULE}`
       : `You are Spoonful's kitchen planner. Pick dinner recipes from the catalog only. Never invent ids. ${goalLine} Avoid repeating the same protein two nights in a row when possible. Reply with JSON only: {"days":[{"date":"YYYY-MM-DD","recipeId":"id"}],"note":"one short sentence"}. Cover every date given.`;
 
     const fatBit =
@@ -108,7 +190,7 @@ export const planWeekWithChef = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
-    const result = await kitchenJson(system, user, invent ? (tonight ? 1200 : 2200) : 700, invent ? 0.7 : 0.6);
+    const result = await kitchenJson(system, user, invent ? (tonight ? 2000 : 2800) : 700, invent ? 0.7 : 0.6);
     if (!result.ok) {
       return { ok: false as const, error: result.error };
     }
@@ -147,7 +229,7 @@ export const planWeekWithChef = createServerFn({ method: "POST" })
               name: dish.data.name,
               minutes: dish.data.minutes,
               protein: (PROTEINS.has(dish.data.protein ?? "") ? dish.data.protein : "veg") as Protein,
-              plate: "bowl",
+              plate: plateFromInvented(dish.data.name, dish.data.steps),
               tags: [],
               ingredients: dish.data.ingredients as Recipe["ingredients"],
               steps: dish.data.steps,
@@ -167,11 +249,13 @@ export const planWeekWithChef = createServerFn({ method: "POST" })
       if (days.length === 0) {
         return { ok: false as const, error: "No matching recipes came back. Try a broader request." };
       }
-      return {
+      const ok: ChefOk = {
         ok: true as const,
         days,
         note: typeof parsed.note === "string" ? parsed.note.slice(0, 180) : "",
       };
+      void writeChefCache(key, ok);
+      return ok;
     } catch {
       return { ok: false as const, error: "The chef's notes were scrambled. Try again." };
     }

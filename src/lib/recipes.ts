@@ -91,7 +91,7 @@ const CORE_RECIPES: Recipe[] = [
 		steps: [
 			"Boil pasta in well-salted water until just shy of al dente. Save a cup of water.",
 			"Warm olive oil and garlic until fragrant. Add chopped tomatoes and a pinch of salt.",
-			"Simmer until the tomatoes slump, 10 minutes. Add pasta, a splash of water, and basil.",
+			"Simmer until the tomatoes slump, 10 minutes. Add pasta, a splash of the pasta water, and basil.",
 			"Toss until glossy. Finish with parmesan and pepper flakes."
 		]
 	},
@@ -126,9 +126,9 @@ const CORE_RECIPES: Recipe[] = [
 			I("sour cream", .5, "cup", "Dairy & Eggs")
 		],
 		steps: [
-			"Warm beans with cumin, chili powder, salt, and a splash of water.",
-			"Shred cabbage and toss with lime juice and a pinch of salt.",
-			"Char tortillas in a dry pan. Fill with beans, slaw, avocado, and sour cream."
+			"Warm the 2 cans of black beans with the 1 teaspoon of cumin, the 1 teaspoon of chili powder, salt, and 2 tablespoons of water.",
+			"Shred the ½ head of red cabbage and toss with the juice of the 2 limes and a pinch of salt.",
+			"Char the 12 corn tortillas in a dry pan. Fill with beans, slaw, the 2 avocados, and the ½ cup of sour cream."
 		]
 	},
 	{
@@ -319,7 +319,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("olive oil", 2, "tbsp", "Pantry"),
 			I("dried oregano", 1, "tsp", "Herbs & Spices")
 		],
-		steps: ["Heat oven to 425°F. Slice peppers and onions; toss with oil, oregano, and salt.", "Nestle sausages on the pan. Roast 25–30 minutes, turning once."]
+		steps: [
+			"Heat the oven to 425°F. Slice the 3 bell peppers and the 2 onions. Toss them on a sheet pan with the 2 tablespoons of olive oil, the 1 teaspoon of dried oregano, and salt.",
+			"Nestle the 1½ pounds of Italian sausage on the pan among the vegetables.",
+			"Roast 25–30 minutes, turning the sausages once, until they are browned and cooked through and the peppers are soft at the edges.",
+			"Rest 3 minutes. Serve the sausages with the peppers and onions.",
+		],
 	},
 	{
 		id: "chickpea-curry",
@@ -348,10 +353,11 @@ const CORE_RECIPES: Recipe[] = [
 			I("rice", 1.5, "cups", "Pantry")
 		],
 		steps: [
-			"Sweat onion, garlic, and ginger. Bloom curry powder in the oil.",
-			"Add chickpeas and coconut milk. Simmer 15 minutes.",
-			"Fold in spinach until wilted. Serve over rice."
-		]
+			"Sweat the chopped onion, the 3 minced garlic cloves, and the 1 tablespoon of fresh ginger in oil 5 minutes, until soft.",
+			"Stir in the 2 tablespoons of curry powder and cook 30 seconds, until fragrant.",
+			"Add the 2 cans of chickpeas and the 1 can of coconut milk. Simmer 15 minutes, until the sauce thickens.",
+			"Fold in the 4 cups of spinach until wilted. Serve over the 1½ cups of cooked rice.",
+		],
 	},
 	{
 		id: "greek-bowls",
@@ -446,9 +452,9 @@ const CORE_RECIPES: Recipe[] = [
 			I("cheddar", 4, "oz", "Dairy & Eggs")
 		],
 		steps: [
-			"Brown beef with onion. Drain extra fat.",
-			"Add spices, tomatoes, beans, and a pinch of salt. Simmer 35 minutes.",
-			"Serve with cheddar."
+			"Brown the 1½ lb of ground beef with the chopped onion. Drain extra fat.",
+			"Stir in the 2 tablespoons of chili powder, the 1 teaspoon of cumin, the crushed tomatoes, the 2 cans of kidney beans, and a pinch of salt. Simmer 35 minutes.",
+			"Serve with the cheddar."
 		]
 	},
 	{
@@ -475,7 +481,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("broccoli", 1, "head", "Produce"),
 			I("rice", 1.5, "cups", "Pantry")
 		],
-		steps: ["Steam or roast broccoli. Cook rice.", "Sear shrimp 1 minute a side. Add honey, soy, and garlic; toss until glazed."]
+		steps: [
+			"Cook the 1½ cups of rice. Steam or roast the head of broccoli until just tender, 8–10 minutes.",
+			"Pat the 1½ pounds of shrimp dry. Sear in a hot skillet 1 minute a side, until they just turn pink.",
+			"Add the 3 tablespoons of honey, the 3 tablespoons of soy sauce, and the 4 minced garlic cloves. Toss 1–2 minutes, until the sauce is sticky and coats the shrimp.",
+			"Serve the shrimp over the rice with the broccoli.",
+		],
 	},
 	{
 		id: "shakshuka",
@@ -508,9 +519,9 @@ const CORE_RECIPES: Recipe[] = [
 			I("crusty bread", 1, "loaf", "Bakery")
 		],
 		steps: [
-			"Cook onion and pepper until soft. Add spices and tomatoes; simmer 10 minutes.",
-			"Make wells and crack in eggs. Cover until whites set.",
-			"Scatter feta. Serve with bread."
+			"Cook the onion and bell pepper until soft. Stir in the 1 teaspoon of cumin, the 1 teaspoon of paprika, and the crushed tomatoes; simmer 10 minutes.",
+			"Make wells and crack in the 6 eggs. Cover until the whites set.",
+			"Scatter the feta. Serve with the crusty bread."
 		]
 	},
 	{
@@ -542,7 +553,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("carrot", 2, "", "Produce"),
 			I("garlic", 1, "clove", "Produce")
 		],
-		steps: ["Cook noodles. Whisk peanut butter, soy, lime, garlic, and warm water until pourable.", "Toss noodles with sauce, shaved carrot, and cucumber."]
+		steps: [
+			"Cook the 12 ounces of spaghetti or ramen in salted water until tender. Drain. Save a splash of the cooking water.",
+			"Whisk the ⅓ cup of peanut butter with the 3 tablespoons of soy sauce, the juice of the lime, the minced garlic, and a splash of warm water until the sauce is pourable.",
+			"Shave the 2 carrots and slice the cucumber.",
+			"Toss the noodles with the peanut sauce, adding a little cooking water if it is too thick. Pile on the carrot and cucumber. Serve warm or cold.",
+		],
 	},
 	{
 		id: "tuna-white-bean",
@@ -620,7 +636,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("honey", 1, "tsp", "Pantry"),
 			I("bok choy", 4, "heads", "Produce")
 		],
-		steps: ["Mash miso with soft butter and honey. Spread on cod.", "Broil 8–10 minutes. Steam bok choy alongside."]
+		steps: [
+			"Mash the white miso with the soft butter and honey until it is a smooth paste.",
+			"Spread the paste on the cod fillets.",
+			"Broil 8–10 minutes, until the glaze is browned and bubbling.",
+			"Steam the bok choy alongside until just tender, 4–5 minutes. Serve the fish with the bok choy.",
+		],
 	},
 	{
 		id: "pesto-gnocchi",
@@ -675,7 +696,11 @@ const CORE_RECIPES: Recipe[] = [
 			I("sourdough", 4, "slices", "Bakery"),
 			I("chili flakes", .5, "tsp", "Herbs & Spices")
 		],
-		steps: ["Wilt greens with garlic in olive oil. Season well.", "Fry eggs. Pile greens on toast and top with eggs and chili."]
+		steps: [
+			"Wilt the bunch of kale or chard with the garlic in the olive oil over medium heat, 4–5 minutes. Season well.",
+			"Fry the 4 eggs in the same pan until the whites are set.",
+			"Toast the 4 slices of sourdough. Pile the greens on the toast, top with the eggs, and scatter chili flakes.",
+		],
 	},
 	{
 		id: "turkey-taco-skillet",
@@ -701,7 +726,7 @@ const CORE_RECIPES: Recipe[] = [
 			I("cheddar", 3, "oz", "Dairy & Eggs"),
 			I("lettuce", 1, "head", "Produce")
 		],
-		steps: ["Brown turkey. Stir in seasoning, beans, and corn with a splash of water.", "Simmer 8 minutes. Top with cheddar and shredded lettuce."]
+		steps: ["Brown the 1½ lb of ground turkey. Stir in the 2 tablespoons of taco seasoning, the black beans, and the 1 cup of frozen corn with 2 tablespoons of water.", "Simmer 8 minutes. Top with the cheddar and shredded lettuce."]
 	},
 	{
 		id: "sesame-soba",
@@ -965,7 +990,7 @@ const CORE_RECIPES: Recipe[] = [
 			I("chili powder", 2, "tbsp", "Herbs & Spices"),
 			I("Greek yogurt", .5, "cup", "Dairy & Eggs")
 		],
-		steps: ["Brown turkey with onion. Add spices, tomatoes, and beans.", "Simmer 25 minutes. Top bowls with yogurt."]
+		steps: ["Brown the 2 lb of ground turkey with the onion. Stir in the 2 tablespoons of chili powder, the crushed tomatoes, and the 2 cans of black beans.", "Simmer 25 minutes. Top bowls with the Greek yogurt."]
 	},
 	{
 		id: "lasagna-bolognese",

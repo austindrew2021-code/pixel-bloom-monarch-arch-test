@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -14,6 +14,17 @@ const SUGGESTIONS = [
   "Georgian khachapuri, vegetarian, under 40 minutes.",
   "Senegalese thieboudienne, no dairy, leftover-friendly.",
   "I lifted heavy. High protein Korean or Peruvian, 30 minutes, not the usual rotation.",
+];
+
+const WAIT_TIPS = [
+  "Salt pasta water until it tastes like the sea — that's the only chance to season the noodle.",
+  "Pat meat dry before it hits the pan. Wet meat steams instead of browning.",
+  "A rest after roasting is part of the cook. Slice too soon and the juice runs onto the board.",
+  "Taste the sauce before you plate, not after. A pinch of salt at the end is cheaper than a ruined pan.",
+  "Don't crowd the skillet. Two batches gold beats one batch grey.",
+  "Save a cup of pasta water. Starch is how a sauce clings.",
+  "Let a stew sit overnight if you can. It is better the next day, every time.",
+  "Heat the pan first, then the fat, then the food. Cold oil in a cold pan is a stew.",
 ];
 
 const AISLES: Aisle[] = [
@@ -55,6 +66,7 @@ export function AiChefSheet({
   const [prompt, setPrompt] = useState(SUGGESTIONS[2] ?? SUGGESTIONS[0] ?? "");
   const [busy, setBusy] = useState(false);
   const [scope, setScope] = useState<"tonight" | "week">("tonight");
+  const [tip, setTip] = useState(0);
   const today = isoDate();
   const remaining = dayFuel({
     goal,
@@ -63,6 +75,15 @@ export function AiChefSheet({
     steps: stepsByDate[today] ?? 0,
     body,
   }).remaining;
+
+  useEffect(() => {
+    if (!busy) return;
+    setTip(0);
+    const id = window.setInterval(() => {
+      setTip((n) => (n + 1) % WAIT_TIPS.length);
+    }, 3500);
+    return () => window.clearInterval(id);
+  }, [busy]);
 
   async function run() {
     if (chefRemaining() <= 0) {
@@ -188,8 +209,13 @@ export function AiChefSheet({
           ))}
         </div>
         <Button className="mt-5 w-full" disabled={busy || !prompt.trim()} onClick={() => void run()}>
-          {busy ? "Plating…" : hasPlus ? (scope === "tonight" ? "Invent tonight" : "Cook the world") : "Plan my dinners"}
+          {busy ? "Chef is cooking…" : hasPlus ? (scope === "tonight" ? "Invent tonight" : "Cook the world") : "Plan my dinners"}
         </Button>
+        {busy ? (
+          <p className="mt-4 min-h-[4.5rem] rounded-2xl bg-background px-3 py-3 text-sm leading-relaxed text-muted-foreground">
+            {WAIT_TIPS[tip]}
+          </p>
+        ) : null}
       </SheetContent>
     </Sheet>
   );

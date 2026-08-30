@@ -23,5 +23,9 @@ export function cuisineBar(cuisine?: string): string {
 
 export function scaleQty(qty: number, household: number, servings: number): number {
   const factor = household / Math.max(1, servings);
-  return Math.round(qty * factor * 4) / 4;
+  const scaled = qty * factor;
+  if (scaled === 0) return 0;
+  const rounded = Math.round(scaled * 4) / 4;
+  if (rounded === 0 && scaled > 0) return scaled <= 0.125 ? 0.125 : 0.25;
+  return rounded;
 }

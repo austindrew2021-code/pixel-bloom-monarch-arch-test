@@ -86,11 +86,15 @@ function cookAromStep(recipe: MethodRecipe, minutes = "4"): string {
 function proteinName(recipe: MethodRecipe): string {
   const hit = recipe.ingredients.find((i) => {
     const n = i.name.toLowerCase();
-    if (recipe.protein === "veg") return /tofu|tempeh|bean|lentil|chickpea|mushroom|eggplant|cauliflower/.test(n);
+    if (recipe.protein === "veg") {
+      return /tofu|tempeh|bean|lentil|chickpea|mushroom|eggplant|cauliflower|squash/.test(n);
+    }
     if (recipe.protein === "eggs") return /\begg/.test(n);
-    return /chicken|turkey|duck|beef|steak|pork|ham|bacon|sausage|lamb|salmon|shrimp|cod|tuna|fish|scallop|mussel|clam|tofu/.test(n);
+    return /chicken|turkey|duck|beef|steak|pork|ham|bacon|sausage|lamb|salmon|shrimp|cod|tuna|fish|scallop|mussel|clam|tofu/.test(
+      n,
+    );
   });
-  return hit?.name ?? recipe.ingredients[0]?.name ?? "the main ingredient";
+  return hit?.name ?? recipe.ingredients[0]?.name ?? "the vegetables";
 }
 
 function isGroundMeat(recipe: MethodRecipe): boolean {
@@ -161,7 +165,7 @@ function pad(steps: string[]): string[] {
     const last = out[out.length - 1] ?? "";
     if (!/\b(serve|plate)\b/i.test(last)) out.push("Plate and serve while it is hot.");
   }
-  return out.slice(0, 6);
+  return out.slice(0, 14);
 }
 
 function specialMethod(recipe: MethodRecipe): string[] | null {
@@ -178,7 +182,7 @@ function specialMethod(recipe: MethodRecipe): string[] | null {
     ];
   }
 
-  if (recipe.id === "vh-va-beaten-biscuits" || /beaten biscuits/.test(n)) {
+  if (recipe.id === "vh-va-beaten-biscuits") {
     return [
       "Heat the oven to 400°F. Rub the lard into the flour and salt until the mix looks like coarse meal.",
       "Add cold water a little at a time until a very stiff dough forms. It should not be sticky.",
@@ -233,6 +237,37 @@ function specialMethod(recipe: MethodRecipe): string[] | null {
       `Brew the ${coffee} so it is hot and strong, about 1–2 ounces per cup.`,
       `Pour the hot ${coffee} over the ice cream at the table so it melts at the edges.`,
       "Serve immediately with a spoon while the espresso is still melting the edges.",
+    ];
+  }
+
+  if (recipe.id === "ok-chicken-fried-steak" || /chicken-?fried steak/.test(n)) {
+    const steaks = named(recipe, /steak/, "cubed steak");
+    const flour = named(recipe, /flour/, "flour");
+    const buttermilk = named(recipe, /buttermilk/, "buttermilk");
+    const milk = named(recipe, /^milk$|whole milk/, "milk");
+    const potato = named(recipe, /potato/, "potatoes");
+    const oil = named(recipe, /oil|lard/, "oil");
+    const butter = named(recipe, /butter/, "butter");
+    return [
+      `Peel the ${potato} and cut into chunks. Boil in salted water until a fork slides through, 15–18 minutes. Drain. Mash with the ${butter}. Cover and keep warm.`,
+      `Season the ${steaks} with salt and black pepper. Put the ${flour} in a shallow dish and the ${buttermilk} in another. Dredge each steak in flour, dip in buttermilk, then flour again, pressing the coating on.`,
+      `Heat ½ inch of ${oil} in a wide skillet over medium-high until a pinch of flour sizzles. Fry the steaks 3–4 minutes a side, until the crust is deep gold. Move to a rack. Pour off all but 3 tablespoons of the drippings.`,
+      `Whisk 3 tablespoons of the leftover flour into the drippings and cook 1 minute. Slowly whisk in the ${milk}. Simmer 4–5 minutes, until the gravy is thick and peppered. Taste for salt.`,
+      `Plate each steak with the mashed potatoes. Spoon the peppered gravy over both. Serve hot.`,
+    ];
+  }
+
+  if (recipe.id === "hi-loco-moco" || /loco moco/.test(n)) {
+    const beef = named(recipe, /ground beef|beef/, "ground beef");
+    const rice = named(recipe, /rice/, "cooked rice");
+    const eggs = named(recipe, /eggs?/, "eggs");
+    const onion = named(recipe, /onion/, "onion");
+    const broth = named(recipe, /broth|stock/, "beef broth");
+    return [
+      `Shape the ${beef} into 4 patties and salt both sides. Sear in a skillet over medium-high heat 3–4 minutes a side, until browned. Move to a plate.`,
+      `Add the chopped ${onion} to the drippings and cook 3 minutes. Sprinkle 1 tablespoon flour if the pan is dry, then pour in the ${broth}. Simmer 3–4 minutes, until the gravy thickens. Taste for salt.`,
+      `Fry the ${eggs} in the same skillet, or a second pan, until the whites are set and the yolks are still runny, 2–3 minutes.`,
+      `Spoon the ${rice} onto plates. Set a patty on the rice, an egg on the patty, and the onion gravy over everything. Serve hot.`,
     ];
   }
 
@@ -373,6 +408,79 @@ function specialMethod(recipe: MethodRecipe): string[] | null {
     ];
   }
 
+  if (recipe.id === "spanakopita" || /spanakopita|spanakopitta/.test(n)) {
+    return [
+      "Heat the oven to 375°F. Wilt the spinach in a wide pan until collapsed, 4–5 minutes. Squeeze it dry in a towel so the filling is not wet.",
+      "Mix the spinach with crumbled feta, chopped dill, and the beaten eggs. Salt and pepper.",
+      "Brush a baking dish with olive oil. Layer about 6 sheets of phyllo, brushing each sheet with oil.",
+      "Spread the spinach filling. Cover with the remaining phyllo, brushing each sheet. Score the top into squares.",
+      "Bake 35 minutes at 375°F, until the phyllo is deep gold and shatter-crisp.",
+      "Rest 10 minutes so it cuts clean. Serve warm.",
+    ];
+  }
+
+  if (recipe.id === "palak-paneer" || /palak paneer|saag paneer/.test(n)) {
+    return [
+      "Blanch the spinach in boiling water 1 minute. Drain, then blend with the ginger and garlic to a smooth puree.",
+      "Fry the paneer cubes in a little oil until gold on the edges, 2–3 minutes. Move to a plate.",
+      "Cook the chopped onion in the same pan 6–8 minutes, until soft and sweet.",
+      "Add the spinach puree and garam masala. Simmer 8–10 minutes.",
+      "Fold in the paneer and the cream. Taste for salt. Serve with rice or roti.",
+    ];
+  }
+
+  if (recipe.id === "poutine" || recipe.id === "in-poutine-home" || /^((weeknight) )?poutine$/.test(n)) {
+    const potatoes = named(recipe, /potato|fries/, "potatoes");
+    const curds = named(recipe, /curd/, "cheese curds");
+    const gravy = named(recipe, /gravy/, "gravy");
+    return [
+      `Cut the ${potatoes} into fries if they are not already. Soak in cold water 20 minutes. Drain and pat very dry.`,
+      "Fry once at 325°F for 5–6 minutes, until pale and just cooked. Drain.",
+      "Fry again at 375°F for 2–3 minutes, until deep gold and crisp. Salt.",
+      `Heat the ${gravy} until it boils.`,
+      `Pile the fries. Scatter room-temperature ${curds}. Ladle the boiling gravy over so the curds squeak and slump. Serve at once.`,
+    ];
+  }
+
+  if (recipe.id === "ratatouille" || (/ratatouille/.test(n) && recipe.plate === "skillet")) {
+    return [
+      "Cut the eggplant, zucchini, pepper, tomato, and onion into similar chunks. Salt the eggplant 10 minutes, then pat dry.",
+      "Brown the vegetables in batches in olive oil over medium-high heat, 4–5 minutes a batch, until they take color. Do not crowd the pan.",
+      "Return everything to the pan with garlic and thyme. Stew on medium-low 30–40 minutes, until jammy.",
+      "Taste for salt. Serve warm or at room temperature.",
+    ];
+  }
+
+  if (recipe.id === "welsh-rarebit") {
+    const cheese = named(recipe, /cheese|cheddar/, "cheese");
+    const liquid = named(recipe, /ale|beer|milk/, "ale or milk");
+    const bread = named(recipe, /toast|bread|sourdough/, "toast");
+    return [
+      `Toast the ${bread}.`,
+      `Melt the ${cheese} with the ${liquid}, mustard, and Worcestershire over low heat, stirring, until smooth. Do not let it boil.`,
+      `Spoon over the ${bread}.`,
+      "Broil 1–2 minutes, until bubbling and spotted gold.",
+      "Serve at once while it is still flowing.",
+    ];
+  }
+
+  if (recipe.id === "sw-tuna-salad" || /tuna salad sandwich/.test(n)) {
+    const bread = named(recipe, /bread/, "sandwich bread");
+    return [
+      "Drain the tuna well. Mix with mayonnaise, chopped celery, and pickle until it just holds. Do not mash it to paste.",
+      `Toast the ${bread} if you want it warm, or leave it soft.`,
+      "Lay lettuce on the bread. Spoon the tuna salad on. Close the sandwich and cut.",
+    ];
+  }
+
+  if (recipe.id === "cp-hot-dogs" || /campfire hot dogs/.test(n)) {
+    return [
+      "Roast the hot dogs over coals or in a hot skillet, turning, until the skins blister, 6–8 minutes.",
+      "Toast the buns cut-side down for 30 seconds if you have a grate.",
+      "Set a dog in each bun. Mustard and relish. Eat while it is hot.",
+    ];
+  }
+
   if (/duck breast|magret/.test(n)) {
     const shallot = named(recipe, /shallot|onion/, "shallot");
     const wine = named(recipe, /wine/, "red wine");
@@ -462,7 +570,7 @@ function specialMethod(recipe: MethodRecipe): string[] | null {
     ];
   }
 
-  if (/crêpe|crepe|pancake/.test(n)) {
+  if (recipe.id === "fr-crepes" || /^(crêpes?|crepes?)(\s|$)/i.test(n) || /crepes? suzette/i.test(n)) {
     const flour = named(recipe, /flour/, "flour");
     const milk = named(recipe, /milk/, "milk");
     const eggs = named(recipe, /egg/, "eggs");
@@ -539,6 +647,17 @@ function drinkMethod(recipe: MethodRecipe): string[] {
     `Taste and adjust sweet, sour, or spirit.`,
     `Chill at least 30 minutes so it is cold through.`,
     `Pour and grate nutmeg or add ice if that is how you drink it.`,
+  ];
+}
+
+function rubMethod(recipe: MethodRecipe): string[] {
+  const list = join(recipe.ingredients.map((i) => i.name).slice(0, 6));
+  return [
+    `Get out ${list}.`,
+    `Mix in a bowl until even, with no clumps of salt or sugar.`,
+    `Pat the meat, fish, or vegetables dry.`,
+    `Rub the mix on all sides. Rest 30 minutes on the counter, or overnight in the fridge.`,
+    `This is a seasoning, not a skillet dinner. Cook the food how you like after it rests.`,
   ];
 }
 
@@ -688,7 +807,7 @@ function skilletMethod(recipe: MethodRecipe): string[] {
   return [
     `Pat the ${meat} dry. Salt both sides. Set a wide skillet over medium-high heat with a film of ${fat(recipe)}.`,
     `Sear the ${meat} ${searN} minutes per side, until browned. Move to a plate.`,
-    `In the same pan, ${cookAromStep(recipe, "3–4")} Add ${veg || "any remaining vegetables"} if they still need cooking.`,
+    `In the same pan, ${cookAromStep(recipe, "3–4")}${veg ? ` Add ${veg} if they still need cooking.` : ""}`,
     sauce
       ? `Add ${sauce}. Simmer 3–5 minutes, scraping the browned bits. Return the ${meat} to the pan to heat through, 2 minutes.`
       : `Return the ${meat} to the pan. Cook 2 minutes more, until cooked through.`,
@@ -766,7 +885,7 @@ function curryMethod(recipe: MethodRecipe): string[] {
     recipe.protein === "veg"
       ? `Add ${vegList(recipe)} and the ${liq}. Stir.`
       : `Add the ${meat} and the ${liq}. Stir so nothing is stuck on the bottom.`,
-    `Simmer gently ${simmerN} minutes, until the sauce thickens and the main ingredient is tender. Salt to taste.`,
+    `Simmer gently ${simmerN} minutes, until the sauce thickens and the ${meat} is tender. Salt to taste.`,
     `${endPlate(recipe, `Serve with ${rice}.`)}`,
   ];
 }
@@ -928,6 +1047,11 @@ function bowlMethod(recipe: MethodRecipe): string[] {
   return skilletMethod(recipe);
 }
 
+export function knownDishMethod(recipe: MethodRecipe): string[] | null {
+  const special = specialMethod(recipe);
+  return special ? pad(special) : null;
+}
+
 export function writeDishMethod(recipe: MethodRecipe): string[] {
   const special = specialMethod(recipe);
   if (special) return pad(special);
@@ -935,6 +1059,9 @@ export function writeDishMethod(recipe: MethodRecipe): string[] {
   if (isPressure(recipe)) return pad(pressureMethod(recipe));
   if (/pudding|custard|spoon bread|clafoutis|flan|panna cotta/.test(recipe.name.toLowerCase())) {
     return pad(dessertMethod(recipe));
+  }
+  if ((recipe.tags ?? []).includes("dry-rub") || /\brub\b/.test(recipe.name.toLowerCase())) {
+    return pad(rubMethod(recipe));
   }
   if ((recipe.tags ?? []).includes("sauce") || /sauce|gravy|vinaigrette|dressing|aioli|pesto/.test(recipe.name.toLowerCase())) {
     return pad(sauceMethod(recipe));

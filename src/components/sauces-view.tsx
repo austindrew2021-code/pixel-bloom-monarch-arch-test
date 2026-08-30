@@ -6,8 +6,9 @@ import { RecipeCard } from "@/components/recipe-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { cuisineBar } from "@/lib/cuisine";
-import { formatMinutes } from "@/lib/format";
+import { cuisineBar, scaleQty } from "@/lib/cuisine";
+import { formatMinutes, formatQty } from "@/lib/format";
+import { scaleMethodSteps } from "@/lib/cook-steps";
 import { RECIPES } from "@/lib/recipes";
 import { SAUCE_MENUS, isSauceRecipe, saucesIn, type SauceMenuId } from "@/lib/sauce-menu";
 import { searchRecipes } from "@/lib/search";
@@ -23,6 +24,7 @@ export function SaucesView() {
   const assignMeal = useSpoonful((s) => s.assignMeal);
   const addExtraGrocery = useSpoonful((s) => s.addExtraGrocery);
   const setTab = useSpoonful((s) => s.setTab);
+  const household = useSpoonful((s) => s.household);
   const [query, setQuery] = useState("");
   const [menu, setMenu] = useState<SauceMenuId | "all">("all");
   const [active, setActive] = useState<Recipe | null>(null);
@@ -103,13 +105,16 @@ export function SaucesView() {
               </p>
               <ul className="mt-4 space-y-1 text-sm">
                 {active.ingredients.map((ing, i) => (
-                  <li key={`${ing.name}-${i}`}>
-                    {ing.qty} {ing.unit} {ing.name}
+                  <li key={`${ing.name}-${i}`} className="flex justify-between gap-3">
+                    <span className="min-w-0">{ing.name}</span>
+                    <span className="shrink-0 tabular-nums text-muted-foreground">
+                      {formatQty(scaleQty(ing.qty, household, active.servings), ing.unit)}
+                    </span>
                   </li>
                 ))}
               </ul>
               <ol className="mt-4 list-decimal space-y-2 pl-4 text-sm leading-relaxed">
-                {active.steps.map((s, i) => (
+                {scaleMethodSteps(active.steps, active.ingredients, household, active.servings).map((s, i) => (
                   <li key={`step-${i}`}>{s}</li>
                 ))}
               </ol>

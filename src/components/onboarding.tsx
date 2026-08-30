@@ -215,7 +215,7 @@ export function Onboarding() {
         </div>
         <p className="mt-2 text-xs text-muted-foreground">{GOAL_KINDS.find((g) => g.id === body.goalKind)?.hint}</p>
         <p className="mt-3 text-sm tabular-nums text-foreground">
-          {tdee} kcal TDEE · {macros.cal} kcal target · {macros.protein}g protein
+          {tdee} kcal to stay here · {macros.cal} kcal target · {macros.protein}g protein
         </p>
       </section>
 

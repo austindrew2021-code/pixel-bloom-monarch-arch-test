@@ -1092,8 +1092,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("Gruyère", 8, "oz", "Dairy & Eggs"),
     ],
     steps: [
-      "Cook onions in butter 45 minutes until mahogany. Deglaze with wine, add broth.",
-      "Ladle into bowls, top with bread and Gruyère, broil.",
+      "Melt the 4 tablespoons of butter in a heavy pot over medium-low. Add the 4 pounds of sliced onions and cook 45 minutes, stirring often, until mahogany.",
+      "Pour in the ½ cup of dry white wine and scrape the pot. Add the 8 cups of beef broth. Simmer 20 minutes.",
+      "Heat the broiler. Ladle the soup into oven-safe bowls. Top with baguette slices and the 8 ounces of Gruyère.",
+      "Broil 2–3 minutes, until the cheese bubbles. Serve hot.",
     ],
   }),
   dish({

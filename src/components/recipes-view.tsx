@@ -16,7 +16,9 @@ import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
 import { t, voiceFor } from "@/lib/i18n";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
+import { scaleMethodSteps } from "@/lib/cook-steps";
 import { formatMinutes, formatQty } from "@/lib/format";
+
 import { lookupDish } from "@/lib/kitchen-ai";
 import { packLabel, RECIPES, recipeById } from "@/lib/recipes";
 import { mealsFromPantry } from "@/lib/pantry-match";
@@ -646,6 +648,8 @@ function RecipeDetail({
     ...ing,
     shown: formatQty(scaleQty(ing.qty, serves, recipe.servings), ing.unit),
   }));
+  const shownSteps = scaleMethodSteps(recipe.steps, recipe.ingredients, serves, recipe.servings);
+
   return (
     <div>
       <MealPhoto recipe={recipe} className="h-44 rounded-2xl" />
@@ -765,7 +769,8 @@ function RecipeDetail({
       <h3 className="mt-6 text-sm font-medium">Method</h3>
       <p className="mt-1 text-sm text-muted-foreground">Each step names the food, the pan, and how long.</p>
       <ol className="mt-2 space-y-3 text-base leading-relaxed text-foreground/80">
-        {recipe.steps.map((step, i) => (
+        {shownSteps.map((step, i) => (
+
           <li key={`step-${i}`} className="flex gap-3">
             <span className="w-5 shrink-0 font-medium tabular-nums text-foreground">{i + 1}</span>
             <span className="min-w-0">{step}</span>

@@ -6,9 +6,10 @@ import { RecipeCard } from "@/components/recipe-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { cuisineBar } from "@/lib/cuisine";
+import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { isDessert, isHealthy } from "@/lib/diet";
-import { formatMinutes } from "@/lib/format";
+import { formatMinutes, formatQty } from "@/lib/format";
+import { scaleMethodSteps } from "@/lib/cook-steps";
 import { strictestGoal } from "@/lib/goal-fit";
 import { t } from "@/lib/i18n";
 import { RECIPES } from "@/lib/recipes";
@@ -45,6 +46,7 @@ export function DessertsView() {
   const addExtraGrocery = useSpoonful((s) => s.addExtraGrocery);
   const setTab = useSpoonful((s) => s.setTab);
   const locale = useSpoonful((s) => s.locale);
+  const household = useSpoonful((s) => s.household);
   const body = useSpoonful((s) => s.body);
   const seats = useSpoonful((s) => s.seats) ?? [];
   const tableGoal = strictestGoal([body.goalKind, ...seats.map((s) => s.goalKind)]);
@@ -123,13 +125,16 @@ export function DessertsView() {
               </p>
               <ul className="mt-4 space-y-1 text-sm">
                 {active.ingredients.map((ing, i) => (
-                  <li key={`${ing.name}-${i}`}>
-                    {ing.qty} {ing.unit} {ing.name}
+                  <li key={`${ing.name}-${i}`} className="flex justify-between gap-3">
+                    <span className="min-w-0">{ing.name}</span>
+                    <span className="shrink-0 tabular-nums text-muted-foreground">
+                      {formatQty(scaleQty(ing.qty, household, active.servings), ing.unit)}
+                    </span>
                   </li>
                 ))}
               </ul>
               <ol className="mt-4 list-decimal space-y-2 pl-4 text-sm leading-relaxed">
-                {active.steps.map((s, i) => (
+                {scaleMethodSteps(active.steps, active.ingredients, household, active.servings).map((s, i) => (
                   <li key={`step-${i}`}>{s}</li>
                 ))}
               </ol>

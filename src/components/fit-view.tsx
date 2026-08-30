@@ -648,7 +648,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
             const mins = Number(minutes) || 30;
             const km = Number(distance) || undefined;
             addWorkout({ date: today, kind, minutes: mins, distanceKm: km });
-            toast("Logged — remaining macros moved");
+            toast("Logged — remaining calories and protein moved");
           }}
         >
           <Plus />
@@ -678,7 +678,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
         <div className="flex items-end justify-between gap-3">
           <div>
             <h2 className="font-display text-2xl">Fuel me</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Ranked for remaining macros after that work{synced && health ? " and tonight’s recovery" : ""}.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Ranked for remaining calories and protein after that work{synced && health ? " and tonight’s recovery" : ""}.</p>
           </div>
           <Flame className="size-5 text-spark" />
         </div>
