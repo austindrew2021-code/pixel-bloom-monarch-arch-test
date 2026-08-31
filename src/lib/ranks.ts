@@ -97,6 +97,11 @@ export const MILESTONES = [
     title: "Twenty-five sessions",
     body: "Twenty-five sessions logged. That's a serious training log.",
   },
+  {
+    id: "saved-100",
+    title: "Hundred saved",
+    body: "You've saved about $100 cooking instead of ordering in.",
+  },
 ] as const;
 
 export type Celebrate = {
@@ -112,11 +117,13 @@ export function milestonesFor(input: {
   snapped: boolean;
   family: boolean;
   liftCount?: number;
+  savedTotal?: number;
 }): Celebrate[] {
   const out: Celebrate[] = [];
   const streak = cookStreak(input.cookedDates, isoDate());
   const cooked = input.cookedDates.length;
   const lifts = input.liftCount ?? 0;
+  const saved = input.savedTotal ?? 0;
   const ok: Record<string, boolean> = {
     "first-plate": cooked >= 1,
     "streak-3": streak >= 3,
@@ -128,6 +135,7 @@ export function milestonesFor(input: {
     "first-lift": lifts >= 1,
     "lift-10": lifts >= 10,
     "lift-25": lifts >= 25,
+    "saved-100": saved >= 100,
   };
   for (const row of MILESTONES) {
     if (ok[row.id] && !input.seen.includes(row.id)) {

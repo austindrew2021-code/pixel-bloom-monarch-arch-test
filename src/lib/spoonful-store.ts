@@ -25,7 +25,7 @@ import {
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "./notify";
 import type { FitnessSourceId, SyncAccess } from "./devices";
 import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
-import { plateCost, recipeSafe } from "./shield";
+import { mealSavings, plateCost, recipeSafe } from "./shield";
 import { postKitchenEvent } from "./family";
 import { shareAchievement, syncMyStats } from "./community";
 import type { LiftSession } from "./lift";
@@ -60,7 +60,7 @@ import type {
   Workout,
   WorkoutKind,
 } from "./types";
-import { mondayOf, weekDates } from "./week";
+import { mondayOf, shiftWeek, weekDates } from "./week";
 
 function rollAiWeek(
   get: () => SpoonfulState,
@@ -1265,6 +1265,7 @@ export const useSpoonful = create<SpoonfulState>()(
           snapped: s.snapped,
           family: isUnlocked(s.unlocked, "family"),
           liftCount: s.liftSessions.length,
+          savedTotal: savingsSummary(s.meals, s.cookedDates, s.household).allTime,
         });
         let lastCelebrate: Celebrate | null = s.lastCelebrate;
         const seen = [...s.seenMilestones];
@@ -1539,6 +1540,60 @@ export function weekPulse(
     proteins: proteins.size,
     cost: Math.round(cost),
   };
+}
+
+export type SavingsSummary = { week: number; month: number; allTime: number; count: number };
+
+/** Estimated dollars saved cooking actually-cooked dinners instead of ordering them in. */
+export function savingsSummary(
+  meals: PlannedMeal[],
+  cookedDates: string[],
+  household: number,
+  today = isoDate(),
+): SavingsSummary {
+  const thisWeek = new Set(weekDates(mondayOf(parseISO(`${today}T12:00:00`))));
+  const monthPrefix = today.slice(0, 7);
+  let week = 0;
+  let month = 0;
+  let allTime = 0;
+  let count = 0;
+  for (const date of cookedDates) {
+    const dinner = meals.find((m) => m.date === date && m.slot === "dinner" && !m.skip);
+    if (!dinner) continue;
+    const recipe = resolveMeal(dinner).recipe;
+    if (!recipe) continue;
+    const savings = mealSavings(recipe, household);
+    allTime += savings;
+    count += 1;
+    if (date.slice(0, 7) === monthPrefix) month += savings;
+    if (thisWeek.has(date)) week += savings;
+  }
+  return { week: Math.round(week), month: Math.round(month), allTime: Math.round(allTime), count };
+}
+
+/** Estimated dollars saved per week, oldest to newest, for the last `weeks` weeks including this one. */
+export function weeklySavingsTrend(
+  meals: PlannedMeal[],
+  cookedDates: string[],
+  household: number,
+  weeks = 8,
+  today = isoDate(),
+): number[] {
+  const thisWeekStart = mondayOf(parseISO(`${today}T12:00:00`));
+  const totals: number[] = [];
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const start = shiftWeek(thisWeekStart, -i);
+    const dates = new Set(weekDates(start));
+    let sum = 0;
+    for (const date of cookedDates) {
+      if (!dates.has(date)) continue;
+      const dinner = meals.find((m) => m.date === date && m.slot === "dinner" && !m.skip);
+      const recipe = dinner ? resolveMeal(dinner).recipe : undefined;
+      if (recipe) sum += mealSavings(recipe, household);
+    }
+    totals.push(Math.round(sum));
+  }
+  return totals;
 }
 
 export function weekPlanText(meals: PlannedMeal[], weekStart: string): string {

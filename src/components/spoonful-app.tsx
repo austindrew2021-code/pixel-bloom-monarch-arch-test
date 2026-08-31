@@ -316,7 +316,7 @@ export function SpoonfulApp() {
       {tab === "snap" ? <SnapView /> : null}
       {tab === "people" ? <PeopleView /> : null}
       {tab === "fit" ? <FitView onOpenStore={() => setExtras(true)} /> : null}
-      {tab === "shop" ? <ShopView /> : null}
+      {tab === "shop" ? <ShopView onOpenStore={() => setExtras(true)} /> : null}
 
       {extras ? (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-background">

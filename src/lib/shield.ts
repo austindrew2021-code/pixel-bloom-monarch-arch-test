@@ -76,6 +76,29 @@ export function plateCost(recipe: Recipe, household: number): number {
   return Math.round(scaled * 2) / 2;
 }
 
+/** What the same plate would run at a restaurant or takeout counter — roughly 2x grocery cost. */
+const TAKEOUT_COST: Record<Protein, number> = {
+  chicken: 30,
+  beef: 42,
+  pork: 28,
+  fish: 38,
+  seafood: 46,
+  veg: 20,
+  eggs: 18,
+  turkey: 32,
+};
+
+export function takeoutCost(recipe: Recipe, household: number): number {
+  const base = TAKEOUT_COST[recipe.protein];
+  const scaled = base * (Math.max(1, household) / Math.max(1, recipe.servings));
+  return Math.round(scaled * 2) / 2;
+}
+
+/** Estimated dollars saved by cooking this plate instead of ordering it in. */
+export function mealSavings(recipe: Recipe, household: number): number {
+  return Math.max(0, takeoutCost(recipe, household) - plateCost(recipe, household));
+}
+
 export const SNACKS: { name: string; nutrition: Nutrition }[] = [
   { name: "Eggs", nutrition: { cal: 180, protein: 12, carbs: 1, fat: 14 } },
   { name: "Greek yogurt", nutrition: { cal: 150, protein: 15, carbs: 8, fat: 4 } },
