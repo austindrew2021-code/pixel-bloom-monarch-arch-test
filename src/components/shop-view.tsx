@@ -55,7 +55,7 @@ export function ShopView() {
   return (
     <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Groceries</p>
-      <h1 className="mt-1 font-display text-4xl">Shop</h1>
+      <h1 className="mt-1 font-display text-4xl" data-tour="shop-head">Shop</h1>
       <p className="mt-2 text-sm text-foreground/80">
         Built from {weekMeals.filter((m) => !m.skip).length} meal
         {weekMeals.filter((m) => !m.skip).length === 1 ? "" : "s"}, scaled for {household}{" "}

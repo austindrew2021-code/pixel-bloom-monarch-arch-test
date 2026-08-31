@@ -245,7 +245,7 @@ export function rankForFuel(
   pool: Recipe[],
   remaining: MacroGoal,
   pantry: string[],
-  opts?: { afterLift?: boolean; recovery?: "low" | "ok" | "high"; goalKind?: GoalKind | string },
+  opts?: { afterLift?: boolean; recovery?: "low" | "ok" | "high"; goalKind?: GoalKind | string; afterCardio?: boolean; skipped?: boolean },
 ): FuelHit[] {
   const pantryN = pantry.map((p) => p.toLowerCase()).filter(Boolean);
   const recovery = opts?.recovery;
@@ -266,6 +266,11 @@ export function rankForFuel(
       let score =
         (pFit * 5 + pantryRatio * 3 + calFit * 2 + cFit + (recipe.minutes <= 35 ? 0.6 : 0)) * liftBoost;
       score += goalRankBoost(recipe, opts?.goalKind);
+      if (opts?.afterCardio && n.protein >= 28) score += 0.35;
+      if (opts?.skipped) {
+        if (n.cal <= 520) score += 0.7;
+        if (n.carbs >= 70 && n.protein < 32) score -= 0.6;
+      }
       if (recovery === "low") {
         if (recipe.minutes <= 30) score += 0.8;
         if (n.cal <= 520) score += 0.5;
@@ -282,6 +287,8 @@ export function rankForFuel(
       if (remaining.protein >= 40 && n.protein >= 30) bits.push(`${n.protein}g protein to close the gap`);
       if (pantryHits >= 2) bits.push("uses what you have");
       if (opts?.afterLift && n.protein >= 35) bits.push("after lifting");
+      if (opts?.afterCardio && n.protein >= 28) bits.push("after cardio");
+      if (opts?.skipped && n.cal <= 520) bits.push("session skipped — lighter plate");
       if (recipe.minutes <= 30) bits.push("weeknight-fast");
       return {
         recipe,

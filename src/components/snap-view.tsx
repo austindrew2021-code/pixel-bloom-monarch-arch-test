@@ -163,7 +163,7 @@ function SnapFlow() {
         onChange={(e) => void onFile(e.target.files?.[0])}
       />
 
-      <div className="mt-5 grid grid-cols-2 gap-2">
+      <div className="mt-5 grid grid-cols-2 gap-2" data-tour="snap-cam">
         <Button
           className="h-28 flex-col rounded-3xl bg-spark text-spark-foreground hover:opacity-95"
           onClick={() => {

@@ -233,6 +233,9 @@ if (typeof window === "undefined" && dbSource === "pglite") {
   globalBoot.__pgBootstrapPromise__ ??= ensureDbReady().catch((err) => {
     globalBoot.__pgBootstrapPromise__ = undefined;
     console.error("[db] PGLite bootstrap failed:", err);
-    throw err;
+    // Don't rethrow: a fire-and-forget rejection here becomes an unhandled
+    // rejection and Nitro wraps the whole document request as
+    // `{ error: true, status: 500, unhandled: true }`. Callers of getSql()
+    // still fail when they actually need the database.
   });
 }

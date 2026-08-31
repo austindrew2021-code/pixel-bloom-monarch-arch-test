@@ -232,8 +232,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("mustard powder", 0.5, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Boil pasta. Make a roux with butter and flour, whisk in milk.",
-      "Melt cheddar off heat. Fold in pasta and mustard powder.",
+      "Bring a large pot of salted water to a boil. Cook the 12 ounces of elbow macaroni until just tender. Drain, saving a splash of the water.",
+      "Melt the 3 tablespoons of butter in the same pot. Stir in the 3 tablespoons of flour and cook 1 minute. Whisk in the 1½ cups of milk until the sauce is smooth and thick.",
+      "Take the pan off the heat. Stir in the 10 ounces of sharp cheddar and the ½ teaspoon of mustard powder until melted.",
+      "Fold in the pasta. If the sauce is tight, loosen with a splash of the pasta water. Serve hot.",
     ],
   }),
   dish({
@@ -257,8 +259,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("toast", 8, "slices", "Bakery"),
     ],
     steps: [
-      "Sauté mushrooms and pepper in butter. Stir in flour, then milk.",
-      "Add chicken and peas. Serve over toast.",
+      "Melt the 4 tablespoons of butter in a skillet. Cook the 8 ounces of mushrooms and the chopped bell pepper until soft, 5 minutes.",
+      "Stir in the 4 tablespoons of flour and cook 1 minute. Whisk in the 2 cups of milk until the sauce is smooth and thick.",
+      "Add the 3 cups of cooked chicken and the 1 cup of frozen peas. Simmer 3–4 minutes, until everything is hot.",
+      "Toast the 8 slices of toast. Spoon the chicken over the toast and serve at once.",
     ],
   }),
   dish({
@@ -279,8 +283,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("butter", 2, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Sear seasoned chops until browned and just cooked. Rest.",
-      "In the pan, cook apples and onion with cinnamon and butter until saucy.",
+      "Pat the 4 pork chops dry and salt both sides. Set a wide skillet over medium-high heat.",
+      "Sear the chops until browned and just cooked through, 4–5 minutes per side. Move to a plate and rest.",
+      "In the same pan, melt the 2 tablespoons of butter. Add the 3 apples (sliced) and the chopped onion with the ½ teaspoon of cinnamon.",
+      "Cook until the apples slump into a sauce, 6–8 minutes. Spoon over the chops and serve.",
     ],
   }),
   dish({
@@ -301,8 +307,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("crushed tomatoes", 2, "cans", "Pantry"),
     ],
     steps: [
-      "Blanch cabbage leaves. Mix beef, rice, and onion. Roll.",
-      "Nestle in tomato sauce. Bake covered 90 minutes at 325°F.",
+      "Heat the oven to 325°F. Boil the whole head of cabbage 8 minutes. Pull off 12 large leaves and trim the thick rib so they roll.",
+      "Mix the 1 pound of ground beef, the 1 cup of cooked rice, the chopped onion, salt, and pepper. Put 2 tablespoons in each leaf. Fold the sides in and roll.",
+      "Lay the rolls in a dish. Pour the 2 cans of crushed tomatoes over.",
+      "Cover and bake 90 minutes, until the leaves are silky and the filling is cooked through. Spoon the tomato over and serve.",
     ],
   }),
   dish({
@@ -324,8 +332,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("tomato paste", 2, "tbsp", "Pantry"),
     ],
     steps: [
-      "Brown cubed chuck. Add onion, tomato paste, broth. Simmer 90 minutes.",
-      "Add potato and carrot. Cook until tender, 40 minutes more.",
+      "Pat the 2 pounds of beef chuck dry and salt it. Set a heavy pot over medium-high heat.",
+      "Brown the cubed chuck on all sides, 6–8 minutes. Add the chopped onion and the 2 tablespoons of tomato paste. Cook 1 minute.",
+      "Pour in the 4 cups of beef broth. Simmer, partly covered, 90 minutes, until the beef starts to give.",
+      "Add the 4 potatoes (chunked) and the 4 carrots. Cook until tender, 40 minutes more. Taste for salt and serve in warm bowls.",
     ],
   }),
   dish({
@@ -391,8 +401,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("butter", 2, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Crisp diced potato and onion in butter. Add chopped corned beef and press.",
-      "Fry until crusty. Top with fried eggs.",
+      "Dice the 3 potatoes and the onion. Set a wide skillet over medium-high heat with the 2 tablespoons of butter.",
+      "Crisp the potato and onion, 8–10 minutes, pressing them into the pan so a crust forms.",
+      "Add the 2 cups of chopped cooked corned beef. Press again and fry until the underside is crusty.",
+      "Fry the 4 eggs in a second pan. Top each plate of hash with an egg and serve hot.",
     ],
   }),
   dish({
@@ -529,8 +541,9 @@ export const WORLD_RECIPES: Recipe[] = [
       I("butter", 3, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Simmer vegetables in salted water until just tender. Drain most of the water.",
-      "Add cream and butter. Do not boil hard. Serve in bowls.",
+      "Simmer the 1 pound of new potatoes, the 4 carrots, the ½ pound of green beans, and the 1 cup of peas in salted water until just tender, 12–15 minutes. Drain most of the water.",
+      "Stir in the 1 cup of cream and the 3 tablespoons of butter. Do not boil hard.",
+      "Taste for salt. Serve in warm bowls.",
     ],
   }),
   dish({
@@ -805,8 +818,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("cilantro", 0.5, "bunch", "Produce"),
     ],
     steps: [
-      "Simmer chopped tomato, onion, and jalapeño into a salsa.",
-      "Fry eggs, warm tortillas, spoon salsa over. Cilantro on top.",
+      "Chop the 4 tomatoes, the onion, and the jalapeño. Simmer in a skillet with a pinch of salt 8–10 minutes, until they slump into a salsa.",
+      "Warm the 8 corn tortillas in a dry pan 20 seconds a side, until they flex.",
+      "Fry the 4 eggs in a little oil over medium heat, 2–3 minutes, until the whites set and the yolks stay runny.",
+      "Set the tortillas on plates. Top with an egg and a spoon of salsa. Scatter the cilantro over.",
     ],
   }),
   dish({

@@ -22,11 +22,17 @@ export function prettyFrac(qty: number): string {
 }
 
 export function formatQty(qty: number, unit: string): string {
-  const pretty = prettyFrac(qty);
-  if (!unit) return pretty;
-  const raw = unit.trim();
-  if (Math.abs(qty - 1) > 0.02) return `${pretty} ${raw}`;
-  if (/^(tbsp|tsp|oz|lb|ml|g)$/i.test(raw)) return `${pretty} ${raw}`;
+  let q = qty;
+  let raw = (unit || "").trim();
+  if (/^(tbsp|tablespoons?)$/i.test(raw) && q > 0 && q < 0.4) {
+    q *= 3;
+    raw = /^tbsp$/i.test(unit.trim()) ? "tsp" : q <= 1 ? "teaspoon" : "teaspoons";
+  }
+  const pretty = prettyFrac(q);
+  if (!raw) return pretty;
+  const keepAbbrev = /^(tbsp|tsp|oz|lb|ml|g)$/i.test(raw);
+  if (q > 1.02) return `${pretty} ${raw}`;
+  if (keepAbbrev) return `${pretty} ${raw}`;
   const singular = /ies$/i.test(raw)
     ? raw.replace(/ies$/i, "y")
     : /s$/i.test(raw) && !/ss$/i.test(raw)

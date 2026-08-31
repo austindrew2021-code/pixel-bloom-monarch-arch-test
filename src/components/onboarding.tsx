@@ -94,7 +94,7 @@ export function Onboarding() {
           >
             <p className="font-display text-2xl leading-tight">Next Gen</p>
             <p className={cn("mt-1 text-sm leading-relaxed", nextGen ? "opacity-90" : "text-muted-foreground")}>
-              Same kitchen, plus calories, body fat, and workouts. Dinner follows the body goal you set.
+              Same kitchen, plus a training week for your body goal. Dinners move when you train, skip, or miss.
             </p>
           </button>
         </div>

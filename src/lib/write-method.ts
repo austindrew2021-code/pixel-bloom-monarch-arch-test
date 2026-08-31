@@ -61,7 +61,10 @@ function isPressure(recipe: MethodRecipe): boolean {
 }
 
 function isDrink(recipe: MethodRecipe): boolean {
-  return (recipe.tags ?? []).includes("drink") || /nog|punch|cocktail|smoothie|lassi|lemonade|iced tea/.test(recipe.name.toLowerCase());
+  return (
+    (recipe.tags ?? []).includes("drink") ||
+    /nog|punch|cocktail|smoothie|lassi|lemonade|iced tea|cocoa|hot chocolate/.test(recipe.name.toLowerCase())
+  );
 }
 
 function fat(recipe: MethodRecipe): string {
@@ -78,6 +81,12 @@ function andArom(recipe: MethodRecipe): string {
 }
 
 function cookAromStep(recipe: MethodRecipe, minutes = "4"): string {
+  const cold =
+    isDrink(recipe) ||
+    /overnight|parfait|bircher|muesli|hummus|yogurt|cottage bowl|oat jar|granola|nice cream/.test(
+      `${recipe.name} ${(recipe.tags ?? []).join(" ")}`.toLowerCase(),
+    );
+  if (cold) return "Have everything measured and a bowl ready.";
   const a = aromatics(recipe);
   if (!a) return "Let the fat get hot for 30 seconds, until it shimmers.";
   return `Add ${a} and cook ${minutes} minutes, until soft.`;
@@ -237,6 +246,48 @@ function specialMethod(recipe: MethodRecipe): string[] | null {
       `Brew the ${coffee} so it is hot and strong, about 1–2 ounces per cup.`,
       `Pour the hot ${coffee} over the ice cream at the table so it melts at the edges.`,
       "Serve immediately with a spoon while the espresso is still melting the edges.",
+    ];
+  }
+
+  if (/quiche/.test(n)) {
+    const cheese = named(recipe, /gruyère|gruyere|cheddar|cheese/, "cheese");
+    const filling = named(recipe, /bacon|ham|spinach|mushroom/, "bacon");
+    return [
+      "Heat the oven to 375°F. Blind-bake the crust 12 minutes, until it looks dry at the bottom.",
+      `Scatter the ${filling} and the ${cheese} in the crust.`,
+      "Beat the eggs with the cream and a pinch of salt. Pour over the filling.",
+      "Bake 30–35 minutes, until the center is just set and the top is gold. Rest 10 minutes, then slice.",
+    ];
+  }
+
+  if (/omelette|omelet/.test(n) && !/spanish tortilla|frittata/.test(n)) {
+    const veg = vegList(recipe);
+    const cheese = named(recipe, /cheddar|gruyère|cheese/, "");
+    return [
+      "Beat the eggs with a pinch of salt until the whites and yolks are even.",
+      `Melt the butter in a skillet over medium heat until it foams.`,
+      veg
+        ? `Pour in the eggs. Scatter ${veg}${cheese ? ` and the ${cheese}` : ""} when the edges just set.`
+        : `Pour in the eggs. Tilt the pan so the uncooked egg runs to the edges.`,
+      "Fold the omelette in half and slide it onto a plate while the middle is still a little soft.",
+    ];
+  }
+
+  if (/huevos rancheros/.test(n)) {
+    return [
+      "Chop the tomato, onion, and jalapeño. Simmer in a skillet with a pinch of salt 8–10 minutes, until they slump into a salsa.",
+      "Warm the tortillas in a dry pan 20 seconds a side, until they flex.",
+      "Fry the eggs in a little oil over medium heat, 2–3 minutes, until the whites set and the yolks stay runny.",
+      "Set the tortillas on plates. Top with an egg and a spoon of salsa. Scatter cilantro over.",
+    ];
+  }
+
+  if (/chilaquiles/.test(n)) {
+    return [
+      "Cut the tortillas into wedges. Fry or bake until crisp, 8–10 minutes.",
+      "Warm the salsa in a skillet. Add the chips and simmer 2–3 minutes, until they soften at the edges but still have crunch.",
+      "Fry the eggs in a little oil, 2–3 minutes, until the whites set.",
+      "Spoon the chilaquiles onto plates. Top with an egg, crema, cheese, and onion. Serve hot.",
     ];
   }
 
@@ -620,33 +671,95 @@ function specialMethod(recipe: MethodRecipe): string[] | null {
 }
 
 function pressureMethod(recipe: MethodRecipe): string[] {
+  const n = recipe.name.toLowerCase();
   const meat = proteinName(recipe);
   const mins = [...recipe.steps.join(" ").matchAll(/high pressure (\d+)/gi)].map((m) => Number(m[1]));
   const nat = [...recipe.steps.join(" ").matchAll(/natural(?: release)? (\d+)/gi)].map((m) => Number(m[1]));
   const cookN = mins[0] ?? Math.max(8, Math.round(recipe.minutes * 0.45));
   const natN = nat[0] ?? 10;
+  const minWord = cookN === 1 ? "minute" : "minutes";
   const veg = vegList(recipe);
   const liq = liquid(recipe);
+
+  if (/yogurt/.test(n)) {
+    const milk = named(recipe, /milk/, "milk");
+    const culture = named(recipe, /yogurt/, "yogurt");
+    return [
+      `Heat the ${milk} to 180°F, then cool it to 110°F.`,
+      `Whisk in the ${culture} until smooth.`,
+      "Set the Instant Pot to Yogurt for 8 hours.",
+      "Chill until cold. Strain through a cloth if you want it Greek-thick.",
+      "Spoon into jars and keep in the fridge.",
+    ];
+  }
+  if (recipe.protein === "eggs" && /egg/.test(n)) {
+    return [
+      "Pour 1 cup of water into the Instant Pot. Set a trivet in the pot and arrange the eggs on it.",
+      "Lock the lid. Cook at high pressure for 5 minutes.",
+      "Turn the valve to quick-release. Move the eggs to an ice bath for 5 minutes.",
+      "Peel and eat, or keep in the fridge.",
+    ];
+  }
+  if (/artichoke|beet/.test(n)) {
+    const food = named(recipe, /artichoke|beet/, proteinName(recipe));
+    return [
+      "Pour 1 cup of water into the Instant Pot. Set a trivet in the pot.",
+      `Set the ${food} on the trivet.`,
+      `Lock the lid. Cook at high pressure for ${cookN} ${minWord}.`,
+      `Let the pressure release naturally for ${natN} minutes, then open the lid.`,
+      `Serve the ${food} warm, with oil, lemon, or vinegar if you have it.`,
+    ];
+  }
+
+  const grain = named(recipe, /quinoa|oats|rice|pasta|noodle|barley/, "");
+  if (grain && (recipe.protein === "veg" || recipe.protein === "eggs") && !/soup|chili|stew|curry/.test(n)) {
+    return [
+      `Add the ${grain}, the ${liq}, and a pinch of salt to the Instant Pot.`,
+      `Lock the lid. Cook at high pressure for ${cookN} ${minWord}.`,
+      `Let the pressure release naturally for ${natN} minutes, then open the lid.`,
+      `Fluff with a fork. ${herbFinish(recipe) || "Taste for salt."}`.trim(),
+      "Spoon into bowls and serve.",
+    ];
+  }
   const sauteMeat = recipe.protein !== "veg" && recipe.protein !== "eggs";
+  const addLine = sauteMeat
+    ? `Add the ${meat} and cook 4–5 minutes, stirring, until the outside is no longer raw.${veg ? ` Stir in ${veg} and the ${liq}.` : ` Stir in the ${liq}.`} Scrape the bottom of the pot so nothing is stuck.`
+    : veg
+      ? `Add ${veg} and the ${liq}. Scrape the bottom of the pot so nothing is stuck.`
+      : `Add the ${liq}. Scrape the bottom of the pot so nothing is stuck.`;
   return [
     `Set the Instant Pot to Sauté. Heat a spoon of ${fat(recipe)}. ${cookAromStep(recipe, "3")}`,
-    sauteMeat
-      ? `Add the ${meat} and cook 4–5 minutes, stirring, until the outside is no longer raw. Stir in the ${veg} and the ${liq}. Scrape the bottom of the pot so nothing is stuck.`
-      : `Add the ${veg} and the ${liq}. Scrape the bottom of the pot so nothing is stuck.`,
-    `Lock the lid. Cook at high pressure for ${cookN} minutes.`,
+    addLine,
+    `Lock the lid. Cook at high pressure for ${cookN} ${minWord}.`,
     `Let the pressure release naturally for ${natN} minutes, then open the lid.`,
-    `Taste for salt. If the sauce is thin, simmer on Sauté 3–5 minutes. Ladle and serve.`,
+    "Taste for salt. If the sauce is thin, simmer on Sauté 3–5 minutes. Ladle and serve.",
   ];
 }
 
 function drinkMethod(recipe: MethodRecipe): string[] {
+  const n = recipe.name.toLowerCase();
   const list = join(recipe.ingredients.map((i) => i.name).slice(0, 6));
+  if (/cocoa|hot chocolate|toddy|mulled|buttered rum/.test(n)) {
+    const chocolate = named(recipe, /chocolate|cocoa/, "chocolate");
+    const dairy = named(recipe, /milk|cream/, "milk");
+    const sugar = named(recipe, /sugar/, "sugar");
+    const top = named(recipe, /whipped cream|marshmallow/, "");
+    return [
+      `Get out ${list}. Chop the ${chocolate} if it is in a bar.`,
+      `Warm the ${dairy} in a saucepan over medium-low until it steams, not boils.`,
+      `Whisk in the ${chocolate} and the ${sugar} until the drink is smooth and no streaks remain.`,
+      named(recipe, /vanilla/, "")
+        ? `Stir in ${named(recipe, /vanilla/, "vanilla")}. Taste.`
+        : "Taste. Add a pinch of salt if it tastes flat.",
+      top ? `Pour into mugs and top with ${top}. Serve hot.` : "Pour into mugs and serve hot.",
+    ];
+  }
   return [
     `Get out ${list}. Chill a pitcher or the glasses.`,
-    `Whisk or blend the ingredients until even, with no streaks of yolk or undissolved sugar.`,
-    `Taste and adjust sweet, sour, or spirit.`,
-    `Chill at least 30 minutes so it is cold through.`,
-    `Pour and grate nutmeg or add ice if that is how you drink it.`,
+    "Whisk or blend the ingredients until even, with no streaks of yolk or undissolved sugar.",
+    "Taste and adjust sweet, sour, or spirit.",
+    "Chill at least 30 minutes so it is cold through.",
+    "Pour and grate nutmeg or add ice if that is how you drink it.",
   ];
 }
 
@@ -655,7 +768,7 @@ function rubMethod(recipe: MethodRecipe): string[] {
   return [
     `Get out ${list}.`,
     `Mix in a bowl until even, with no clumps of salt or sugar.`,
-    `Pat the meat, fish, or vegetables dry.`,
+    "Pat chicken, fish, or vegetables dry.",
     `Rub the mix on all sides. Rest 30 minutes on the counter, or overnight in the fridge.`,
     `This is a seasoning, not a skillet dinner. Cook the food how you like after it rests.`,
   ];
@@ -712,13 +825,17 @@ function soupMethod(recipe: MethodRecipe): string[] {
     lastIng && /vermicelli/i.test(lastIng) ? `${lastIng} noodles` : lastIng;
   const veg = vegList(recipe);
   const liq = liquid(recipe);
-  const vegBit = veg || named(recipe, /lentil|chickpea|bean|tomato|chicken|beef/, proteinName(recipe));
+  const vegBit =
+    veg ||
+    named(recipe, /lentil|chickpea|bean|tomato(?! juice)|potato/, "") ||
+    (recipe.protein === "veg" || recipe.protein === "eggs" ? proteinName(recipe) : "");
+  const liquidBit = liq && vegBit && vegBit.toLowerCase() === liq.toLowerCase() ? "" : liq;
   return [
     `Get out the ingredients.${aromatics(recipe) ? ` Dice ${aromatics(recipe)}.` : ""} Chop the vegetables.`,
     `Warm ${fat(recipe)} in a heavy pot over medium heat. ${cookAromStep(recipe, "5–6")}`,
     recipe.protein === "veg" || recipe.protein === "eggs"
-      ? `Add ${vegBit}, then the ${liq}. Bring to a simmer. Cook ${simmerN} minutes, until tender.`
-      : `Add the ${meat}, then the ${liq}. Bring to a simmer. Cook ${simmerN} minutes, skimming any foam.`,
+      ? `Add ${vegBit || "the vegetables"}${liquidBit ? `, then the ${liquidBit}` : ""}. Bring to a simmer. Cook ${simmerN} minutes, until tender.`
+      : `Add the ${meat}${liquidBit ? `, then the ${liquidBit}` : ""}. Bring to a simmer. Cook ${simmerN} minutes, skimming any foam.`,
     lastAdd
       ? `Add the ${lastAdd} and cook ${lastN} minutes, until tender. Season with salt.`
       : `Add any quick-cooking vegetables now. Simmer ${lastN} minutes more. Season with salt.`,
@@ -754,8 +871,8 @@ function roastMethod(recipe: MethodRecipe): string[] {
     meaty
       ? `Rub with ${fat(recipe)} and the spices. Set in a roasting pan or on a sheet.`
       : `Toss the ${veg} with ${fat(recipe)}, salt, and the herbs. Spread in a single layer on a sheet.`,
-    meaty && veg !== "the vegetables"
-      ? `Scatter the ${veg} around the pan. Roast ${roastN} minutes, until the ${meat} ${cookedBe(meat)} cooked through and the edges are gold.`
+    meaty && veg
+      ? `Scatter ${veg} around the pan. Roast ${roastN} minutes, until the ${meat} ${cookedBe(meat)} cooked through and the edges are gold.`
       : `Roast ${roastN} minutes, until cooked through and browned at the edges.`,
     meaty
       ? `Rest 8–10 minutes so the juices settle. Slice across the grain.`
@@ -775,7 +892,7 @@ function skilletMethod(recipe: MethodRecipe): string[] {
     return [
       `Get out the eggs and the rest of the ingredients. Beat the eggs with a pinch of salt.`,
       `Set a skillet over medium heat with ${fat(recipe)}. ${cookAromStep(recipe, "3–4")}`,
-      veg !== "the vegetables"
+      veg
         ? `Add ${veg} and cook 3–5 minutes, until they give up some water.`
         : `Keep the heat on medium so the eggs will set gently.`,
       `Pour in the eggs. Stir gently until they are just set, 2–4 minutes. Take off the heat while they still look a little wet.`,
@@ -807,7 +924,7 @@ function skilletMethod(recipe: MethodRecipe): string[] {
   return [
     `Pat the ${meat} dry. Salt both sides. Set a wide skillet over medium-high heat with a film of ${fat(recipe)}.`,
     `Sear the ${meat} ${searN} minutes per side, until browned. Move to a plate.`,
-    `In the same pan, ${cookAromStep(recipe, "3–4")}${veg ? ` Add ${veg} if they still need cooking.` : ""}`,
+    `In the same pan, ${cookAromStep(recipe, "3–4").replace(/^([A-Z])/, (c) => c.toLowerCase())}${veg ? ` Add ${veg} if they still need cooking.` : ""}`,
     sauce
       ? `Add ${sauce}. Simmer 3–5 minutes, scraping the browned bits. Return the ${meat} to the pan to heat through, 2 minutes.`
       : `Return the ${meat} to the pan. Cook 2 minutes more, until cooked through.`,
@@ -817,8 +934,18 @@ function skilletMethod(recipe: MethodRecipe): string[] {
 
 function tacoMethod(recipe: MethodRecipe): string[] {
   const meat = proteinName(recipe);
-  const wrap = named(recipe, /tortilla|taco shell|lettuce|tostada|pita/, "tortillas");
+  const wrap = named(recipe, /tortilla|taco shell|lettuce|tostada|pita|wrap/, "tortillas");
   const topping = join(namesMatching(recipe, /cabbage|salsa|avocado|cheese|cilantro|onion|lime|crema|sour cream|pickle|tomato/i));
+  if (recipe.protein === "eggs") {
+    return [
+      `Scramble the eggs over medium-low heat until just set, still a little wet.`,
+      `Warm the ${wrap} in a dry pan 15 seconds a side so they flex.`,
+      topping
+        ? `Spoon the eggs into the ${wrap}. Top with ${topping}.`
+        : `Spoon the eggs into the ${wrap}.`,
+      `Roll tight. Serve hot.`,
+    ];
+  }
   return [
     `Set a skillet over medium-high heat with ${fat(recipe)}. Add the ${meat}${andArom(recipe)}.`,
     isGroundMeat(recipe)
@@ -833,8 +960,34 @@ function tacoMethod(recipe: MethodRecipe): string[] {
 }
 
 function toastMethod(recipe: MethodRecipe): string[] {
-  const bread = named(recipe, /bun|bread|toast|roll|bagel|english muffin/, "bread");
+  const bread = named(recipe, /bun|bread|toast|roll|bagel|english muffin|baguette/, "bread");
   const meat = proteinName(recipe);
+  const n = recipe.name.toLowerCase();
+  const blob = hintText(recipe);
+
+  if (
+    /\b(pancake|waffle|crêpe|crepe|muffin|scone|biscuit|dough|cinnamon roll|soda bread|no-knead|pizza bagel|bagel pizza|pizza muffin)\b/.test(
+      n,
+    ) ||
+    (/\b(flour|yeast|cornmeal|pumpkin puree)\b/.test(meat) && !/sandwich|burger|toast|bagel/.test(n))
+  ) {
+    return dessertMethod(recipe);
+  }
+
+  if (/bagel|bread|muffin|toast|roll|bun|baguette/.test(meat)) {
+    const topping = join(
+      recipe.ingredients.filter((i) => !/bagel|bread|muffin|toast|roll|bun|baguette/.test(i.name)).map((i) => i.name).slice(0, 5),
+    );
+    return [
+      `Split and toast the ${bread} until the cut side is gold.`,
+      topping ? `Spoon ${topping} over the ${bread}.` : `Add the topping.`,
+      /pizza|broil/.test(`${n} ${blob}`)
+        ? `Broil 3–5 minutes, until the cheese bubbles and browns in spots.`
+        : `Serve at once so the ${bread} stays crisp.`,
+      `Serve hot.`,
+    ];
+  }
+
   if (isGroundMeat(recipe)) {
     const sauce = join(namesMatching(recipe, /ketchup|mustard|bbq|barbecue|worcestershire|mayo/i));
     return [
@@ -847,14 +1000,37 @@ function toastMethod(recipe: MethodRecipe): string[] {
       `Serve hot so the bread stays crisp.`,
     ];
   }
+
+  const coldFill = /smoked salmon|lox|pâté|pate|sardine|tuna salad|cream cheese|tomato|avocado/.test(`${meat} ${n} ${blob}`);
+  if (coldFill && recipe.protein !== "eggs") {
+    const spread = named(recipe, /cream cheese|mayo|mayonnaise|butter|hummus/, "");
+    const topping = join(
+      recipe.ingredients.filter((i) => !/bread|bagel|toast|roll|bun|english muffin|baguette/.test(i.name)).map((i) => i.name).slice(0, 5),
+    );
+    return [
+      `Toast the ${bread} on both sides until gold, about 1–2 minutes a side.`,
+      spread ? `Spread the ${spread} on the ${bread}.` : `Lay the ${bread} on plates.`,
+      topping ? `Pile ${topping} on top.` : `Lay the filling on the ${bread}.`,
+      `Serve at once so the ${bread} stays crisp.`,
+    ];
+  }
+
+  if (recipe.protein === "eggs") {
+    return [
+      `Toast the ${bread} on both sides until gold, about 1–2 minutes a side.`,
+      `Fry the eggs in a little butter over medium heat, 2–3 minutes, until the whites set.`,
+      `Lay the eggs on the ${bread}. Spoon any cheese or sauce over the top.`,
+      `Serve right away so the bread stays crisp.`,
+    ];
+  }
+
   return [
     `Toast the ${bread} on both sides until gold, about 1–2 minutes a side.`,
-    /slices?|deli|leftover|roast/i.test(meat)
+    /slices?|deli|leftover|roast|\bham\b/.test(meat)
       ? `Warm the ${meat} in a skillet 1–2 minutes a side, just until hot. Do not brown it hard or it will dry out.`
-      : `Cook the ${meat}${andArom(recipe)} in a pan if it needs heat, 4–6 minutes, until cooked through.`,
-    `Season with salt. Taste.`,
+      : `Cook the ${meat}${andArom(recipe)} in a skillet over medium heat, 4–6 minutes, until cooked through.`,
     `Lay the ${meat} on the ${bread}. Spoon any sauce or cheese over the top.`,
-    `Serve ${recipe.name.toLowerCase()} right away so the bread stays crisp.`,
+    `Serve right away so the bread stays crisp.`,
   ];
 }
 
@@ -919,17 +1095,68 @@ function dessertMethod(recipe: MethodRecipe): string[] {
   }
 
   const noBake =
-    /\b(panna cotta|affogato|mousse|chia|yogurt|gelato|ice cream|nice cream|bark|pops?|ambrosia|fudge|pralines?|brittle|icing|frosting|fondant|horchata|pots de cr[eè]me|boiled custard|matcha pudding|whip|float|trifle|curds and cream|sugared grapes|rum balls|popcorn balls|candied|stewed|grilled peach|cinnamon apple|fried peach|banana boat|s['’]?mores|horchata)\b/.test(
+    /\b(panna cotta|affogato|mousse|chia|yogurt|gelato|ice cream|nice cream|bark|pops?|ambrosia|fudge|pralines?|brittle|icing|frosting|fondant|horchata|pots de cr[eè]me|boiled custard|matcha pudding|whip|float|trifle|curds and cream|sugared grapes|rum balls|popcorn balls|candied|stewed|grilled peach|cinnamon apple|fried peach|banana boat|s['’]?mores|horchata|no-bake)\b/.test(
       n,
     );
   const bakedKind =
-    /\b(cake|cookies?|pie|tarts?|crust|cobbler|crisp|brownies?|muffins?|gingerbread|doughnuts?|fritters?|dumplings?|galette|turnover|pandowdy|shortnin|jelly roll|upside-down|banana bread|yorkshire|souffl[eé]|biscuits?|scones?|grunt|chess pie|pudding|spoon bread|clafoutis|flan|cheesecakes?)\b/.test(
+    /\b(cake|cookies?|pie|tarts?|crust|cobbler|crisp|brownies?|muffins?|gingerbread|doughnuts?|fritters?|dumplings?|galette|turnover|pandowdy|shortnin|jelly roll|upside-down|banana bread|yorkshire|souffl[eé]|biscuits?|scones?|grunt|chess pie|pudding|spoon bread|clafoutis|flan|cheesecakes?|rugelach)\b/.test(
       n,
     );
   const hasFlour = recipe.ingredients.some((i) => /\b(flour|self-rising|cornmeal|pastry|phyllo|puff pastry|tart shells?)\b/.test(i.name));
   const baked = !noBake && (/bake|oven|roast|preheat/.test(blob) || bakedKind || (hasFlour && /cake|cookie|pie|bread|tart|crust/.test(n)));
 
   if (!baked) {
+    if (/s['’]?mores/.test(n)) {
+      return [
+        "Toast the marshmallows over a flame or under a broiler until the outside is gold and the inside is molten.",
+        "Sandwich each marshmallow with a square of chocolate between two graham crackers.",
+        "Press gently so the chocolate melts. Eat at once, while it is still warm.",
+      ];
+    }
+    if (/rum balls/.test(n)) {
+      return [
+        "Crush the wafers. Mix with cocoa, rum, sugar, and syrup until the mix holds together.",
+        "Roll into balls with wet hands. Toss in extra sugar or cocoa.",
+        "Chill at least 1 hour so they firm up. Serve cold.",
+      ];
+    }
+    if (/sugared grapes/.test(n)) {
+      return [
+        "Dip grapes in lightly beaten egg white, letting extra drip off.",
+        "Roll in sugar until coated.",
+        "Dry on a rack 30 minutes. Serve cold.",
+      ];
+    }
+    if (/\bbark\b/.test(n)) {
+      return [
+        "Line a sheet with parchment. Spread yogurt in a thin even layer.",
+        "Scatter berries and coconut over the top. Press them in lightly.",
+        "Freeze at least 3 hours. Break into shards and keep frozen.",
+      ];
+    }
+    if (/matcha/.test(n)) {
+      return [
+        "Whisk matcha, sugar, and starch into cold milk until no lumps remain.",
+        "Cook over medium heat, stirring, until thick, 4–6 minutes. Do not boil hard.",
+        "Stir in vanilla. Spoon into cups. Chill until cold.",
+      ];
+    }
+    if (/yogurt/.test(n) && /berr/.test(n)) {
+      return [
+        "Spoon the yogurt into bowls.",
+        "Scatter the berries and pistachios or nuts over the top.",
+        "Drizzle with honey. Serve cold.",
+      ];
+    }
+    if (/pops?/.test(n)) {
+      return [
+        `Stir ${list} until even.`,
+        "Spoon into popsicle molds, tapping to knock out air.",
+        "Freeze at least 4 hours, until solid.",
+        "Run a mold under warm water 3 seconds to release.",
+        `Eat ${recipe.name.toLowerCase()} frozen.`,
+      ];
+    }
     if (named(recipe, /gelatin/, "")) {
       return [
         `Bloom the gelatin in 3 tablespoons cold water for 5 minutes.`,
@@ -1036,15 +1263,259 @@ function bowlMethod(recipe: MethodRecipe): string[] {
   const grain = named(recipe, /rice|quinoa|couscous|bulgur|farro|noodle/, "");
   const meat = proteinName(recipe);
   if (grain) {
+    const veg = vegList(recipe);
+    const vegProtein = recipe.protein === "veg" || recipe.protein === "eggs";
+    const leftoverGrain = /cooked|leftover|day-old/.test(grain);
+    const leftoverMeat = /cooked|leftover|rotisserie|shredded/.test(meat);
     return [
-      `Cook the ${grain} in salted water according to the package, until tender. Drain if needed and keep warm.`,
-      `Set a skillet over medium-high heat with ${fat(recipe)}. Cook the ${meat}${andArom(recipe)} 6–8 minutes, until cooked through.`,
-      `Add ${vegList(recipe)} and cook 3–5 minutes more, until just tender.`,
-      `Season with salt. Taste.`,
+      leftoverGrain
+        ? `Fluff the ${grain}. Warm it in a skillet or the microwave until hot.`
+        : `Cook the ${grain} in salted water according to the package, until tender. Drain if needed and keep warm.`,
+      leftoverMeat
+        ? `Warm the ${meat}${andArom(recipe)} in a skillet with ${fat(recipe)} 2–3 minutes, just until hot.`
+        : vegProtein
+          ? `Set a skillet over medium-high heat with ${fat(recipe)}. ${veg ? `Add ${veg}${andArom(recipe)} and cook 3–5 minutes, until just tender.` : cookAromStep(recipe, "3–4")}`
+          : `Set a skillet over medium-high heat with ${fat(recipe)}. Cook the ${meat}${andArom(recipe)} 6–8 minutes, until cooked through.`,
+      !vegProtein && veg && !leftoverMeat
+        ? `Add ${veg} and cook 3–5 minutes more, until just tender. Season with salt.`
+        : `Season with salt. Taste.`,
       `Spoon over the ${grain}. ${endPlate(recipe)}`,
     ];
   }
   return skilletMethod(recipe);
+}
+
+function isAirFry(recipe: MethodRecipe): boolean {
+  return (recipe.tags ?? []).includes("air-fryer") || /air-?fryer/.test(recipe.name.toLowerCase());
+}
+
+function isSlowCook(recipe: MethodRecipe): boolean {
+  return (recipe.tags ?? []).includes("slow-cooker") || /slow-?cooker|crockpot/.test(recipe.name.toLowerCase());
+}
+
+function isColdMix(recipe: MethodRecipe): boolean {
+  if (isSlowCook(recipe) || isPressure(recipe) || isAirFry(recipe)) return false;
+  if (isSandwichLike(recipe)) return false;
+  const name = recipe.name.toLowerCase();
+  const tags = (recipe.tags ?? []).join(" ").toLowerCase();
+  if (/\b(wrap|taco|quesadilla|panini|sandwich|burger)\b/.test(name)) return false;
+  if (/hummus/.test(name) && /\b(bowl|plate|wrap|salad)\b/.test(name)) return false;
+  if (
+    (recipe.plate === "green" || /\bsalad\b/.test(name) || /\bsalad\b/.test(tags)) &&
+    !/parfait|overnight oats|muesli|bircher/.test(`${name} ${tags}`)
+  ) {
+    return false;
+  }
+  const hint = `${recipe.id ?? ""} ${name} ${tags}`.toLowerCase();
+  if (
+    /overnight oats|parfait|hummus|bircher|muesli|yogurt bowl|yogurt breakfast|cottage bowl|cottage cheese bowl|smoked trout|poke|hiyayakko|chilled tofu|tuna rice/.test(
+      hint,
+    )
+  ) {
+    return true;
+  }
+  const steps = recipe.steps.join(" ").toLowerCase();
+  if (/stir everything in a jar/.test(steps)) return true;
+  if (
+    /fridge overnight|eat cold/.test(steps) &&
+    /oat|muesli|parfait|bircher|yogurt/.test(`${hint} ${steps}`)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function isSandwichLike(recipe: MethodRecipe): boolean {
+  const n = recipe.name.toLowerCase();
+  const tags = recipe.tags ?? [];
+  return (
+    tags.includes("sandwich") ||
+    /wrap|quesadilla|panini|reuben|nachos|cuban sandwich|club sandwich|chicken salad|egg salad|chickpea salad|tuna salad|salad sandwich|muffuletta/.test(n)
+  );
+}
+
+function isSauceName(recipe: MethodRecipe): boolean {
+  const n = recipe.name.toLowerCase();
+  if (/oyster dressing|cornbread dressing|bread stuffing|sage dressing/.test(n)) return false;
+  return (
+    (recipe.tags ?? []).includes("sauce") ||
+    /sauce|gravy|vinaigrette|aioli|pesto|ranch|mayonnaise dressing|french dressing/.test(n)
+  );
+}
+
+function mixJarMethod(recipe: MethodRecipe): string[] {
+  const list = join(recipe.ingredients.map((i) => i.name).slice(0, 6));
+  const n = `${recipe.id ?? ""} ${recipe.name}`.toLowerCase();
+  if (/hummus|dip/.test(n)) {
+    return [
+      `Blend ${list} until smooth, scraping the sides, 1–2 minutes.`,
+      "Taste for salt and lemon.",
+      "Spoon into a bowl. Drizzle oil on top if you have it. Serve with bread or vegetables.",
+    ];
+  }
+  if (/poke|tuna rice/.test(n)) {
+    const fish = named(recipe, /tuna|salmon|ahi|fish/, proteinName(recipe));
+    const rice = named(recipe, /rice/, "rice");
+    return [
+      `Cube the ${fish}. Toss with the soy or tamari, sesame oil, and scallion until every piece is glossy.`,
+      "Slice the cucumber and avocado if you have them. Fluff the rice.",
+      `Spoon the ${rice} into bowls. Top with the ${fish} and the vegetables. Serve cold, not cooked.`,
+    ];
+  }
+  if (/hiyayakko|chilled tofu/.test(n)) {
+    return [
+      "Chill the tofu well. Drain and cube it onto a plate.",
+      "Scatter grated ginger and sliced scallion over the tofu.",
+      "Spoon tamari and a drop of sesame oil over the top. Serve cold, straight from the fridge.",
+    ];
+  }
+  if (/parfait|cottage|yogurt/.test(n) && !/overnight|oat/.test(n)) {
+    return [
+      `Spoon the ${named(recipe, /yogurt|cottage/, "yogurt")} into bowls.`,
+      `Add ${join(namesMatching(recipe, /cucumber|tomato|berr|almond|dill|fruit/)) || "the toppings"} from the list.`,
+      "Finish with the seasoning or oil. Serve cold, straight from the fridge.",
+    ];
+  }
+  if (/trout/.test(n)) {
+    return [
+      `Flake the ${named(recipe, /trout/, "smoked trout")}. Stir yogurt with dill and lemon.`,
+      "Slice the cucumber.",
+      "Plate the trout with cucumber and the yogurt. Serve cold, straight from the fridge.",
+    ];
+  }
+  return [
+    `Stir ${list} together in a jar or bowl until every bit is wet.`,
+    "Cover and refrigerate overnight, at least 6 hours.",
+    "Stir in the morning. Eat cold, or warm 30 seconds if you want.",
+  ];
+}
+
+function sandwichPressMethod(recipe: MethodRecipe): string[] {
+  const n = recipe.name.toLowerCase();
+  const bread = named(recipe, /bread|roll|tortilla|ciabatta|rye|bun|chip|loaf|wrap|pita/, "bread");
+  const filling = join(
+    recipe.ingredients
+      .filter((i) => !/bread|roll|tortilla|ciabatta|rye|bun|butter|oil|chip|loaf|lettuce/.test(i.name))
+      .map((i) => i.name)
+      .slice(0, 5),
+  );
+  if (/salad/.test(n)) {
+    return [
+      `Chop or mash ${filling} and stir until the salad holds together.`,
+      "Taste for salt. Chill 10 minutes if you have time.",
+      `Pile onto the ${bread} with lettuce if you have it. Serve cold.`,
+    ];
+  }
+  if (/\bwrap\b/.test(n)) {
+    const wrap = named(recipe, /wrap|pita|tortilla/, bread);
+    const spread = named(recipe, /hummus|tahini|mayo|mayonnaise|pesto|spread/, "");
+    const veg = join(
+      namesMatching(recipe, /carrot|cucumber|spinach|pepper|lettuce|tomato|cabbage|onion|avocado|olive|falafel/),
+    );
+    if (/falafel/.test(n)) {
+      return [
+        `Crisp the falafel in a skillet over medium heat, 2–3 minutes a side, until hot and browned.`,
+        `Warm the ${wrap} in a dry pan 15 seconds a side so they flex.`,
+        spread
+          ? `Spread the ${spread} on the ${wrap}. Pile on ${veg || filling}.`
+          : `Pile ${veg || filling} onto the ${wrap}.`,
+        "Roll tight, slice in half, and eat.",
+      ];
+    }
+    return [
+      `Warm the ${wrap} in a dry pan 15 seconds a side so they flex.`,
+      spread
+        ? `Spread the ${spread} on the ${wrap}, going almost to the edges.`
+        : `Lay out the ${wrap} and add ${filling}.`,
+      veg ? `Pile on ${veg}.` : `Pile on ${filling}.`,
+      "Roll tight, slice in half, and eat.",
+    ];
+  }
+  if (/muffuletta/.test(n)) {
+    return [
+      `Split the ${bread}. Spoon olive salad on both cut sides.`,
+      `Layer ${filling}.`,
+      "Wrap and weight 30 minutes. Cut into wedges and serve.",
+    ];
+  }
+  if (/quesadilla/.test(n)) {
+    return [
+      `Scatter ${filling} on half of each tortilla. Fold.`,
+      "Set a dry skillet over medium. Cook 2–3 minutes a side, until the cheese melts and the tortilla blisters.",
+      "Cut into wedges. Serve with salsa.",
+    ];
+  }
+  if (/nachos/.test(n)) {
+    return [
+      `Heat a skillet over medium. Layer the ${bread} with beans and cheese.`,
+      "Cover until the cheese melts, 3–5 minutes.",
+      "Spoon salsa and scallions over. Serve from the pan.",
+    ];
+  }
+  return [
+    `Lay out the ${bread}. Spread the condiment. Layer ${filling}.`,
+    "Brush the outside with butter or oil. Press in a skillet over medium 3–4 minutes a side, until the cheese runs and the bread is gold.",
+    "Cut into pieces and serve hot, while the bread is still crisp.",
+  ];
+}
+
+function airFryMethod(recipe: MethodRecipe): string[] {
+  const food = proteinName(recipe);
+  const mins = hintMinutes(recipe, Math.max(8, Math.min(20, recipe.minutes)));
+  const oil = named(recipe, /olive oil|oil/, "oil");
+  const citrus = named(recipe, /\b(lime|lemon)\b/, "");
+  return [
+    `Pat the ${food} dry. Toss with the ${oil} and salt.`,
+    `Air-fry at 400°F for ${mins} minutes, turning once, until the edges are browned.`,
+    citrus ? `Squeeze the ${citrus} over. Serve hot.` : "Finish with a pinch of salt. Serve hot.",
+  ];
+}
+
+function slowCookerMethod(recipe: MethodRecipe): string[] {
+  const list = join(recipe.ingredients.map((i) => i.name).slice(0, 6));
+  const n = recipe.steps.join(" ").toLowerCase();
+  const hrs = n.match(/(\d+)\s*hours?/)?.[1] ?? String(Math.max(4, Math.round(recipe.minutes / 60)));
+  const heat = /\bhigh\b/.test(n) ? "high" : "low";
+  const meat = proteinName(recipe);
+  if (recipe.protein !== "veg" && recipe.protein !== "eggs") {
+    return [
+      `Pat the ${meat} dry. Brown it in a skillet over medium-high heat, 3–4 minutes a side, then move it to the slow cooker.`,
+      `Add ${list} around the meat.`,
+      `Cover. Cook on ${heat} for ${hrs} hours, until the meat is tender.`,
+      "Taste for salt. Slice across the grain and spoon the juices over.",
+    ];
+  }
+  return [
+    `Get out ${list}. Put everything in the slow cooker.`,
+    `Cover. Cook on ${heat} for ${hrs} hours, until tender.`,
+    "Taste for salt. Serve hot.",
+  ];
+}
+
+function granolaMethod(recipe: MethodRecipe): string[] {
+  const list = join(recipe.ingredients.map((i) => i.name).slice(0, 6));
+  return [
+    "Heat the oven to 325°F. Line a sheet pan with parchment.",
+    `Stir ${list} until every oat is coated.`,
+    "Spread in an even layer. Bake 30–35 minutes, stirring once, until gold.",
+    "Cool on the pan — it crisps as it cools.",
+    "Store airtight. Eat with yogurt or milk.",
+  ];
+}
+
+export function hasSpecialistMethod(recipe: MethodRecipe): boolean {
+  const n = recipe.name.toLowerCase();
+  if (specialMethod(recipe)) return true;
+  if (isDrink(recipe)) return true;
+  if (isColdMix(recipe)) return true;
+  if (isSandwichLike(recipe)) return true;
+  if (isAirFry(recipe)) return true;
+  if (isSlowCook(recipe)) return true;
+  if (isPressure(recipe)) return true;
+  if (isSauceName(recipe)) return true;
+  if (/granola/.test(n)) return true;
+  if (/pudding|custard|spoon bread|clafoutis|flan|panna cotta/.test(n)) return true;
+  return false;
 }
 
 export function knownDishMethod(recipe: MethodRecipe): string[] | null {
@@ -1056,14 +1527,19 @@ export function writeDishMethod(recipe: MethodRecipe): string[] {
   const special = specialMethod(recipe);
   if (special) return pad(special);
   if (isDrink(recipe)) return pad(drinkMethod(recipe));
+  if (isColdMix(recipe)) return pad(mixJarMethod(recipe));
+  if (isSandwichLike(recipe)) return pad(sandwichPressMethod(recipe));
+  if (isAirFry(recipe)) return pad(airFryMethod(recipe));
+  if (isSlowCook(recipe)) return pad(slowCookerMethod(recipe));
   if (isPressure(recipe)) return pad(pressureMethod(recipe));
+  if (/granola/.test(recipe.name.toLowerCase())) return pad(granolaMethod(recipe));
   if (/pudding|custard|spoon bread|clafoutis|flan|panna cotta/.test(recipe.name.toLowerCase())) {
     return pad(dessertMethod(recipe));
   }
   if ((recipe.tags ?? []).includes("dry-rub") || /\brub\b/.test(recipe.name.toLowerCase())) {
     return pad(rubMethod(recipe));
   }
-  if ((recipe.tags ?? []).includes("sauce") || /sauce|gravy|vinaigrette|dressing|aioli|pesto/.test(recipe.name.toLowerCase())) {
+  if (isSauceName(recipe)) {
     return pad(sauceMethod(recipe));
   }
 

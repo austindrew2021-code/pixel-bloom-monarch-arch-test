@@ -1,5 +1,5 @@
 import { Check, ChevronLeft, ChevronRight, Sparkles, UtensilsCrossed, WandSparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { MealPhoto } from "@/components/meal-photo";
 import { MacroBar } from "@/components/macro-bar";
@@ -13,6 +13,7 @@ import { dayFuel, isoDate } from "@/lib/fuel";
 import { formatMinutes } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { mealsFromPantry } from "@/lib/pantry-match";
+import { expectedWorkoutsForDate, resolveStatus } from "@/lib/program";
 import { recipeById } from "@/lib/recipes";
 import { rankForXp } from "@/lib/ranks";
 import { proteinDot, skipTitle } from "@/lib/shield";
@@ -60,10 +61,16 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
   const hasPlus = useSpoonful((s) => s.hasAddon("chef-plus"));
   const body = useSpoonful((s) => s.body);
   const locale = useSpoonful((s) => s.locale);
+  const programWeek = useSpoonful((s) => s.programWeek);
+  const ensureProgram = useSpoonful((s) => s.ensureProgram);
   const [picker, setPicker] = useState<{ date: string; slot: MealSlotKind } | null>(null);
   const [active, setActive] = useState<PlannedMeal | null>(null);
   const [chefOpen, setChefOpen] = useState(false);
   const [cooking, setCooking] = useState<PlannedMeal | null>(null);
+
+  useEffect(() => {
+    if (nextGen) ensureProgram();
+  }, [nextGen, weekStart, ensureProgram, body.goalKind]);
 
   const weekMeals = useMemo(() => plannedForWeek(meals, weekStart), [meals, weekStart]);
   const dates = weekDates(weekStart);
@@ -88,7 +95,13 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
     ? dayFuel({
         goal,
         eaten: nutritionForDate(meals, today, snacks),
-        workouts: workouts.filter((w) => w.date === today),
+        workouts: expectedWorkoutsForDate({
+          date: today,
+          today,
+          sessions: programWeek?.sessions ?? [],
+          logged: workouts.filter((w) => w.date === today),
+          bodyKg: body.weightKg,
+        }),
         steps: stepsByDate[today] ?? 0,
         body,
       })
@@ -106,7 +119,9 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">This week</p>
           <h1 className="mt-1 font-display text-3xl leading-tight">{weekHeading(weekStart)}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            The red card is dinner tonight. Fill empty nights picks the rest of the week.
+            {nextGen
+              ? "The red card is dinner tonight. Training done, skipped, or missed rewrites the plate."
+              : "The red card is dinner tonight. Fill empty nights picks the rest of the week."}
           </p>
         </div>
         <div className="flex shrink-0 gap-1">
@@ -149,7 +164,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
       </div>
 
       {todayDate ? (
-        <section className="mt-5 overflow-hidden rounded-3xl bg-spark text-spark-foreground shadow-[var(--shadow-lift)]">
+        <section className="mt-5 overflow-hidden rounded-3xl bg-spark text-spark-foreground shadow-[var(--shadow-lift)]" data-tour="tonight">
           <button
             type="button"
             onClick={() =>
@@ -175,6 +190,19 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
                     ? ` · ${resolveMeal(tonight).recipe?.nutrition.protein}g protein`
                     : ""}
                 </p>
+                {nextGen && programWeek?.sessions.find((s) => s.date === todayDate) ? (
+                  <p className="mt-2 text-xs opacity-80">
+                    {(() => {
+                      const ses = programWeek.sessions.find((s) => s.date === todayDate)!;
+                      const st = resolveStatus(ses, today);
+                      if (ses.kind === "rest") return "Rest day · dinner stays even";
+                      if (st === "done") return `${ses.name} done · plate follows the work`;
+                      if (st === "skipped") return `${ses.name} skipped · lighter plate`;
+                      if (st === "missed") return `${ses.name} missed`;
+                      return `${ses.name} still on · ${ses.minutes} min`;
+                    })()}
+                  </p>
+                ) : null}
               </div>
             ) : tonight?.skip ? (
               <div className="mt-2">
@@ -194,7 +222,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
             )}
             </div>
           </button>
-          <div className="grid grid-cols-2 gap-2 px-4 pb-4">
+          <div className="grid grid-cols-2 gap-2 px-4 pb-4" data-tour="cook">
             {tonight && !tonight.skip ? (
               <>
                 <Button
@@ -326,7 +354,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           }}
         >
           <WandSparkles />
-          {nextGen ? "Plate from Fuel" : "Fill empty nights"}
+          {nextGen ? "Plate from training" : "Fill empty nights"}
         </Button>
         <Button
           variant="spark"
@@ -387,6 +415,8 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           const dinner = weekMeals.find((m) => m.date === date && m.slot === "dinner");
           const lunch = weekMeals.find((m) => m.date === date && m.slot === "lunch");
           const breakfast = weekMeals.find((m) => m.date === date && m.slot === "breakfast");
+          const session = nextGen ? programWeek?.sessions.find((s) => s.date === date) : undefined;
+          const sessionStatus = session ? resolveStatus(session, today) : undefined;
           if (meta.today) return null;
           return (
             <li key={date} className="rounded-3xl bg-card p-2 shadow-[var(--shadow-border)]">
@@ -406,6 +436,22 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
                   />
                 )}
               </div>
+              {session && session.kind !== "rest" ? (
+                <button
+                  type="button"
+                  onClick={() => setTab("fit")}
+                  className="mx-3 mt-2 rounded-full bg-background px-3 py-1.5 text-left text-xs text-muted-foreground"
+                >
+                  {session.name}
+                  {sessionStatus === "done"
+                    ? " · done"
+                    : sessionStatus === "skipped"
+                      ? " · skipped"
+                      : sessionStatus === "missed"
+                        ? " · missed"
+                        : ` · ${session.minutes} min`}
+                </button>
+              ) : null}
               <DaySlot
                 label="Dinner"
                 meal={dinner}

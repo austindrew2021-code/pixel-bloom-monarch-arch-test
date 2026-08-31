@@ -67,7 +67,7 @@ export function StoreView() {
   return (
     <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Kitchen</p>
-      <h1 className="mt-1 font-display text-4xl">Extras</h1>
+      <h1 className="mt-1 font-display text-4xl" data-tour="extras-head">Extras</h1>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/80">
         The library, Midnight, nutrition, Kitchen Shield, Sauces, Next Gen Fuel, and Body Sync are free — people would riot if those cost extra. You pay for extra Chef plates and for Kitchen Table: Chef plus family seats, $7.99/mo instead of $9.98 a la carte.
       </p>
@@ -210,7 +210,7 @@ export function StoreView() {
       <section className="mt-6 rounded-3xl bg-spark p-4 text-spark-foreground">
         <h2 className="font-display text-2xl">Kitchen mode</h2>
         <p className="mt-1 text-sm opacity-90">
-          Simple is large type and Tonight first. Next Gen adds workouts, calories and protein, and dinners ranked for the body goal you set.
+          Simple is large type and Tonight first. Next Gen adds a training week for your body goal, calories and protein, and dinners that rewrite when you train, skip, or miss.
         </p>
         <Button
           className="mt-4 w-full bg-spark-foreground text-spark hover:opacity-95"

@@ -98,8 +98,10 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("onion", 1, "", "Produce"),
     ],
     steps: [
-      "Soak fish and hard bread separately overnight.",
-      "Simmer both until tender. Fry pork bits and onion. Pour fat over the bowl.",
+      "Soak the 1 pound of salt cod and the 4 cakes of hard bread in separate bowls of cold water overnight. Drain.",
+      "Simmer the fish and the bread in fresh water until both are tender, 10–15 minutes. Drain and keep warm.",
+      "Set a skillet over medium-high heat. Fry the 4 ounces of salt pork scrunchions with the chopped onion until the pork is crisp and the fat has rendered.",
+      "Pile the fish and bread in bowls. Pour the fat and onions over and serve hot.",
     ],
   }),
   dish({
@@ -168,8 +170,10 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("Worcestershire", 1, "tbsp", "Pantry"),
     ],
     steps: [
-      "Mix beef, crumbs, eggs, onion, and a spoon of ketchup. Shape into a loaf.",
-      "Paint with ketchup. Bake 1 hour at 350°F. Rest 10 minutes.",
+      "Heat the oven to 350°F. Mix the 2 pounds of ground beef, the 1 cup of breadcrumb, the 2 eggs, the chopped onion, the 1 tablespoon of Worcestershire, and 2 tablespoons of the ketchup until just combined.",
+      "Shape into a loaf in a pan. Paint the top with the remaining ketchup.",
+      "Bake 1 hour at 350°F, until the center is cooked through.",
+      "Rest the loaf 10 minutes so it slices clean. Cut thick slices and serve.",
     ],
   }),
   dish({
@@ -215,8 +219,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("milk", 0.5, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Brown mince with onion and carrot. Add peas and a splash of stock.",
-      "Mash potato with butter and milk. Spread over the mince. Bake 25 minutes at 400°F.",
+      "Heat the oven to 400°F. Boil the 2 pounds of potato until tender, then mash with the 3 tablespoons of butter and the ½ cup of milk.",
+      "Set a wide skillet over medium-high heat. Brown the 1½ pounds of ground lamb or beef with the chopped onion and the 2 carrots, 6–8 minutes.",
+      "Stir in the 1 cup of peas. Season well.",
+      "Spread the mash over the mince in an even layer, sealing the edges.",
+      "Bake 25 minutes, until the top is gold and the filling is bubbling.",
     ],
   }),
   dish({
@@ -263,8 +270,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("butter", 2, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Sear strips of beef. Sauté mushrooms and onion.",
-      "Stir in sour cream off the heat. Serve over noodles.",
+      "Bring a pot of salted water to a boil and cook the 12 ounces of egg noodles until just tender. Drain.",
+      "Set a wide skillet over medium-high heat. Sear strips of the 1½ pounds of beef sirloin until browned. Move to a plate.",
+      "In the same pan, melt the 2 tablespoons of butter. Cook the 8 ounces of mushrooms and the chopped onion until soft.",
+      "Return the beef. Take the pan off the heat and stir in the 1 cup of sour cream until the sauce is even.",
+      "Spoon over the egg noodles and serve hot.",
     ],
   }),
   dish({
@@ -288,8 +298,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("butter", 4, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Salt and roast eggplant slices. Cook mince with onion, tomato, and cinnamon.",
-      "Layer eggplant and meat. Pour béchamel. Bake 45 minutes at 350°F.",
+      "Heat the oven to 350°F. Salt slices of the 2 eggplants. Roast until soft and gold, about 25 minutes.",
+      "Cook the 1½ pounds of ground lamb or beef with the chopped onion, the 2 cups of tomato sauce, and the ½ teaspoon of cinnamon until the sauce is thick.",
+      "Make a béchamel: melt the 4 tablespoons of butter, stir in the 4 tablespoons of flour, then whisk in the 2 cups of milk until thick.",
+      "Layer eggplant and meat in a dish. Pour the béchamel over the top in an even layer.",
+      "Bake 45 minutes, until the top is gold and the center is set. Rest 10 minutes before cutting.",
     ],
   }),
   dish({
@@ -493,8 +506,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("fresh ginger", 1, "tbsp", "Produce"),
     ],
     steps: [
-      "Marinate chicken in yogurt and spices. Broil until charred.",
-      "Simmer tomato, garlic, ginger, and cream. Add chicken. Serve with rice or naan.",
+      "Mix the 1½ pounds of chicken thighs with the ½ cup of plain yogurt, the 2 teaspoons of garam masala, and a pinch of salt. Rest 20 minutes.",
+      "Broil until the edges are charred and the chicken is just cooked through, 10–12 minutes.",
+      "Simmer the 1 cup of tomato puree with the 4 cloves of garlic, the 1 tablespoon of fresh ginger, and the ½ cup of cream until the sauce is thick, 8–10 minutes.",
+      "Nestle the chicken back into the sauce and simmer 5 minutes so it drinks the gravy.",
+      "Rest 2 minutes, then plate and serve hot. Rice or naan on the side if you have it.",
     ],
   }),
   dish({
@@ -544,8 +560,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("green onion", 3, "", "Produce"),
     ],
     steps: [
-      "Brown pork. Add doubanjiang, garlic, ginger.",
-      "Add tofu cubes and a little water. Simmer gently. Green onion.",
+      "Set a wide skillet over medium-high heat. Brown the 4 ounces of ground pork, breaking it up, 4–5 minutes.",
+      "Add the 2 tablespoons of doubanjiang, the 3 cloves of garlic, and the 1 teaspoon of ginger. Stir 30 seconds until it smells hot and fermented.",
+      "Cut the 14 ounces of soft tofu into cubes. Slide them into the pan with the 1 tablespoon of soy sauce and a splash of water.",
+      "Simmer gently 5 minutes so the tofu drinks the sauce. Do not stir hard or the cubes will break.",
+      "Scatter the 3 green onions over the top and serve hot.",
     ],
   }),
   dish({
@@ -614,8 +633,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("paprika", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Stew peppers and onion in tomato and spices.",
-      "Nest eggs, cover until just set.",
+      "Set a skillet over medium heat with oil. Cook the chopped onion and the 2 bell peppers 6–8 minutes, until soft.",
+      "Add the 1 can of crushed tomatoes, the 1 teaspoon of paprika, the 1 teaspoon of cumin, and a pinch of salt. Simmer 10 minutes, until the sauce is thick enough to hold a well.",
+      "Make wells in the sauce with a spoon. Crack in the 6 eggs.",
+      "Cover and cook 5–7 minutes, until the whites are set and the yolks are still soft.",
+      "Rest 2 minutes, then plate and serve hot. Warm bread on the side if you have it.",
     ],
   }),
   dish({
@@ -729,8 +751,10 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("Gruyère", 4, "oz", "Dairy & Eggs"),
     ],
     steps: [
-      "Blind-bake crust. Scatter bacon and cheese.",
-      "Pour egg and cream. Bake 35 minutes at 350°F until just set.",
+      "Heat the oven to 375°F. Blind-bake the pie crust 12 minutes, until the bottom looks dry.",
+      "Scatter the 6 slices of bacon and the 4 ounces of Gruyère in the crust.",
+      "Beat the 4 eggs with the 1½ cups of cream and a pinch of salt. Pour over the filling.",
+      "Bake 30–35 minutes, until the center is just set. Rest 10 minutes, then slice.",
     ],
   }),
   dish({
@@ -752,8 +776,10 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("rice", 2, "cups", "Pantry"),
     ],
     steps: [
-      "Soak beans. Simmer with trinity and sausage until creamy, 90 minutes.",
-      "Serve over rice.",
+      "Soak the 1 pound of dried red kidney beans in plenty of cold water overnight, or at least 8 hours. Drain.",
+      "Set a heavy pot over medium heat. Brown slices of the 12 ounces of andouille sausage. Add the chopped onion, the 2 stalks of celery, and the bell pepper. Cook 5 minutes, until soft.",
+      "Add the beans and cover with fresh water by an inch. Simmer until the beans are creamy, about 90 minutes, stirring now and then. Mash a few against the pot.",
+      "Cook the 2 cups of rice in salted water until tender. Spoon the beans over the rice and serve hot.",
     ],
   }),
   dish({

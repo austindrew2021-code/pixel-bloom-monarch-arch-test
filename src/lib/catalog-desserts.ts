@@ -195,8 +195,9 @@ export const DESSERT_RECIPES: Recipe[] = [
       I("pistachios", 0.25, "cup", "Pantry"),
     ],
     steps: [
-      "Spoon yogurt into cold bowls.",
-      "Heap berries. Drizzle honey. Crush pistachios over top.",
+      "Spoon the 2 cups of greek yogurt into cold bowls.",
+      "Heap the 2 cups of mixed berries over the yogurt.",
+      "Drizzle with the 2 tablespoons of honey and crush the ¼ cup of pistachios over the top. Serve cold.",
     ],
     nutrition: { cal: 240, protein: 18, carbs: 28, fat: 7 },
   }),

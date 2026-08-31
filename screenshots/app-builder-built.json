@@ -1,5 +1,38 @@
 {
-  "ok": false,
   "url": "http://127.0.0.1:8081/",
-  "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8081/\nCall log:\n  - navigating to \"http://127.0.0.1:8081/\", waiting until \"domcontentloaded\"\n"
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Spoonful",
+      "hasCanvas": false,
+      "bodyTextLen": 228,
+      "bodyTextHash": "f0c17c9f94b1d75466d1af4da82195b72a2896015b81690d02ff53ccc00331bc",
+      "bodyTextPrefix": "PRIVATE TESTING This kitchen is closed. Spoonful is in a private",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Spoonful",
+      "hasCanvas": false,
+      "bodyTextLen": 228,
+      "bodyTextHash": "f0c17c9f94b1d75466d1af4da82195b72a2896015b81690d02ff53ccc00331bc",
+      "bodyTextPrefix": "PRIVATE TESTING This kitchen is closed. Spoonful is in a private",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
 }

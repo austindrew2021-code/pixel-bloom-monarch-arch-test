@@ -355,7 +355,11 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("sherry vinegar", 2, "tbsp", "Pantry"),
       I("olive oil", 0.25, "cup", "Pantry"),
     ],
-    steps: ["Blend everything until rustic, not baby food. Salt. Spoon on grilled calçots or any fish."],
+    steps: [
+      "Toast the ½ cup of almonds and the 1 slice of stale bread in a dry pan until gold.",
+      "Blend with the 2 roasted red peppers, the tomato, the 2 cloves of garlic, the 2 tablespoons of sherry vinegar, and the ¼ cup of olive oil until rustic, not baby food.",
+      "Salt to taste. Spoon over grilled vegetables or fish.",
+    ],
   }),
   dish({
     id: "buffalo-sauce",
@@ -375,7 +379,11 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("white vinegar", 1, "tsp", "Pantry"),
       I("garlic powder", 0.5, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Melt butter into hot sauce over low heat. Toss with fried or roasted wings."],
+    steps: [
+      "Melt the ⅓ cup of butter into the ⅔ cup of hot sauce over low heat.",
+      "Stir in the 1 teaspoon of white vinegar and the ½ teaspoon of garlic powder.",
+      "Toss with fried or roasted wings until every piece is coated.",
+    ],
   }),
   dish({
     id: "tartar-sauce",
@@ -440,7 +448,11 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("chili garlic sauce", 1, "tsp", "Pantry"),
       I("warm water", 0.25, "cup", "Other"),
     ],
-    steps: ["Whisk everything until pourable. Serve with chicken satay, tofu, or cucumber."],
+    steps: [
+      "Whisk the ½ cup of peanut butter with the 2 tablespoons of soy sauce, the juice of the lime, the 1 tablespoon of brown sugar, the minced garlic, and the 1 teaspoon of chili garlic sauce.",
+      "Thin with the ¼ cup of warm water until the sauce pours off a spoon.",
+      "Taste. Serve with chicken satay, tofu, or cucumber.",
+    ],
   }),
   dish({
     id: "sweet-chili-sauce",
@@ -484,7 +496,11 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("garlic powder", 1, "tsp", "Herbs & Spices"),
       I("onion powder", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Whisk. Chill 20 minutes. For pizza crusts, wings, and people who will not eat a salad without it."],
+    steps: [
+      "Whisk the mayonnaise, sour cream, buttermilk, dried dill, garlic powder, and onion powder until smooth.",
+      "Taste. Add a pinch of salt if it tastes flat, a splash more buttermilk if it is stiff.",
+      "Chill 20 minutes so it thickens. Spoon over pizza crusts, wings, or a salad.",
+    ],
   }),
   dish({
     id: "teriyaki-sauce",

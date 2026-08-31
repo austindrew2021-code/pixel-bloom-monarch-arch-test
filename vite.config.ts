@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { copyFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
@@ -11,6 +11,73 @@ import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
 // @ts-expect-error JS plugin alongside the TS vite config
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
+
+function copyPgliteWasm(serverDir: string) {
+  const src = join(process.cwd(), "node_modules/@electric-sql/pglite/dist");
+  for (const name of ["pglite.wasm", "pglite.data", "initdb.wasm"]) {
+    const from = join(src, name);
+    if (existsSync(from)) copyFileSync(from, join(serverDir, name));
+  }
+}
+
+/**
+ * Nitro's vercel preset writes `config.json` + `.vc-config.json` in its own
+ * `compiled` hook. Putting our own `hooks.compiled` on `nitro()` *replaces*
+ * that (hookable overwrites the name), so Vercel/Grok prebuilt deploys ship a
+ * function with no routing config and every request 500s as
+ * `{ error: true, status: 500, unhandled: true }` even though `vite build`
+ * exits 0 and a local `handler.fetch()` returns HTML.
+ *
+ * Copy wasm and backfill the Vercel files in a Vite closeBundle hook instead —
+ * that *adds* work after Nitro, it does not replace Nitro's compiled step.
+ */
+function vercelOutputPlugin(): Plugin {
+  return {
+    name: "app-builder:vercel-output",
+    apply: "build",
+    closeBundle: {
+      sequential: true,
+      order: "post",
+      handler() {
+        const outputDir = join(process.cwd(), ".vercel/output");
+        const serverDir = join(outputDir, "functions/__server.func");
+        if (!existsSync(join(serverDir, "index.mjs"))) return;
+        copyPgliteWasm(serverDir);
+        const vcConfig = join(serverDir, ".vc-config.json");
+        if (!existsSync(vcConfig)) {
+          writeFileSync(
+            vcConfig,
+            `${JSON.stringify(
+              {
+                runtime: "nodejs22.x",
+                handler: "index.mjs",
+                launcherType: "Nodejs",
+                shouldAddHelpers: false,
+                supportsResponseStreaming: true,
+              },
+              null,
+              2,
+            )}\n`,
+          );
+        }
+        const buildConfig = join(outputDir, "config.json");
+        if (!existsSync(buildConfig)) {
+          writeFileSync(
+            buildConfig,
+            `${JSON.stringify(
+              {
+                version: 3,
+                routes: [{ handle: "filesystem" }, { src: "/(.*)", dest: "/__server" }],
+              },
+              null,
+              2,
+            )}\n`,
+          );
+        }
+      },
+    },
+  };
+}
 
 /** The files `src/lib/db.ts` globs — same directory, same non-recursive scope. */
 function hasGlobbedMigrations(root: string): boolean {
@@ -210,7 +277,13 @@ export default defineConfig(({ command, isPreview }) => ({
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
+            // Vite 8.2 + Rolldown re-exports an undeclared `ssr_exports`
+            // across SSR chunks; every production request then 500s even
+            // though `vite build` exits 0.
+            // https://github.com/tanstack/router/issues/8031
+            inlineDynamicImports: true,
           }),
+          vercelOutputPlugin(),
         ]
       : []),
     viteReact(),

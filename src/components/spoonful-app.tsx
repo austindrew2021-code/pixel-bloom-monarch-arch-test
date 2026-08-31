@@ -61,9 +61,7 @@ export function SpoonfulApp() {
   const [extras, setExtras] = useState(false);
   const [editPins, setEditPins] = useState(false);
   const [unread, setUnread] = useState(0);
-  const [allowed, setAllowed] = useState<boolean | null>(() =>
-    typeof window === "undefined" ? null : isTesterUnlocked() ? true : false,
-  );
+  const [allowed, setAllowed] = useState(false);
   const [previewChrome, setPreviewChrome] = useState(false);
   const streak = cookStreak(cookedDates, isoDate());
   const rank = rankForXp(xp);
@@ -209,14 +207,12 @@ export function SpoonfulApp() {
       .catch(() => setUnread(0));
   }, [user, isPending, tab]);
 
-  if (allowed !== true) {
-    if (allowed === false) return <TesterGate onUnlock={() => setAllowed(true)} />;
-    return <main className="min-h-dvh bg-background" />;
+  if (!allowed) {
+    return <TesterGate onUnlock={() => setAllowed(true)} />;
   }
 
   if (!onboarded) return <Onboarding />;
-  if (!walkthroughDone) return <Walkthrough />;
-  if (user && !user.isDevFallback && profile === null) {
+  if (user && !user.isDevFallback && profile === null && walkthroughDone) {
     return (
       <UsernameGate
         onDone={() => {
@@ -250,6 +246,7 @@ export function SpoonfulApp() {
           <div className="mt-2 flex items-center gap-2">
             <button
               type="button"
+              data-tour="theme"
               onClick={() => setTheme(theme === "midnight" ? "paper" : "midnight")}
               className="flex size-12 shrink-0 items-center justify-center rounded-full bg-card shadow-[var(--shadow-border)]"
               aria-label={theme === "midnight" ? "Paper kitchen" : "Midnight kitchen"}
@@ -258,6 +255,7 @@ export function SpoonfulApp() {
             </button>
             <button
               type="button"
+              data-tour="kitchen-mode"
               onClick={() => setNextGen(!nextGen)}
               className={cn(
                 "flex h-12 min-w-0 flex-1 items-center justify-center rounded-full text-base font-semibold",
@@ -273,7 +271,7 @@ export function SpoonfulApp() {
             {rank.title}
             {streak > 0 ? ` · ${streak}d` : ""}
           </p>
-          <nav className="mt-1 flex items-center gap-1" aria-label="Shortcuts">
+          <nav className="mt-1 flex items-center gap-1" aria-label="Shortcuts" data-tour="shortcuts">
             <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto pb-0.5">
               {pins.map((id) => {
                 const menu = menuById(id);
@@ -350,6 +348,8 @@ export function SpoonfulApp() {
         </SheetContent>
       </Sheet>
 
+      {!walkthroughDone ? <Walkthrough onExtras={setExtras} /> : null}
+
       <nav
         className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-border bg-card/95 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-md"
         aria-label="Primary"
@@ -363,6 +363,7 @@ export function SpoonfulApp() {
               <li key={item.id} className="min-w-0">
                 <button
                   type="button"
+                  data-tour={`nav-${item.id}`}
                   onClick={() => setTab(item.id)}
                   className={cn(
                     "relative flex h-[4.35rem] w-full min-w-0 flex-col items-center justify-end gap-1 pb-1.5 text-[11px] font-semibold leading-none",

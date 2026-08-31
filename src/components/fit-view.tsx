@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MacroBar } from "@/components/macro-bar";
 import { Plate } from "@/components/plate";
+import { TrainView } from "@/components/train-view";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -37,6 +38,7 @@ import {
 } from "@/lib/fuel";
 import { formatMinutes } from "@/lib/format";
 import { sessionVolumeKg } from "@/lib/lift";
+import { expectedWorkoutsForDate } from "@/lib/program";
 import { rankProgress } from "@/lib/ranks";
 import { SNACKS } from "@/lib/shield";
 import {
@@ -76,6 +78,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const fitnessSource = useSpoonful((s) => s.fitnessSource);
   const lastSyncAt = useSpoonful((s) => s.lastSyncAt);
   const liftSessions = useSpoonful((s) => s.liftSessions);
+  const programWeek = useSpoonful((s) => s.programWeek);
   const weightLog = useSpoonful((s) => s.weightLog) ?? [];
   const syncFitness = useSpoonful((s) => s.syncFitness);
   const healthByDate = useSpoonful((s) => s.healthByDate) ?? {};
@@ -87,7 +90,14 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const seats = useSpoonful((s) => s.seats) ?? [];
   const tableGoal = strictestGoal([body.goalKind, ...seats.map((s) => s.goalKind)]);
   const today = isoDate();
-  const todayWork = workouts.filter((w) => w.date === today);
+  const loggedToday = workouts.filter((w) => w.date === today);
+  const todayWork = expectedWorkoutsForDate({
+    date: today,
+    today,
+    sessions: programWeek?.sessions ?? [],
+    logged: loggedToday,
+    bodyKg: body.weightKg,
+  });
   const todaySnacks = snacks.filter((s) => s.date === today);
   const eaten = nutritionForDate(meals, today, snacks);
   const health = healthByDate[today];
@@ -124,6 +134,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const [stepDraft, setStepDraft] = useState(String(stepsByDate[today] ?? ""));
   const [liftOpen, setLiftOpen] = useState(false);
   const [editBody, setEditBody] = useState(false);
+  const [pane, setPane] = useState<"train" | "fuel">("train");
   const tdee = tdeeKcal(body);
   const bmr = bmrKcal(body);
   const lastLift = liftSessions[liftSessions.length - 1];
@@ -156,11 +167,11 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Live Fuel</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Fuel</h1>
       <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-        Calories from your body ({bmrMethod(body)}
-        {formatBodyFat(body) ? `, ${formatBodyFat(body)}` : ""}), ACSM METs for cardio, and the actual pounds on the bar for lifts. Plates follow your {goalLabel(tableGoal)} goal. A linked watch writes the same numbers here, live.
+        Training follows {goalLabel(tableGoal)}. Done, skipped, or missed sessions rewrite tonight automatically — calories from your body ({bmrMethod(body)}
+        {formatBodyFat(body) ? `, ${formatBodyFat(body)}` : ""}), ACSM METs for cardio, and the load on the bar for lifts.
       </p>
 
-      <section className="mt-5 rounded-3xl bg-spark p-4 text-spark-foreground">
+      <section className="mt-5 rounded-3xl bg-spark p-4 text-spark-foreground" data-tour="fuel-now">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-medium uppercase tracking-[0.14em] opacity-80">Right now</p>
           <span className="flex items-center gap-1.5 text-xs">
@@ -181,6 +192,33 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
         ) : null}
       </section>
 
+      <div className="mt-4 grid grid-cols-2 gap-1 rounded-full bg-card p-1 shadow-[var(--shadow-border)]" data-tour="train-pane">
+        <button
+          type="button"
+          onClick={() => setPane("train")}
+          className={cn(
+            "h-11 rounded-full text-sm font-medium",
+            pane === "train" ? "bg-spark text-spark-foreground" : "text-muted-foreground",
+          )}
+        >
+          Train
+        </button>
+        <button
+          type="button"
+          onClick={() => setPane("fuel")}
+          className={cn(
+            "h-11 rounded-full text-sm font-medium",
+            pane === "fuel" ? "bg-primary text-primary-foreground" : "text-muted-foreground",
+          )}
+        >
+          Body
+        </button>
+      </div>
+
+      {pane === "train" ? <TrainView /> : null}
+
+      {pane === "fuel" ? (
+      <>
       {health && fitnessSource ? (
         <section className="mt-5 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
           <div className="flex items-start justify-between gap-2">
@@ -655,7 +693,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           Log
         </Button>
         <ul className="mt-3 space-y-2">
-          {todayWork.map((w) => (
+          {loggedToday.map((w) => (
             <li key={w.id} className="flex items-center justify-between rounded-2xl bg-background px-3 py-2">
               <p className="text-sm">
                 {WORKOUTS.find((x) => x.id === w.kind)?.label} · {w.minutes} min · {workoutKcal(w, body)} kcal
@@ -712,7 +750,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           variant="secondary"
           onClick={() => {
             const n = fillFromFuel();
-            toast(n ? `Fueled ${n} empty night${n === 1 ? "" : "s"}` : "This week is already full");
+            toast(n ? `Plated ${n} night${n === 1 ? "" : "s"} from training` : "This week is already full");
             setTab("plan");
           }}
         >
@@ -720,6 +758,8 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           Fuel the empty nights
         </Button>
       </section>
+      </>
+      ) : null}
 
       <LiftSheet open={liftOpen} onClose={() => setLiftOpen(false)} />
     </div>

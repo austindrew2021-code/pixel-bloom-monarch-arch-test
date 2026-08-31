@@ -29,6 +29,19 @@ import { plateCost, recipeSafe } from "./shield";
 import { postKitchenEvent } from "./family";
 import type { LiftSession } from "./lift";
 import { liftKcal, sessionRomM, sessionVolumeKg } from "./lift";
+import {
+  expectedWorkoutsForDate,
+  isProgramWeek,
+  matchLoggedToSession,
+  patchSession,
+  rebuildProgram,
+  sessionAfterCardio,
+  sessionAfterLift,
+  sessionSkipped,
+  swapMove,
+  type ProgramWeek,
+  type SessionStatus,
+} from "./program";
 import type {
   AddonId,
   Aisle,
@@ -117,6 +130,8 @@ type SpoonfulState = {
   seats: FamilySeat[];
   chefBonus: number;
   chefBonusWeek: string;
+  programWeek: ProgramWeek | null;
+  favMoves: string[];
   completeOnboarding: (input: {
     household: number;
     prefs: PrefId[];
@@ -190,6 +205,12 @@ type SpoonfulState = {
   removeSeat: (id: string) => void;
   hydrateFromCloud: (payload: Record<string, unknown>) => void;
   kitchenPayload: () => Record<string, unknown>;
+  ensureProgram: () => ProgramWeek;
+  markSession: (id: string, status: SessionStatus) => string | undefined;
+  restoreSession: (id: string) => string | undefined;
+  swapSessionMove: (sessionId: string, fromId: string, toId: string) => void;
+  toggleFavMove: (moveId: string) => void;
+  replateFromFuel: (dates?: string[]) => { count: number; names: string[] };
   logWater: (ml: number) => void;
   markCooked: (date: string) => void;
   saveLeftovers: (fromDate: string) => boolean;
@@ -307,15 +328,26 @@ function pickVaried(
   afterLift = false,
   recovery?: "low" | "ok" | "high",
   goalKind?: GoalKind | string,
+  extra?: { afterCardio?: boolean; skipped?: boolean },
 ): Recipe | undefined {
   const fresh = pool.filter((r) => !used.has(r.id));
   const varied = avoid ? fresh.filter((r) => r.protein !== avoid) : fresh;
   const list = varied.length > 0 ? varied : fresh;
   if (list.length === 0) return undefined;
+  const opts = { afterLift, recovery, goalKind, afterCardio: extra?.afterCardio, skipped: extra?.skipped };
   if (remaining) {
-    return rankForFuel(list, remaining, pantry, { afterLift, recovery, goalKind })[0]?.recipe;
+    return rankForFuel(list, remaining, pantry, opts)[0]?.recipe;
   }
-  return rankForFuel(list, { cal: 700, protein: 40, carbs: 60, fat: 25 }, pantry, { goalKind })[0]?.recipe ?? list[0];
+  return rankForFuel(list, { cal: 700, protein: 40, carbs: 60, fat: 25 }, pantry, opts)[0]?.recipe ?? list[0];
+}
+
+function mealLocked(meal: PlannedMeal | undefined, cookedDates: string[]): boolean {
+  if (!meal) return false;
+  if (meal.skip) return true;
+  if (meal.custom) return true;
+  if (cookedDates.includes(meal.date)) return true;
+  if (meal.recipeId && meal.auto !== true) return true;
+  return false;
 }
 
 function pruneHealth(map: Record<string, HealthDay>): Record<string, HealthDay> {
@@ -379,6 +411,8 @@ export const useSpoonful = create<SpoonfulState>()(
       seats: [],
       chefBonus: 0,
       chefBonusWeek: mondayOf(),
+      programWeek: null,
+      favMoves: [],
       completeOnboarding: ({ household, prefs, allergies, sample, nextGen, goal, body, locale, country }) => {
         const nextBody = normalizeBody(body ?? DEFAULT_BODY);
         set({
@@ -394,10 +428,15 @@ export const useSpoonful = create<SpoonfulState>()(
           locale: locale ?? "en",
           country: country ?? "CA",
         });
+        if (nextGen) get().ensureProgram();
         if (sample) get().fillWeek(true);
+        if (sample && nextGen) get().replateFromFuel();
       },
       setTab: (tab) => set({ tab }),
-      setWeekStart: (weekStart) => set({ weekStart }),
+      setWeekStart: (weekStart) => {
+        set({ weekStart });
+        get().ensureProgram();
+      },
       setHousehold: (household) => set({ household }),
       togglePref: (pref) =>
         set((s) => ({
@@ -408,11 +447,13 @@ export const useSpoonful = create<SpoonfulState>()(
           allergies: s.allergies.includes(id) ? s.allergies.filter((a) => a !== id) : [...s.allergies, id],
         })),
       setTheme: (theme) => set({ theme }),
-      setNextGen: (nextGen) =>
+      setNextGen: (nextGen) => {
         set((s) => ({
           nextGen,
           tab: !nextGen && s.tab === "fit" ? "plan" : nextGen && s.tab === "people" ? "fit" : s.tab,
-        })),
+        }));
+        if (nextGen) get().ensureProgram();
+      },
       setGoal: (goal) => set({ goal }),
       assignMeal: (date, slot, recipeId) => {
         set((s) => {
@@ -475,59 +516,14 @@ export const useSpoonful = create<SpoonfulState>()(
           const recipe = pickVaried(pool, used, proteinOf(prev), undefined, [], false, undefined, goalKind);
           if (!recipe) continue;
           used.add(recipe.id);
-          added.push({ id: uid(), date, slot: "dinner", recipeId: recipe.id });
+          added.push({ id: uid(), date, slot: "dinner", recipeId: recipe.id, auto: nextGen || undefined });
           filled += 1;
         }
         set({ meals: [...kept, ...added], undoMeals: snapshot });
         return filled;
       },
       fillFromFuel: () => {
-        const { weekStart, meals, unlocked, prefs, allergies, hidden, pantry, goal, workouts, stepsByDate, snacks, body, seats } =
-          get();
-        const goalKind = tableGoalOf(body, seats ?? []);
-        const pool = allowedPool(unlocked, prefs, allergies, hidden, goalKind);
-        if (pool.length === 0) return 0;
-        const dates = weekDates(weekStart);
-        const snapshot = meals;
-        const used = new Set(
-          meals.filter((m) => dates.includes(m.date) && m.recipeId).map((m) => m.recipeId as string),
-        );
-        const added: PlannedMeal[] = [];
-        for (const date of dates) {
-          if (meals.some((m) => m.date === date && m.slot === "dinner")) continue;
-          const eaten = nutritionForDate(meals, date, snacks);
-          const dayWork = workouts.filter((w) => w.date === date);
-          const health = get().healthByDate[date];
-          let fuel = dayFuel({
-            goal,
-            eaten,
-            workouts: dayWork,
-            steps: stepsByDate[date] ?? health?.steps ?? 0,
-            body,
-          });
-          if (health) fuel = applyHealthToFuel(fuel, health);
-          const prevDate = isoDate(addDays(parseISO(`${date}T12:00:00`), -1));
-          const prev =
-            added.find((m) => m.date === prevDate) ??
-            meals.find((m) => m.date === prevDate && m.slot === "dinner");
-          const pick = pickVaried(
-            pool,
-            used,
-            proteinOf(prev),
-            fuel.remaining,
-            pantry.map((p) => p.name),
-            dayWork.some((w) => w.kind === "lift"),
-            health ? recoveryLabel(health) : undefined,
-            goalKind,
-          );
-          if (!pick) continue;
-          used.add(pick.id);
-          added.push({ id: uid(), date, slot: "dinner", recipeId: pick.id });
-        }
-        if (added.length === 0) return 0;
-        const rest = meals.filter((m) => !(m.slot === "dinner" && added.some((a) => a.date === m.date)));
-        set({ meals: [...rest, ...added], undoMeals: snapshot });
-        return added.length;
+        return get().replateFromFuel().count;
       },
       surpriseDinner: (date) => {
         const { meals, unlocked, prefs, allergies, hidden, pantry, goal, workouts, stepsByDate, snacks, nextGen, body, seats } =
@@ -540,8 +536,16 @@ export const useSpoonful = create<SpoonfulState>()(
         const prev = meals.find((m) => m.date === prevDate && m.slot === "dinner");
         let pick: Recipe | undefined;
         if (nextGen) {
+          const program = get().ensureProgram();
+          const session = program.sessions.find((s) => s.date === date);
           const eaten = nutritionForDate(meals, date, snacks);
-          const dayWork = workouts.filter((w) => w.date === date);
+          const dayWork = expectedWorkoutsForDate({
+            date,
+            today: isoDate(),
+            sessions: program.sessions,
+            logged: workouts,
+            bodyKg: body.weightKg,
+          });
           const health = get().healthByDate[date];
           let fuel = dayFuel({
             goal,
@@ -557,9 +561,13 @@ export const useSpoonful = create<SpoonfulState>()(
             proteinOf(prev),
             fuel.remaining,
             pantry.map((p) => p.name),
-            dayWork.some((w) => w.kind === "lift"),
+            sessionAfterLift(session, isoDate()) || dayWork.some((w) => w.kind === "lift"),
             health ? recoveryLabel(health) : undefined,
             goalKind,
+            {
+              afterCardio: sessionAfterCardio(session, isoDate()),
+              skipped: sessionSkipped(session, isoDate()),
+            },
           );
         } else {
           pick = pickVaried(pool, used, proteinOf(prev), undefined, [], false, undefined, goalKind);
@@ -686,9 +694,41 @@ export const useSpoonful = create<SpoonfulState>()(
           ],
         }));
         if (!input.silent) get().awardXp(12, "workout");
+        const week = get().programWeek;
+        if (week) {
+          const session = week.sessions.find((s) => s.date === input.date && s.status === "planned");
+          if (session && matchLoggedToSession(session, get().workouts)) {
+            set({
+              programWeek: {
+                ...week,
+                sessions: week.sessions.map((s) => (s.id === session.id ? { ...s, status: "done" as const } : s)),
+              },
+            });
+          }
+        }
+        if (get().nextGen && !input.silent) get().replateFromFuel([input.date]);
       },
-      removeWorkout: (id) => set((s) => ({ workouts: s.workouts.filter((w) => w.id !== id) })),
-      setBody: (patch) =>
+      removeWorkout: (id) => {
+        const w = get().workouts.find((x) => x.id === id);
+        set((s) => ({ workouts: s.workouts.filter((x) => x.id !== id) }));
+        if (w && get().nextGen) {
+          const week = get().programWeek;
+          if (week) {
+            const session = week.sessions.find((s) => s.date === w.date && s.status === "done");
+            const still = get().workouts.some((x) => x.date === w.date);
+            if (session && !still) {
+              set({
+                programWeek: {
+                  ...week,
+                  sessions: week.sessions.map((s) => (s.id === session.id ? { ...s, status: "planned" as const } : s)),
+                },
+              });
+            }
+          }
+          get().replateFromFuel([w.date]);
+        }
+      },
+      setBody: (patch) => {
         set((s) => {
           const body = normalizeBody({ ...s.body, ...patch });
           let weightLog = s.weightLog ?? [];
@@ -697,7 +737,9 @@ export const useSpoonful = create<SpoonfulState>()(
             weightLog = [...s.weightLog.filter((w) => w.date !== today), { date: today, kg: body.weightKg }].slice(-60);
           }
           return { body, weightLog, goal: macrosFromBody(body) };
-        }),
+        });
+        if (patch.goalKind) get().ensureProgram();
+      },
       applyBodyGoal: () => {
         const body = get().body;
         set({ goal: macrosFromBody(body) });
@@ -711,6 +753,19 @@ export const useSpoonful = create<SpoonfulState>()(
           liftSessions: [...s.liftSessions.filter((x) => x.id !== finished.id), finished].slice(-40),
         }));
         get().addWorkout({ date: finished.date, kind: "lift", minutes, kcal, volumeKg });
+        const week = get().programWeek;
+        if (week) {
+          const session = week.sessions.find((s) => s.date === finished.date && s.kind === "lift" && s.status !== "skipped");
+          if (session) {
+            set({
+              programWeek: {
+                ...week,
+                sessions: week.sessions.map((s) => (s.id === session.id ? { ...s, status: "done" as const } : s)),
+              },
+            });
+            if (get().nextGen) get().replateFromFuel([finished.date]);
+          }
+        }
       },
       importFitness: ({ steps, workouts, body }) => {
         const today = isoDate();
@@ -863,6 +918,164 @@ export const useSpoonful = create<SpoonfulState>()(
           seats: (s.seats ?? []).map((seat) => (seat.id === id ? { ...seat, ...patch } : seat)),
         })),
       removeSeat: (id) => set((s) => ({ seats: (s.seats ?? []).filter((seat) => seat.id !== id) })),
+      ensureProgram: () => {
+        const s = get();
+        const today = isoDate();
+        const week = rebuildProgram(s.programWeek, s.weekStart, s.body.goalKind, today);
+        const synced = week.sessions.map((session) => {
+          if (session.status === "planned" && matchLoggedToSession(session, s.workouts)) {
+            return { ...session, status: "done" as const };
+          }
+          return session;
+        });
+        const next = { ...week, sessions: synced };
+        const same =
+          s.programWeek &&
+          s.programWeek.weekStart === next.weekStart &&
+          s.programWeek.goalKind === next.goalKind &&
+          s.programWeek.sessions.length === next.sessions.length &&
+          s.programWeek.sessions.every((ses, i) => {
+            const n = next.sessions[i];
+            return n && ses.id === n.id && ses.status === n.status && ses.name === n.name && ses.kind === n.kind;
+          });
+        if (!same) set({ programWeek: next });
+        return get().programWeek ?? next;
+      },
+      markSession: (id, status) => {
+        const week = get().ensureProgram();
+        const session = week.sessions.find((s) => s.id === id);
+        if (!session || session.kind === "rest") return undefined;
+        set({ programWeek: { ...week, sessions: week.sessions.map((s) => (s.id === id ? { ...s, status } : s)) } });
+        if (status === "done" && !get().workouts.some((w) => w.date === session.date && w.kind === (session.kind === "lift" ? "lift" : session.cardioKind ?? "walk"))) {
+          get().addWorkout({
+            date: session.date,
+            kind: session.kind === "lift" ? "lift" : (session.cardioKind ?? "walk"),
+            minutes: session.minutes,
+            silent: true,
+          });
+        }
+        if (status === "skipped" || status === "missed") {
+          const kinds = session.kind === "lift" ? (["lift"] as const) : undefined;
+          set((st) => ({
+            workouts: st.workouts.filter((w) => {
+              if (w.date !== session.date) return true;
+              if (w.source) return true;
+              if (kinds) return w.kind !== "lift";
+              return false;
+            }),
+          }));
+        }
+        const plated = get().replateFromFuel([session.date]);
+        return plated.names[0];
+      },
+      restoreSession: (id) => {
+        const week = get().ensureProgram();
+        const session = week.sessions.find((s) => s.id === id);
+        if (!session || session.kind === "rest") return undefined;
+        set({ programWeek: patchSession(week, id, { status: "planned" }) });
+        if (session.status === "done") {
+          const kinds = session.kind === "lift" ? "lift" : (session.cardioKind ?? "walk");
+          set((st) => ({
+            workouts: st.workouts.filter((w) => {
+              if (w.date !== session.date) return true;
+              if (w.source) return true;
+              return w.kind !== kinds;
+            }),
+          }));
+        }
+        const plated = get().replateFromFuel([session.date]);
+        return plated.names[0];
+      },
+      swapSessionMove: (sessionId, fromId, toId) => {
+        const week = get().ensureProgram();
+        set({ programWeek: swapMove(week, sessionId, fromId, toId) });
+      },
+      toggleFavMove: (moveId) =>
+        set((s) => ({
+          favMoves: s.favMoves.includes(moveId) ? s.favMoves.filter((id) => id !== moveId) : [...s.favMoves, moveId],
+        })),
+      replateFromFuel: (onlyDates) => {
+        const program = get().ensureProgram();
+        const {
+          weekStart,
+          meals,
+          unlocked,
+          prefs,
+          allergies,
+          hidden,
+          pantry,
+          goal,
+          workouts,
+          stepsByDate,
+          snacks,
+          body,
+          seats,
+          cookedDates,
+        } = get();
+        const goalKind = tableGoalOf(body, seats ?? []);
+        const pool = allowedPool(unlocked, prefs, allergies, hidden, goalKind);
+        if (pool.length === 0) return { count: 0, names: [] };
+        const today = isoDate();
+        const dates = (onlyDates && onlyDates.length > 0 ? onlyDates : weekDates(weekStart)).filter((d) =>
+          weekDates(weekStart).includes(d),
+        );
+        const snapshot = meals;
+        const used = new Set(meals.filter((m) => m.recipeId).map((m) => m.recipeId as string));
+        const added: PlannedMeal[] = [];
+        const names: string[] = [];
+        for (const date of dates) {
+          const existing = meals.find((m) => m.date === date && m.slot === "dinner");
+          if (mealLocked(existing, cookedDates)) continue;
+          const eaten = nutritionForDate(
+            meals.filter((m) => !(m.date === date && m.slot === "dinner")),
+            date,
+            snacks,
+          );
+          const session = program.sessions.find((s) => s.date === date);
+          const dayWork = expectedWorkoutsForDate({
+            date,
+            today,
+            sessions: program.sessions,
+            logged: workouts,
+            bodyKg: body.weightKg,
+          });
+          const health = get().healthByDate[date];
+          let fuel = dayFuel({
+            goal,
+            eaten,
+            workouts: dayWork,
+            steps: stepsByDate[date] ?? health?.steps ?? 0,
+            body,
+          });
+          if (health) fuel = applyHealthToFuel(fuel, health);
+          const prevDate = isoDate(addDays(parseISO(`${date}T12:00:00`), -1));
+          const prev =
+            added.find((m) => m.date === prevDate) ?? meals.find((m) => m.date === prevDate && m.slot === "dinner");
+          const pick = pickVaried(
+            pool,
+            used,
+            proteinOf(prev),
+            fuel.remaining,
+            pantry.map((p) => p.name),
+            sessionAfterLift(session, today) || dayWork.some((w) => w.kind === "lift"),
+            health ? recoveryLabel(health) : undefined,
+            goalKind,
+            {
+              afterCardio: sessionAfterCardio(session, today),
+              skipped: sessionSkipped(session, today),
+            },
+          );
+          if (!pick) continue;
+          if (existing?.recipeId === pick.id) continue;
+          used.add(pick.id);
+          added.push({ id: uid(), date, slot: "dinner", recipeId: pick.id, auto: true });
+          names.push(pick.name);
+        }
+        if (added.length === 0) return { count: 0, names: [] };
+        const rest = meals.filter((m) => !(m.slot === "dinner" && added.some((a) => a.date === m.date)));
+        set({ meals: [...rest, ...added], undoMeals: snapshot });
+        return { count: added.length, names };
+      },
       kitchenPayload: () => {
         const s = get();
         return {
@@ -909,6 +1122,8 @@ export const useSpoonful = create<SpoonfulState>()(
           seats: s.seats,
           chefBonus: s.chefBonus,
           chefBonusWeek: s.chefBonusWeek,
+          programWeek: s.programWeek,
+          favMoves: s.favMoves,
           updatedAt: new Date().toISOString(),
         };
       },
@@ -943,6 +1158,8 @@ export const useSpoonful = create<SpoonfulState>()(
           ...(typeof payload.chefBonus === "number" ? { chefBonus: payload.chefBonus } : {}),
           ...(typeof payload.chefBonusWeek === "string" ? { chefBonusWeek: payload.chefBonusWeek } : {}),
           ...(typeof payload.autoPlate === "boolean" ? { autoPlate: payload.autoPlate } : {}),
+          ...(isProgramWeek(payload.programWeek) ? { programWeek: payload.programWeek } : {}),
+          ...(Array.isArray(payload.favMoves) ? { favMoves: payload.favMoves as string[] } : {}),
         });
       },
       logWater: (ml) => {
@@ -1111,6 +1328,8 @@ export const useSpoonful = create<SpoonfulState>()(
           chefBonus: typeof p.chefBonus === "number" ? p.chefBonus : 0,
           chefBonusWeek: typeof p.chefBonusWeek === "string" ? p.chefBonusWeek : current.chefBonusWeek,
           autoPlate: typeof p.autoPlate === "boolean" ? p.autoPlate : true,
+          programWeek: isProgramWeek(p.programWeek) ? p.programWeek : current.programWeek,
+          favMoves: Array.isArray(p.favMoves) ? p.favMoves : current.favMoves,
         };
       },
       partialize: (s) => ({
@@ -1158,6 +1377,8 @@ export const useSpoonful = create<SpoonfulState>()(
         seats: s.seats,
         chefBonus: s.chefBonus,
         chefBonusWeek: s.chefBonusWeek,
+        programWeek: s.programWeek,
+        favMoves: s.favMoves,
       }),
     },
   ),

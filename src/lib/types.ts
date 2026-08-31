@@ -116,6 +116,8 @@ export type PlannedMeal = {
   recipeId?: string;
   custom?: CustomMeal;
   skip?: "takeout" | "rest";
+  /** Next Gen auto-plated dinners can be swapped when training changes. */
+  auto?: boolean;
 };
 
 export type PantryItem = {

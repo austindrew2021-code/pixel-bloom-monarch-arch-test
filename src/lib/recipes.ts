@@ -611,7 +611,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("smoked paprika", 1, "tsp", "Herbs & Spices"),
 			I("lettuce", 1, "head", "Produce")
 		],
-		steps: ["Smash chickpeas lightly and fry with paprika and salt until crisp at the edges.", "Spread yogurt on tortillas. Add chickpeas, cucumber, and lettuce."]
+		steps: [
+			"Drain the 2 cans of chickpeas. Smash them lightly with a fork so some stay whole.",
+			"Set a wide skillet over medium-high heat with a slick of oil. Fry the chickpeas with the 1 teaspoon of smoked paprika and salt until the edges are crisp, 6–8 minutes.",
+			"Warm the 4 flour tortillas. Spread the ¾ cup of plain yogurt on each one.",
+			"Pile on the crisp chickpeas, sliced cucumber, and shredded lettuce. Roll and eat while the chickpeas are still hot.",
+		],
 	},
 	{
 		id: "miso-butter-cod",
@@ -752,7 +757,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("green onion", 3, "", "Produce"),
 			I("sesame oil", 1, "tsp", "Pantry")
 		],
-		steps: ["Cook soba, rinse cold. Whisk tahini, soy, sesame oil, and water.", "Toss with noodles, cucumber, and green onion."]
+		steps: [
+			"Cook the 8 ounces of soba noodles in salted water until tender, 4–5 minutes. Drain and rinse under cold water.",
+			"Whisk the 3 tablespoons of tahini or sesame paste with the 2 tablespoons of soy sauce, the 1 teaspoon of sesame oil, and a splash of cold water until pourable.",
+			"Slice the cucumber and the 3 green onions.",
+			"Toss the cold noodles with the sesame sauce, cucumber, and green onion. Serve cold or at room temperature.",
+		],
 	},
 	{
 		id: "ham-pea-pasta",
@@ -804,7 +814,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("olive oil", .33, "cup", "Pantry"),
 			I("red pepper flakes", .5, "tsp", "Herbs & Spices")
 		],
-		steps: ["Chop parsley and garlic; stir with vinegar, oil, chili, and salt.", "Salt steaks well. Sear 3–4 minutes a side. Rest, slice, spoon sauce."]
+		steps: [
+			"Chop the 1 bunch of parsley and the 3 cloves of garlic. Stir with the 2 tablespoons of red wine vinegar, the ⅓ cup of olive oil, the ½ teaspoon of red pepper flakes, and a pinch of salt.",
+			"Pat the 1½ pounds of sirloin steaks dry and salt both sides well.",
+			"Set a wide skillet over high heat. Sear the steaks 3–4 minutes per side, until browned outside and still pink in the center if you like them medium.",
+			"Rest 5 minutes off the heat. Slice across the grain and spoon the chimichurri over.",
+		],
 	},
 	{
 		id: "tofu-power-bowls",
@@ -832,10 +847,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("lime", 1, "", "Produce")
 		],
 		steps: [
-			"Press tofu, cube, toss with soy, bake at 425°F until crisp.",
-			"Cook quinoa. Steam broccoli and edamame. Whisk tahini and lime.",
-			"Assemble bowls and drizzle."
-		]
+			"Heat the oven to 425°F. Press the 14 ounces of extra-firm tofu 10 minutes, then cube and toss with the 2 tablespoons of soy sauce.",
+			"Spread the tofu on a sheet and bake 20–25 minutes, until the edges are crisp.",
+			"Cook the 1½ cups of quinoa in salted water until the grains are tender, then drain. Steam the head of broccoli and the 1½ cups of edamame until just tender, 4–5 minutes.",
+			"Whisk the 2 tablespoons of tahini with the juice of the lime and a splash of water until pourable.",
+			"Divide the quinoa, tofu, broccoli, and edamame among bowls. Spoon the tahini-lime over and serve.",
+		],
 	},
 	{
 		id: "greek-yogurt-chicken",
@@ -861,7 +878,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("cumin", 1, "tsp", "Herbs & Spices"),
 			I("cucumber", 1, "", "Produce")
 		],
-		steps: ["Mix yogurt, garlic, lemon, cumin, and salt. Coat chicken at least 20 minutes.", "Grill or roast until the edges char. Serve with cucumber."]
+		steps: [
+			"Mix the 1 cup of plain Greek yogurt with the 4 cloves of garlic (minced), the juice of the lemon, the 1 teaspoon of cumin, and a pinch of salt.",
+			"Coat the 2 pounds of chicken thighs and rest at least 20 minutes, or up to overnight in the fridge.",
+			"Grill or roast at 425°F until the edges char and the thighs are cooked through, 18–22 minutes.",
+			"Rest 5 minutes. Slice and serve with the cucumber, cut into thick spears.",
+		],
 	},
 	{
 		id: "salmon-quinoa",
@@ -1048,7 +1070,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("garlic", 4, "cloves", "Produce"),
 			I("green onion", 4, "", "Produce")
 		],
-		steps: ["Bake chicken with soy, ginger, and garlic at 400°F for 30 minutes.", "Cook a pot of rice. Steam broccoli. Slice chicken over rice in six boxes."]
+		steps: [
+			"Heat the oven to 400°F. Toss the 2½ pounds of chicken thighs with the ¼ cup of soy sauce, the 2 tablespoons of fresh ginger, and the 4 cloves of garlic.",
+			"Bake 30 minutes, until the chicken is cooked through and the edges are browned.",
+			"Cook the 2 cups of rice in salted water until tender. Steam the 2 heads of broccoli until just tender, 4–5 minutes.",
+			"Slice the chicken. Divide rice, chicken, and broccoli among six boxes. Scatter the 4 green onions over.",
+		],
 	},
 	{
 		id: "veg-minestrone",
@@ -1136,7 +1163,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("blueberries", 2, "cups", "Frozen"),
 			I("cinnamon", 1, "tsp", "Herbs & Spices")
 		],
-		steps: ["Stir oats, milk, eggs, maple, cinnamon, and berries. Pour into a buttered pan.", "Bake at 375°F for 35 minutes. Cool and slice."]
+		steps: [
+			"Heat the oven to 375°F. Butter a baking dish.",
+			"Stir the 3 cups of rolled oats, the 2 cups of milk, the 2 eggs, the ⅓ cup of maple syrup, the 1 teaspoon of cinnamon, and the 2 cups of blueberries until even.",
+			"Pour into the buttered pan and spread in an even layer.",
+			"Bake 35 minutes, until the center is set and the top is gold. Cool, then slice.",
+		],
 	},
 	{
 		id: "grain-salad",
@@ -1163,7 +1195,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("olive oil", .25, "cup", "Pantry"),
 			I("lemon", 2, "", "Produce")
 		],
-		steps: ["Cook farro. Roast sweet potato and onion at 425°F.", "Massage kale with lemon and oil. Toss everything with feta."]
+		steps: [
+			"Heat the oven to 425°F. Cook the 2 cups of farro in salted water until tender, then drain.",
+			"Cube the 2 sweet potatoes and slice the red onion. Toss with some of the ¼ cup of olive oil and salt. Roast 25 minutes, until browned.",
+			"Strip the bunch of kale. Massage with the juice of the 2 lemons and the rest of the oil until the leaves soften.",
+			"Toss the farro, roasted vegetables, and kale with the 6 ounces of feta.",
+		],
 	},
 	{
 		id: "chicken-tortilla-soup",
@@ -1191,7 +1228,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("tortilla chips", 1, "bag", "Pantry"),
 			I("lime", 2, "", "Produce")
 		],
-		steps: ["Simmer chicken in broth with cumin and tomatoes until shreddable.", "Add beans and corn. Shred chicken back into the pot. Serve with lime and chips."]
+		steps: [
+			"Set a heavy pot over medium heat. Add the 2 pounds of chicken breasts, the 6 cups of chicken broth, the 1 can of fire-roasted tomatoes, and the 2 teaspoons of cumin.",
+			"Simmer until the chicken shreds easily, about 20 minutes. Pull the chicken out, shred it, and return it to the pot.",
+			"Add the 1 can of black beans and the 1 cup of corn. Simmer 10 minutes more.",
+			"Ladle into bowls. Squeeze the 2 limes over and crush a handful of the tortilla chips on top.",
+		],
 	},
 	{
 		id: "breakfast-burritos",

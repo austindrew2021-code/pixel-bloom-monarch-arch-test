@@ -1,5 +1,5 @@
 import type { Recipe } from "./types";
-import { knownDishMethod, writeDishMethod } from "./write-method.ts";
+import { knownDishMethod, writeDishMethod, hasSpecialistMethod } from "./write-method.ts";
 import { scaleQty } from "./cuisine.ts";
 import { prettyFrac } from "./format.ts";
 
@@ -13,9 +13,53 @@ const JUNK_NAME =
   /^(ingredients?|directions?|instructions?|method|recipes?|index|contents|preface|introduction|chapter\s+\d+|camp cookery)$/i;
 
 const VERB =
-  /\b(heat|warm|preheat|toast|mix|stir|whisk|beat|fold|bake|roast|simmer|boil|brown|sear|saute|sauté|fry|grill|char|chop|dice|slice|cut|mince|add|pour|drain|pat|salt|season|cover|uncover|rest|serve|plate|spoon|spread|brush|toss|combine|blend|purée|puree|mash|shred|roll|knead|steam|pressure|nestle|rub|stuff|fill|layer|top|finish|grate|squeeze|taste|adjust|remove|return|transfer|flip|turn|skim|strain|chill|freeze|thaw|soak|marinate|deglaze|reduce|thicken|crumble|sprinkle|dust|dredge|coat|dip|broil|blanch|peel|core|trim|rinse|wash|set|put|place|drop|press|shape|form|score|tie|truss|cook|scald|dissolve|cream|sift|whip|baste|carve|ladle|dot|glaze|wilt|sweat|bloom|steep|frost|ice|crack|juice|zest|halve|quarter|cube|pull|lock|flatten|melt|wrap|char|scatter|drizzle|paint|scramble|crisp|reheat|keep|dollop|smash|wipe|blot|loosen|swirl|pack|unmold|line|lift|discard|nest|thread|prick|joint|skewer|try|lay|let)\b/i;
+  /\b(heat|warm|preheat|toast|mix|stir|whisk|beat|fold|bake|roast|simmer|boil|brown|sear|saute|sauté|fry|grill|char|chop|dice|slice|cut|mince|add|pour|drain|pat|salt|season|cover|uncover|rest|serve|plate|spoon|spread|brush|toss|combine|blend|purée|puree|mash|shred|roll|knead|steam|pressure|nestle|rub|stuff|fill|layer|top|finish|grate|squeeze|taste|adjust|remove|return|transfer|flip|turn|skim|strain|chill|freeze|thaw|soak|marinate|deglaze|reduce|thicken|crumble|sprinkle|dust|dredge|coat|dip|broil|blanch|peel|core|trim|rinse|wash|set|put|place|drop|press|shape|form|score|tie|truss|cook|scald|dissolve|cream|sift|whip|baste|carve|ladle|dot|glaze|wilt|sweat|bloom|steep|frost|ice|crack|juice|zest|halve|quarter|cube|pull|lock|flatten|melt|wrap|scatter|drizzle|paint|scramble|crisp|reheat|keep|dollop|smash|wipe|blot|loosen|swirl|pack|unmold|line|lift|discard|nest|thread|prick|joint|skewer|try|lay|let|assemble|garnish|divide|cool|unmold|make|shake|eat|fluff|refrigerate|air-?fry|prick|griddle|work|open|flake|pipe|invert|bloom|get|moisten|lower|separate|pile|swipe|shave|smear|arrange|stack|blind-?bake|nestle)\b/i;
 
 const HEAT_VERB = /\b(brown|sear|simmer|bake|roast|fry|boil|grill|broil|cook|toast|steam|pressure)\b|saut[eé]/i;
+
+function minutesWord(n: string | number, unit?: string): string {
+  const num = Number(n);
+  const u = (unit || "minute").toLowerCase();
+  if (/^hours?$|^hrs?$/.test(u)) return num === 1 ? "hour" : "hours";
+  return num === 1 ? "minute" : "minutes";
+}
+
+function tidyCookText(s: string): string {
+  let t = s.replace(/\s+/g, " ").trim();
+  t = t.replace(/\b1 minutes\b/gi, "1 minute");
+  t = t.replace(/\b1 hours\b/gi, "1 hour");
+  t = t.replace(/\b(so the mix is set)(?:[,.]?\s+\1)+\b/gi, "$1");
+  t = t.replace(/\b(so everything is ready)(?:[,.]?\s+\1)+\b/gi, "$1");
+  t = t.replace(/\bin an even layer in an even layer\b/gi, "in an even layer");
+  t = t.replace(/\b(until everything is hot and combined)\. Cook, stirring, \1\.?/gi, "$1.");
+  t = t.replace(/\bthe the\b/gi, "the");
+  t = t.replace(/\bremaining the\b/gi, "remaining");
+  t = t.replace(/\bthe can of the\s+/gi, "the ");
+  t = t.replace(/\bthe slice of the\s+/gi, "the ");
+  t = t.replace(/\ba can of the\s+/gi, "the ");
+  t = t.replace(/\bthe hot the\s+/gi, "the hot ");
+  t = t.replace(/\ba little hot the\s+/gi, "a little of the hot ");
+  t = t.replace(/\bover hot the\s+/gi, "over the ");
+  t = t.replace(/\bHot the\s+/g, "Heat the ");
+  t = t.replace(/\b(ravioli|butter|chicken|beef|pork|turkey|onion|garlic) \1\b/gi, "$1");
+  t = t.replace(/\bIn the same pan, Let\b/g, "In the same pan, let");
+  t = t.replace(/\bStir in the and the\b/gi, "Stir in the");
+  t = t.replace(/\bthe bunch of the\b/gi, "the");
+  t = t.replace(/\bthe head of the\b/gi, "the");
+  t = t.replace(/\bAdd the on a\b/gi, "On a");
+  t = t.replace(/\bFold in the fold\b/gi, "Fold it over");
+  t = t.replace(/\bAdd and cook\b/gi, "Cook");
+  t = t.replace(/\bEgg on top\. the\b/gi, "Egg on top, with the");
+  t = t.replace(/\band and\b/gi, "and");
+  t = t.replace(/\bAdd the lay\b/gi, "Lay");
+  t = t.replace(/\bFold in the together\b/gi, "Fold together");
+  t = t.replace(/\bEat cold until the sauce is even\.?/gi, "Eat cold.");
+  t = t.replace(/\buntil the sauce is even so the mix is set/gi, "until the sauce is even");
+  t = t.replace(/\bthe (cold|chopped|melted|hot|warm|boiling|fresh|ground|grated) the\b/gi, "the $1");
+  t = t.replace(/\bthe the\b/gi, "the");
+  t = t.replace(/\s+/g, " ").trim();
+  return finishSentence(t);
+}
 
 export function cleanRecipeName(name: string): string | null {
   let n = name
@@ -245,9 +289,7 @@ function expandNounList(s: string, recipe: RecipeLike): string | null {
   const raw = s.replace(/[.]+$/, "").trim();
   if (!raw) return null;
   const first = raw.split(/[\s,]/)[0] ?? "";
-  const leadingCookVerb =
-    VERB.test(first) && !/^(mash|roll|invert|rest|fold|strain|blend|spread|peel|oil|salt|pepper|toast)$/i.test(first);
-  if (leadingCookVerb) return null;
+  if (VERB.test(first)) return null;
 
   const tokens = raw
     .split(/\s*,\s*|\s+or\s+|\s+and\s+/i)
@@ -255,11 +297,14 @@ function expandNounList(s: string, recipe: RecipeLike): string | null {
     .filter((t) => t && t !== "and");
   if (tokens.length === 0) return null;
 
-  if (/\bor\b/i.test(raw) && tokens.every((t) => SERVE_WORDS.has(t) || SERVE_WORDS.has(t.replace(/s$/, "")))) {
-    return finishSentence(`Serve with ${joinList(tokens)}`);
+  if (tokens.some((t) => /fry|deep-fry|crumb/.test(t)) && tokens.some((t) => /egg/.test(t))) {
+    return finishSentence(`Dip in beaten egg, then ${joinList(tokens.filter((t) => !/egg/.test(t)))}, and fry until gold`);
   }
 
+  const batterish = tokens.some((t) => /milk|flour|butter|sugar|dough|crumb/.test(t));
+  const cookedEgg = recipe.steps.some((s) => /scramble|beat|fry|stir in/.test(s.toLowerCase()) && /egg/.test(s.toLowerCase()));
   if (tokens.length >= 1 && (SERVE_WORDS.has(tokens[0]!) || SERVE_WORDS.has(tokens[0]!.replace(/s$/, "")))) {
+    if (batterish || (cookedEgg && tokens.some((t) => /egg/.test(t)))) return finishSentence(`Stir in the ${joinList(tokens)}`);
     return finishSentence(`Serve with ${joinList(tokens)}`);
   }
 
@@ -357,9 +402,30 @@ function expandFragment(s: string, recipe: RecipeLike): string {
     roll: "Roll it up and eat while the edges are still crisp.",
     "drain extra fat": "Tilt the pan and drain off extra fat so the sauce is not greasy.",
   };
-  if (canned[lower]) return canned[lower];
+  if (/^spread on /i.test(lower)) {
+    return finishSentence(`Spread the mixture ${lower.replace(/^spread /i, "")}`);
+  }
+  if (/^cream\.?$/i.test(lower) && (recipe.plate === "dessert" || /shortcake|berry|cake/i.test(recipe.name))) {
+    return "Spoon cream over the top and serve.";
+  }
+  if (canned[lower]) {
+    if (lower === "roll" && /cabbage|holub|golub|stuffed cabbage/i.test(`${recipe.name} ${(recipe.tags ?? []).join(" ")}`)) {
+      return "Roll each leaf around a spoon of the filling, tucking in the sides so they hold.";
+    }
+    return canned[lower];
+  }
   const finish = finishToken(lower);
-  if (finish) return finish;
+  if (finish) {
+    if (lower === "cream" && (recipe.plate === "dessert" || /shortcake|berry|cake/i.test(recipe.name))) {
+      return "Spoon cream over the top and serve.";
+    }
+    if (lower === "egg" || lower === "eggs") {
+      if (recipe.ingredients.some((i) => /flour|milk|butter|sugar|dough/i.test(i.name))) {
+        return "Beat in the egg.";
+      }
+    }
+    return finish;
+  }
 
   if (/spread thin on/i.test(lower)) {
     const dough = recipe.ingredients.find((i) => /dough|pastry/i.test(i.name))?.name ?? "dough";
@@ -374,30 +440,47 @@ function expandFragment(s: string, recipe: RecipeLike): string {
   }
 
   const timed = lower.match(
-    /^(flip|turn|sear|render|simmer|bake|roast|boil|cook|fry|sauté|saute|steam|rest|cover|broil|chill)(?: for)? (\d+)(?:-\d+)?(?: minutes?| hours?)?(?: a side| per side)?$/,
+    /^(flip|turn|sear|render|simmer|bake|roast|boil|cook|fry|sauté|saute|steam|rest|cover|broil|chill)(?: for)? (\d+)(?:[-–]\d+)?(?:\s+(minutes?|mins?|hours?|hrs?))?(?: a side| per side)?$/,
   );
   if (timed) {
     const verb = timed[1]!.toLowerCase();
     const n = timed[2]!;
+    const unit = timed[3] || "minutes";
+    const dur = `${n} ${minutesWord(n, unit)}`;
     const meat = proteinNoun(recipe);
     if (verb === "flip" || verb === "turn") {
-      return `Flip the ${meat} and cook ${n} minutes on the other side.`;
+      return `Flip the ${meat} and cook ${dur} on the other side.`;
     }
     if (verb === "sear") {
-      return `Sear the ${meat} ${n} minutes per side.`;
+      return `Sear the ${meat} ${dur} per side.`;
     }
     if (verb === "render") {
-      return `Cook the ${meat} skin-side down ${n} minutes, until the fat is rendered and the skin is gold.`;
+      return `Cook the ${meat} skin-side down ${dur}, until the fat is rendered and the skin is gold.`;
     }
-    if (verb === "steam") return `Cover and steam for ${n} minutes.`;
-    if (verb === "rest") return `Rest the ${meat} ${n} minutes off the heat so the juices settle.`;
-    if (verb === "cover") return `Cover the pan and cook ${n} minutes.`;
-    if (verb === "broil") return `Broil ${n} minutes, until the top is browned.`;
-    if (verb === "chill") return /hour/.test(lower) ? `Chill ${n} hours.` : `Chill ${n} minutes.`;
-    return `${capitalize(timed[1]!)} for ${n} minutes.`;
+    if (verb === "steam") return `Cover and steam for ${dur}, until tender all the way through.`;
+    if (verb === "rest") {
+      const blob = `${recipe.name} ${(recipe.tags ?? []).join(" ")} ${recipe.plate}`.toLowerCase();
+      if (isDoughRest(recipe) || /cornmeal|meal|mush|batter|dough|flour/.test(`${blob} ${meat}`)) {
+        return `Rest ${dur} so the mix hydrates and thickens.`;
+      }
+      if (/meatloaf|loaf/.test(blob)) {
+        return `Rest the loaf ${dur} so it slices clean.`;
+      }
+      return `Rest the ${meat} ${dur} off the heat so the juices settle.`;
+    }
+    if (verb === "cover") return `Cover the pan and cook ${dur}.`;
+    if (verb === "broil") {
+      const range = lower.match(/(\d+\s*[-–]\s*\d+)/);
+      return `Broil ${range ? range[1].replace(/\s+/g, "") : dur}, until the top is browned and bubbling.`;
+    }
+    if (verb === "chill") return `Chill ${dur} so the mix is set.`;
+    if (verb === "simmer" || verb === "boil" || verb === "cook") {
+      return `${capitalize(verb)} for ${dur}, until the food is tender and cooked through.`;
+    }
+    return `${capitalize(timed[1]!)} for ${dur}.`;
   }
   const high = lower.match(/^high pressure (\d+) minutes?$/);
-  if (high) return `Lock the lid. Cook at high pressure for ${high[1]} minutes.`;
+  if (high) return `Lock the lid. Cook at high pressure for ${high[1]} ${minutesWord(high[1])}.`;
   const natural = lower.match(/^natural(?: release)?(?: (\d+))?/);
   if (natural && lower.startsWith("natural")) {
     return natural[1]
@@ -460,6 +543,9 @@ function expandFragment(s: string, recipe: RecipeLike): string {
   if (/^mix\b/i.test(t) && !/until|bowl/i.test(t)) {
     return finishSentence(`${t.replace(/[.]$/, "")} in a bowl until even`);
   }
+  if (/^stir in the morning/i.test(lower)) {
+    return "Stir in the morning. Eat cold, or warm for 30 seconds if you want.";
+  }
   if (/^stir in\b/i.test(lower) && !/until/i.test(lower)) {
     return finishSentence(`Stir in ${lower.replace(/^stir in\s+/i, "")} until the sauce is even`);
   }
@@ -477,6 +563,10 @@ function expandFragment(s: string, recipe: RecipeLike): string {
     return `Set the ${meat} skin-side down in a cold skillet. Cook over medium heat for ${coldPan[1]} minutes, until the fat is rendered and the skin is gold.`;
   }
   if (/^slice\.?$/i.test(lower) || /^slice$/i.test(lower)) {
+    const blob = `${recipe.name} ${recipe.steps.join(" ")}`.toLowerCase();
+    if (/mold|mould|paste|terrine/.test(blob)) {
+      return "Turn out of the mold and slice.";
+    }
     return `Slice the ${proteinNoun(recipe)} across the grain and spoon the pan juices over.`;
   }
   if (/^spoon over/i.test(lower)) {
@@ -488,11 +578,61 @@ function expandFragment(s: string, recipe: RecipeLike): string {
     return finishSentence(`Rub ${onThe[1]} on the ${onThe[2]}`);
   }
 
+  const ovenRange = lower.match(/^(\d{3})\s*°?\s*f\s+(\d+)\s*(?:to|-|–)\s*(\d+)\s*minutes?$/);
+  if (ovenRange) {
+    return `Bake at ${ovenRange[1]}°F for ${ovenRange[2]} to ${ovenRange[3]} minutes.`;
+  }
   const ovenOnly = lower.match(/^(\d{3})\s*°?\s*f(?:\s+(\d+)\s*minutes?)?$/);
   if (ovenOnly) {
+    const air = (recipe.tags ?? []).includes("air-fryer") || /air-?fryer/.test(recipe.name);
+    if (ovenOnly[2] && air) {
+      return `Air-fry at ${ovenOnly[1]}°F for ${ovenOnly[2]} minutes, turning once.`;
+    }
     return ovenOnly[2]
-      ? `Roast at ${ovenOnly[1]}°F for ${ovenOnly[2]} minutes, until tender and browned.`
+      ? `Bake at ${ovenOnly[1]}°F for ${ovenOnly[2]} minutes.`
       : `Heat the oven to ${ovenOnly[1]}°F.`;
+  }
+  const slowH = lower.match(/^(high|low)\s+(\d+)\s*hours?/);
+  if (slowH) {
+    return `Cover and cook on ${slowH[1]} for ${slowH[2]} hours, until tender.`;
+  }
+
+  if (/^fold\.?$/i.test(lower) || /^fold\.\s+/i.test(lower)) {
+    return "Fold it over and slide it onto a plate.";
+  }
+  if (/^fold\b/i.test(lower) && !/^fold and serve\.?$/i.test(lower)) {
+    if (/^fold(?:\s+in)?\s+(gently|carefully|slowly|lightly)\b/i.test(lower)) {
+      return finishSentence(capitalize(t));
+    }
+    const rest = lower.replace(/^fold(?:\s+in)?\s+/i, "").replace(/[.]+$/, "");
+    if (!rest || rest === "fold" || /^slide\b/i.test(rest)) {
+      return "Fold it over and slide it onto a plate.";
+    }
+    if (rest) {
+      const noun = /^the\s+/i.test(rest) ? rest : `the ${rest}`;
+      return finishSentence(`Fold in ${noun}`);
+    }
+  }
+
+  if (/^steam\b/i.test(lower) && !hasTime(t) && !/until/i.test(lower)) {
+    return finishSentence(`${capitalize(t.replace(/[.]$/, ""))}, until just tender, 4–5 minutes`);
+  }
+
+  if (/^cut apples/i.test(lower)) {
+    return "Peel and cut the apples into thick slices.";
+  }
+  if (/^slice pears/i.test(lower)) {
+    return "Peel and slice the pears.";
+  }
+
+  if (/^assemble\b/i.test(lower) || /^add the assemble\b/i.test(lower)) {
+    return "Divide among bowls. Spoon the sauce over the top and serve.";
+  }
+  if (/^in the (?:same )?pan,?\s+/i.test(lower)) {
+    return finishSentence(`In the same pan, ${lower.replace(/^in the (?:same )?pan,?\s+/i, "")}`);
+  }
+  if (/^soak(?: the)? beans/i.test(lower)) {
+    return "Soak the beans in plenty of cold water overnight, or at least 8 hours. Drain.";
   }
 
   if (/^oil,/.test(lower) && /salt/.test(lower)) {
@@ -519,11 +659,24 @@ function expandFragment(s: string, recipe: RecipeLike): string {
   if (t.length >= 40 && VERB.test(t)) return t;
   if (!VERB.test(t)) {
     const body = t.replace(/[.]$/, "");
-    if (/^\d/.test(body) || /°/.test(body)) return finishSentence(`Cook ${body.toLowerCase()}`);
+    if (/^\d/.test(body) || /°/.test(body)) {
+      const range = body.match(/(\d{3})\s*°?\s*f\s+(\d+)\s*(?:to|-|–)\s*(\d+)\s*minutes?/i);
+      if (range) return `Bake at ${range[1]}°F for ${range[2]} to ${range[3]} minutes.`;
+      const one = body.match(/(\d{3})\s*°?\s*f\s+(\d+)\s*minutes?/i);
+      if (one) return `Bake at ${one[1]}°F for ${one[2]} minutes.`;
+      return finishSentence(`Bake at ${body}`);
+    }
     const first = (body.split(/\s+/)[0] ?? "").toLowerCase();
-    if (first.length >= 4 && !/^(the|and|with|from|into|some|half|this|that|each)$/.test(first)) {
+    if (
+      first.length >= 2 &&
+      /^(in|on|at|to|for|into|onto|over|under|after|before|once|when|while|until|if|with|from|the|and|some|half|this|that|each)$/.test(
+        first,
+      )
+    ) {
       return finishSentence(capitalize(body));
     }
+    if (body.length >= 40) return finishSentence(capitalize(body));
+    if (first.length >= 4) return finishSentence(capitalize(body));
     return finishSentence(`Add the ${body.toLowerCase()}`);
   }
   return t;
@@ -535,7 +688,7 @@ function patternEnrich(step: string, recipe: RecipeLike): string | null {
 
   const high = s.match(/high pressure (\d+)\s*minutes?/i);
   if (high && !/lock the lid/i.test(s)) {
-    return `Lock the Instant Pot lid. Cook at high pressure for ${high[1]} minutes.`;
+    return `Lock the Instant Pot lid. Cook at high pressure for ${high[1]} ${minutesWord(high[1])}.`;
   }
   const nat = s.match(/natural(?: release)? (\d+)/i);
   if (nat && s.length < 48) {
@@ -589,11 +742,13 @@ function patternEnrich(step: string, recipe: RecipeLike): string | null {
 function genericEnrich(step: string, recipe: RecipeLike): string {
   let s = finishSentence(step);
 
-  if (HEAT_VERB.test(s) && !hasTime(s)) {
+  const toastAsNoun = /\b(serve|plate|over|on|with|from)\b.*\btoast\b/i.test(s) && !/\btoast(?:ed|ing)? the\b/i.test(s);
+  const doNotHeat = /\bdo not\b|\bdon't\b/i.test(s);
+  if (HEAT_VERB.test(s) && !hasTime(s) && !doNotHeat && !toastAsNoun) {
     const d = inferDuration(s, recipe);
     if (d) {
       const sentences = s.match(/[^.!?]+[.!?]+/g);
-      const heatAt = sentences?.findIndex((x) => HEAT_VERB.test(x)) ?? -1;
+      const heatAt = sentences?.findIndex((x) => HEAT_VERB.test(x) && !/\bdo not\b/i.test(x)) ?? -1;
       if (sentences && heatAt >= 0) {
         const target = sentences[heatAt]!.replace(/[.!?]\s*$/, "");
         sentences[heatAt] = /\buntil\b/i.test(target) ? `${target} — about ${d}.` : `${target} for ${d}.`;
@@ -609,7 +764,9 @@ function genericEnrich(step: string, recipe: RecipeLike): string {
   if (isPressure(recipe) && /saut[eé]/i.test(s) && !/instant pot/i.test(s)) {
     s = `Set the Instant Pot to Sauté. ${s}`;
   } else if (HEAT_VERB.test(s) && !/\b(skillet|pan|pot|oven|saucepan|sheet|dish|instant pot|grill)\b/i.test(s)) {
-    if (/\bbrown\b|\bsear\b|\bfry\b|saut[eé]/i.test(s)) {
+    if (/^(add|stir|pour|return|fold|nestle|cover|simmer)\b/i.test(s)) {
+      /* already in a pan — don't start a new one */
+    } else if (/\bbrown\b|\bsear\b|\bfry\b|saut[eé]/i.test(s)) {
       s = `Set a wide skillet over medium-high heat. ${s}`;
     } else if (/\bsimmer\b|\bstew\b/i.test(s)) {
       s = `Use a heavy pot over medium heat. ${s}`;
@@ -687,7 +844,12 @@ function isClearMethod(steps: string[], recipe: RecipeLike): boolean {
 }
 
 function serveLine(recipe: RecipeLike): string {
+  const blob = `${recipe.name} ${(recipe.tags ?? []).join(" ")} ${recipe.plate}`.toLowerCase();
   if (isDrink(recipe)) return "Taste, adjust the sweet or sour, and serve.";
+  if (recipe.plate === "green" || /salad|slaw|aspic/.test(blob)) return "Serve cold, on a chilled plate.";
+  if ((recipe.tags ?? []).includes("chilled") || /yogurt|parfait|overnight|muesli/.test(blob)) {
+    return "Serve cold, straight from the fridge.";
+  }
   if (recipe.plate === "dessert") return "Cool until just set, then slice or spoon and serve.";
   if (recipe.plate === "toast") return "Serve right away so the bread stays crisp.";
   if (recipe.plate === "soup") return "Taste for salt. Ladle into warm bowls.";
@@ -717,12 +879,213 @@ function isKeepableMethod(steps: string[], recipe: RecipeLike): boolean {
   const solid = (s: string) => s.length >= 40 && VERB.test(s) && mentionsFood(s, recipe);
   if (steps.length >= 3 && steps.every(solid)) return true;
   if (steps.length >= 3 && steps.every((s) => isUsableCookStep(s))) return true;
+  if (steps.length >= 3 && steps.filter(isUsableCookStep).length >= 3 && steps.every((s) => s.length >= 20)) return true;
   if (isFromABook(recipe) && steps.length >= 3 && steps.every((s) => s.length >= 24 && VERB.test(s))) return true;
+  if (steps.length >= 3 && steps.every((s) => s.length >= 24 && VERB.test(s)) && !isJunkMethod(steps)) return true;
   return false;
 }
 
 const NEW_COOK_STAGE =
-  /\b(preheat|heat|bake|roast|broil|grill|sear|simmer|boil|steam|chill|rest|serve|plate|drain|transfer|fry|poach|whisk|spread|toast|fold|brown|saute|sauté|wilt|cook|lock|blend|mash|score|pat|set|stir|spoon|add|pour|toss|mix)\b/i;
+  /\b(preheat|heat|bake|roast|broil|grill|sear|simmer|boil|steam|chill|rest|serve|plate|drain|transfer|fry|poach|whisk|spread|toast|fold|brown|saute|sauté|wilt|cook|lock|blend|mash|score|pat|set|stir|spoon|add|pour|toss|mix|soak|assemble|pile|swipe|roll)\b/i;
+
+function isDoughRest(recipe: RecipeLike): boolean {
+  const blob = `${recipe.name} ${(recipe.tags ?? []).join(" ")} ${recipe.plate}`.toLowerCase();
+  return (
+    /sourdough|dough|starter|bread flour|baking|hoe cake|cornmeal|batter|mush|pastry/.test(blob) ||
+    recipe.ingredients.some((i) => /starter|bread flour|cornmeal|flour/.test(i.name))
+  );
+}
+
+function lengthenShortCard(s: string, recipe: RecipeLike): string {
+  const raw = finishSentence(s.replace(/\s+/g, " ").trim());
+  if (raw.length >= 40) return raw;
+  const t = raw.replace(/[.]+$/, "").trim();
+  const lower = t.toLowerCase();
+  const meat = proteinNoun(recipe);
+
+  if (/^do not stir/i.test(t)) {
+    return "Do not stir — leave it layered so the top stays frosty.";
+  }
+  if (/^do not boil/i.test(t)) {
+    return "Do not let it boil, or the milk will curdle. Keep it just steaming.";
+  }
+  if (/^lower(?: the)? heat/i.test(t)) {
+    return "Lower the heat so it cooks gently without burning.";
+  }
+  if (/^drain\.?$/i.test(t)) {
+    return "Drain well, then continue with the next step.";
+  }
+  if (/^serve cold/i.test(t)) {
+    return "Serve cold, straight from the fridge.";
+  }
+  if (/^instantly on toast/i.test(t)) {
+    return "Spoon instantly over hot toast and serve at once.";
+  }
+  if (/^pat ½ inch/i.test(t) || /^pat 1\/2 inch/i.test(t)) {
+    return "Pat the dough out ½ inch thick and cut into pieces.";
+  }
+  if (/^blend and serve/i.test(t)) {
+    return "Stir until everything is hot and combined, then serve.";
+  }
+  if (/^cook down/i.test(t)) {
+    return finishSentence(`${t}, until the pot is thick and the flavors have come together`);
+  }
+  if (/^rest before carving/i.test(t)) {
+    return `Rest the ${meat} 15–20 minutes off the heat before carving so the juices settle.`;
+  }
+  if (/^spoon batter in/i.test(t)) {
+    return "Spoon the batter in, a few at a time, leaving room to turn them.";
+  }
+  if (/^cakes? ½ inch/i.test(t) || /^cakes? 1\/2 inch/i.test(t)) {
+    return "Shape into cakes ½ inch thick and lay them on a hot greased griddle.";
+  }
+  if (/^broil until browned/i.test(t)) {
+    return "Broil until browned on both sides, 8–10 minutes, then serve hot.";
+  }
+  if (/^turn out onto a plate/i.test(t)) {
+    return "Turn the curds out onto a plate so they hold their shape.";
+  }
+  if (/^cook until almost done/i.test(t)) {
+    return "Cook until almost tender, then add the rest of the food.";
+  }
+  if (/^taste for salt/i.test(t) || /^taste and add salt/i.test(t)) {
+    return "Taste and add salt until the flavor is round, then serve.";
+  }
+  if (/^serve at once/i.test(t) || /^serve (very )?hot/i.test(t) || /^serve right away/i.test(t) || /^serve clear/i.test(t) || /^plate and serve/i.test(t)) {
+    return serveLine(recipe);
+  }
+  if (/^heat gently/i.test(t)) {
+    return "Heat gently until steaming, and do not let it boil.";
+  }
+  if (/^chill until firm/i.test(t)) {
+    return "Chill until firm, at least 2 hours, then turn out of the mold.";
+  }
+  if (/^chill overnight/i.test(t)) {
+    return "Chill overnight so the flavors settle and the mix is set.";
+  }
+  if (/^chill in the icebox/i.test(t) || /^chill in a mold/i.test(t)) {
+    return finishSentence(`${t} so it is cold through and holds its shape`);
+  }
+  if (/^fold and serve/i.test(t)) {
+    return "Fold together just until combined, then plate and serve.";
+  }
+  if (/^mash a few/i.test(t) || /^mash some beans/i.test(t)) {
+    return "Mash some of the beans against the side of the pot so the soup turns creamy.";
+  }
+  if (/^add chicken\.?$/i.test(t) || /^add chicken$/i.test(t)) {
+    return `Nestle the ${meat} back into the sauce and simmer 5 minutes so it drinks the gravy.`;
+  }
+  if (/^add crab\.?$/i.test(t)) {
+    return "Fold in the crab gently so the lumps stay whole.";
+  }
+  if (/^pour b[ée]chamel/i.test(t)) {
+    return "Pour the béchamel over the top in an even layer.";
+  }
+  if (/^spread over the mince/i.test(t)) {
+    return "Spread the mash over the mince in an even layer, sealing the edges.";
+  }
+  if (/^broil until charred/i.test(t)) {
+    return "Broil until the edges are charred and the meat is just cooked through.";
+  }
+  if (/^melt cheddar off heat/i.test(t)) {
+    return "Take the pan off the heat and melt in the cheddar, stirring until the sauce is smooth.";
+  }
+  if (/^rest, slice, spoon (sauce|gravy)/i.test(t)) {
+    const what = /gravy/i.test(t) ? "gravy" : "sauce";
+    return `Rest the ${meat} 5 minutes off the heat. Slice across the grain and spoon the ${what} over.`;
+  }
+  if (/^assemble\b/i.test(t) || /^add the assemble/i.test(t)) {
+    return "Divide among bowls. Spoon the sauce over the top and serve.";
+  }
+  if (/^green onion/i.test(t)) {
+    return "Scatter the sliced green onion over the top and serve hot.";
+  }
+  if (/^bread\.?$/i.test(t)) {
+    return "Serve with warm bread for scooping.";
+  }
+  if (/^soak(?: the)? beans/i.test(t) || /^soak overnight/i.test(t)) {
+    return "Soak the beans in plenty of cold water overnight, or at least 8 hours. Drain.";
+  }
+  if (/^rest 5/i.test(t) || /^rest 5–10 minutes off the heat/i.test(t) || /^rest \d/i.test(t)) {
+    if (isDoughRest(recipe)) return finishSentence(`Rest ${t.replace(/^rest\s+/i, "")} so the mix hydrates`);
+    if (/meatloaf|loaf/i.test(recipe.name)) return "Rest the loaf 5–10 minutes off the heat so it slices clean.";
+    if (recipe.protein === "veg" && !/tofu|tempeh/.test(meat)) {
+      return finishSentence(`Rest ${t.replace(/^rest\s+/i, "")} so it settles, then continue`);
+    }
+    return `Rest the ${meat} 5–10 minutes off the heat so the juices settle, then slice.`;
+  }
+  if (/^fold in /i.test(t)) {
+    return finishSentence(`${t} just until they disappear into the mix`);
+  }
+  if (/^serve with /i.test(t)) {
+    return finishSentence(`Spoon onto plates and serve with ${t.replace(/^serve with /i, "")} on the side`);
+  }
+  if (/^serve over /i.test(t)) {
+    return finishSentence(`Spoon over ${t.replace(/^serve over /i, "")} and serve hot`);
+  }
+  if (/^serve on /i.test(t)) {
+    return finishSentence(`Spoon onto ${t.replace(/^serve on /i, "")} and serve at once`);
+  }
+  if (/^cook (?:a pot of )?the /i.test(t) && /(rice|quinoa|farro|grain|pasta)/i.test(t)) {
+    return finishSentence(`${t} in salted water until tender, then drain`);
+  }
+  if (/^cook a pot of /i.test(t)) {
+    return finishSentence(`${t} in salted water until tender, then drain`);
+  }
+  if (/^pour into /i.test(t)) {
+    return finishSentence(`${t} and spread it in an even layer`);
+  }
+  if (/^pour over /i.test(t) || /^pour fat over /i.test(t)) {
+    return finishSentence(`${t} so everything is coated`);
+  }
+  if (/^spread /i.test(t)) {
+    return finishSentence(`${t} in an even layer, all the way to the edges`);
+  }
+  if (/^add /i.test(t)) {
+    return finishSentence(`${t} and cook, stirring, until everything is hot and combined`);
+  }
+  if (/^pour /i.test(t)) {
+    return finishSentence(`${t} in an even layer`);
+  }
+  if (/^squeeze (lemon|lime) over/i.test(t)) {
+    return finishSentence(`${t} so the food tastes bright, then serve`);
+  }
+  if (/^cover and (steam|roast|bake|simmer)/i.test(t)) {
+    return finishSentence(`${t}, until tender all the way through`);
+  }
+  if (/^spoon into cups/i.test(t) || /^spoon onto /i.test(t)) {
+    return finishSentence(`${t} and serve while they are hot`);
+  }
+  if (/^chill /i.test(t)) {
+    if (/so the mix is set|so it is cold|so it firms|so the flavors/i.test(t)) return finishSentence(t);
+    return finishSentence(`${t} so the mix is set`);
+  }
+  if (/^take off the heat/i.test(t)) {
+    return "Take the pan off the heat and let it sit 1 minute so it settles.";
+  }
+  if (/^slide onto a plate/i.test(t)) {
+    return "Slide onto a plate and serve at once, while it is still hot.";
+  }
+  if (/^get out /i.test(t)) {
+    return finishSentence(`${t.replace(/\.?$/, "")} so everything is within reach`);
+  }
+  if (/^shape /i.test(t) && t.length < 48) {
+    return finishSentence(`${t.replace(/[.]$/, "")} with wet hands so they hold together`);
+  }
+  if (/^roll thin/i.test(t) && t.length < 48) {
+    return finishSentence(`${t.replace(/[.]$/, "")} on a floured board`);
+  }
+  if (/^roll warm/i.test(t)) {
+    return "Roll the sponge up while it is still warm so it does not crack.";
+  }
+  if (/^roll up/i.test(t) && t.length < 40) {
+    return finishSentence(`${t.replace(/[.]$/, "")} and pinch the seam so the filling stays in`);
+  }
+  if (VERB.test(t)) {
+    return finishSentence(t);
+  }
+  return finishSentence(capitalize(t));
+}
 
 function foldShortSteps(steps: string[], recipe?: RecipeLike): string[] {
   const out: string[] = [];
@@ -734,7 +1097,7 @@ function foldShortSteps(steps: string[], recipe?: RecipeLike): string[] {
       if (expanded.length >= 28 && expanded.toLowerCase() !== s.toLowerCase()) s = expanded;
     }
     const weak = s.length < 36 || !VERB.test(s);
-    const newStage = NEW_COOK_STAGE.test(s);
+    const newStage = NEW_COOK_STAGE.test(s) && !/^lower(?: the)? heat/i.test(s) && !/^drain\.?$/i.test(s);
     if (out.length && weak && !newStage) {
       out[out.length - 1] = `${out[out.length - 1]!.replace(/[.]+$/, "")}. ${s}`;
       continue;
@@ -746,19 +1109,87 @@ function foldShortSteps(steps: string[], recipe?: RecipeLike): string[] {
     out[1] = `${out[0]!.replace(/[.]+$/, "")}. ${out[1]}`;
     out.shift();
   }
-  return out.map((s) => {
+  const mapped = out.map((s) => {
     if (!recipe) return s;
+    if (/^Serve hot\.?$/i.test(s) || /^Serve right away\.?$/i.test(s)) {
+      return recipe ? serveLine(recipe) : "Plate and serve hot.";
+    }
     if (/^Heat the oven to \d{3}°F\.?$/i.test(s)) {
       return `${s.replace(/\.?$/, "")} and set a rack in the middle.`;
+    }
+    if (/^Rest \d+[–-]?\d* minutes, then plate\.?$/i.test(s)) {
+      return s.replace(/\.?$/, " and serve hot.");
+    }
+    if (/^Chill at least \d+ minutes\.?$/i.test(s)) {
+      if (/so the mix is set/i.test(s)) return s;
+      return s.replace(/\.?$/, " so the mix is set.");
+    }
+    if (/^Lock the lid\.?$/i.test(s)) {
+      return "Lock the Instant Pot lid and make sure the valve is sealed.";
+    }
+    if (/^Drain on paper\.?$/i.test(s)) {
+      return "Lift out and drain on a rack or paper so they stay crisp.";
+    }
+    if (/^Stir until even\.?$/i.test(s)) {
+      return "Stir until the mix is even, with no dry pockets.";
     }
     if (/^Use a heavy pot over medium heat\.?$/i.test(s)) {
       return "Set a heavy pot over medium heat until the fat shimmers.";
     }
-    if (s.length >= 36 && !(HEAT_VERB.test(s) && !hasTime(s) && s.length < 72)) return s;
+    if (/^Soak(?: the)? beans\.?$/i.test(s) || /^Soak overnight\.?$/i.test(s)) {
+      return "Soak the beans in plenty of cold water overnight, or at least 8 hours. Drain.";
+    }
+    if (/^Chill(?: for)? (\d+)\s*minutes?\.?$/i.test(s) && s.length < 40) {
+      if (/so the mix/i.test(s)) return s;
+      return s.replace(/\.?$/, " so the mix firms up.");
+    }
+    if (/^Bake (\d+)\s*minutes? at (\d{3})°?F\.?$/i.test(s)) {
+      return s.replace(
+        /^Bake (\d+)\s*minutes? at (\d{3})°?F\.?$/i,
+        "Bake at $2°F for $1 minutes, until the center is set and the top is gold.",
+      );
+    }
+    if (/^Bake(?: covered)? (\d+(?:\.\d+)?)\s*hours? at (\d{3})°?F\.?$/i.test(s) || /^Bake covered (\d+)\s*minutes? at (\d{3})°?F\.?$/i.test(s)) {
+      return finishSentence(`${s.replace(/\.?$/, "")}, until tender all the way through`);
+    }
+    if (/^Bake at (\d{3})°F for (\d+) minutes\.?$/i.test(s) && s.length < 40) {
+      return s.replace(/\.?$/, ", until the center is set.");
+    }
+    if (/^Nestle in tomato sauce\.?$/i.test(s)) {
+      return "Nestle the rolls in the tomato sauce, cover, and simmer until tender.";
+    }
+    if (/^Toss pasta\.?$/i.test(s)) {
+      return "Drain the pasta, saving a cup of the water. Toss with the sauce.";
+    }
+    if (/^Serve with the /i.test(s) && s.length < 40) {
+      return s.replace(/^Serve with /i, "Spoon into bowls and serve with ").replace(/\.?$/, " on the side.");
+    }
+    if (/^Serve over the /i.test(s) && s.length < 40) {
+      return s.replace(/^Serve over /i, "Spoon over ").replace(/\.?$/, " and serve hot.");
+    }
+    if (s.length >= 40 && !(HEAT_VERB.test(s) && !hasTime(s) && s.length < 72)) return s;
     const next = expandFragment(s, recipe);
-    if (next.length >= 36) return next;
-    return genericEnrich(next, recipe);
+    const long = next.length >= 40 ? next : genericEnrich(next, recipe);
+    return lengthenShortCard(long, recipe);
   }).filter(keepPiece);
+  const collapsed: string[] = [];
+  for (const s of mapped) {
+    const last = collapsed[collapsed.length - 1];
+    if (last && /^Set a wide skillet over medium-high heat\.?$/i.test(last) && /^Set a wide skillet over medium-high heat\./i.test(s)) {
+      collapsed[collapsed.length - 1] = s;
+      continue;
+    }
+    if (last && /^Set a wide skillet over medium-high heat\.?$/i.test(last) && /\b(brown|sear|fry|sauté|saute)\b/i.test(s)) {
+      collapsed[collapsed.length - 1] = `${last.replace(/[.]+$/, "")}. ${s.replace(/^Set a wide skillet over medium-high heat\.\s*/i, "")}`;
+      continue;
+    }
+    if (last && /^Use a heavy pot over medium heat\.?$/i.test(last) && /\b(simmer|stew|boil)\b/i.test(s)) {
+      collapsed[collapsed.length - 1] = `${last.replace(/[.]+$/, "")}. ${s.replace(/^Use a heavy pot over medium heat\.\s*/i, "")}`;
+      continue;
+    }
+    collapsed.push(s);
+  }
+  return collapsed.length ? collapsed : mapped;
 }
 
 function expandToMinCards(steps: string[], recipe: RecipeLike): string[] {
@@ -799,11 +1230,31 @@ function escapeRe(s: string): string {
 }
 
 function pluralFoodName(name: string): string {
+  if (/^ear of corn$/i.test(name)) return "ears of corn";
   if (/s$/i.test(name)) return name;
   if (/leaf$/i.test(name)) return name.replace(/leaf$/i, "leaves");
   if (/potato$/i.test(name)) return name.replace(/potato$/i, "potatoes");
   if (/tomato$/i.test(name)) return name.replace(/tomato$/i, "tomatoes");
   return `${name}s`;
+}
+
+function singularFoodName(name: string): string {
+  const n = name.replace(/^the\s+/i, "");
+  if (/^ears of corn$/i.test(n)) return "ear of corn";
+  if (/\b(couscous|molasses|bass|citrus|hummus|asparagus|octopus|oats)\b/i.test(n)) return n;
+  if (/leaves$/i.test(n)) return n.replace(/leaves$/i, "leaf");
+  if (/potatoes$/i.test(n)) return n.replace(/potatoes$/i, "potato");
+  if (/tomatoes$/i.test(n)) return n.replace(/tomatoes$/i, "tomato");
+  if (/s$/i.test(n) && !/ss$/i.test(n)) return n.replace(/s$/i, "");
+  return n;
+}
+
+function namePattern(name: string): string {
+  const t = name.trim();
+  if (/\b(couscous|molasses|bass|citrus|hummus|asparagus|octopus|oats)\b/i.test(t)) return escapeRe(t);
+  const base = t.replace(/s$/i, "");
+  if (base.length < 3) return escapeRe(t);
+  return `${escapeRe(base)}s?`;
 }
 
 function prettyUnit(unit: string, qty: number): string {
@@ -828,8 +1279,12 @@ function prettyUnit(unit: string, qty: number): string {
 
 function amountPhrase(ing: { name: string; qty: number; unit: string }): string {
   const name = ing.name.replace(/^the\s+/i, "");
-  const qty = Number(ing.qty);
-  const unit = (ing.unit ?? "").trim();
+  let qty = Number(ing.qty);
+  let unit = (ing.unit ?? "").trim();
+  if (/^(tbsp|tablespoons?)$/i.test(unit) && qty > 0 && qty < 0.4) {
+    qty *= 3;
+    unit = /^tbsp$/i.test(ing.unit.trim()) ? "tsp" : "teaspoon";
+  }
   if (!qty && !unit) return `the ${name}`;
   if (/pinch|dash/i.test(unit) && (!qty || qty === 1)) {
     return `a ${unit.replace(/s$/i, "").toLowerCase()} of ${name}`;
@@ -837,8 +1292,10 @@ function amountPhrase(ing: { name: string; qty: number; unit: string }): string 
   const q = prettyFrac(qty || 1);
   const u = prettyUnit(unit, qty || 1);
   if (!u) {
-    if (!qty || qty === 1) return `the ${name}`;
-    return `the ${q} ${pluralFoodName(name)}`;
+    if (!qty) return `the ${name}`;
+    if (qty === 1) return `the ${singularFoodName(name)}`;
+    if (qty < 1) return `the ${q} ${singularFoodName(name)}`;
+    return `the ${q} ${pluralFoodName(singularFoodName(name))}`;
   }
   return `the ${q} ${u} of ${name}`;
 }
@@ -856,15 +1313,34 @@ function ingIsMentioned(blob: string, ing: { name: string }): boolean {
   const n = ing.name.toLowerCase();
   if (t.includes(n)) return true;
   if (/kale|chard|spinach|collard|mustard green/.test(n) && /\bgreens?\b/.test(t)) return true;
-  if (/sourdough|bread|toast|bun|tortilla|wrap/.test(n) && /\b(toast|bread|tortilla|wrap|bun)\b/.test(t)) return true;
+  if (/sourdough|bread|toast|bun|tortilla|wrap/.test(n) && /\b(toast|bread|tortilla|wrap|bun|crouton)\b/.test(t)) return true;
   if (/flour|cornmeal|baking powder|baking soda|sugar/.test(n) && /\bdry ingredients\b/.test(t)) return true;
   if (/onion|carrot|celery|tomato|pepper|potato|cabbage|okra|lima|pea/.test(n) && /\bvegetables?\b/.test(t)) return true;
   if (/beef|chicken|pork|lamb|turkey|veal/.test(n) && /\bmeats?\b/.test(t)) return true;
+  if (/\beggs?\b/.test(n) && /\b(yolk|white|meringue|beaten|egg)\b/.test(t)) return true;
+  if (/bourbon|whiskey|whisky|rum|brandy/.test(n) && /\b(whiskey|whisky|bourbon|spirit|rum|brandy)\b/.test(t)) return true;
+  if (/parmesan|pecorino|gruyere|cheddar|cheese/.test(n) && /\b(cheese|parmesan|cheddar|toast)\b/.test(t)) return true;
+  if (/white bread|bread|toast/.test(n) && /\b(toast|bread|crouton)\b/.test(t)) return true;
+  if (/bread crumbs|breadcrumb|crumbs/.test(n) && /\b(crumb|egg and crumb)\b/.test(t)) return true;
+  if (/cornmeal|corn meal/.test(n) && /\b(meal|cornmeal|dodger)\b/.test(t)) return true;
+  if (/^(fat|lard|drippings?)$/.test(n) && /\b(fat|lard|butter|oil|dripping)\b/.test(t)) return true;
+  if (/ham steak|\bham\b/.test(n) && /\bham\b/.test(t)) return true;
+  if (/frog/.test(n) && /\b(frog|legs)\b/.test(t)) return true;
+  if (/stuffing|breadcrumb/.test(n) && /\bstuffing\b/.test(t)) return true;
+  if (/turkey|chicken|hen|broiling|frying chicken|suckling pig|leg of lamb|opossum/.test(n) && /\b(bird|cavity|hen|skin|roast|pig|lamb|leg)\b/.test(t)) return true;
+  if (/pie dough|pastry/.test(n) && /\b(dough|pastry|paste|crust)\b/.test(t)) return true;
+  if (/hard-cooked egg/.test(n) && /\begg/.test(t)) return true;
+  if (/worcestershire/.test(n) && /\bworce/i.test(t)) return true;
+  if (/\beggs?\b/.test(n) && /\b(yolk|white|meringue|beaten|egg)\b/.test(t)) return true;
+  if (/bourbon|whiskey|whisky|rum|brandy/.test(n) && /\b(whiskey|whisky|bourbon|spirit|rum|brandy)\b/.test(t)) return true;
+  if (/cheddar|american cheese|grated cheese/.test(n) && /\b(cheese|cheddar|rarebit)\b/.test(t)) return true;
+  if (/bread crumbs|breadcrumb|crumbs/.test(n) && /\b(crumb|egg and crumb|crumbs)\b/.test(t)) return true;
+  if (/strawberry jam|\bjam\b/.test(n) && /\bjam\b/.test(t)) return true;
   return ingTokens(ing.name).some((w) => w.length > 2 && new RegExp(`\\b${escapeRe(w)}s?\\b`, "i").test(t));
 }
 
 function isMeasuredIng(ing: { unit: string }): boolean {
-  return /cup|tbsp|tsp|tablespoon|teaspoon|oz|ounce|lb|pound|pint|quart|ml|liter|can|pinch|dash|clove/i.test(ing.unit || "");
+  return /cup|tbsp|tsp|tablespoon|teaspoon|oz|ounce|lb|pound|pint|quart|ml|liter|can|pinch|dash|clove|slice|sprig|bunch|stick/i.test(ing.unit || "");
 }
 
 function hasAmountNear(step: string, token: string): boolean {
@@ -890,7 +1366,6 @@ function isSeasoningIng(ing: { name: string; aisle?: string }): boolean {
 
 function tidyThe(s: string): string {
   return s
-    .replace(/\bthe the\b/gi, "the")
     .replace(/\bremaining the\b/gi, "remaining")
     .replace(/\bsplash more the\b/gi, "splash more")
     .replace(/\bmake a the\b/gi, "make a")
@@ -898,11 +1373,24 @@ function tidyThe(s: string): string {
     .replace(/\bfold in the it\b/gi, "fold it")
     .replace(/\badd the lay\b/gi, "lay")
     .replace(/\bcold the\b/gi, "the cold")
+    .replace(/\bthe can of the\s+/gi, "the ")
+    .replace(/\bthe slice of the\s+/gi, "the ")
+    .replace(/\ba can of the\s+/gi, "the ")
+    .replace(/\bthe hot the\s+/gi, "the hot ")
+    .replace(/\ba little hot the\s+/gi, "a little of the hot ")
+    .replace(/\bover hot the\s+/gi, "over the ")
+    .replace(/\bHot the\s+/g, "Heat the ")
+    .replace(/\bdrained the\s+(?=\d|[½¼¾⅓⅔⅛])/gi, "drained ")
+    .replace(/\bsimmering the\s+(?=\d|[½¼¾⅓⅔⅛])/gi, "simmering ")
     .replace(/\bthe main ingredient\b/gi, "the vegetables")
     .replace(
-      /\b(soft|melted|unsalted|salted|chopped|sliced|minced|diced|fresh|ground|grated|crushed|smashed|beaten)\s+the\s+(\d+[^\s]*|[½¼¾⅓⅔⅛])\s+(tablespoons?|teaspoons?|cups?|ounces?|pounds?|cloves?|cans?|slices?)\s+of\s+/gi,
+      /\b(soft|melted|unsalted|salted|chopped|sliced|minced|diced|fresh|ground|grated|crushed|smashed|beaten|boiling|cold)\s+the\s+(\d+[^\s]*|[½¼¾⅓⅔⅛])\s+(tablespoons?|teaspoons?|cups?|ounces?|pounds?|cloves?|cans?|slices?)\s+of\s+/gi,
       (_m, adj: string, qty: string, unit: string) => `the ${qty} ${unit} of ${String(adj).toLowerCase()} `,
     )
+    .replace(/\bthe (cold|chopped|melted|hot|warm|boiling|fresh|ground|grated|sliced|minced|diced|toasted|roasted) the\b/gi, "the $1")
+    .replace(/\bthe bunch of the\b/gi, "the")
+    .replace(/\bthe head of the\b/gi, "the")
+    .replace(/\bthe the\b/gi, "the")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -927,7 +1415,7 @@ function expandNicknames(step: string, recipe: RecipeLike): string {
     s = s.replace(/\b(the )?dry ingredients\b/gi, joinList(dry.map(amountPhrase)));
   }
   const veg = recipe.ingredients.filter((i) =>
-    /\b(onion|carrot|celery|tomato|pepper|potato|cabbage|okra|lima bean|pea|parsnip|turnip|green pepper|bell pepper)\b/i.test(
+    /\b(onions?|carrots?|celery|tomatoes?|peppers?|potatoes?|cabbage|okra|lima beans?|peas?|parsnip|turnip|green peppers?|bell peppers?|zucchini|mushrooms?)\b/i.test(
       i.name,
     ),
   );
@@ -999,7 +1487,7 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       if (hasAmountNear(s, tok)) continue;
       const amt = amountPhrase(ing);
       const full = new RegExp(
-        `\\b((?:soft|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|crushed|smashed|beaten|toasted|roasted)\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
+        `\\b((?:soft|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|crushed|smashed|beaten|toasted|roasted|boiling|cold)\\s+)?(?:(?:the|a)\\s+(?:can|slice)\\s+of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
         "i",
       );
       if (full.test(s)) {
@@ -1009,7 +1497,7 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
             return m;
           }
           if (/\b(splash|little|bit|more|cream sauce|white sauce)\s+$/i.test(before)) return m;
-          if (/\bremaining\s+$/i.test(before)) return amt.replace(/^the\s+/i, "");
+          if (/\bremaining\s+$/i.test(before)) return ing.name;
           if (!adj) return amt;
           return amt.replace(new RegExp(`\\b${escapeRe(ing.name)}\\b`, "i"), `${adj.trim()} ${ing.name}`);
         });
@@ -1040,7 +1528,7 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       const idx = out.findIndex(
         (s) =>
           /\b(add|stir|mix|whisk|combine|season|simmer|toss|pour|beat|layer|sift)\b/i.test(s) &&
-          !/\b(serve|plate|ladle|wilt|saute|sauté|brown|sear|fry)\b/i.test(s),
+          !/\b(serve|plate|ladle|wilt|saute|sauté|brown|sear|fry|bake|roast)\b/i.test(s),
       );
       if (idx >= 0) {
         out[idx] = `${out[idx]!.replace(/[.]+$/, "")}. ${add}`;
@@ -1078,7 +1566,12 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
     }
   }
 
-  return out.map((s) => finishSentence(tidyThe(s))).filter(keepPiece);
+  return out.map((s) => {
+    let next = finishSentence(tidyThe(s));
+    if (/^Serve hot\.?$/i.test(next)) next = serveLine(recipe);
+    if (next.length < 40) next = lengthenShortCard(next, recipe);
+    return tidyCookText(next);
+  }).filter(keepPiece);
 }
 
 const FRAC_VAL: Record<string, number> = {
@@ -1101,16 +1594,39 @@ function parseQtyToken(raw: string): number | null {
 const STEP_UNIT =
   "tablespoons?|teaspoons?|cups?|ounces?|pounds?|tbsp|tsp|oz|lb|cloves?|cans?|pints?|quarts?|pinches?|dashes?|slices?|sprigs?|bunches?|sticks?|grams?|ml";
 
-const QTY_TOKEN = String.raw`\d+\s+\d+\s*/\s*\d+|\d+\s*/\s*\d+|\d+[⅛¼⅓½⅔¾]|(?<!\d)[⅛¼¾⅓⅔⅛]|\d+(?:\.\d+)?`;
+const FRAC_GLYPHS = "⅛¼⅓½⅔¾";
+const QTY_TOKEN = String.raw`\d+\s+\d+\s*/\s*\d+|\d+\s*/\s*\d+|\d+[${FRAC_GLYPHS}]|[${FRAC_GLYPHS}]|\d+(?:\.\d+)?`;
 
-/** Rewrite amounts in cook steps so they match the scaled ingredient list. Times, oven temps, and inch measures stay put. */
+function normCookUnit(u: string): string {
+  const x = String(u || "").toLowerCase().replace(/s$/, "");
+  if (/^(tbsp|tablespoon)$/.test(x)) return "tbsp";
+  if (/^(tsp|teaspoon)$/.test(x)) return "tsp";
+  if (/^(oz|ounce)$/.test(x)) return "oz";
+  if (/^(lb|pound)$/.test(x)) return "lb";
+  return x;
+}
+
+function closeQty(a: number, b: number): boolean {
+  return Math.abs(a - b) <= 0.12;
+}
+
+/**
+ * Cook-card amounts always come from the ingredient list.
+ * Times, oven temps, and inch measures stay put. A written "½ cup of parmesan"
+ * scales even when a "1½ cups of milk" in the same sentence already did.
+ */
 export function scaleMethodSteps(
   steps: string[],
   ingredients: { name: string; qty: number; unit: string }[],
   household: number,
   servings: number,
 ): string[] {
-  if (!steps.length || household === servings) return steps;
+  if (!steps.length) return steps;
+  const scale = household !== servings;
+  const measured = [...ingredients]
+    .filter((i) => Number(i.qty) > 0)
+    .sort((a, b) => b.name.length - a.name.length);
+
   return steps.map((step) => {
     const held: string[] = [];
     const hold = (m: string) => {
@@ -1123,17 +1639,111 @@ export function scaleMethodSteps(
       .replace(/\b\d{2,3}\s*°?\s*F\b/gi, hold)
       .replace(/\b\d+\s*(?:-|–)?(?:inch(?:es)?|cm)\b/gi, hold)
       .replace(/\b\d+\s*degrees\b/gi, hold)
-      .replace(/\bserves?\s+\d+\b/gi, hold);
+      .replace(/\bserves?\s+\d+\b/gi, hold)
+      .replace(/\b\d+-pound mold\b/gi, hold);
 
-    s = s.replace(
-      new RegExp(`(\\bthe\\s+)?(${QTY_TOKEN})\\s+(${STEP_UNIT})\\b`, "gi"),
-      (_m, the: string | undefined, qtyTok: string, unitWord: string) => {
-        const q = parseQtyToken(qtyTok);
-        if (q == null || q <= 0) return _m;
-        const scaled = scaleQty(q, household, servings);
-        return `${the ?? ""}${prettyFrac(scaled)} ${prettyUnit(unitWord, scaled)}`;
-      },
-    );
+    if (scale) {
+      s = s.replace(
+        /\b(shape|form|make)\s+(\d+)\s+(small\s+)?(cakes|patties|meatballs|balls|fritters|dumplings)\b/gi,
+        (match: string, verb: string, qtyTok: string, small: string | undefined, noun: string) => {
+          const q = Number(qtyTok);
+          if (!q) return match;
+          const qty = scaleQty(q, household, servings);
+          const n = qty === 1 ? noun.replace(/s$/i, "") : /s$/i.test(noun) ? noun : `${noun}s`;
+          return hold(`${verb} ${prettyFrac(qty)} ${small ?? ""}${n}`.replace(/\s+/g, " "));
+        },
+      );
+      s = s.replace(
+        /\b(\d+(?:\.\d+)?)[- ](pounds?|ounces?)\s+(beef|roast|turkey|bird|brisket|pork|salmon|shoulder|ham|chicken|lamb|point|fillet|steak)/gi,
+        (match: string, qtyTok: string, unitWord: string, food: string) => {
+          const q = Number(qtyTok);
+          if (!q) return match;
+          const qty = scaleQty(q, household, servings);
+          const u = unitWord.replace(/s$/i, "");
+          return hold(`${prettyFrac(qty)}-${u} ${food}`);
+        },
+      );
+    }
+
+    for (const ing of measured) {
+      const nameRe = namePattern(ing.name);
+      const hasUnit = Boolean((ing.unit || "").trim());
+      if (hasUnit) {
+        const re = new RegExp(
+          `(the\\s+)?(${QTY_TOKEN})\\s+(${STEP_UNIT})(\\s+of)?(\\s+the)?\\s+(${nameRe})\\b`,
+          "gi",
+        );
+        s = s.replace(
+          re,
+          (
+            match: string,
+            the: string | undefined,
+            qtyTok: string,
+            unitWord: string,
+            ofWord: string | undefined,
+            the2: string | undefined,
+            nameHit: string,
+            offset: number,
+            whole: string,
+          ) => {
+            const q = parseQtyToken(qtyTok);
+            if (q == null || q <= 0) return match;
+            const before = whole.slice(Math.max(0, offset - 28), offset);
+            const remaining = /\b(remaining|rest of|half (?:of )?the)\b/i.test(before);
+            const partial = remaining || Boolean(the2);
+            const unitOk = normCookUnit(unitWord) === normCookUnit(ing.unit);
+            const listed = Number(ing.qty);
+            const ratio = q / Math.max(listed, 0.001);
+            const full = unitOk && !partial && (closeQty(q, listed) || (ratio >= 0.4 && ratio <= 2.5));
+            if (remaining && unitOk && closeQty(q, listed)) {
+              return hold(`the remaining ${ing.name}`);
+            }
+            if (full) {
+              const qty = scale ? scaleQty(listed, household, servings) : listed;
+              return hold(amountPhrase({ name: ing.name, qty, unit: ing.unit }));
+            }
+            if (!scale) return match;
+            const qty = scaleQty(q, household, servings);
+            return hold(
+              `${the ?? ""}${prettyFrac(qty)} ${prettyUnit(unitWord, qty)}${ofWord ?? ""}${the2 ?? ""} ${nameHit}`,
+            );
+          },
+        );
+      } else {
+        const re = new RegExp(`(the\\s+)?(${QTY_TOKEN})\\s+(${nameRe})\\b`, "gi");
+        s = s.replace(
+          re,
+          (match: string, the: string | undefined, qtyTok: string, nameHit: string, offset: number, whole: string) => {
+            const q = parseQtyToken(qtyTok);
+            if (q == null || q <= 0) return match;
+            const before = whole.slice(Math.max(0, offset - 28), offset);
+            if (/\b(remaining|rest of|into|for)\b/i.test(before)) return match;
+            const listed = Number(ing.qty);
+            const full = closeQty(q, listed);
+            if (full) {
+              const qty = scale ? scaleQty(listed, household, servings) : listed;
+              return hold(amountPhrase({ name: ing.name, qty, unit: "" }));
+            }
+            if (!scale) return match;
+            const qty = scaleQty(q, household, servings);
+            const label = qty === 1 ? nameHit.replace(/s$/i, "") : nameHit;
+            return hold(`${the ?? ""}${prettyFrac(qty)} ${label}`);
+          },
+        );
+      }
+    }
+
+    if (scale) {
+      s = s.replace(
+        new RegExp(`(\\bthe\\s+)?(${QTY_TOKEN})\\s+(${STEP_UNIT})\\b`, "gi"),
+        (_m, the: string | undefined, qtyTok: string, unitWord: string) => {
+          const q = parseQtyToken(qtyTok);
+          if (q == null || q <= 0) return _m;
+          const scaled = scaleQty(q, household, servings);
+          return `${the ?? ""}${prettyFrac(scaled)} ${prettyUnit(unitWord, scaled)}`;
+        },
+      );
+    }
 
     s = s.replace(/\u0000(\d+)\u0000/g, (_m, i: string) => held[Number(i)] ?? "");
     return tidyThe(s);
@@ -1207,17 +1817,14 @@ function faithfulBookMethod(steps: string[], recipe: RecipeLike): string[] {
 export function polishSteps(recipe: RecipeLike): string[] {
   const original = recipe.steps.map((s) => finishSentence(s.replace(/\s+/g, " ").trim())).filter(keepPiece);
   let out: string[];
-  let kept = false;
   if (isKeepableMethod(original, recipe)) {
     out = original.slice(0, MAX_STEPS);
-    kept = true;
   } else {
     const split = splitIfPacked(original)
       .map((s) => finishSentence(s.replace(/\s+/g, " ").trim()))
       .filter(keepPiece);
     if (isKeepableMethod(split, recipe)) {
       out = split.slice(0, MAX_STEPS);
-      kept = true;
     } else if (isFromABook(recipe)) {
       const stubId = recipe.id ?? "";
       if (stubId === "vh-ww2-chipped-beef" || stubId === "vh-jw-gefilte" || stubId === "vh-va-beaten-biscuits") {
@@ -1225,13 +1832,15 @@ export function polishSteps(recipe: RecipeLike): string[] {
       } else {
         out = faithfulBookMethod(split.length ? split : original, recipe);
       }
+    } else if (hasSpecialistMethod(recipe) || original.length < 3 || split.length < 3) {
+      out = writeDishMethod(recipe);
     } else {
       const known = knownDishMethod(recipe);
       if (known) {
         out = known;
       } else {
         const source = split.length ? split : original;
-        const originalHasCook = source.filter((s) => VERB.test(s) && s.length >= 16).length >= 2 && !isJunkMethod(source);
+        const originalHasCook = source.filter((s) => VERB.test(s) && s.length >= 12).length >= 1 && !isJunkMethod(source);
         const expanded = expandToMinCards(source, recipe);
         const usable = expanded.filter(isUsableCookStep);
         if (usable.length >= 3 && !isJunkMethod(usable)) {
@@ -1246,9 +1855,24 @@ export function polishSteps(recipe: RecipeLike): string[] {
   }
   out = foldShortSteps(out, recipe);
   if (out.filter(isUsableCookStep).length < 3) {
-    out = expandToMinCards(out, recipe);
+    const keepableSource = isKeepableMethod(original, recipe) || isKeepableMethod(out, recipe);
+    if (keepableSource) {
+      out = expandToMinCards(out, recipe);
+    } else if (hasSpecialistMethod(recipe) || !isFromABook(recipe)) {
+      const written = writeDishMethod(recipe);
+      if (written.filter(isUsableCookStep).length >= 3) out = written;
+      else out = expandToMinCards(out, recipe);
+    } else {
+      out = expandToMinCards(out, recipe);
+    }
   }
-  return alignCookToList(out, recipe);
+  const aligned = alignCookToList(out, recipe).map(tidyCookText);
+  const deduped: string[] = [];
+  for (const s of aligned) {
+    if (deduped.length && deduped[deduped.length - 1]!.toLowerCase() === s.toLowerCase()) continue;
+    deduped.push(s);
+  }
+  return deduped;
 }
 
 function cleanDescription(recipe: Recipe, name: string): string {
@@ -1302,90 +1926,3 @@ export function foodsUsedInStep(step: string, ingredients: Recipe["ingredients"]
   });
 }
 
-
-function isClearStep(step: string, recipe: RecipeLike): boolean {
-  if (step.length < 50) return false;
-  if (!VERB.test(step)) return false;
-  if (HEAT_VERB.test(step) && !hasTime(step) && !/\buntil\b/i.test(step)) return false;
-  return mentionsFood(step, recipe);
-}
-
-function isClearMethod(steps: string[], recipe: RecipeLike): boolean {
-  if (steps.length < 5) return false;
-  const clear = steps.filter((s) => isClearStep(s, recipe)).length;
-  return clear >= Math.min(5, steps.length) && steps.every((s) => s.length >= 40);
-}
-
-function serveLine(recipe: RecipeLike): string {
-  if (isDrink(recipe)) return "Taste, adjust the sweet or sour, and serve.";
-  if (recipe.plate === "dessert") return "Cool until just set, then slice or spoon and serve.";
-  if (recipe.plate === "toast") return "Serve right away so the bread stays crisp.";
-  if (recipe.plate === "soup") return "Taste for salt. Ladle into warm bowls.";
-  return "Rest 2 minutes, then plate and serve hot.";
-}
-
-function isKeepableMethod(steps: string[], recipe: RecipeLike): boolean {
-  const junk =
-    /ingredients on the list|the rest of the list|flip \d+ with|use the ingredients|bubbling at the edges and hot in the center/i;
-  if (steps.some((s) => junk.test(s))) return false;
-  if (isClearMethod(steps, recipe)) return true;
-  if (steps.length >= 4 && steps.every((s) => s.length >= 40 && VERB.test(s))) return true;
-  return false;
-}
-
-export function polishSteps(recipe: RecipeLike): string[] {
-  const original = recipe.steps.map((s) => finishSentence(s.replace(/\s+/g, " ").trim())).filter((s) => s.length >= 8);
-  if (isKeepableMethod(original, recipe)) return original.slice(0, 8);
-  return writeDishMethod(recipe);
-}
-
-function cleanDescription(recipe: Recipe, name: string): string {
-  let d = (recipe.description ?? "").replace(/[="]+/g, " ").replace(/\s+/g, " ").trim();
-  d = d.replace(/…\s*$/, "").trim();
-  if (d.length < 20 || JUNK_NAME.test(d) || /to obtain good broth/i.test(d)) {
-    return `${name} — homemade, about ${recipe.minutes} minutes.`;
-  }
-  if (d.length > 180) d = `${d.slice(0, 177).replace(/\s+\S*$/, "")}.`;
-  return d;
-}
-
-export function polishRecipe(recipe: Recipe): Recipe | null {
-  const name = cleanRecipeName(recipe.name);
-  if (!name) return null;
-  const ingredients = recipe.ingredients.filter((i) => i.name && !JUNK_NAME.test(i.name.trim()));
-  if (ingredients.length < 1) return null;
-  const next = { ...recipe, name, ingredients };
-  return {
-    ...next,
-    description: cleanDescription(next, name),
-    steps: polishSteps(next),
-  };
-}
-
-export function polishCatalog(list: Recipe[]): Recipe[] {
-  const out: Recipe[] = [];
-  const seen = new Set<string>();
-  for (const recipe of list) {
-    const polished = polishRecipe(recipe);
-    if (!polished || seen.has(polished.id)) continue;
-    seen.add(polished.id);
-    out.push(polished);
-  }
-  return out;
-}
-
-export function isBannedDishName(name: string): boolean {
-  return cleanRecipeName(name) === null;
-}
-
-export function foodsUsedInStep(step: string, ingredients: Recipe["ingredients"]): Recipe["ingredients"] {
-  return ingredients.filter((ing) => {
-    const n = ing.name.toLowerCase();
-    const t = step.toLowerCase();
-    if (t.includes(n)) return true;
-    return n
-      .split(/\s+/)
-      .filter((w) => w.length > 3 && !["fresh", "ground", "dried", "white", "black", "green", "whole"].includes(w))
-      .some((w) => t.includes(w));
-  });
-}

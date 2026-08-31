@@ -1,0 +1,12 @@
+import { chromium } from "playwright";
+const browser = await chromium.launch({ args: ["--no-sandbox"] });
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+const errors = [];
+page.on("pageerror", (e) => errors.push(String(e.message ?? e).slice(0, 200)));
+page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text().slice(0, 200)); });
+const res = await page.goto("http://127.0.0.1:8081/", { waitUntil: "networkidle", timeout: 45000 });
+await page.waitForTimeout(1500);
+const text = (await page.locator("body").innerText()).slice(0, 400);
+await page.screenshot({ path: "/workspace/screenshots/qa-prod-open.png", fullPage: true });
+console.log(JSON.stringify({ status: res?.status(), title: await page.title(), errors: errors.slice(0, 6), text }, null, 2));
+await browser.close();

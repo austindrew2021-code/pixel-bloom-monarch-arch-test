@@ -301,7 +301,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
         </p>
       ) : null}
 
-      <div className="relative mt-4 min-w-0">
+      <div className="relative mt-4 min-w-0" data-tour="recipes-search">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={query}
