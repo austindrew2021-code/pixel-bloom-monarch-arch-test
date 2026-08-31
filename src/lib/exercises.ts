@@ -196,7 +196,7 @@ const META: Record<string, Meta> = {
     secondary: ["front-delts"],
     equipment: "barbell",
     setup: "Eyes under the bar, feet planted, shoulder blades pinched and down.",
-    cues: ["Row the bar to the chest.", "Elbows about 45°.", "Press back toward the rack."],
+    cues: ["Touch the mid-chest.", "Elbows about 45°.", "Drive back toward the rack."],
     mistakes: ["Flaring the elbows to 90°.", "Bouncing off the chest.", "Hips leaving the bench."],
     defaultSets: 4,
     defaultReps: "6-8",

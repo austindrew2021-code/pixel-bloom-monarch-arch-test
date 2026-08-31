@@ -82,6 +82,21 @@ export const MILESTONES = [
     title: "Sous chef",
     body: "You cooked your way into the rank. Keep the board full.",
   },
+  {
+    id: "first-lift",
+    title: "First session",
+    body: "Logged your first workout. The training log starts here.",
+  },
+  {
+    id: "lift-10",
+    title: "Ten sessions",
+    body: "Ten workouts on the board. The habit is real.",
+  },
+  {
+    id: "lift-25",
+    title: "Twenty-five sessions",
+    body: "Twenty-five sessions logged. That's a serious training log.",
+  },
 ] as const;
 
 export type Celebrate = {
@@ -96,10 +111,12 @@ export function milestonesFor(input: {
   seen: string[];
   snapped: boolean;
   family: boolean;
+  liftCount?: number;
 }): Celebrate[] {
   const out: Celebrate[] = [];
   const streak = cookStreak(input.cookedDates, isoDate());
   const cooked = input.cookedDates.length;
+  const lifts = input.liftCount ?? 0;
   const ok: Record<string, boolean> = {
     "first-plate": cooked >= 1,
     "streak-3": streak >= 3,
@@ -108,6 +125,9 @@ export function milestonesFor(input: {
     "snap-1": input.snapped,
     "family-1": input.family,
     "xp-sous": input.xp >= 560,
+    "first-lift": lifts >= 1,
+    "lift-10": lifts >= 10,
+    "lift-25": lifts >= 25,
   };
   for (const row of MILESTONES) {
     if (ok[row.id] && !input.seen.includes(row.id)) {
@@ -115,6 +135,13 @@ export function milestonesFor(input: {
     }
   }
   return out;
+}
+
+const WORKOUT_MILESTONE_IDS = new Set(["first-lift", "lift-10", "lift-25"]);
+
+/** True for a PR celebration or a workout-count milestone — the ones worth offering to share. */
+export function isWorkoutCelebration(id: string): boolean {
+  return id.startsWith("pr-") || WORKOUT_MILESTONE_IDS.has(id);
 }
 
 export const CHEF_FREE_WEEK = 3;

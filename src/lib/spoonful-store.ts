@@ -1,7 +1,7 @@
 import { addDays, parseISO } from "date-fns";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_BODY, macrosFromBody, normalizeBody, type BodyProfile, type FamilySeat, type GoalKind } from "./body";
+import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, type BodyProfile, type FamilySeat, type GoalKind } from "./body";
 import { isDinnerMain, isGlutenFree, isSugarFree, isVegan } from "./diet";
 import { fitsGoal, strictestGoal } from "./goal-fit";
 import { isUnlocked } from "./access";
@@ -27,8 +27,9 @@ import type { FitnessSourceId, SyncAccess } from "./devices";
 import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
 import { plateCost, recipeSafe } from "./shield";
 import { postKitchenEvent } from "./family";
+import { shareAchievement, syncMyStats } from "./community";
 import type { LiftSession } from "./lift";
-import { liftKcal, sessionRomM, sessionVolumeKg } from "./lift";
+import { liftKcal, moveById, sessionPRs, sessionRomM, sessionVolumeKg } from "./lift";
 import {
   expectedWorkoutsForDate,
   isProgramWeek,
@@ -218,6 +219,7 @@ type SpoonfulState = {
   removeSnack: (id: string) => void;
   awardXp: (amount: number, reason?: string) => Celebrate | null;
   clearCelebrate: () => void;
+  shareCelebration: () => Promise<boolean>;
   consumeChef: () => boolean;
   consumeSnap: () => boolean;
   consumeLookup: () => boolean;
@@ -746,6 +748,7 @@ export const useSpoonful = create<SpoonfulState>()(
       },
       saveLiftSession: (session) => {
         const finished: LiftSession = { ...session, finishedAt: session.finishedAt ?? Date.now() };
+        const priorSessions = get().liftSessions;
         const minutes = Math.max(8, Math.round(((finished.finishedAt ?? Date.now()) - finished.startedAt) / 60000));
         const volumeKg = sessionVolumeKg(finished);
         const kcal = liftKcal(get().body.weightKg, minutes, volumeKg, sessionRomM(finished));
@@ -753,6 +756,20 @@ export const useSpoonful = create<SpoonfulState>()(
           liftSessions: [...s.liftSessions.filter((x) => x.id !== finished.id), finished].slice(-40),
         }));
         get().addWorkout({ date: finished.date, kind: "lift", minutes, kcal, volumeKg });
+        const prs = sessionPRs(priorSessions, finished);
+        if (prs[0]) {
+          const pr = prs[0];
+          const move = moveById(pr.moveId);
+          const imperial = get().body.units !== "metric";
+          const weight = imperial ? `${Math.round(lbFromKg(pr.weightKg))} lb` : `${Math.round(pr.weightKg * 10) / 10} kg`;
+          set({
+            lastCelebrate: {
+              id: `pr-${finished.id}-${pr.moveId}`,
+              title: "New PR!",
+              body: `${move?.name ?? pr.moveId} — ${weight} × ${pr.reps}. Your best yet.`,
+            },
+          });
+        }
         const week = get().programWeek;
         if (week) {
           const session = week.sessions.find((s) => s.date === finished.date && s.kind === "lift" && s.status !== "skipped");
@@ -766,6 +783,7 @@ export const useSpoonful = create<SpoonfulState>()(
             if (get().nextGen) get().replateFromFuel([finished.date]);
           }
         }
+        get().ensureProgram();
       },
       importFitness: ({ steps, workouts, body }) => {
         const today = isoDate();
@@ -921,7 +939,7 @@ export const useSpoonful = create<SpoonfulState>()(
       ensureProgram: () => {
         const s = get();
         const today = isoDate();
-        const week = rebuildProgram(s.programWeek, s.weekStart, s.body.goalKind, today);
+        const week = rebuildProgram(s.programWeek, s.weekStart, s.body.goalKind, today, s.liftSessions);
         const synced = week.sessions.map((session) => {
           if (session.status === "planned" && matchLoggedToSession(session, s.workouts)) {
             return { ...session, status: "done" as const };
@@ -1246,6 +1264,7 @@ export const useSpoonful = create<SpoonfulState>()(
           seen: s.seenMilestones,
           snapped: s.snapped,
           family: isUnlocked(s.unlocked, "family"),
+          liftCount: s.liftSessions.length,
         });
         let lastCelebrate: Celebrate | null = s.lastCelebrate;
         const seen = [...s.seenMilestones];
@@ -1256,9 +1275,20 @@ export const useSpoonful = create<SpoonfulState>()(
           seen.push(fresh[0].id);
         }
         set({ xp, seenMilestones: seen, lastCelebrate });
+        void syncMyStats({ data: { xp, liftCount: get().liftSessions.length } }).catch(() => {});
         return lastCelebrate && lastCelebrate !== s.lastCelebrate ? lastCelebrate : null;
       },
       clearCelebrate: () => set({ lastCelebrate: null }),
+      shareCelebration: async () => {
+        const last = get().lastCelebrate;
+        if (!last) return false;
+        try {
+          const res = await shareAchievement({ data: { title: last.title, body: last.body } });
+          return res.ok;
+        } catch {
+          return false;
+        }
+      },
       consumeChef: () => {
         rollAiWeek(get, set);
         const s = get();

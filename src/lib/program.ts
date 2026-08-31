@@ -3,6 +3,7 @@
 import type { GoalKind } from "./body.ts";
 import { normalizeGoalKind } from "./body.ts";
 import { exerciseById } from "./exercises.ts";
+import { lastFinishedSession, type LiftSession } from "./lift.ts";
 import type { Workout, WorkoutKind } from "./types.ts";
 import { weekDates } from "./week.ts";
 
@@ -497,10 +498,12 @@ export function rebuildProgram(
   weekStart: string,
   goalKind: GoalKind | string | undefined,
   today: string,
+  liftSessions: LiftSession[] = [],
 ): ProgramWeek {
   const fresh = generateProgram(weekStart, goalKind);
   if (!prev || prev.weekStart !== weekStart) {
-    return applyVolumeCatchup(scheduleMakeups(applyMissed(fresh, today), today), today);
+    const built = applyVolumeCatchup(scheduleMakeups(applyMissed(fresh, today), today), today);
+    return applyPerformanceAdjustment(built, liftSessions, today);
   }
   const merged: ProgramWeek = {
     ...fresh,
@@ -518,7 +521,8 @@ export function rebuildProgram(
       return s;
     }),
   };
-  return applyVolumeCatchup(scheduleMakeups(applyMissed(merged, today), today), today);
+  const built = applyVolumeCatchup(scheduleMakeups(applyMissed(merged, today), today), today);
+  return applyPerformanceAdjustment(built, liftSessions, today);
 }
 
 export function sessionAsWorkout(session: ProgramSession, bodyKg: number): Workout | null {
@@ -708,6 +712,36 @@ export function applyVolumeCatchup(week: ProgramWeek, today: string): ProgramWee
         minutes: s.minutes + 8,
         why: `${s.why} Extra set on the opener after a missed day.`,
         moves: s.moves.map((m, i) => (i === 0 ? { ...m, sets: m.sets + 1 } : m)),
+      };
+    }),
+  };
+}
+
+/**
+ * Reads how the last finished lift session actually felt and nudges this
+ * week's still-planned lift sessions accordingly — an easy session earns an
+ * extra set on the opener, a grind holds it back a set. Skips sessions the
+ * attendance catch-up already touched so the two adjustments never stack.
+ */
+export function applyPerformanceAdjustment(week: ProgramWeek, liftSessions: LiftSession[], today: string): ProgramWeek {
+  const last = lastFinishedSession(liftSessions);
+  if (!last || !last.feel || last.feel === "right") return week;
+  const bump = last.feel === "easy";
+  return {
+    ...week,
+    sessions: week.sessions.map((s) => {
+      if (s.volumeBump || s.makeupOf) return s;
+      if (s.kind !== "lift" || s.date < today || resolveStatus(s, today) !== "planned") return s;
+      const opener = s.moves[0];
+      if (!opener) return s;
+      if (!bump && opener.sets <= 2) return s;
+      return {
+        ...s,
+        volumeBump: true,
+        why: bump
+          ? `${s.why} Last session felt easy — added a set on the opener.`
+          : `${s.why} Last session was a grind — held the opener back a set.`,
+        moves: s.moves.map((m, i) => (i === 0 ? { ...m, sets: bump ? m.sets + 1 : m.sets - 1 } : m)),
       };
     }),
   };

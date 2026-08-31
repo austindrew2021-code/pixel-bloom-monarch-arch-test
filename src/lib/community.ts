@@ -239,6 +239,47 @@ export const feedRecipes = createServerFn({ method: "GET" })
     return rows;
   });
 
+export const syncMyStats = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) => z.object({ xp: z.number().min(0), liftCount: z.number().min(0) }).parse(input))
+  .handler(async ({ context, data }) => {
+    const sql = await getSql();
+    await sql`update profiles set xp = ${Math.round(data.xp)}, lift_count = ${Math.round(data.liftCount)}, stats_updated_at = now()
+      where user_id = ${context.userId}`;
+    return { ok: true as const };
+  });
+
+export const followedLeaderboard = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const sql = await getSql();
+    return sql<{ user_id: string; username: string; display_name: string; xp: number; lift_count: number; you: boolean }>`
+      select p.user_id, p.username, p.display_name, p.xp, p.lift_count, (p.user_id = ${context.userId}) as you
+      from profiles p
+      where p.user_id = ${context.userId}
+        or exists (select 1 from follows f where f.follower_id = ${context.userId} and f.followee_id = p.user_id)
+      order by p.xp desc, p.lift_count desc
+      limit 30
+    `;
+  });
+
+export const shareAchievement = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) => z.object({ title: z.string().min(1).max(80), body: z.string().min(1).max(160) }).parse(input))
+  .handler(async ({ context, data }) => {
+    const sql = await getSql();
+    const followers = await sql<{ follower_id: string }>`
+      select f.follower_id from follows f
+      left join notification_prefs np on np.user_id = f.follower_id and np.followee_id = ${context.userId}
+      where f.followee_id = ${context.userId} and coalesce(np.enabled, true) = true
+    `;
+    for (const row of followers) {
+      await sql`insert into notifications (id, user_id, kind, actor_id, body)
+        values (${nid()}, ${row.follower_id}, 'workout_pr', ${context.userId}, ${`${data.title} — ${data.body}`})`;
+    }
+    return { ok: true as const, count: followers.length };
+  });
+
 export const listNotifications = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {

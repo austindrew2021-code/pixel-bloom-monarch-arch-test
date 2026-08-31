@@ -207,6 +207,22 @@ export function epley1rm(weightKg: number, reps: number): number {
   return weightKg * (1 + reps / 30);
 }
 
+export type SessionPR = { moveId: string; weightKg: number; reps: number; est: number };
+
+/** Moves in a just-finished session whose top set beats every prior logged best for that move. */
+export function sessionPRs(priorSessions: LiftSession[], finished: LiftSession): SessionPR[] {
+  const out: SessionPR[] = [];
+  for (const line of finished.lines) {
+    const working = line.sets.filter((s) => s.done && !s.warmup && s.reps >= 1 && s.weightKg > 0);
+    if (!working.length) continue;
+    const top = working.reduce((a, b) => (epley1rm(b.weightKg, b.reps) > epley1rm(a.weightKg, a.reps) ? b : a));
+    const est = epley1rm(top.weightKg, top.reps);
+    const prior = bestEpley(priorSessions, line.moveId);
+    if (prior > 0 && est > prior) out.push({ moveId: line.moveId, weightKg: top.weightKg, reps: top.reps, est });
+  }
+  return out;
+}
+
 export function bestEpley(sessions: LiftSession[], moveId: string, exceptId?: string): number {
   let best = 0;
   for (const s of sessions) {
