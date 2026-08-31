@@ -1,5 +1,6 @@
 /** Looping form clips for the library. Missing ids fall back to the pose figure. */
 export const EXERCISE_CLIPS = new Set([
+  "ab-wheel",
   "arnold",
   "battle-rope",
   "bench",
@@ -32,6 +33,7 @@ export const EXERCISE_CLIPS = new Set([
   "flutter-kick",
   "fly",
   "front-raise",
+  "front-squat",
   "glute-bridge",
   "hack-squat",
   "hammer",
@@ -56,6 +58,7 @@ export const EXERCISE_CLIPS = new Set([
   "machine-crunch",
   "machine-press",
   "mountain-climber",
+  "ohp",
   "one-arm-cable-row",
   "one-arm-row",
   "overhead-cable",
@@ -74,6 +77,7 @@ export const EXERCISE_CLIPS = new Set([
   "reverse-crunch",
   "reverse-lunge",
   "reverse-pec-deck",
+  "row",
   "rower",
   "russian-twist",
   "seated-calf",

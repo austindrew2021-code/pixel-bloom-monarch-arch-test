@@ -80,7 +80,7 @@ function templates(kind: GoalKind): Blueprint[] {
         moves: [
           ["squat", 4, "6-8", 150],
           ["bench", 3, "8-10", 120],
-          ["seated-row", 3, "8-10", 120],
+          ["row", 3, "8-10", 120],
           ["rdl", 3, "8-10", 120],
           ["plank", 3, "30-45s", 45],
         ],
@@ -98,7 +98,7 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 45,
         why: "Upper volume without a huge calorie dump. Close protein at dinner.",
         moves: [
-          ["seated-db-press", 4, "6-8", 150],
+          ["ohp", 4, "6-8", 150],
           ["incline", 3, "8-10", 120],
           ["chest-press", 3, "10-12", 90],
           ["lateral", 3, "12-15", 60],
@@ -120,7 +120,7 @@ function templates(kind: GoalKind): Blueprint[] {
         moves: [
           ["deadlift", 3, "5", 180],
           ["lat", 3, "8-12", 90],
-          ["seated-row", 3, "8-12", 90],
+          ["row", 3, "8-12", 90],
           ["face-pull", 3, "12-15", 60],
           ["curl", 3, "10-12", 60],
         ],
@@ -144,7 +144,7 @@ function templates(kind: GoalKind): Blueprint[] {
         why: "Build the upper body at near-maintenance. Dinner should actually close protein.",
         moves: [
           ["bench", 4, "6-8", 150],
-          ["seated-db-press", 3, "6-8", 120],
+          ["ohp", 3, "6-8", 120],
           ["incline", 3, "8-10", 90],
           ["lateral", 3, "12-15", 60],
           ["dip", 3, "8-12", 90],
@@ -157,7 +157,7 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Rows and lats. A normal plate — not a surplus, not a cut dinner.",
         moves: [
-          ["seated-row", 4, "6-8", 150],
+          ["row", 4, "6-8", 150],
           ["lat", 3, "8-12", 90],
           ["pullup", 3, "6-10", 120],
           ["face-pull", 3, "12-15", 60],
@@ -186,8 +186,8 @@ function templates(kind: GoalKind): Blueprint[] {
         why: "Push plus pull to finish the week. Keep protein high, calories near the line.",
         moves: [
           ["chest-press", 3, "8-12", 90],
-          ["seated-row", 3, "8-12", 90],
-          ["seated-db-press", 3, "8-10", 90],
+          ["row", 3, "8-12", 90],
+          ["ohp", 3, "8-10", 90],
           ["lat", 3, "8-12", 90],
           ["curl", 2, "10-12", 60],
           ["tricep", 2, "12-15", 60],
@@ -212,7 +212,7 @@ function templates(kind: GoalKind): Blueprint[] {
         why: "Heavy press day. Surplus is small — carbs at dinner, not dessert as dinner.",
         moves: [
           ["bench", 4, "6-8", 150],
-          ["seated-db-press", 4, "6-8", 150],
+          ["ohp", 4, "6-8", 150],
           ["incline", 3, "8-10", 120],
           ["lateral", 3, "12-15", 60],
           ["dip", 3, "8-12", 90],
@@ -226,7 +226,7 @@ function templates(kind: GoalKind): Blueprint[] {
         why: "Rows and chins. Eat the extra protein; keep the surplus honest.",
         moves: [
           ["deadlift", 3, "5", 180],
-          ["seated-row", 4, "6-8", 150],
+          ["row", 4, "6-8", 150],
           ["lat", 3, "8-12", 90],
           ["pullup", 3, "6-10", 120],
           ["face-pull", 3, "12-15", 60],
@@ -254,7 +254,7 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Volume press. Still a surplus day — do not skip dinner after this.",
         moves: [
-          ["seated-db-press", 4, "6-8", 150],
+          ["ohp", 4, "6-8", 150],
           ["chest-press", 3, "8-12", 90],
           ["fly", 3, "12-15", 75],
           ["lateral", 3, "12-15", 60],
@@ -269,7 +269,7 @@ function templates(kind: GoalKind): Blueprint[] {
         why: "More back volume. Protein and a normal carb plate.",
         moves: [
           ["pullup", 4, "6-10", 120],
-          ["seated-row", 3, "8-12", 90],
+          ["row", 3, "8-12", 90],
           ["cable-row", 3, "10-12", 75],
           ["rear-fly", 3, "12-15", 60],
           ["hammer", 3, "10-12", 60],
@@ -302,7 +302,7 @@ function templates(kind: GoalKind): Blueprint[] {
         why: "Big pulling day. Keep calories and carbs up tonight.",
         moves: [
           ["deadlift", 3, "5", 180],
-          ["seated-row", 4, "6-8", 150],
+          ["row", 4, "6-8", 150],
           ["lat", 4, "8-12", 90],
           ["pullup", 3, "6-10", 120],
           ["curl", 3, "10-12", 60],
@@ -329,7 +329,7 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Delts and upper back. Carbs stay in the plan.",
         moves: [
-          ["seated-db-press", 4, "6-8", 150],
+          ["ohp", 4, "6-8", 150],
           ["lateral", 4, "12-15", 60],
           ["face-pull", 3, "12-15", 60],
           ["rear-fly", 3, "12-15", 60],
@@ -370,7 +370,7 @@ function templates(kind: GoalKind): Blueprint[] {
       moves: [
         ["squat", 3, "6-8", 150],
         ["bench", 3, "6-8", 120],
-        ["seated-row", 3, "8-10", 120],
+        ["row", 3, "8-10", 120],
         ["rdl", 3, "8-10", 120],
         ["plank", 3, "30-45s", 45],
       ],
@@ -390,7 +390,7 @@ function templates(kind: GoalKind): Blueprint[] {
       why: "Same idea, different pressing and pulling. Balanced plate.",
       moves: [
         ["deadlift", 3, "5", 180],
-        ["seated-db-press", 3, "6-8", 120],
+        ["ohp", 3, "6-8", 120],
         ["lat", 3, "8-12", 90],
         ["lunge", 3, "8-10", 90],
         ["face-pull", 3, "12-15", 60],

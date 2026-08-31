@@ -21890,10 +21890,10 @@ var init_client = __esmMin((() => {
 	init_headers();
 }));
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-DtoJ0S6c.js
-var _tanstack_start_manifest_v_DtoJ0S6c_exports = /* @__PURE__ */ __exportAll$1({ tsrStartManifest: () => tsrStartManifest });
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-CAh69cZl.js
+var _tanstack_start_manifest_v_CAh69cZl_exports = /* @__PURE__ */ __exportAll$1({ tsrStartManifest: () => tsrStartManifest });
 var tsrStartManifest;
-var init__tanstack_start_manifest_v_DtoJ0S6c = __esmMin((() => {
+var init__tanstack_start_manifest_v_CAh69cZl = __esmMin((() => {
 	tsrStartManifest = () => ({ routes: {
 		__root__: {
 			filePath: "/workspace/src/routes/__root.tsx",
@@ -21903,39 +21903,39 @@ var init__tanstack_start_manifest_v_DtoJ0S6c = __esmMin((() => {
 				"/watch",
 				"/api/auth/$"
 			],
-			preloads: ["/assets/index-BLDhCbp1.js", "/assets/react-SIfiwpqq.js"],
+			preloads: ["/assets/index-SBW_67qb.js", "/assets/react-SIfiwpqq.js"],
 			scripts: [{ attrs: {
 				type: "module",
 				async: !0,
-				src: "/assets/index-BLDhCbp1.js"
+				src: "/assets/index-SBW_67qb.js"
 			} }]
 		},
 		"/": {
 			filePath: "/workspace/src/routes/index.tsx",
 			children: void 0,
 			preloads: [
-				"/assets/routes-YAJB9xVH.js",
-				"/assets/tester-gate-NYlB9_K3.js",
+				"/assets/routes--9G9-_SE.js",
+				"/assets/tester-gate-DdZfWmgK.js",
 				"/assets/client-DRhaju3Z.js",
-				"/assets/kitchen-hero-C7VLwz3X.js"
+				"/assets/kitchen-hero-CBBDwYOE.js"
 			]
 		},
 		"/login": {
 			filePath: "/workspace/src/routes/login.tsx",
 			children: void 0,
 			preloads: [
-				"/assets/login-BuDQHO6x.js",
+				"/assets/login-5tuoUNQh.js",
 				"/assets/client-DRhaju3Z.js",
-				"/assets/kitchen-hero-C7VLwz3X.js"
+				"/assets/kitchen-hero-CBBDwYOE.js"
 			]
 		},
 		"/watch": {
 			filePath: "/workspace/src/routes/watch.tsx",
 			children: void 0,
 			preloads: [
-				"/assets/watch-vdHRlnLF.js",
-				"/assets/tester-gate-NYlB9_K3.js",
-				"/assets/kitchen-hero-C7VLwz3X.js"
+				"/assets/watch-1NkBwtBP.js",
+				"/assets/tester-gate-DdZfWmgK.js",
+				"/assets/kitchen-hero-CBBDwYOE.js"
 			]
 		}
 	} });
@@ -107815,7 +107815,7 @@ var init_middleware = __esmMin((() => {
 	persist = persistImpl;
 }));
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/tester-gate-BoUeBzTd.js
+//#region node_modules/.nitro/vite/services/ssr/assets/tester-gate-CQr-VGoA.js
 function recipeAllergens(recipe) {
 	const blob = `${recipe.name} ${recipe.tags.join(" ")} ${recipe.ingredients.map((i) => i.name).join(" ")}`;
 	return ALLERGIES.map((a) => a.id).filter((id) => PATTERNS[id].test(blob));
@@ -108237,6 +108237,34 @@ function formatElapsed(ms) {
 }
 function isUnilateral(moveId) {
 	return UNILATERAL.has(moveId);
+}
+/** How heavy this set is vs your estimated 1RM. */
+function pctOfBest(weightKg, best1rm) {
+	if (best1rm <= 0 || weightKg <= 0) return null;
+	return Math.round(weightKg / best1rm * 100);
+}
+function dropLoadKg(weightKg) {
+	return Math.round(weightKg * .8 * 4) / 4;
+}
+function formatRecap(session, imperial) {
+	const ms = (session.finishedAt ?? Date.now()) - session.startedAt;
+	const lines = [`${session.name} · ${formatElapsed(ms)}`];
+	for (const line of session.lines) {
+		const move = moveById(line.moveId)?.name ?? line.moveId;
+		const work = line.sets.filter((s) => s.done && !s.warmup);
+		if (!work.length) continue;
+		const bits = work.map((s) => {
+			const w = imperial ? Math.round(s.weightKg * 2.2046226218) : Math.round(s.weightKg);
+			const tag = s.kind === "drop" ? " D" : s.kind === "fail" ? " F" : s.kind === "amrap" ? " AMRAP" : "";
+			const rir = s.rir != null ? `@${s.rir}` : "";
+			return `${s.reps}×${w}${rir}${tag}`;
+		});
+		lines.push(`${move}  ${bits.join("  ")}`);
+	}
+	const vol = sessionVolumeKg(session);
+	const shown = imperial ? Math.round(vol * 2.2046226218) : Math.round(vol);
+	lines.push(`${shown} ${imperial ? "lb" : "kg"} moved`);
+	return lines.join("\n");
 }
 function isoDate(d = /* @__PURE__ */ new Date()) {
 	return format(d, "yyyy-MM-dd");
@@ -109025,7 +109053,7 @@ function templates(kind) {
 					120
 				],
 				[
-					"seated-row",
+					"row",
 					3,
 					"8-10",
 					120
@@ -109058,7 +109086,7 @@ function templates(kind) {
 			why: "Upper volume without a huge calorie dump. Close protein at dinner.",
 			moves: [
 				[
-					"seated-db-press",
+					"ohp",
 					4,
 					"6-8",
 					150
@@ -109115,7 +109143,7 @@ function templates(kind) {
 					90
 				],
 				[
-					"seated-row",
+					"row",
 					3,
 					"8-12",
 					90
@@ -109157,7 +109185,7 @@ function templates(kind) {
 					150
 				],
 				[
-					"seated-db-press",
+					"ohp",
 					3,
 					"6-8",
 					120
@@ -109195,7 +109223,7 @@ function templates(kind) {
 			why: "Rows and lats. A normal plate — not a surplus, not a cut dinner.",
 			moves: [
 				[
-					"seated-row",
+					"row",
 					4,
 					"6-8",
 					150
@@ -109284,13 +109312,13 @@ function templates(kind) {
 					90
 				],
 				[
-					"seated-row",
+					"row",
 					3,
 					"8-12",
 					90
 				],
 				[
-					"seated-db-press",
+					"ohp",
 					3,
 					"8-10",
 					90
@@ -109338,7 +109366,7 @@ function templates(kind) {
 					150
 				],
 				[
-					"seated-db-press",
+					"ohp",
 					4,
 					"6-8",
 					150
@@ -109382,7 +109410,7 @@ function templates(kind) {
 					180
 				],
 				[
-					"seated-row",
+					"row",
 					4,
 					"6-8",
 					150
@@ -109465,7 +109493,7 @@ function templates(kind) {
 			why: "Volume press. Still a surplus day — do not skip dinner after this.",
 			moves: [
 				[
-					"seated-db-press",
+					"ohp",
 					4,
 					"6-8",
 					150
@@ -109515,7 +109543,7 @@ function templates(kind) {
 					120
 				],
 				[
-					"seated-row",
+					"row",
 					3,
 					"8-12",
 					90
@@ -109606,7 +109634,7 @@ function templates(kind) {
 					180
 				],
 				[
-					"seated-row",
+					"row",
 					4,
 					"6-8",
 					150
@@ -109688,7 +109716,7 @@ function templates(kind) {
 			why: "Delts and upper back. Carbs stay in the plan.",
 			moves: [
 				[
-					"seated-db-press",
+					"ohp",
 					4,
 					"6-8",
 					150
@@ -109798,7 +109826,7 @@ function templates(kind) {
 					120
 				],
 				[
-					"seated-row",
+					"row",
 					3,
 					"8-10",
 					120
@@ -109838,7 +109866,7 @@ function templates(kind) {
 					180
 				],
 				[
-					"seated-db-press",
+					"ohp",
 					3,
 					"6-8",
 					120
@@ -110498,11 +110526,11 @@ function TesterGate({ onUnlock }) {
 	});
 }
 var import_react$30, import_jsx_runtime$11, ALLERGIES, PATTERNS, COST, SNACKS, SUGAR, EGG, HONEY_GEL, FREE, STEP_BASE, LIFT_MOVES, LIFT_TEMPLATES, REST_PRESETS, HOLD_MOVES, UNILATERAL, DEFAULT_GOAL, WORKOUTS, MET, PROTEIN_PER_KG, CARB_PER_KG, I$5, BREAKFAST_RECIPES, I$4, DESSERT_RECIPES, I$3, EXPAND_RECIPES, I$2, EXTRA_RECIPES, ATLANTIC_RECIPES, USA, PLACE_RECIPES, SAUCE_RECIPES, SOUTHERN_RECIPES, I$1, WORLD_RECIPES, PLUS_RECIPES, MORE_RECIPES, farmer, fisher, CLASSIC_RECIPES, ww1, ww2, WARTIME_RECIPES, virginia, simmons, whiteHouse, gentile, HERITAGE_RECIPES, foreign365, paDutch, picayune, BOOK_RECIPES, kephart, ladiesAid, kleber, hill, bosse, oliveGreen, TABLE_RECIPES, jewish, fulton, desserts365, twenties, SWEET_ERA_RECIPES, I, CORE_RECIPES, CORE_FLAVOR, SOUTHERN_SOURCE, RECIPES, RECIPE_BY_ID, ADDONS, RANKS, MILESTONES, DEFAULT_NOTIFY, NAV_MENUS, DEFAULT_NAV_PINS, createSsrRpc, myKitchen, listKitchenMembers, createKitchen, joinKitchen, leaveKitchen, postKitchenEvent, listKitchenEvents, MUSCLE_LABEL, META, FALLBACK, EXERCISES, EQUIPMENT_LABEL, MUSCLE_GROUPS, EQUIPMENT_FILTER, REST, useSpoonful, AISLE_ORDER, TESTER_KEY, STORAGE;
-var init_tester_gate_BoUeBzTd = __esmMin((() => {
+var init_tester_gate_CQr_VGoA = __esmMin((() => {
 	init_ssr();
 	init_goal_fit_CXIqAHOY();
 	init_middleware_fw4qZJAZ();
-	init_router_EMRNTauM();
+	init_router_DV4bUhpo();
 	init_kitchen_hero_Y_MaOFPO();
 	import_react$30 = /* @__PURE__ */ __toESM(require_react());
 	import_jsx_runtime$11 = require_jsx_runtime();
@@ -110810,6 +110838,13 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 			bodyweight: true
 		},
 		{
+			id: "ab-wheel",
+			name: "Ab wheel rollout",
+			muscle: "core",
+			romM: .45,
+			bodyweight: true
+		},
+		{
 			id: "hanging-leg",
 			name: "Hanging knee raise",
 			muscle: "core",
@@ -110977,7 +111012,7 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 		},
 		{
 			id: "cable-fly",
-			name: "Standing cable fly",
+			name: "Seated machine fly",
 			muscle: "push",
 			romM: .4
 		},
@@ -111348,7 +111383,7 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 			hint: "Chest, shoulders, triceps",
 			moves: [
 				"bench",
-				"seated-db-press",
+				"ohp",
 				"incline",
 				"dip",
 				"lateral",
@@ -111361,7 +111396,7 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 			hint: "Back and biceps",
 			moves: [
 				"deadlift",
-				"seated-row",
+				"row",
 				"pullup",
 				"lat",
 				"face-pull",
@@ -111387,8 +111422,8 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 			hint: "Push + pull",
 			moves: [
 				"bench",
-				"seated-row",
-				"seated-db-press",
+				"row",
+				"ohp",
 				"lat",
 				"curl",
 				"tricep"
@@ -111413,9 +111448,9 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 			moves: [
 				"squat",
 				"bench",
-				"seated-row",
+				"row",
 				"rdl",
-				"seated-db-press"
+				"ohp"
 			]
 		}
 	];
@@ -141919,6 +141954,21 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 			defaultReps: "30-45s",
 			restSec: 45
 		},
+		"ab-wheel": {
+			primary: ["abs"],
+			secondary: ["lats", "obliques"],
+			equipment: "bodyweight",
+			setup: "Kneel, wheel under the shoulders, ribs down, glutes tight.",
+			cues: [
+				"Reach long without dumping the low back.",
+				"Pull the wheel back with the abs.",
+				"Don't pike the hips."
+			],
+			mistakes: ["Sagging into a banana. Rushing the reach."],
+			defaultSets: 3,
+			defaultReps: "8-12",
+			restSec: 60
+		},
 		"hanging-leg": {
 			primary: ["abs"],
 			secondary: ["forearms", "obliques"],
@@ -142316,12 +142366,12 @@ var init_tester_gate_BoUeBzTd = __esmMin((() => {
 		"cable-fly": {
 			primary: ["chest"],
 			secondary: ["front-delts"],
-			equipment: "cable",
-			setup: "Stand between high or mid cables, slight elbow bend, step forward to load.",
+			equipment: "machine",
+			setup: "Sit tall on the fly machine, elbows slightly bent, handles at chest height.",
 			cues: [
-				"Sweep in, not press down.",
-				"Chest leads.",
-				"Don't crash the handles."
+				"Hug, don't press.",
+				"Stop when the chest is loaded.",
+				"Control the open."
 			],
 			mistakes: ["Straight elbows. Turning it into a press."],
 			defaultSets: 3,
@@ -147783,8 +147833,8 @@ var init_dist = __esmMin((() => {
 	};
 }));
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-DGw77NWQ.js
-var routes_DGw77NWQ_exports = /* @__PURE__ */ __exportAll$1({ component: () => Home });
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-rcOHeCz_.js
+var routes_rcOHeCz__exports = /* @__PURE__ */ __exportAll$1({ component: () => Home });
 function CelebrateOverlay() {
 	const last = useSpoonful((s) => s.lastCelebrate);
 	const clear = useSpoonful((s) => s.clearCelebrate);
@@ -149914,6 +149964,15 @@ function LiftSheet({ open, onClose, seed }) {
 			total
 		};
 	}, [session]);
+	const etaMin = (0, import_react$4.useMemo)(() => {
+		let sec = 0;
+		for (const line of session.lines) {
+			const left = line.sets.filter((s) => !s.done && !s.warmup).length;
+			if (!left) continue;
+			sec += left * (20 + (exerciseById(line.moveId)?.restSec ?? restPreset));
+		}
+		return sec > 0 ? Math.max(1, Math.round(sec / 60)) : 0;
+	}, [session, restPreset]);
 	const restCue = restMove ? exerciseById(restMove)?.cues[0] : void 0;
 	const moves = (0, import_react$4.useMemo)(() => {
 		const q = query.trim().toLowerCase();
@@ -150102,6 +150161,49 @@ function LiftSheet({ open, onClose, seed }) {
 		}));
 		setSwapOf(null);
 	}
+	function addDrop(line) {
+		const last = line.sets.filter((s) => s.done && !s.warmup).at(-1) ?? line.sets.filter((s) => !s.warmup).at(-1);
+		if (!last) {
+			toast("Log a set first");
+			return;
+		}
+		setSession((cur) => ({
+			...cur,
+			lines: cur.lines.map((l) => l.id !== line.id ? l : {
+				...l,
+				sets: [...l.sets, {
+					id: nid(),
+					reps: last.reps,
+					weightKg: dropLoadKg(last.weightKg),
+					done: false,
+					kind: "drop"
+				}]
+			})
+		}));
+	}
+	function restPause(line) {
+		if (!line.sets.filter((s) => s.done && !s.warmup).at(-1)) {
+			toast("Log a set first");
+			return;
+		}
+		if (!line.sets.some((s) => !s.done && !s.warmup)) addSet(line);
+		setRestHold(false);
+		setRestMove(line.moveId);
+		setRest(15);
+		toast("15s rest-pause");
+	}
+	async function copyRecap() {
+		const text = formatRecap({
+			...session,
+			finishedAt: session.finishedAt ?? Date.now()
+		}, imperial);
+		try {
+			await navigator.clipboard.writeText(text);
+			toast("Recap copied");
+		} catch {
+			toast(text);
+		}
+	}
 	function bumpWeight(lineId, setId, dir) {
 		const step = imperial ? kgFromLb(displayStep(true)) : displayStep(false);
 		setSession((cur) => ({
@@ -150133,6 +150235,16 @@ function LiftSheet({ open, onClose, seed }) {
 		try {
 			window.navigator.vibrate?.(40);
 		} catch {}
+		if (line.sets.filter((s) => !s.warmup && s.id !== set.id && !s.done).length === 0) {
+			const idx = session.lines.findIndex((l) => l.id === line.id);
+			const next = session.lines[idx + 1];
+			if (next) window.requestAnimationFrame(() => {
+				document.getElementById(`lift-line-${next.id}`)?.scrollIntoView({
+					block: "start",
+					behavior: "smooth"
+				});
+			});
+		}
 	}
 	function setFeel(feel) {
 		setSession((cur) => ({
@@ -150229,7 +150341,8 @@ function LiftSheet({ open, onClose, seed }) {
 											setProgress.done,
 											"/",
 											setProgress.total,
-											" sets"
+											" sets",
+											etaMin > 0 ? ` · ~${etaMin} min` : ""
 										]
 									}) : null
 								]
@@ -150249,11 +150362,21 @@ function LiftSheet({ open, onClose, seed }) {
 					}) : null]
 				}), /* @__PURE__ */ (0, import_jsx_runtime$4.jsxs)("div", {
 					className: "px-4 pb-1",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(Button, {
-						variant: "spark",
-						className: "w-full",
-						onClick: finish,
-						children: "Finish"
+					children: [/* @__PURE__ */ (0, import_jsx_runtime$4.jsxs)("div", {
+						className: "flex gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(Button, {
+							variant: "spark",
+							className: "min-w-0 flex-1",
+							onClick: finish,
+							children: "Finish"
+						}), /* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(Button, {
+							variant: "secondary",
+							size: "icon",
+							className: "shrink-0",
+							onClick: () => void copyRecap(),
+							"aria-label": "Copy recap",
+							children: /* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(Share2, {})
+						})]
 					}), session.lines.some((l) => l.sets.some((s) => s.done && !s.warmup)) ? /* @__PURE__ */ (0, import_jsx_runtime$4.jsx)("div", {
 						className: "mt-2 flex gap-1",
 						children: [
@@ -150382,6 +150505,7 @@ function LiftSheet({ open, onClose, seed }) {
 						const nextKg = suggestNextKg(prev, prevSess?.feel);
 						const paired = line.pairId ? session.lines.find((l) => l.pairId === line.pairId && l.id !== line.id) : void 0;
 						return /* @__PURE__ */ (0, import_jsx_runtime$4.jsxs)("section", {
+							id: `lift-line-${line.id}`,
 							className: "mb-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime$4.jsxs)("div", {
@@ -150464,7 +150588,7 @@ function LiftSheet({ open, onClose, seed }) {
 												children: [
 													/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)("span", {
 														className: "text-center text-xs tabular-nums text-muted-foreground",
-														children: set.warmup ? "W" : set.kind === "drop" ? "D" : set.kind === "fail" ? "F" : workIndex + 1
+														children: set.warmup ? "W" : set.kind === "drop" ? "D" : set.kind === "fail" ? "F" : set.kind === "amrap" ? "A" : workIndex + 1
 													}),
 													unit === "sec" ? /* @__PURE__ */ (0, import_jsx_runtime$4.jsx)("button", {
 														type: "button",
@@ -150523,7 +150647,8 @@ function LiftSheet({ open, onClose, seed }) {
 													ghost.reps,
 													unit === "reps" ? " × " : unit === "sec" ? "s @ " : "m @ ",
 													imperial ? Math.round(lbFromKg(ghost.weightKg)) : Math.round(ghost.weightKg * 10) / 10,
-													ghost.rir != null ? ` @${ghost.rir}` : ""
+													ghost.rir != null ? ` @${ghost.rir}` : "",
+													best > 0 && pctOfBest(set.weightKg, best) != null ? ` · ${pctOfBest(set.weightKg, best)}%` : ""
 												]
 											}) : null,
 											isUnilateral(line.moveId) ? /* @__PURE__ */ (0, import_jsx_runtime$4.jsx)("div", {
@@ -150565,6 +150690,12 @@ function LiftSheet({ open, onClose, seed }) {
 														onClick: () => patchSet(line.id, set.id, { kind: set.kind === "fail" ? "work" : "fail" }),
 														className: cn("h-8 rounded-full px-2 text-[10px] uppercase tracking-wide", set.kind === "fail" ? "bg-spark text-spark-foreground" : "text-muted-foreground"),
 														children: "Fail"
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)("button", {
+														type: "button",
+														onClick: () => patchSet(line.id, set.id, { kind: set.kind === "amrap" ? "work" : "amrap" }),
+														className: cn("h-8 rounded-full px-2 text-[10px] uppercase tracking-wide", set.kind === "amrap" ? "bg-spark text-spark-foreground" : "text-muted-foreground"),
+														children: "AMRAP"
 													})
 												]
 											}) : null
@@ -150629,6 +150760,16 @@ function LiftSheet({ open, onClose, seed }) {
 											variant: "ghost",
 											onClick: () => setSwapOf(swapOf === line.id ? null : line.id),
 											children: [/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(ArrowLeftRight, {}), " Swap"]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(Button, {
+											variant: "ghost",
+											onClick: () => addDrop(line),
+											children: "Drop 20%"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(Button, {
+											variant: "ghost",
+											onClick: () => restPause(line),
+											children: "Rest-pause"
 										})
 									]
 								}),
@@ -158155,12 +158296,12 @@ function Home() {
 	return /* @__PURE__ */ (0, import_jsx_runtime$4.jsx)(SpoonfulApp, {});
 }
 var import_react$4, import_jsx_runtime$4, BY_ID, PLATE_PHOTO, badgeVariants, SYNONYMS, LOCALES, COUNTRIES, EN, DICT, MENUS, EXERCISE_CLIPS, POSE, SIZES$1, SIZES, FITNESS_SOURCES, SYNC_ACCESS, TAG, PENDING, CACHE, PREFS, usernameSchema, getMyProfile, claimUsername, searchPeople, toggleFollow, setNotifyPref, listFollowing, saveCommunityRecipe, listMyRecipes, feedRecipes, listNotifications, markNotificationsRead, listConversations, openDirectChat, createGroupChat, listMessages, sendMessage, inputSchema, planWeekWithChef, SUGGESTIONS, WAIT_TIPS, AISLES, COLLECTIONS, COLLECTION_GROUPS, scanPantryPhoto, suggestMealsFromPantry, suggestSubstitutes, lookupDish, DIET_CHIPS, MORE_CHIPS, TIME_CHIPS, PROTEIN_CHIPS, RECENT_KEY, SAUCE_MENUS, STEPS, loadKitchenState, saveKitchenState;
-var init_routes_DGw77NWQ = __esmMin((() => {
+var init_routes_rcOHeCz_ = __esmMin((() => {
 	init_ssr();
 	init_goal_fit_CXIqAHOY();
 	init_client_CVqXY6bk();
 	init_middleware_fw4qZJAZ();
-	init_tester_gate_BoUeBzTd();
+	init_tester_gate_CQr_VGoA();
 	init_kitchen_hero_Y_MaOFPO();
 	import_react$4 = /* @__PURE__ */ __toESM(require_react());
 	import_jsx_runtime$4 = require_jsx_runtime();
@@ -159480,6 +159621,7 @@ var init_routes_DGw77NWQ = __esmMin((() => {
 		}
 	];
 	EXERCISE_CLIPS = /* @__PURE__ */ new Set([
+		"ab-wheel",
 		"arnold",
 		"battle-rope",
 		"bench",
@@ -159512,6 +159654,7 @@ var init_routes_DGw77NWQ = __esmMin((() => {
 		"flutter-kick",
 		"fly",
 		"front-raise",
+		"front-squat",
 		"glute-bridge",
 		"hack-squat",
 		"hammer",
@@ -159536,6 +159679,7 @@ var init_routes_DGw77NWQ = __esmMin((() => {
 		"machine-crunch",
 		"machine-press",
 		"mountain-climber",
+		"ohp",
 		"one-arm-cable-row",
 		"one-arm-row",
 		"overhead-cable",
@@ -159554,6 +159698,7 @@ var init_routes_DGw77NWQ = __esmMin((() => {
 		"reverse-crunch",
 		"reverse-lunge",
 		"reverse-pec-deck",
+		"row",
 		"rower",
 		"russian-twist",
 		"seated-calf",
@@ -159663,6 +159808,7 @@ var init_routes_DGw77NWQ = __esmMin((() => {
 		tricep: "press",
 		skullcrusher: "bench",
 		plank: "plank",
+		"ab-wheel": "plank",
 		crunch: "plank",
 		bicycle: "plank",
 		"sit-up": "plank",
@@ -160913,8 +161059,8 @@ var init_login_lwknp1jD = __esmMin((() => {
 	init_dist$18();
 }));
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/watch-Co6vfjFW.js
-var watch_Co6vfjFW_exports = /* @__PURE__ */ __exportAll$1({ component: () => WatchFace });
+//#region node_modules/.nitro/vite/services/ssr/assets/watch-DyWeSh1d.js
+var watch_DyWeSh1d_exports = /* @__PURE__ */ __exportAll$1({ component: () => WatchFace });
 function WatchFace() {
 	const meals = useSpoonful((s) => s.meals);
 	const goal = useSpoonful((s) => s.goal);
@@ -161005,16 +161151,16 @@ function WatchFace() {
 	});
 }
 var import_react$2, import_jsx_runtime$2;
-var init_watch_Co6vfjFW = __esmMin((() => {
+var init_watch_DyWeSh1d = __esmMin((() => {
 	init_goal_fit_CXIqAHOY();
-	init_tester_gate_BoUeBzTd();
+	init_tester_gate_CQr_VGoA();
 	init_kitchen_hero_Y_MaOFPO();
 	import_react$2 = /* @__PURE__ */ __toESM(require_react());
 	import_jsx_runtime$2 = require_jsx_runtime();
 }));
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/router-EMRNTauM.js
-var router_EMRNTauM_exports = /* @__PURE__ */ __exportAll$1({
+//#region node_modules/.nitro/vite/services/ssr/assets/router-DV4bUhpo.js
+var router_DV4bUhpo_exports = /* @__PURE__ */ __exportAll$1({
 	getRouter: () => getRouter,
 	n: () => isSandboxPreviewGuestHost,
 	r: () => resolveParentEmbedderOrigin,
@@ -161275,7 +161421,7 @@ function getRouter() {
 	});
 }
 var import_react$1, import_jsx_runtime$1, PREVIEW_BRIDGE_CHANNEL, EnvelopeSchema, HelloSchema, NavigateSchema, HistorySchema, styles_default, APP_NAME, Route$4, $$splitComponentImporter$2, Route$3, $$splitComponentImporter$1, Route$2, $$splitComponentImporter, Route$1, Route, rootRouteChildren, routeTree, router_exports;
-var init_router_EMRNTauM = __esmMin((() => {
+var init_router_DV4bUhpo = __esmMin((() => {
 	init_rolldown_runtime_D7D4PA_g();
 	init_server_wFLFbueS();
 	import_react$1 = /* @__PURE__ */ __toESM(require_react());
@@ -161389,11 +161535,11 @@ var init_router_EMRNTauM = __esmMin((() => {
 			})]
 		})
 	});
-	$$splitComponentImporter$2 = () => Promise.resolve().then(() => (init_routes_DGw77NWQ(), routes_DGw77NWQ_exports));
+	$$splitComponentImporter$2 = () => Promise.resolve().then(() => (init_routes_rcOHeCz_(), routes_rcOHeCz__exports));
 	Route$3 = createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter$2, "component") });
 	$$splitComponentImporter$1 = () => Promise.resolve().then(() => (init_login_lwknp1jD(), login_lwknp1jD_exports));
 	Route$2 = createFileRoute("/login")({ component: lazyRouteComponent($$splitComponentImporter$1, "component") });
-	$$splitComponentImporter = () => Promise.resolve().then(() => (init_watch_Co6vfjFW(), watch_Co6vfjFW_exports));
+	$$splitComponentImporter = () => Promise.resolve().then(() => (init_watch_DyWeSh1d(), watch_DyWeSh1d_exports));
 	Route$1 = createFileRoute("/watch")({ component: lazyRouteComponent($$splitComponentImporter, "component") });
 	Route = createFileRoute("/api/auth/$")({ server: { handlers: {
 		GET: ({ request }) => auth.handler(request),
@@ -161528,7 +161674,7 @@ function getResponse() {
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await Promise.resolve().then(() => (init__tanstack_start_manifest_v_DtoJ0S6c(), _tanstack_start_manifest_v_DtoJ0S6c_exports));
+	const { tsrStartManifest } = await Promise.resolve().then(() => (init__tanstack_start_manifest_v_CAh69cZl(), _tanstack_start_manifest_v_CAh69cZl_exports));
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -162438,7 +162584,7 @@ function getStartResponseHeaders(opts) {
 }
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		Promise.resolve().then(() => (init_router_EMRNTauM(), router_EMRNTauM_exports)).then((n) => n.t),
+		Promise.resolve().then(() => (init_router_DV4bUhpo(), router_DV4bUhpo_exports)).then((n) => n.t),
 		Promise.resolve().then(() => (init_start_5Z2QO8AU(), start_5Z2QO8AU_exports)),
 		Promise.resolve().then(() => (init_empty_plugin_adapters_D9UWiqvJ(), empty_plugin_adapters_D9UWiqvJ_exports))
 	]);

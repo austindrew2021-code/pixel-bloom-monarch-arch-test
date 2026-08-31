@@ -107,6 +107,7 @@ const POSE: Record<string, Pose> = {
   tricep: "press",
   skullcrusher: "bench",
   plank: "plank",
+  "ab-wheel": "plank",
   crunch: "plank",
   bicycle: "plank",
   "sit-up": "plank",

@@ -1,4 +1,4 @@
-import { ArrowLeftRight, ChevronDown, ChevronUp, History, Pause, Play, Plus, Timer, X } from "lucide-react";
+import { ArrowLeftRight, ChevronDown, ChevronUp, History, Pause, Play, Plus, Share2, Timer, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ExerciseFigure } from "@/components/exercise-figure";
@@ -14,14 +14,17 @@ import {
   beatsPrevious,
   bestEpley,
   displayStep,
+  dropLoadKg,
   epley1rm,
   formatElapsed,
+  formatRecap,
   ghostSet,
   isUnilateral,
   lastFinishedSession,
   lineVolumeKg,
   logUnit,
   moveById,
+  pctOfBest,
   platesPerSide,
   previousLine,
   previousSessionForMove,
@@ -184,6 +187,15 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     }
     return { done, total };
   }, [session]);
+  const etaMin = useMemo(() => {
+    let sec = 0;
+    for (const line of session.lines) {
+      const left = line.sets.filter((s) => !s.done && !s.warmup).length;
+      if (!left) continue;
+      sec += left * (20 + (exerciseById(line.moveId)?.restSec ?? restPreset));
+    }
+    return sec > 0 ? Math.max(1, Math.round(sec / 60)) : 0;
+  }, [session, restPreset]);
   const restCue = restMove ? exerciseById(restMove)?.cues[0] : undefined;
   const moves = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -376,6 +388,58 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     setSwapOf(null);
   }
 
+  function addDrop(line: LiftLine) {
+    const last = line.sets.filter((s) => s.done && !s.warmup).at(-1) ?? line.sets.filter((s) => !s.warmup).at(-1);
+    if (!last) {
+      toast("Log a set first");
+      return;
+    }
+    setSession((cur) => ({
+      ...cur,
+      lines: cur.lines.map((l) =>
+        l.id !== line.id
+          ? l
+          : {
+              ...l,
+              sets: [
+                ...l.sets,
+                {
+                  id: nid(),
+                  reps: last.reps,
+                  weightKg: dropLoadKg(last.weightKg),
+                  done: false,
+                  kind: "drop" as const,
+                },
+              ],
+            },
+      ),
+    }));
+  }
+
+  function restPause(line: LiftLine) {
+    const last = line.sets.filter((s) => s.done && !s.warmup).at(-1);
+    if (!last) {
+      toast("Log a set first");
+      return;
+    }
+    const open = line.sets.some((s) => !s.done && !s.warmup);
+    if (!open) addSet(line);
+    setRestHold(false);
+    setRestMove(line.moveId);
+    setRest(15);
+    toast("15s rest-pause");
+  }
+
+  async function copyRecap() {
+    const text = formatRecap({ ...session, finishedAt: session.finishedAt ?? Date.now() }, imperial);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("Recap copied");
+    } catch {
+      toast(text);
+    }
+  }
+
   function bumpWeight(lineId: string, setId: string, dir: 1 | -1) {
     const step = imperial ? kgFromLb(displayStep(true)) : displayStep(false);
     setSession((cur) => ({
@@ -413,6 +477,16 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
       window.navigator.vibrate?.(40);
     } catch {
       /* ignore */
+    }
+    const leftover = line.sets.filter((s) => !s.warmup && s.id !== set.id && !s.done);
+    if (leftover.length === 0) {
+      const idx = session.lines.findIndex((l) => l.id === line.id);
+      const next = session.lines[idx + 1];
+      if (next) {
+        window.requestAnimationFrame(() => {
+          document.getElementById(`lift-line-${next.id}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+        });
+      }
     }
   }
 
@@ -485,6 +559,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
               {setProgress.total > 0 ? (
                 <p className="text-[11px] tabular-nums text-muted-foreground">
                   {setProgress.done}/{setProgress.total} sets
+                  {etaMin > 0 ? ` · ~${etaMin} min` : ""}
                 </p>
               ) : null}
             </div>
@@ -495,9 +570,14 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           {isPreviewChrome() ? <div className="pill-slot" aria-hidden /> : null}
         </div>
         <div className="px-4 pb-1">
-          <Button variant="spark" className="w-full" onClick={finish}>
-            Finish
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="spark" className="min-w-0 flex-1" onClick={finish}>
+              Finish
+            </Button>
+            <Button variant="secondary" size="icon" className="shrink-0" onClick={() => void copyRecap()} aria-label="Copy recap">
+              <Share2 />
+            </Button>
+          </div>
           {session.lines.some((l) => l.sets.some((s) => s.done && !s.warmup)) ? (
             <div className="mt-2 flex gap-1">
               {(["easy", "right", "grind"] as const).map((id) => (
@@ -610,7 +690,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           const nextKg = suggestNextKg(prev, prevSess?.feel);
           const paired = line.pairId ? session.lines.find((l) => l.pairId === line.pairId && l.id !== line.id) : undefined;
           return (
-            <section key={line.id} className="mb-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
+            <section key={line.id} id={`lift-line-${line.id}`} className="mb-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
               <div className="flex items-start gap-3">
                 {ex ? <ExerciseFigure exercise={ex} size="sm" className="h-14 w-14 rounded-xl" /> : null}
                 <div className="min-w-0 flex-1">
@@ -671,7 +751,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                     <li key={set.id}>
                       <div className="grid grid-cols-[1.75rem_minmax(0,3.6rem)_minmax(0,1fr)_auto] items-center gap-1.5">
                         <span className="text-center text-xs tabular-nums text-muted-foreground">
-                          {set.warmup ? "W" : set.kind === "drop" ? "D" : set.kind === "fail" ? "F" : workIndex + 1}
+                          {set.warmup ? "W" : set.kind === "drop" ? "D" : set.kind === "fail" ? "F" : set.kind === "amrap" ? "A" : workIndex + 1}
                         </span>
                         {unit === "sec" ? (
                           <button
@@ -743,6 +823,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                           {unit === "reps" ? " × " : unit === "sec" ? "s @ " : "m @ "}
                           {imperial ? Math.round(lbFromKg(ghost.weightKg)) : Math.round(ghost.weightKg * 10) / 10}
                           {ghost.rir != null ? ` @${ghost.rir}` : ""}
+                          {best > 0 && pctOfBest(set.weightKg, best) != null ? ` · ${pctOfBest(set.weightKg, best)}%` : ""}
                         </p>
                       ) : null}
                       {isUnilateral(line.moveId) ? (
@@ -802,6 +883,18 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                           >
                             Fail
                           </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              patchSet(line.id, set.id, { kind: set.kind === "amrap" ? "work" : "amrap" })
+                            }
+                            className={cn(
+                              "h-8 rounded-full px-2 text-[10px] uppercase tracking-wide",
+                              set.kind === "amrap" ? "bg-spark text-spark-foreground" : "text-muted-foreground",
+                            )}
+                          >
+                            AMRAP
+                          </button>
                         </div>
                       ) : null}
                     </li>
@@ -855,11 +948,14 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                 <Button variant="ghost" onClick={() => fillRest(line)}>
                   Fill rest
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => setSwapOf(swapOf === line.id ? null : line.id)}
-                >
+                <Button variant="ghost" onClick={() => setSwapOf(swapOf === line.id ? null : line.id)}>
                   <ArrowLeftRight /> Swap
+                </Button>
+                <Button variant="ghost" onClick={() => addDrop(line)}>
+                  Drop 20%
+                </Button>
+                <Button variant="ghost" onClick={() => restPause(line)}>
+                  Rest-pause
                 </Button>
               </div>
               {swapOf === line.id ? (

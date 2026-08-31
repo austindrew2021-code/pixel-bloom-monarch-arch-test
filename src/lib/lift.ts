@@ -41,6 +41,7 @@ export const LIFT_MOVES: LiftMove[] = [
   { id: "swing", name: "Kettlebell swing", muscle: "full", romM: 0.7 },
   { id: "farmer", name: "Farmer carry", muscle: "full", romM: 0.15 },
   { id: "plank", name: "Plank", muscle: "core", romM: 0.1, bodyweight: true },
+  { id: "ab-wheel", name: "Ab wheel rollout", muscle: "core", romM: 0.45, bodyweight: true },
   { id: "hanging-leg", name: "Hanging knee raise", muscle: "core", romM: 0.4, bodyweight: true },
   { id: "step-up", name: "Step-up", muscle: "legs", romM: 0.5 },
   { id: "leg-curl", name: "Lying leg curl", muscle: "legs", romM: 0.35 },
@@ -67,7 +68,7 @@ export const LIFT_MOVES: LiftMove[] = [
   { id: "pec-deck", name: "Pec deck", muscle: "push", romM: 0.35 },
   { id: "arnold", name: "Arnold press", muscle: "push", romM: 0.45 },
   { id: "hack-squat", name: "Hack squat", muscle: "legs", romM: 0.55 },
-  { id: "cable-fly", name: "Standing cable fly", muscle: "push", romM: 0.4 },
+  { id: "cable-fly", name: "Seated machine fly", muscle: "push", romM: 0.4 },
   { id: "suspension-curl", name: "Suspension leg curl", muscle: "legs", romM: 0.4, bodyweight: true },
   { id: "concentration", name: "Concentration curl", muscle: "pull", romM: 0.3 },
   { id: "hip-adduction", name: "Hip adduction", muscle: "legs", romM: 0.25 },
@@ -127,12 +128,12 @@ export const LIFT_MOVES: LiftMove[] = [
 ];
 
 export const LIFT_TEMPLATES: { id: string; name: string; hint: string; moves: string[] }[] = [
-  { id: "push", name: "Push", hint: "Chest, shoulders, triceps", moves: ["bench", "seated-db-press", "incline", "dip", "lateral", "tricep"] },
-  { id: "pull", name: "Pull", hint: "Back and biceps", moves: ["deadlift", "seated-row", "pullup", "lat", "face-pull", "curl"] },
+  { id: "push", name: "Push", hint: "Chest, shoulders, triceps", moves: ["bench", "ohp", "incline", "dip", "lateral", "tricep"] },
+  { id: "pull", name: "Pull", hint: "Back and biceps", moves: ["deadlift", "row", "pullup", "lat", "face-pull", "curl"] },
   { id: "legs", name: "Legs", hint: "Squat and hinge", moves: ["squat", "rdl", "lunge", "leg-press", "hip-thrust", "calf"] },
-  { id: "upper", name: "Upper", hint: "Push + pull", moves: ["bench", "seated-row", "seated-db-press", "lat", "curl", "tricep"] },
+  { id: "upper", name: "Upper", hint: "Push + pull", moves: ["bench", "row", "ohp", "lat", "curl", "tricep"] },
   { id: "lower", name: "Lower", hint: "Squat + hinge", moves: ["squat", "deadlift", "lunge", "hip-thrust", "calf"] },
-  { id: "full", name: "Full body", hint: "One of each", moves: ["squat", "bench", "seated-row", "rdl", "seated-db-press"] },
+  { id: "full", name: "Full body", hint: "One of each", moves: ["squat", "bench", "row", "rdl", "ohp"] },
 ];
 
 export const REST_PRESETS = [60, 90, 120, 180] as const;
@@ -144,7 +145,7 @@ export type LiftSet = {
   done: boolean;
   warmup?: boolean;
   rir?: number;
-  kind?: "work" | "drop" | "fail";
+  kind?: "work" | "drop" | "fail" | "amrap";
   side?: "L" | "R";
 };
 
@@ -382,3 +383,35 @@ const UNILATERAL = new Set([
 export function isUnilateral(moveId: string): boolean {
   return UNILATERAL.has(moveId);
 }
+
+/** How heavy this set is vs your estimated 1RM. */
+export function pctOfBest(weightKg: number, best1rm: number): number | null {
+  if (best1rm <= 0 || weightKg <= 0) return null;
+  return Math.round((weightKg / best1rm) * 100);
+}
+
+export function dropLoadKg(weightKg: number): number {
+  return Math.round(weightKg * 0.8 * 4) / 4;
+}
+
+export function formatRecap(session: LiftSession, imperial: boolean): string {
+  const ms = (session.finishedAt ?? Date.now()) - session.startedAt;
+  const lines = [`${session.name} · ${formatElapsed(ms)}`];
+  for (const line of session.lines) {
+    const move = moveById(line.moveId)?.name ?? line.moveId;
+    const work = line.sets.filter((s) => s.done && !s.warmup);
+    if (!work.length) continue;
+    const bits = work.map((s) => {
+      const w = imperial ? Math.round(s.weightKg * 2.2046226218) : Math.round(s.weightKg);
+      const tag = s.kind === "drop" ? " D" : s.kind === "fail" ? " F" : s.kind === "amrap" ? " AMRAP" : "";
+      const rir = s.rir != null ? `@${s.rir}` : "";
+      return `${s.reps}×${w}${rir}${tag}`;
+    });
+    lines.push(`${move}  ${bits.join("  ")}`);
+  }
+  const vol = sessionVolumeKg(session);
+  const shown = imperial ? Math.round(vol * 2.2046226218) : Math.round(vol);
+  lines.push(`${shown} ${imperial ? "lb" : "kg"} moved`);
+  return lines.join("\n");
+}
+

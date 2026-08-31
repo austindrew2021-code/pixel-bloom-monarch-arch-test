@@ -4,9 +4,12 @@ import { substituteMoves } from "./exercises.ts";
 import { EXERCISE_CLIPS } from "./exercise-clips.ts";
 import {
   beatsPrevious,
+  dropLoadKg,
+  formatRecap,
   ghostSet,
   isUnilateral,
   moveById,
+  pctOfBest,
   suggestNextKg,
   volumeChangePct,
   warmupLoads,
@@ -222,6 +225,11 @@ test("volume change is percent vs last session", () => {
 });
 
 test("clip names match the movement in the clip", () => {
+  assert.equal(moveById("bench")?.name, "Bench press");
+  assert.equal(moveById("ohp")?.name, "Overhead press");
+  assert.equal(moveById("row")?.name, "Barbell row");
+  assert.equal(moveById("cable-fly")?.name, "Seated machine fly");
+  assert.equal(moveById("ab-wheel")?.name, "Ab wheel rollout");
   assert.equal(moveById("kickback")?.name, "Quadruped glute kickback");
   assert.equal(moveById("one-arm-cable-row")?.name, "Chest-supported one-arm row");
   assert.equal(moveById("pendulum-squat")?.name, "Pendulum squat");
@@ -232,10 +240,39 @@ test("clip names match the movement in the clip", () => {
   assert.equal(moveById("sissy-squat")?.name, "Sissy squat");
   assert.equal(moveById("sumo-squat")?.name, "Sumo squat");
   assert.equal(EXERCISE_CLIPS.has("smith-shrug"), true);
+  assert.equal(EXERCISE_CLIPS.has("bench"), true);
+  assert.equal(EXERCISE_CLIPS.has("ohp"), true);
+  assert.equal(EXERCISE_CLIPS.has("row"), true);
+  assert.equal(EXERCISE_CLIPS.has("front-squat"), true);
+  assert.equal(EXERCISE_CLIPS.has("ab-wheel"), true);
   assert.equal(EXERCISE_CLIPS.has("goblet"), false);
   assert.equal(EXERCISE_CLIPS.has("sissy-squat"), false);
   assert.equal(EXERCISE_CLIPS.has("sumo-squat"), false);
   assert.equal(EXERCISE_CLIPS.has("squat"), true);
+});
+
+test("drop load is 80 percent and recap names the work", () => {
+  assert.equal(dropLoadKg(100), 80);
+  assert.equal(pctOfBest(80, 100), 80);
+  const recap = formatRecap(
+    {
+      id: "s",
+      date: "2026-08-31",
+      name: "Push",
+      startedAt: 0,
+      finishedAt: 60000,
+      lines: [
+        {
+          id: "l",
+          moveId: "bench",
+          sets: [{ id: "a", reps: 8, weightKg: 80, done: true, rir: 2 }],
+        },
+      ],
+    },
+    false,
+  );
+  assert.match(recap, /Bench press/);
+  assert.match(recap, /8×80@2/);
 });
 
 test("unilateral moves can log left and right", () => {
