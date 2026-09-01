@@ -3,3 +3,8 @@ node_modules/
 .github_repo
 .env
 .env.*
+# Build output — Vercel's Build Output API. If this is present at deploy
+# time, Vercel skips its own build and redeploys whatever is checked in
+# here verbatim, so a committed copy silently freezes the app at whatever
+# state it was in when it got committed. Always let Vercel build fresh.
+.vercel/output/
