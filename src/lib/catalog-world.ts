@@ -379,8 +379,10 @@ export const WORLD_RECIPES: Recipe[] = [
       I("butter", 2, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Mix tuna with mayo and celery. Pile on bread with cheddar.",
-      "Griddle in butter until the cheese runs.",
+      "Drain the canned tuna well and flake it into a bowl. Dice the celery fine and mix it in with the mayonnaise until the salad just holds together.",
+      "Butter one side of each slice of bread. Lay four slices butter-side down, spread the tuna salad over them, and top each with a slice of cheddar and a second slice of bread, butter-side up.",
+      "Griddle over medium heat 3–4 minutes a side, pressing lightly, until the bread is deep gold and the cheddar has run.",
+      "Cut each sandwich in half on the diagonal and eat while the cheese is still molten.",
     ],
   }),
   dish({

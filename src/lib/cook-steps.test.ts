@@ -349,3 +349,176 @@ test("quiche is baked, not toasted like a sandwich", () => {
   assert.equal(/toast the bread/i.test(steps), false, steps);
   assert.ok(/bake/i.test(steps) && /crust/i.test(steps), steps);
 });
+
+test("a garnish goes on at the table, not into a pot that simmers for half an hour", () => {
+  const steps = polishSteps(
+    fake({
+      id: "turkey-chili-bowl",
+      name: "Turkey chili bowl",
+      protein: "turkey",
+      plate: "soup",
+      minutes: 45,
+      ingredients: [
+        { name: "ground turkey", qty: 2, unit: "lb", aisle: "Meat & Seafood" },
+        { name: "black beans", qty: 2, unit: "cans", aisle: "Pantry" },
+        { name: "crushed tomatoes", qty: 1, unit: "can", aisle: "Pantry" },
+        { name: "onion", qty: 1, unit: "", aisle: "Produce" },
+        { name: "chili powder", qty: 2, unit: "tbsp", aisle: "Herbs & Spices" },
+        { name: "Greek yogurt", qty: 0.5, unit: "cup", aisle: "Dairy & Eggs" },
+      ],
+      steps: ["Brown the turkey with the onion.", "Add the rest and simmer."],
+    }),
+  );
+  const yogurtAt = steps.findIndex((s) => /yogurt/i.test(s));
+  assert.ok(yogurtAt >= 0, steps.join("\n"));
+  assert.equal(yogurtAt, steps.length - 1, `yogurt should land on the serving step:\n${steps.join("\n")}`);
+  assert.match(steps[yogurtAt]!, /top each bowl with/i);
+  // Everything on the list still has to get into the pot somewhere.
+  assert.match(steps.join(" "), /crushed tomatoes/i);
+});
+
+test("a shape of pasta counts as used when the method just says pasta", () => {
+  const steps = polishSteps(
+    fake({
+      id: "tomato-basil-pasta",
+      name: "Tomato basil pasta",
+      plate: "pasta",
+      ingredients: [
+        { name: "spaghetti", qty: 12, unit: "oz", aisle: "Pantry" },
+        { name: "ripe tomatoes", qty: 6, unit: "", aisle: "Produce" },
+        { name: "garlic", qty: 4, unit: "cloves", aisle: "Produce" },
+        { name: "olive oil", qty: 3, unit: "tbsp", aisle: "Pantry" },
+      ],
+      steps: [
+        "Boil pasta in well-salted water until just shy of al dente. Save a cup of water.",
+        "Warm the oil and garlic until fragrant. Add chopped tomatoes and a pinch of salt.",
+        "Simmer until the tomatoes slump, 10 minutes. Add pasta and a splash of the pasta water.",
+        "Toss until glossy.",
+      ],
+    }),
+  );
+  // The pasta is boiled in step 1; it must not also be tipped into the sauce pan.
+  assert.equal(
+    steps.filter((s) => /\b(stir in|add) the [^.]*spaghetti/i.test(s)).length,
+    0,
+    steps.join("\n"),
+  );
+});
+
+test("pasta water keeps its own name and never borrows the pasta's weight", () => {
+  const steps = polishSteps(
+    fake({
+      id: "pk-sage-pasta",
+      name: "Pumpkin sage pasta",
+      plate: "pasta",
+      ingredients: [
+        { name: "pasta", qty: 12, unit: "oz", aisle: "Pantry" },
+        { name: "pumpkin puree", qty: 1, unit: "cup", aisle: "Pantry" },
+        { name: "butter", qty: 4, unit: "tbsp", aisle: "Dairy & Eggs" },
+        { name: "sage", qty: 12, unit: "leaves", aisle: "Herbs & Spices" },
+      ],
+      steps: ["Cook the pasta. Save a cup of the water.", "Brown the butter with the sage, add pumpkin, toss."],
+    }),
+  ).join("\n");
+  assert.equal(/\d+ ounces of pasta water/i.test(steps), false, steps);
+});
+
+test("an amount is spelled out once, not repeated into a doneness cue", () => {
+  const steps = polishSteps(
+    fake({
+      id: "tuna-melt",
+      name: "Tuna melt",
+      protein: "fish",
+      plate: "toast",
+      minutes: 15,
+      ingredients: [
+        { name: "canned tuna", qty: 2, unit: "cans", aisle: "Pantry" },
+        { name: "mayonnaise", qty: 3, unit: "tbsp", aisle: "Pantry" },
+        { name: "cheddar", qty: 4, unit: "slices", aisle: "Dairy & Eggs" },
+        { name: "bread", qty: 8, unit: "slices", aisle: "Bakery" },
+      ],
+      steps: [
+        "Flake the tuna and mix it with the mayonnaise.",
+        "Spread it over four slices of bread, top each with cheddar and a second slice.",
+        "Griddle until the bread is deep gold and the cheddar has run.",
+      ],
+    }),
+  ).join("\n");
+  assert.equal(/until the 8 slices of bread/i.test(steps), false, steps);
+  assert.equal((steps.match(/8 slices of bread/gi) ?? []).length <= 1, true, steps);
+});
+
+test("a leftover roasting fat is rubbed on before the oven, not stirred into a cooked bird", () => {
+  const steps = polishSteps(
+    fake({
+      id: "so-roast-chicken",
+      name: "Roast chicken",
+      protein: "chicken",
+      plate: "roast",
+      minutes: 110,
+      ingredients: [
+        { name: "chicken", qty: 1, unit: "bird", aisle: "Meat & Seafood" },
+        { name: "flour", qty: 0.25, unit: "cup", aisle: "Pantry" },
+        { name: "butter", qty: 4, unit: "tbsp", aisle: "Dairy & Eggs" },
+      ],
+      steps: [
+        "Dredge a seasoned 4-pound bird with the flour.",
+        "Roast in a hot oven (425°F) until the flour browns.",
+        "Lower the heat to 350°F. Baste every 15 minutes.",
+        "Roast about 1½ hours, until the juices run clear.",
+      ],
+    }),
+  );
+  const butterAt = steps.findIndex((s) => /butter/i.test(s));
+  assert.ok(butterAt >= 0, steps.join("\n"));
+  assert.equal(butterAt, 0, `butter belongs on the bird before it roasts:\n${steps.join("\n")}`);
+  assert.equal(/stir in [^.]*butter/i.test(steps.join("\n")), false, steps.join("\n"));
+});
+
+test("\"any quick-cooking vegetables\" is never expanded into the food already in the pot", () => {
+  const steps = polishSteps(
+    fake({
+      id: "su-split-pea",
+      name: "Split pea soup",
+      plate: "soup",
+      minutes: 60,
+      ingredients: [
+        { name: "split peas", qty: 1, unit: "lb", aisle: "Pantry" },
+        { name: "carrot", qty: 2, unit: "", aisle: "Produce" },
+        { name: "onion", qty: 1, unit: "", aisle: "Produce" },
+        { name: "celery", qty: 2, unit: "stalks", aisle: "Produce" },
+        { name: "vegetable broth", qty: 8, unit: "cups", aisle: "Pantry" },
+      ],
+      steps: ["Simmer everything until the peas break down."],
+    }),
+  ).join("\n");
+  assert.equal(/quick-cooking the /i.test(steps), false, steps);
+  assert.equal(/Add any quick-cooking/i.test(steps), false, steps);
+});
+
+test("a generic \"season with salt\" does not count as using the salt pork", () => {
+  const steps = polishSteps(
+    fake({
+      id: "so-pot-likker",
+      name: "Pot likker",
+      protein: "pork",
+      plate: "soup",
+      minutes: 90,
+      ingredients: [
+        { name: "collard greens", qty: 2, unit: "bunches", aisle: "Produce" },
+        { name: "ham hock", qty: 1, unit: "", aisle: "Meat & Seafood" },
+        { name: "onion", qty: 1, unit: "", aisle: "Produce" },
+        { name: "salt pork", qty: 4, unit: "oz", aisle: "Meat & Seafood" },
+      ],
+      steps: [
+        "Cover greens and ham hock with water.",
+        "Simmer until the greens are silk. Season with salt and pepper.",
+        "Serve the liquor in cups, greens on the side.",
+      ],
+    }),
+  );
+  assert.match(steps.join(" "), /salt pork/i);
+  // It goes in with the greens, not after an hour and a half of simmering.
+  const porkAt = steps.findIndex((s) => /salt pork/i.test(s));
+  assert.equal(porkAt, 0, steps.join("\n"));
+});

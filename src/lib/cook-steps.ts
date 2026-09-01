@@ -1308,14 +1308,35 @@ function ingTokens(name: string): string[] {
     .filter((w) => w.length > 2 && !STOP_TOK.has(w));
 }
 
+/**
+ * Words too common to prove an ingredient was used: a method that says
+ * “season with salt” has not thereby called for the salt pork on the list.
+ */
+const WEAK_TOK = new Set([
+  "salt", "pepper", "water", "oil", "sugar", "flour", "butter", "milk", "stock",
+  "broth", "sauce", "cream", "powder", "fat", "dry", "mix", "bean", "beans",
+]);
+
 function ingIsMentioned(blob: string, ing: { name: string }): boolean {
   const t = blob.toLowerCase();
   const n = ing.name.toLowerCase();
   if (t.includes(n)) return true;
+  // A shape of pasta is used when the method says “pasta” or “noodles”, and the
+  // same for a variety of rice or a kind of stock. Without these the polisher
+  // thinks the ingredient went unused and bolts it onto an unrelated step.
+  if (/spaghetti|penne|linguine|fettuccine|macaroni|rigatoni|orzo|noodle|lasagna|ziti|farfalle|bucatini|tagliatelle|pappardelle|rotini|fusilli|shells|elbow|vermicelli|ramen|udon|soba|couscous/.test(n) &&
+    /\b(pasta|noodles?|spaghetti|macaroni)\b/.test(t)) return true;
+  if (/\brice\b/.test(n) && /\brice\b/.test(t)) return true;
+  if (/\b(stock|broth|bouillon|consomm)/.test(n) && /\b(stock|broth|liquid)\b/.test(t)) return true;
+  if (/\b(yogurt|yoghurt)\b/.test(n) && /\b(yogurt|yoghurt)\b/.test(t)) return true;
+  if (/\bmayonnaise\b/.test(n) && /\bmayo\b/.test(t)) return true;
   if (/kale|chard|spinach|collard|mustard green/.test(n) && /\bgreens?\b/.test(t)) return true;
   if (/sourdough|bread|toast|bun|tortilla|wrap/.test(n) && /\b(toast|bread|tortilla|wrap|bun|crouton)\b/.test(t)) return true;
   if (/flour|cornmeal|baking powder|baking soda|sugar/.test(n) && /\bdry ingredients\b/.test(t)) return true;
-  if (/onion|carrot|celery|tomato|pepper|potato|cabbage|okra|lima|pea/.test(n) && /\bvegetables?\b/.test(t)) return true;
+  // “Chop the vegetables” is prep, not use — a soup whose method only ever says
+  // that has still never put the tomatoes in the pot.
+  const cooked = t.replace(/\b(chop|dice|slice|mince|cut|prep|wash|peel|trim|scrub|get out)\b[^.]*?\bvegetables?\b/g, " ");
+  if (/onion|carrot|celery|tomato|pepper|potato|cabbage|okra|lima|pea/.test(n) && /\bvegetables?\b/.test(cooked)) return true;
   if (/beef|chicken|pork|lamb|turkey|veal/.test(n) && /\bmeats?\b/.test(t)) return true;
   if (/\beggs?\b/.test(n) && /\b(yolk|white|meringue|beaten|egg)\b/.test(t)) return true;
   if (/bourbon|whiskey|whisky|rum|brandy/.test(n) && /\b(whiskey|whisky|bourbon|spirit|rum|brandy)\b/.test(t)) return true;
@@ -1336,7 +1357,12 @@ function ingIsMentioned(blob: string, ing: { name: string }): boolean {
   if (/cheddar|american cheese|grated cheese/.test(n) && /\b(cheese|cheddar|rarebit)\b/.test(t)) return true;
   if (/bread crumbs|breadcrumb|crumbs/.test(n) && /\b(crumb|egg and crumb|crumbs)\b/.test(t)) return true;
   if (/strawberry jam|\bjam\b/.test(n) && /\bjam\b/.test(t)) return true;
-  return ingTokens(ing.name).some((w) => w.length > 2 && new RegExp(`\\b${escapeRe(w)}s?\\b`, "i").test(t));
+  const toks = ingTokens(ing.name);
+  // Prefer the distinctive words. “Salt pork” is only used if the method says
+  // “pork” — a stray “season with salt” elsewhere does not count.
+  const strong = toks.filter((w) => !WEAK_TOK.has(w));
+  const useful = strong.length ? strong : toks;
+  return useful.some((w) => w.length > 2 && new RegExp(`\\b${escapeRe(w)}s?\\b`, "i").test(t));
 }
 
 function isMeasuredIng(ing: { unit: string }): boolean {
@@ -1419,7 +1445,10 @@ function expandNicknames(step: string, recipe: RecipeLike): string {
       i.name,
     ),
   );
-  if (veg.length >= 2 && /\bvegetables?\b/i.test(s) && !veg.some((v) => s.toLowerCase().includes(v.name.toLowerCase()))) {
+  // “any … vegetables” and “more vegetables” mean whatever is left over, so
+  // spelling them out re-lists food the cook already put in the pot.
+  const vague = /\b(any|more|remaining|other|extra|leftover)\b[^.]{0,24}\bvegetables?\b/i.test(s);
+  if (!vague && veg.length >= 2 && /\bvegetables?\b/i.test(s) && !veg.some((v) => s.toLowerCase().includes(v.name.toLowerCase()))) {
     const phrase = joinList(veg.map(amountPhrase));
     s = s.replace(/\bthe vegetables\b/gi, phrase);
     s = s.replace(/\bvegetables\b/gi, phrase);
@@ -1449,6 +1478,11 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
 
   let out = steps.map((s) => expandNicknames(tidyThe(s), recipe));
 
+  // An amount belongs on the line that first calls for the ingredient. Repeating
+  // it later turns a doneness cue into nonsense — "until the 8 slices of bread
+  // is deep gold" — so each ingredient is spelled out once and referred to after.
+  const quantified = new Set<string>();
+
   out = out.map((step) => {
     let s = step;
     if (spicePhrase) {
@@ -1472,15 +1506,21 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
     for (const ing of ings) {
       if (/^(kosher salt|salt|black pepper|pepper)$/i.test(ing.name)) continue;
       if (!(Number(ing.qty) > 0)) continue;
+      if (quantified.has(ing.name)) continue;
+      // "a little of the dressing" is a deliberate part of the whole — leave it.
       const vague = new RegExp(
-        `\\b(?:a splash of|a little|a bit of|enough|some)\\s+(?:of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
+        `\\b(?:a splash of|a little|a bit of|enough|some)\\s+(?:the\\s+)?${escapeRe(ing.name)}\\b(?!\\s+water\\b)`,
         "i",
       );
-      if (vague.test(s)) s = s.replace(vague, amountPhrase(ing));
+      if (vague.test(s)) {
+        s = s.replace(vague, amountPhrase(ing));
+        quantified.add(ing.name);
+      }
     }
     for (const ing of ings) {
       if (!isMeasuredIng(ing) || !(Number(ing.qty) > 0)) continue;
       if (/^(kosher salt|salt|black pepper|pepper)$/i.test(ing.name)) continue;
+      if (quantified.has(ing.name)) continue;
       if (!ingIsMentioned(s, ing)) continue;
       if (hasAmountNear(s, ing.name)) continue;
       const tok = ingTokens(ing.name).sort((a, b) => b.length - a.length)[0] ?? ing.name;
@@ -1493,11 +1533,19 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       if (full.test(s)) {
         s = s.replace(full, (m: string, adj: string, offset: number, whole: string) => {
           const before = typeof whole === "string" ? whole.slice(0, offset) : "";
+          const after = typeof whole === "string" ? whole.slice(offset + m.length) : "";
+          // “the pasta water” is the starchy cooking liquid, not 12 oz of pasta.
+          if (/^\s*water\b/i.test(after)) return m;
+          // “each slice of bread” already counts the bread — don't restate it.
+          if (/\b(slices?|pieces?|cans?|cups?|cloves?|stalks?|sprigs?|spoonfuls?)\s+of\s+$/i.test(before)) return m;
           if (/(?:^|[.!?]\s+)$/.test(before) && !adj && /^(butter|oil|salt|pepper|milk|flour|sugar|cream|toast|warm)\b/i.test(m)) {
             return m;
           }
-          if (/\b(splash|little|bit|more|cream sauce|white sauce)\s+$/i.test(before)) return m;
+          // A doneness cue points back at food already in the pan.
+          if (/\buntil\s+(?:the\s+)?$/i.test(before)) return m;
+          if (/\b(splash|little|bit|more|cream sauce|white sauce)\s+(?:of\s+)?(?:the\s+)?$/i.test(before)) return m;
           if (/\bremaining\s+$/i.test(before)) return ing.name;
+          quantified.add(ing.name);
           if (!adj) return amt;
           return amt.replace(new RegExp(`\\b${escapeRe(ing.name)}\\b`, "i"), `${adj.trim()} ${ing.name}`);
         });
@@ -1507,7 +1555,7 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
   });
 
   const blob = out.join(" ");
-  const unused = ings.filter((i) => {
+  let unused = ings.filter((i) => {
     if (/^(kosher salt|salt|black pepper|pepper|oil|olive oil|ice|crushed ice)$/i.test(i.name)) return false;
     if (/^water$/i.test(i.name) && !volumeWater) return false;
     return !ingIsMentioned(blob, i);
@@ -1517,6 +1565,34 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       /\b(bread|toast|sourdough|bun|roll|tortilla|wrap|pita|naan|rice|quinoa|potato|noodle|pasta|couscous|baguette)\b/i.test(
         i.name,
       );
+    // Things that go on at the table. Stirring yogurt or cilantro into a pot
+    // that then simmers for half an hour is not a recipe anyone should follow.
+    const isGarnish = (i: { name: string }) =>
+      /\b(yogurt|yoghurt|sour cream|cr[eè]me fra[iî]che|cilantro|scallions?|green onions?|chives?|hot sauce|sriracha|lime wedges?|lemon wedges?|sesame seeds?|croutons?)\b/i.test(
+        i.name,
+      );
+    // A fat left over from a roast belongs on the meat before it goes in, not
+    // stirred into a bird that has been in the oven for an hour and a half.
+    const roasts = out.some((s) => /\b(roast|bake|oven)\b/i.test(s));
+    const isRoastFat = (i: { name: string }) =>
+      roasts && /^(butter|oil|olive oil|neutral oil|lard|drippings?|bacon fat|chicken fat|pork fat|fat)\b/i.test(i.name);
+    const garnishes = unused.filter((i) => isGarnish(i) && !isSide(i));
+    const roastFats = unused.filter((i) => !isGarnish(i) && !isSide(i) && isRoastFat(i));
+    unused = unused.filter((i) => !garnishes.includes(i) && !roastFats.includes(i));
+    if (garnishes.length) {
+      const line = finishSentence(`Top each bowl with ${joinList(garnishes.map(amountPhrase))} at the table`);
+      const at = out.findIndex((s) => /\b(serve|plate|ladle|spoon into)\b/i.test(s));
+      const target = at >= 0 ? at : out.length - 1;
+      if (target >= 0) out[target] = `${out[target]!.replace(/[.]+$/, "")}. ${line}`;
+      else out.push(line);
+    }
+    if (roastFats.length) {
+      const line = finishSentence(`Rub ${joinList(roastFats.map(amountPhrase))} over it before it goes in`);
+      const at = out.findIndex((s) => /\b(pat|dry|salt it|dredge|season|heat the oven)\b/i.test(s));
+      const target = at >= 0 ? at : 0;
+      if (out[target]) out[target] = `${out[target]!.replace(/[.]+$/, "")}. ${line}`;
+      else out.unshift(line);
+    }
     const flavor = unused.filter((i) => !isSide(i));
     const sides = unused.filter(isSide);
     const pasteAt = out.findIndex((s) => /\b(mash|glaze|paste|rub the)\b/i.test(s));
@@ -1525,11 +1601,18 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
     const mixIn = pasteAt >= 0 ? flavor.filter((i) => !bigFood(i)) : flavor;
     if (mixIn.length) {
       const add = finishSentence(`Stir in ${joinList(mixIn.map(amountPhrase))}`);
-      const idx = out.findIndex(
-        (s) =>
-          /\b(add|stir|mix|whisk|combine|season|simmer|toss|pour|beat|layer|sift)\b/i.test(s) &&
-          !/\b(serve|plate|ladle|wilt|saute|sauté|brown|sear|fry|bake|roast)\b/i.test(s),
+      // Prefer a step that is still loading the pot. Tacking an ingredient onto
+      // “simmer until the greens are silk” tells the cook to add it an hour late.
+      const usable = (s: string) => !/\b(serve|plate|ladle|wilt|saute|sauté|brown|sear|fry|bake|roast)\b/i.test(s);
+      const loading = out.findIndex(
+        (s) => /\b(add|stir|mix|whisk|combine|cover|put|place|bring)\b/i.test(s) && usable(s) && !/\buntil\b/i.test(s),
       );
+      const idx =
+        loading >= 0
+          ? loading
+          : out.findIndex(
+              (s) => /\b(add|stir|mix|whisk|combine|season|simmer|toss|pour|beat|layer|sift)\b/i.test(s) && usable(s),
+            );
       if (idx >= 0) {
         out[idx] = `${out[idx]!.replace(/[.]+$/, "")}. ${add}`;
       } else if (out.length) {
