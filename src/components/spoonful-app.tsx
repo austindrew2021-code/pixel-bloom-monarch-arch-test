@@ -1,4 +1,4 @@
-import { BookOpen, CalendarDays, Camera, Droplets, Dumbbell, Moon, Pencil, ShoppingBasket, Sun } from "lucide-react";
+import { BookOpen, CalendarDays, Camera, Droplets, Dumbbell, Palette, Pencil, ShoppingBasket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CelebrateOverlay } from "@/components/celebrate";
 import { DessertsView } from "@/components/desserts-view";
@@ -14,6 +14,7 @@ import { SnapView } from "@/components/snap-view";
 import { StoreView } from "@/components/store-view";
 import { StreakOfferCard } from "@/components/streak-offer";
 import { TesterGate } from "@/components/tester-gate";
+import { ThemePicker } from "@/components/theme-picker";
 import { UsernameGate } from "@/components/username-gate";
 import { Walkthrough } from "@/components/walkthrough";
 import { Button } from "@/components/ui/button";
@@ -31,12 +32,13 @@ import { rankForXp } from "@/lib/ranks";
 import { loadKitchenState, saveKitchenState } from "@/lib/kitchen-cloud";
 import { resolveMeal, useSpoonful, type TabId } from "@/lib/spoonful-store";
 import { isTesterUnlocked } from "@/lib/tester";
+import { normalizeTheme, themeById } from "@/lib/themes";
 import { isPreviewChrome } from "@/lib/preview-chrome";
 import { cn } from "@/lib/utils";
 
 function applyChrome() {
   const { theme, nextGen, locale } = useSpoonful.getState();
-  document.documentElement.dataset.theme = theme === "midnight" ? "midnight" : "paper";
+  document.documentElement.dataset.theme = normalizeTheme(theme);
   document.documentElement.dataset.ease = nextGen ? "next" : "simple";
   document.documentElement.lang = htmlLang(locale);
 }
@@ -61,6 +63,7 @@ export function SpoonfulApp() {
   const { user, isPending } = useCurrentUserState();
   const [profile, setProfile] = useState<{ username: string } | null | undefined>(undefined);
   const [extras, setExtras] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
   const [editPins, setEditPins] = useState(false);
   const [unread, setUnread] = useState(0);
   const [allowed, setAllowed] = useState(false);
@@ -250,11 +253,11 @@ export function SpoonfulApp() {
             <button
               type="button"
               data-tour="theme"
-              onClick={() => setTheme(theme === "midnight" ? "paper" : "midnight")}
+              onClick={() => setThemeOpen(true)}
               className="flex size-12 shrink-0 items-center justify-center rounded-full bg-card shadow-[var(--shadow-border)]"
-              aria-label={theme === "midnight" ? "Paper kitchen" : "Midnight kitchen"}
+              aria-label={`Theme: ${themeById(theme).label}`}
             >
-              {theme === "midnight" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+              <Palette className="size-4" />
             </button>
             <button
               type="button"
@@ -348,6 +351,12 @@ export function SpoonfulApp() {
       <Sheet open={editPins} onOpenChange={setEditPins}>
         <SheetContent title={t(locale, "editPins")}>
           <PinEditor onDone={() => setEditPins(false)} />
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={themeOpen} onOpenChange={setThemeOpen}>
+        <SheetContent title="Kitchen look">
+          <ThemePicker theme={theme} onPick={setTheme} />
         </SheetContent>
       </Sheet>
 

@@ -7,6 +7,7 @@ import { formatMinutes } from "@/lib/format";
 import { nutritionForDate, resolveMeal, useSpoonful } from "@/lib/spoonful-store";
 import { rankProgress } from "@/lib/ranks";
 import { isTesterUnlocked } from "@/lib/tester";
+import { normalizeTheme } from "@/lib/themes";
 
 export const Route = createFileRoute("/watch")({ component: WatchFace });
 
@@ -26,8 +27,7 @@ function WatchFace() {
     setAllowed(isTesterUnlocked());
     const done = useSpoonful.persist.rehydrate();
     void Promise.resolve(done).then(() => {
-      const theme = useSpoonful.getState().theme;
-      document.documentElement.dataset.theme = theme === "midnight" ? "midnight" : "paper";
+      document.documentElement.dataset.theme = normalizeTheme(useSpoonful.getState().theme);
     });
   }, []);
 

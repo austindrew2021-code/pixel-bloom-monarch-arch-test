@@ -26,6 +26,7 @@ import {
 } from "./ranks";
 import type { ProgressPhotoMeta } from "./progress-photos";
 import { brokenStreakInfo, type BrokenStreak } from "./streak";
+import { isThemeId, type ThemeId } from "./themes";
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "./notify";
 import type { FitnessSourceId, SyncAccess } from "./devices";
 import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
@@ -101,7 +102,7 @@ type SpoonfulState = {
   extraGrocery: ExtraGroceryItem[];
   checked: Record<string, boolean>;
   unlocked: AddonId[];
-  theme: "paper" | "midnight";
+  theme: ThemeId;
   tab: TabId;
   walkthroughDone: boolean;
   nextGen: boolean;
@@ -161,7 +162,7 @@ type SpoonfulState = {
   setHousehold: (n: number) => void;
   togglePref: (pref: PrefId) => void;
   toggleAllergy: (id: AllergyId) => void;
-  setTheme: (theme: "paper" | "midnight") => void;
+  setTheme: (theme: ThemeId) => void;
   setNextGen: (nextGen: boolean) => void;
   setPortionSync: (portionSync: boolean) => void;
   setGoal: (goal: MacroGoal) => void;
@@ -1232,7 +1233,7 @@ export const useSpoonful = create<SpoonfulState>()(
           ...(Array.isArray(payload.extraGrocery) ? { extraGrocery: payload.extraGrocery as ExtraGroceryItem[] } : {}),
           ...(payload.checked && typeof payload.checked === "object" ? { checked: payload.checked as Record<string, boolean> } : {}),
           ...(Array.isArray(payload.unlocked) ? { unlocked: payload.unlocked as AddonId[] } : {}),
-          ...(payload.theme === "paper" || payload.theme === "midnight" ? { theme: payload.theme } : {}),
+          ...(isThemeId(payload.theme) ? { theme: payload.theme } : {}),
           ...(typeof payload.walkthroughDone === "boolean" ? { walkthroughDone: payload.walkthroughDone } : {}),
           ...(typeof payload.nextGen === "boolean" ? { nextGen: payload.nextGen } : {}),
           ...(typeof payload.portionSync === "boolean" ? { portionSync: payload.portionSync } : {}),

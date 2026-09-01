@@ -85,6 +85,124 @@
   --shadow-lift: 0 0 0 1px rgb(243 234 220 / 0.06), 0px 14px 32px -16px rgb(0 0 0 / 0.7);
 }
 
+/*
+ * Steampunk: oiled leather and lit brass. Warm metal accents, and shadows
+ * that read as a soft lamp glow rather than a drop shadow.
+ */
+[data-theme="brass"] {
+  --color-background: #1c1410;
+  --color-foreground: #f2e3cd;
+  --color-card: #2a1f17;
+  --color-card-foreground: #f2e3cd;
+  --color-popover: #2a1f17;
+  --color-popover-foreground: #f2e3cd;
+  --color-primary: #6f9a86;
+  --color-primary-foreground: #0e0a07;
+  --color-muted: #3a2b20;
+  --color-muted-foreground: #c0a888;
+  --color-accent: #4a3218;
+  --color-accent-foreground: #f0c37a;
+  --color-spark: #d99a3c;
+  --color-spark-foreground: #1c1208;
+  --color-border: #4b3826;
+  --color-input: #4b3826;
+  --color-ring: #d99a3c;
+  --color-destructive: #c9663f;
+  --color-destructive-foreground: #14100c;
+  --color-today: #2c2418;
+  --color-food-cream: #e8d5b0;
+  --shadow-border: 0 0 0 1px rgb(217 154 60 / 0.22);
+  --shadow-border-hover: 0 0 0 1px rgb(217 154 60 / 0.4), 0 0 18px -6px rgb(217 154 60 / 0.4);
+  --shadow-lift: 0 0 0 1px rgb(217 154 60 / 0.3), 0 16px 34px -18px rgb(0 0 0 / 0.85);
+}
+
+/*
+ * Cyberpunk: wet asphalt under a sign. Cards carry a live cyan edge, so the
+ * "lightning" is structural — every surface in the app glows, not a decal.
+ */
+[data-theme="neon"] {
+  --color-background: #07080f;
+  --color-foreground: #e6f6ff;
+  --color-card: #0e1220;
+  --color-card-foreground: #e6f6ff;
+  --color-popover: #0e1220;
+  --color-popover-foreground: #e6f6ff;
+  --color-primary: #22e0ff;
+  --color-primary-foreground: #04121a;
+  --color-muted: #161d33;
+  --color-muted-foreground: #90a6c8;
+  --color-accent: #241640;
+  --color-accent-foreground: #ff5cf0;
+  --color-spark: #ff2fb3;
+  --color-spark-foreground: #12000c;
+  --color-border: #24304f;
+  --color-input: #24304f;
+  --color-ring: #22e0ff;
+  --color-destructive: #ff5c7a;
+  --color-destructive-foreground: #12000c;
+  --color-today: #10203a;
+  --color-food-cream: #cfe6ff;
+  --shadow-border: 0 0 0 1px rgb(34 224 255 / 0.26), 0 0 14px -8px rgb(34 224 255 / 0.7);
+  --shadow-border-hover: 0 0 0 1px rgb(34 224 255 / 0.5), 0 0 22px -6px rgb(34 224 255 / 0.8);
+  --shadow-lift: 0 0 0 1px rgb(255 47 179 / 0.4), 0 0 30px -10px rgb(255 47 179 / 0.65);
+}
+
+/* Deep space violet — futuristic without the arcade voltage of Neon Grid. */
+[data-theme="nebula"] {
+  --color-background: #0c0718;
+  --color-foreground: #ece4ff;
+  --color-card: #160e28;
+  --color-card-foreground: #ece4ff;
+  --color-popover: #160e28;
+  --color-popover-foreground: #ece4ff;
+  --color-primary: #7ee0d0;
+  --color-primary-foreground: #06110f;
+  --color-muted: #241640;
+  --color-muted-foreground: #b3a3d6;
+  --color-accent: #2e1a52;
+  --color-accent-foreground: #e0c2ff;
+  --color-spark: #c77dff;
+  --color-spark-foreground: #14061f;
+  --color-border: #33224f;
+  --color-input: #33224f;
+  --color-ring: #c77dff;
+  --color-destructive: #ff7ba6;
+  --color-destructive-foreground: #14061f;
+  --color-today: #1d1338;
+  --color-food-cream: #ded2f5;
+  --shadow-border: 0 0 0 1px rgb(199 125 255 / 0.2);
+  --shadow-border-hover: 0 0 0 1px rgb(199 125 255 / 0.38), 0 0 20px -8px rgb(199 125 255 / 0.55);
+  --shadow-lift: 0 0 0 1px rgb(199 125 255 / 0.28), 0 18px 36px -18px rgb(0 0 0 / 0.85);
+}
+
+/* Phosphor CRT. Near-monochrome so the green does the talking. */
+[data-theme="terminal"] {
+  --color-background: #04120a;
+  --color-foreground: #d6ffe8;
+  --color-card: #082014;
+  --color-card-foreground: #d6ffe8;
+  --color-popover: #082014;
+  --color-popover-foreground: #d6ffe8;
+  --color-primary: #3dff9a;
+  --color-primary-foreground: #02160b;
+  --color-muted: #0f2f1e;
+  --color-muted-foreground: #7fc3a1;
+  --color-accent: #123a25;
+  --color-accent-foreground: #8dffc4;
+  --color-spark: #b6ff3d;
+  --color-spark-foreground: #0b1a04;
+  --color-border: #1c4a30;
+  --color-input: #1c4a30;
+  --color-ring: #3dff9a;
+  --color-destructive: #ff8f6b;
+  --color-destructive-foreground: #02160b;
+  --color-today: #0d2c1b;
+  --color-food-cream: #c8e8d4;
+  --shadow-border: 0 0 0 1px rgb(61 255 154 / 0.2);
+  --shadow-border-hover: 0 0 0 1px rgb(61 255 154 / 0.4), 0 0 18px -8px rgb(61 255 154 / 0.5);
+  --shadow-lift: 0 0 0 1px rgb(61 255 154 / 0.3), 0 16px 32px -18px rgb(0 0 0 / 0.9);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -122,6 +240,98 @@
     min-width: 0;
     max-width: 100%;
     overflow-x: clip;
+  }
+
+  /*
+   * Per-theme atmosphere. Painted on a fixed, non-interactive layer behind
+   * the app so it never affects layout, hit-testing or scroll. Each is built
+   * from the theme's own tokens, so it stays in step with the palette.
+   */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--theme-atmosphere, none);
+    background-size: var(--theme-atmosphere-size, auto);
+    opacity: var(--theme-atmosphere-opacity, 1);
+  }
+
+  /* Brass: lamplight pooling in the corners, with a faint machined grain. */
+  [data-theme="brass"] body::before {
+    --theme-atmosphere:
+      radial-gradient(900px 480px at 100% 0%, rgb(217 154 60 / 0.16), transparent 60%),
+      radial-gradient(700px 420px at 0% 100%, rgb(201 102 63 / 0.12), transparent 62%),
+      repeating-linear-gradient(115deg, rgb(217 154 60 / 0.05) 0 2px, transparent 2px 9px);
+  }
+
+  /* Neon: a receding circuit grid under a magenta/cyan sign wash. */
+  [data-theme="neon"] body::before {
+    --theme-atmosphere:
+      radial-gradient(760px 420px at 85% -5%, rgb(255 47 179 / 0.2), transparent 62%),
+      radial-gradient(820px 460px at 0% 105%, rgb(34 224 255 / 0.16), transparent 60%),
+      linear-gradient(rgb(34 224 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(34 224 255 / 0.06) 1px, transparent 1px);
+    --theme-atmosphere-size: auto, auto, 44px 44px, 44px 44px;
+  }
+
+  /*
+   * The lightning: a rare, fast double-flash across the grid. Long gap, low
+   * peak opacity — atmosphere you catch out of the corner of your eye, not a
+   * strobe over content you're trying to read.
+   */
+  [data-theme="neon"] body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: linear-gradient(200deg, rgb(180 240 255 / 0.9), transparent 42%);
+    opacity: 0;
+    animation: theme-lightning 14s var(--ease-smooth-out) infinite;
+  }
+
+  @keyframes theme-lightning {
+    0%,
+    88%,
+    100% {
+      opacity: 0;
+    }
+    89% {
+      opacity: 0.14;
+    }
+    90.5% {
+      opacity: 0.02;
+    }
+    92% {
+      opacity: 0.1;
+    }
+    95% {
+      opacity: 0;
+    }
+  }
+
+  /* Nebula: cold starfield glow, no hard structure. */
+  [data-theme="nebula"] body::before {
+    --theme-atmosphere:
+      radial-gradient(820px 460px at 15% -10%, rgb(199 125 255 / 0.2), transparent 60%),
+      radial-gradient(700px 420px at 95% 20%, rgb(126 224 208 / 0.12), transparent 58%),
+      radial-gradient(900px 520px at 60% 110%, rgb(88 60 160 / 0.24), transparent 60%);
+  }
+
+  /* Terminal: phosphor bloom plus CRT scanlines. */
+  [data-theme="terminal"] body::before {
+    --theme-atmosphere:
+      radial-gradient(760px 420px at 50% -10%, rgb(61 255 154 / 0.14), transparent 62%),
+      repeating-linear-gradient(rgb(61 255 154 / 0.05) 0 1px, transparent 1px 3px);
+  }
+
+  /* Atmosphere is decoration; motion in it is optional. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-theme="neon"] body::after {
+      animation: none;
+    }
   }
 
   .meal-photo {

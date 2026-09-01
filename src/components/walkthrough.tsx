@@ -26,8 +26,8 @@ const STEPS: TourStep[] = [
     id: "theme",
     tab: "plan",
     target: "theme",
-    title: "Paper or midnight",
-    body: "The sun and moon swap the kitchen between warm paper and midnight. Tap it anytime.",
+    title: "Pick your look",
+    body: "Six kitchen skins — warm paper, midnight, brass, neon, nebula, phosphor. Tap to swap anytime.",
   },
   {
     id: "tonight",
