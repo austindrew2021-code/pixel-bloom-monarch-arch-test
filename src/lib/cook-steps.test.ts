@@ -522,3 +522,166 @@ test("a generic \"season with salt\" does not count as using the salt pork", () 
   const porkAt = steps.findIndex((s) => /salt pork/i.test(s));
   assert.equal(porkAt, 0, steps.join("\n"));
 });
+
+test("buttermilk and butter beans are never used as the fat in the pan", () => {
+  const chicken = polishSteps(
+    fake({
+      id: "buttermilk-fried-chicken",
+      name: "Buttermilk fried chicken",
+      protein: "chicken",
+      plate: "skillet",
+      minutes: 45,
+      ingredients: [
+        { name: "chicken thighs", qty: 2, unit: "lb", aisle: "Meat & Seafood" },
+        { name: "buttermilk", qty: 2, unit: "cups", aisle: "Dairy & Eggs" },
+        { name: "flour", qty: 2, unit: "cups", aisle: "Pantry" },
+        { name: "oil for frying", qty: 4, unit: "cups", aisle: "Pantry" },
+      ],
+      steps: ["Soak the chicken in buttermilk.", "Dredge and fry until gold."],
+    }),
+  ).join("\n");
+  assert.equal(/film of (?:the [^.]*)?buttermilk/i.test(chicken), false, chicken);
+
+  const oxtail = polishSteps(
+    fake({
+      id: "cb-oxtail",
+      name: "Oxtail",
+      protein: "beef",
+      plate: "skillet",
+      minutes: 180,
+      ingredients: [
+        { name: "oxtail", qty: 3, unit: "lb", aisle: "Meat & Seafood" },
+        { name: "butter beans", qty: 1, unit: "can", aisle: "Pantry" },
+        { name: "onion", qty: 1, unit: "", aisle: "Produce" },
+      ],
+      steps: ["Brown the oxtail, then braise until it falls off the bone."],
+    }),
+  ).join("\n");
+  assert.equal(/film of (?:the [^.]*)?butter beans/i.test(oxtail), false, oxtail);
+});
+
+test("a chopped salad is never told to wash and tear greens it does not have", () => {
+  const steps = polishSteps(
+    fake({
+      id: "it-caprese",
+      name: "Caprese salad",
+      plate: "green",
+      minutes: 10,
+      ingredients: [
+        { name: "ripe tomatoes", qty: 4, unit: "", aisle: "Produce" },
+        { name: "fresh mozzarella", qty: 8, unit: "oz", aisle: "Dairy & Eggs" },
+        { name: "fresh basil", qty: 1, unit: "bunch", aisle: "Produce" },
+        { name: "olive oil", qty: 2, unit: "tbsp", aisle: "Pantry" },
+      ],
+      steps: ["Slice tomatoes and mozzarella. Layer with basil, oil, salt."],
+    }),
+  ).join("\n");
+  assert.equal(/wash and dry the greens/i.test(steps), false, steps);
+  assert.equal(/cook, stirring, until everything is hot/i.test(steps), false, steps);
+});
+
+test("a raw sauce is blended cold, not simmered through a roux", () => {
+  const steps = polishSteps(
+    fake({
+      id: "basil-pesto",
+      name: "Basil pesto",
+      plate: "dessert",
+      minutes: 10,
+      ingredients: [
+        { name: "fresh basil", qty: 2, unit: "bunches", aisle: "Produce" },
+        { name: "pine nuts", qty: 0.33, unit: "cup", aisle: "Pantry" },
+        { name: "garlic", qty: 2, unit: "cloves", aisle: "Produce" },
+        { name: "parmesan", qty: 0.5, unit: "cup", aisle: "Dairy & Eggs" },
+        { name: "olive oil", qty: 0.5, unit: "cup", aisle: "Pantry" },
+      ],
+      steps: ["Blend everything to a coarse paste."],
+    }),
+  ).join("\n");
+  assert.equal(/Stir in any flour or starch/i.test(steps), false, steps);
+  assert.equal(/simmer/i.test(steps), false, steps);
+  assert.match(steps, /not cooked|do not heat it/i);
+});
+
+test("a coating goes on before the pan, not stirred in after searing", () => {
+  const steps = polishSteps(
+    fake({
+      id: "schnitzel",
+      name: "Pork schnitzel",
+      protein: "pork",
+      plate: "skillet",
+      minutes: 30,
+      ingredients: [
+        { name: "pork cutlets", qty: 4, unit: "", aisle: "Meat & Seafood" },
+        { name: "flour", qty: 0.5, unit: "cup", aisle: "Pantry" },
+        { name: "eggs", qty: 2, unit: "", aisle: "Dairy & Eggs" },
+        { name: "breadcrumbs", qty: 1.5, unit: "cups", aisle: "Pantry" },
+        { name: "oil for frying", qty: 1, unit: "cup", aisle: "Pantry" },
+      ],
+      steps: ["Pound the cutlets thin.", "Fry until gold on both sides."],
+    }),
+  );
+  const coatAt = steps.findIndex((s) => /breadcrumbs/i.test(s));
+  const cookAt = steps.findIndex((s) => /\b(sear|fry|griddle)\b/i.test(s));
+  assert.ok(coatAt >= 0 && cookAt >= 0, steps.join("\n"));
+  assert.ok(coatAt < cookAt, `breading must come before the pan:\n${steps.join("\n")}`);
+});
+
+test("fried rice puts its rice in the pan, not on the side", () => {
+  const steps = polishSteps(
+    fake({
+      id: "hm-spam-fried-rice",
+      name: "Spam fried rice",
+      protein: "pork",
+      plate: "skillet",
+      minutes: 20,
+      ingredients: [
+        { name: "Spam", qty: 1, unit: "can", aisle: "Meat & Seafood" },
+        { name: "cooked rice", qty: 4, unit: "cups", aisle: "Pantry" },
+        { name: "eggs", qty: 2, unit: "", aisle: "Dairy & Eggs" },
+        { name: "tamari", qty: 2, unit: "tbsp", aisle: "Pantry" },
+      ],
+      steps: ["Crisp the Spam, scramble the eggs, toss everything with the rice."],
+    }),
+  ).join("\n");
+  assert.equal(/Serve with the [^.]*rice/i.test(steps), false, steps);
+  assert.match(steps, /rice to the pan|toss/i);
+});
+
+test("a shaped bake is shaped, not poured into one dish", () => {
+  const biscotti = polishSteps(
+    fake({
+      id: "bk-biscotti",
+      name: "Almond biscotti",
+      plate: "dessert",
+      minutes: 60,
+      ingredients: [
+        { name: "flour", qty: 2, unit: "cups", aisle: "Pantry" },
+        { name: "sugar", qty: 0.75, unit: "cup", aisle: "Pantry" },
+        { name: "eggs", qty: 2, unit: "", aisle: "Dairy & Eggs" },
+        { name: "almonds", qty: 1, unit: "cup", aisle: "Pantry" },
+      ],
+      steps: ["Bake into logs, slice, bake again."],
+    }),
+  ).join("\n");
+  assert.match(biscotti, /logs?/i);
+  assert.match(biscotti, /slices?/i);
+  assert.equal(/Scrape into the dish/i.test(biscotti), false, biscotti);
+
+  const thumb = polishSteps(
+    fake({
+      id: "bk-thumbprints",
+      name: "Jam thumbprint cookies",
+      plate: "dessert",
+      minutes: 35,
+      ingredients: [
+        { name: "butter", qty: 1, unit: "cup", aisle: "Dairy & Eggs" },
+        { name: "sugar", qty: 0.67, unit: "cup", aisle: "Pantry" },
+        { name: "flour", qty: 2, unit: "cups", aisle: "Pantry" },
+        { name: "raspberry jam", qty: 0.5, unit: "cup", aisle: "Pantry" },
+      ],
+      steps: ["Roll, thumbprint, fill with jam, bake."],
+    }),
+  ).join("\n");
+  assert.match(thumb, /hollow|thumb/i);
+  assert.equal(/Scrape into the dish/i.test(thumb), false, thumb);
+});

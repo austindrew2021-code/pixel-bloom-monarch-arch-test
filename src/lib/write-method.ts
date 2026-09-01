@@ -67,8 +67,32 @@ function isDrink(recipe: MethodRecipe): boolean {
   );
 }
 
+/**
+ * The fat the pan actually gets. Matching has to be on whole words: "butter"
+ * inside "buttermilk" and "butter beans", and "oil" inside "no-boil lasagna
+ * noodles", were putting beans and dry pasta in the skillet as the cooking fat.
+ */
+const NOT_A_FAT = /\b(buttermilk|butter beans?|butternut|peanut butter|almond butter|apple butter|body butter|nut butter|cocoa butter)\b/i;
+
 function fat(recipe: MethodRecipe): string {
-  return named(recipe, /butter|ghee/, "") || named(recipe, /olive oil|oil|lard|dripping/, "oil");
+  const pick = (re: RegExp) => {
+    const hit = recipe.ingredients.find((i) => re.test(i.name) && !NOT_A_FAT.test(i.name));
+    return hit?.name ?? "";
+  };
+  return (
+    pick(/\b(butter|ghee)\b/i) ||
+    pick(/\b(olive oil|vegetable oil|neutral oil|canola oil|sesame oil|coconut oil|oil|lard|shortening|drippings?|bacon fat|schmaltz|tallow)\b/i) ||
+    "oil"
+  );
+}
+
+/** Names the seasonings the list actually stocks, or says nothing at all. */
+function seasoningBit(recipe: MethodRecipe): string {
+  const hits = namesMatching(
+    recipe,
+    /\b(paprika|cumin|coriander|turmeric|curry|garam|berbere|za'?atar|chili powder|cayenne|oregano|thyme|rosemary|sage|parsley|cilantro|basil|dill|mint|chives|bay|cinnamon|allspice|nutmeg|clove|fennel|sumac|harissa|jerk|old bay|seasoning|herbs?|spices?)\b/i,
+  );
+  return hits.length ? ` and ${join(hits)}` : "";
 }
 
 function aromatics(recipe: MethodRecipe): string {
@@ -786,6 +810,34 @@ function sauceMethod(recipe: MethodRecipe): string[] {
       `Use right away, or chill and shake before you dress the salad.`,
     ];
   }
+  // A pesto, a chimichurri, a tzatziki, an aioli: these are never cooked. The
+  // roux template turned every one of them into a simmered gravy.
+  const lower = recipe.name.toLowerCase();
+  if (/\b(pesto|chimichurri|gremolata|salsa|pico|aioli|tzatziki|raita|harissa|romesco|muhammara|guacamole|nuoc cham|ponzu|mojo|cocktail sauce|tartar sauce|remoulade|hummus|baba)\b/.test(lower)) {
+    const green = join(namesMatching(recipe, /\b(basil|parsley|cilantro|mint|dill|oregano|arugula|spinach|garlic|chile|chili|pepper|tomatillo|tomato|cucumber|avocado|walnut|almond|pine nut|chickpea|eggplant)\b/i));
+    const liquidBits = join(namesMatching(recipe, /\b(olive oil|oil|lemon|lime|vinegar|yogurt|water|fish sauce|soy)\b/i));
+    const rich = join(namesMatching(recipe, /\b(parmesan|pecorino|cheese|tahini|mayonnaise|sour cream)\b/i));
+    return [
+      `Get out ${list}. This one is not cooked — keep everything cold and raw.`,
+      green
+        ? `Chop ${green} roughly, or drop it straight into a food processor.`
+        : `Chop the solid ingredients roughly, or drop them straight into a food processor.`,
+      liquidBits
+        ? `Add ${liquidBits} and a good pinch of salt. Blend or pound to the texture you want — loose and spoonable, or coarse.`
+        : `Add a good pinch of salt and blend or pound to the texture you want.`,
+      rich ? `Stir in ${rich} by hand at the end so it stays creamy and does not split.` : `Taste for salt.`,
+      `Taste and adjust the salt and acid. Serve ${lower} cold or at room temperature — do not heat it.`,
+    ];
+  }
+  if (/\bcranberry sauce\b/.test(lower)) {
+    return [
+      `Get out ${list}.`,
+      `Put the cranberries, sugar, and liquid in a saucepan over medium heat.`,
+      `Cook ${mins} minutes, stirring now and then. The berries will pop and the sauce will thicken.`,
+      `Stir in any zest or spice off the heat.`,
+      `Cool completely — it sets as it cools. Serve cold.`,
+    ];
+  }
   return [
     `Get out ${list}. Set a small saucepan over medium-low heat.`,
     `Melt ${fat(recipe)}. Stir in any flour or starch and cook 1 minute if the sauce needs a thickener.`,
@@ -869,8 +921,8 @@ function roastMethod(recipe: MethodRecipe): string[] {
   return [
     `Heat the oven to ${temp}°F. Pat the ${meat} dry. Salt it well.`,
     meaty
-      ? `Rub with ${fat(recipe)} and the spices. Set in a roasting pan or on a sheet.`
-      : `Toss the ${veg} with ${fat(recipe)}, salt, and the herbs. Spread in a single layer on a sheet.`,
+      ? `Rub with ${fat(recipe)}${seasoningBit(recipe)}. Set in a roasting pan or on a sheet.`
+      : `Toss the ${veg} with ${fat(recipe)}, salt${seasoningBit(recipe)}. Spread in a single layer on a sheet.`,
     meaty && veg
       ? `Scatter ${veg} around the pan. Roast ${roastN} minutes, until the ${meat} ${cookedBe(meat)} cooked through and the edges are gold.`
       : `Roast ${roastN} minutes, until cooked through and browned at the edges.`,
@@ -1035,17 +1087,37 @@ function toastMethod(recipe: MethodRecipe): string[] {
 }
 
 function saladMethod(recipe: MethodRecipe): string[] {
-  const greens = named(recipe, /lettuce|romaine|frisée|spinach|arugula|cabbage|greens/, "the greens");
-  const dressing = join(namesMatching(recipe, /oil|vinegar|lemon|dijon|mustard|garlic|anchovy/i));
-  const extras = join(namesMatching(recipe, /tomato|cucumber|olive|onion|egg|cheese|crouton|avocado|bean|tuna|chicken/i));
+  // Only a leaf salad gets washed and torn. A chopped salad — panzanella,
+  // Israeli salad, three-bean — has no greens to tear, and telling a cook to
+  // wash greens that are not on the list is how the method stops making sense.
+  const greens = named(recipe, /\b(lettuce|romaine|frisée|frisee|spinach|arugula|cabbage|mesclun|escarole|endive|radicchio|salad mix|greens)\b/i);
+  const dressing = join(namesMatching(recipe, /oil|vinegar|lemon|lime|dijon|mustard|garlic|anchovy|tahini|yogurt/i));
+  const body = join(
+    namesMatching(recipe, /tomato|cucumber|olive|onion|egg|cheese|crouton|avocado|bean|tuna|chicken|corn|pepper|carrot|radish|herb|parsley|mint|basil|feta|chickpea|farro|quinoa|bulgur|orzo|pasta|melon|apple|pear/i).filter(
+      (n) => n !== greens,
+    ),
+  );
+  const dressStep = dressing
+    ? `Whisk ${dressing} with a pinch of salt until the dressing looks even.`
+    : `Whisk a little oil with lemon or vinegar and a pinch of salt.`;
+
+  if (greens) {
+    return [
+      `Wash and dry the ${greens}. Tear into bite-size pieces and put them in a wide bowl.`,
+      dressStep,
+      body ? `Add ${body} to the bowl.` : `Keep the bowl ready.`,
+      `Toss with just enough dressing to coat the leaves, not drown them.`,
+      `Taste a leaf for salt. Serve ${recipe.name.toLowerCase()} right away, while it is cold and crisp.`,
+    ];
+  }
   return [
-    `Wash and dry ${greens}. Tear into bite-size pieces and put them in a wide bowl.`,
-    dressing
-      ? `Whisk ${dressing} with a pinch of salt until the dressing looks even.`
-      : `Stir olive oil with lemon or vinegar and a pinch of salt.`,
-    extras ? `Add ${extras} to the bowl.` : `Keep the bowl ready.`,
-    `Toss with just enough dressing to coat the leaves, not drown them.`,
-    `Taste a leaf for salt. Serve ${recipe.name.toLowerCase()} right away.`,
+    body
+      ? `Cut ${body} into bite-size pieces and put them in a wide bowl.`
+      : `Cut everything into bite-size pieces and put it in a wide bowl.`,
+    dressStep,
+    `Pour the dressing over and toss so every piece is coated. Do not cook it — this is a cold salad.`,
+    `Let it sit 10 minutes so the flavors come together, then taste for salt and acid.`,
+    `Serve ${recipe.name.toLowerCase()} cold or at room temperature.`,
   ];
 }
 
@@ -1229,6 +1301,86 @@ function dessertMethod(recipe: MethodRecipe): string[] {
 
   const temp = ovenTemp(recipe);
   const bakeN = hintMinutes(recipe, Math.max(18, recipe.minutes - 10));
+  const fruit = named(recipe, /\b(apple|peach|berry|berries|cherry|cherries|blueberr|rhubarb|plum|pear|apricot|mincemeat|raisin|pumpkin|lemon)\b/i, "the fruit");
+  const jam = named(recipe, /\b(jam|preserves|jelly|marmalade)\b/i, "jam");
+
+  // A shaped bake is not a pan of batter. Sending cookies, bars, a cobbler or a
+  // galette through the one-dish template is how the method stops making the dish.
+  if (/\bthumbprints?\b|\blinzer\b|\brugelach\b|\bcrescents?\b|\btassies\b/.test(n)) {
+    return [
+      `Heat the oven to ${temp}°F. Line a sheet with parchment.`,
+      `Get out ${list}. Work the fat into the flour and sugar until you have a smooth dough, then chill it 30 minutes so it handles.`,
+      /rugelach|crescent/.test(n)
+        ? `Roll the dough thin, spread ${jam} over it, cut into wedges, and roll each wedge up from the wide end into a crescent.`
+        : `Roll the dough into balls, press a deep hollow into each with your thumb, and fill the hollow with ${jam}.`,
+      `Bake at ${temp}°F for ${Math.min(20, bakeN)} minutes, until the edges are gold.`,
+      `Cool on a rack. Serve ${recipe.name.toLowerCase()} at room temperature.`,
+    ];
+  }
+  if (/\bcookies?\b|\bmolasses\b|\bsnickerdoodle\b|\bshortbread\b|\bwedding\b/.test(n) && !/bars?\b/.test(n)) {
+    return [
+      `Heat the oven to ${temp}°F. Line two sheets with parchment.`,
+      `Get out ${list}. Cream the butter and sugar until light, then work in the rest until you have a soft dough.`,
+      `Drop or roll the dough into balls about a tablespoon each and set them well apart on the sheets — they spread.`,
+      `Bake at ${temp}°F for ${Math.min(14, bakeN)} minutes, until the edges are set and the centers still look a little soft.`,
+      `Cool on the sheet 5 minutes, then move to a rack. Serve ${recipe.name.toLowerCase()} warm or cooled.`,
+    ];
+  }
+  if (/\bbiscotti\b/.test(n)) {
+    return [
+      `Heat the oven to ${temp}°F. Line a sheet with parchment.`,
+      `Get out ${list}. Mix to a stiff dough, then shape it into two flat logs about 3 inches wide on the sheet.`,
+      `Bake ${Math.min(30, bakeN)} minutes, until firm and lightly gold. Take them out and let them cool 10 minutes.`,
+      `Cut the logs on the diagonal into ½-inch slices. Lay the slices cut-side down and bake 10 minutes more, turning once, until dry and crisp.`,
+      `Cool completely on a rack — they crisp as they cool. Store ${recipe.name.toLowerCase()} airtight.`,
+    ];
+  }
+  if (/\bbars?\b|\bbrownies?\b|\bblondies?\b/.test(n)) {
+    const crusted = /lemon|key lime|pecan|shortbread|magic|seven/.test(n);
+    return [
+      `Heat the oven to ${temp}°F. Line a square pan with parchment, leaving an overhang to lift by.`,
+      crusted
+        ? `Press the butter, flour and sugar into the pan as a crust and bake it 15 minutes, until it is pale gold and set.`
+        : `Get out ${list}. Melt the butter, then beat in the sugar, eggs and flour until the batter is smooth and glossy.`,
+      crusted
+        ? `Whisk the filling until smooth and pour it over the hot crust.`
+        : `Scrape the batter into the pan and spread it level into the corners.`,
+      `Bake at ${temp}°F for ${bakeN} minutes, until the top is set and barely wobbles in the middle.`,
+      `Cool completely in the pan before you lift it out and cut — warm bars fall apart. Cut ${recipe.name.toLowerCase()} into squares.`,
+    ];
+  }
+  if (/\bcobbler\b|\bcrisp\b|\bcrumble\b|\bbuckle\b|\bgrunt\b|\bpandowdy\b/.test(n)) {
+    return [
+      `Heat the oven to ${temp}°F. Butter a baking dish.`,
+      `Toss ${fruit} with the sugar and a pinch of salt and spread it in the dish.`,
+      /crisp|crumble/.test(n)
+        ? `Rub the butter into the flour, oats and sugar until it clumps, and scatter it over the fruit in an even layer.`
+        : `Stir the topping into a soft, sticky dough and drop it over the fruit in spoonfuls, leaving gaps for steam.`,
+      `Bake at ${temp}°F for ${bakeN} minutes, until the topping is gold and the fruit bubbles thickly at the edges.`,
+      `Cool 15 minutes so the juices set. Serve ${recipe.name.toLowerCase()} warm.`,
+    ];
+  }
+  if (/\bgalette\b|\bturnovers?\b|\bhand pies?\b/.test(n)) {
+    return [
+      `Heat the oven to ${temp}°F. Line a sheet with parchment.`,
+      `Roll the pastry out on the sheet — a rough round for a galette, or cut squares for turnovers. It does not need to be neat.`,
+      `Toss ${fruit} with the sugar and pile it in the middle, leaving a 2-inch border bare.`,
+      /galette/.test(n)
+        ? `Fold the border up over the fruit, pleating as you go, and leave the center open. Brush the pastry with egg or milk.`
+        : `Fold the pastry over the filling, press the edges with a fork to seal, and cut a small vent in each.`,
+      `Bake at ${temp}°F for ${bakeN} minutes, until the pastry is deep gold and the juices bubble. Cool 15 minutes before serving ${recipe.name.toLowerCase()}.`,
+    ];
+  }
+  if (/\bmuffins?\b/.test(n)) {
+    return [
+      `Heat the oven to ${temp}°F. Line a muffin tin with papers or butter the cups.`,
+      `Whisk the dry ingredients in one bowl and the wet in another.`,
+      `Pour the wet into the dry and fold just until no dry flour shows — a lumpy batter makes tender muffins, an over-mixed one makes tough ones.`,
+      `Divide the batter between the cups, filling each about three-quarters, and bake at ${temp}°F for ${Math.min(25, bakeN)} minutes, until a pick comes out clean.`,
+      `Cool 5 minutes in the tin, then turn out onto a rack. Serve ${recipe.name.toLowerCase()} warm.`,
+    ];
+  }
+
   return [
     `Heat the oven to ${temp}°F. Butter a baking dish.`,
     `Get out ${list}. Mix the batter or filling until even.`,

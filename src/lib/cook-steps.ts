@@ -1573,12 +1573,41 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       );
     // A fat left over from a roast belongs on the meat before it goes in, not
     // stirred into a bird that has been in the oven for an hour and a half.
-    const roasts = out.some((s) => /\b(roast|bake|oven)\b/i.test(s));
+    // Only for something that actually gets rubbed and roasted — butter in a
+    // cobbler belongs in the topping, not smeared on the dish.
+    const roasts =
+      recipe.plate !== "dessert" &&
+      out.some((s) => /\b(roast|bake|oven)\b/i.test(s)) &&
+      out.some((s) => /\b(pat|dry|salt it|rub|sear|brown|dredge|dust|coat|season)\b/i.test(s));
     const isRoastFat = (i: { name: string }) =>
       roasts && /^(butter|oil|olive oil|neutral oil|lard|drippings?|bacon fat|chicken fat|pork fat|fat)\b/i.test(i.name);
+    // A coating goes on raw food. Stirring panko into a cutlet that has already
+    // been seared is the difference between schnitzel and a pan of crumbs.
+    const cooksHot = out.some((s) => /\b(sear|fry|roast|bake|griddle|brown)\b/i.test(s));
+    const isCoating = (i: { name: string }) =>
+      cooksHot &&
+      /\b(breadcrumbs?|bread crumbs|panko|cornstarch|corn starch|potato starch|rice flour|cornmeal|semolina|matzo meal|cracker crumbs)\b/i.test(
+        i.name,
+      );
     const garnishes = unused.filter((i) => isGarnish(i) && !isSide(i));
     const roastFats = unused.filter((i) => !isGarnish(i) && !isSide(i) && isRoastFat(i));
-    unused = unused.filter((i) => !garnishes.includes(i) && !roastFats.includes(i));
+    const coatings = unused.filter((i) => !garnishes.includes(i) && !roastFats.includes(i) && isCoating(i));
+    unused = unused.filter(
+      (i) => !garnishes.includes(i) && !roastFats.includes(i) && !coatings.includes(i),
+    );
+    if (coatings.length) {
+      // The egg and flour that bind the coating belong with it, not stirred in later.
+      const binders = unused.filter((i) => /^(eggs?|flour|all-purpose flour|milk|buttermilk)$/i.test(i.name));
+      unused = unused.filter((i) => !binders.includes(i));
+      const all = [...binders, ...coatings];
+      const line = finishSentence(
+        binders.length
+          ? `Set out ${joinList(all.map(amountPhrase))} in shallow dishes. Dip each piece in the egg, then press it through the crumbs so it is coated all over`
+          : `Press each piece through ${joinList(coatings.map(amountPhrase))} so it is coated all over, and shake off the loose crumbs`,
+      );
+      const cookAt = out.findIndex((s) => /\b(sear|fry|roast|bake|griddle|brown)\b/i.test(s));
+      out.splice(Math.max(0, cookAt), 0, line);
+    }
     if (garnishes.length) {
       const line = finishSentence(`Top each bowl with ${joinList(garnishes.map(amountPhrase))} at the table`);
       const at = out.findIndex((s) => /\b(serve|plate|ladle|spoon into)\b/i.test(s));
@@ -1638,12 +1667,35 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
         }
       }
       if (rest.length) {
-        const last = out.length - 1;
-        const line = finishSentence(`Serve with ${joinList(rest.map(amountPhrase))}`);
-        if (last >= 0 && /\b(serve|plate)\b/i.test(out[last]!)) {
-          out[last] = `${out[last]!.replace(/[.]+$/, "")}. ${line}`;
-        } else {
-          out.push(line);
+        // Fried rice whose rice is served on the side is not fried rice. When the
+        // dish is named for the starch, it belongs in the pan, not beside it.
+        const dishName = recipe.name.toLowerCase();
+        const central = rest.filter((i) =>
+          ingTokens(i.name).some((w) => w.length > 3 && dishName.includes(w.replace(/e?s$/, ""))),
+        );
+        const beside = rest.filter((i) => !central.includes(i));
+        if (central.length) {
+          const line = finishSentence(
+            `Add ${joinList(central.map(amountPhrase))} to the pan and toss over the heat until it is hot through and coated, 2–3 minutes`,
+          );
+          // The last plating line, not the first mention of a plate — searing
+          // meat "move to a plate" is mid-method, and the rice goes in near the end.
+          let at = -1;
+          out.forEach((s, i) => {
+            if (/^(plate|serve|spoon onto|ladle|scoop)\b/i.test(s.trim())) at = i;
+          });
+          const target = at > 0 ? at - 1 : Math.max(0, out.length - 2);
+          if (out[target]) out[target] = `${out[target]!.replace(/[.]+$/, "")}. ${line}`;
+          else out.push(line);
+        }
+        if (beside.length) {
+          const last = out.length - 1;
+          const line = finishSentence(`Serve with ${joinList(beside.map(amountPhrase))}`);
+          if (last >= 0 && /\b(serve|plate)\b/i.test(out[last]!)) {
+            out[last] = `${out[last]!.replace(/[.]+$/, "")}. ${line}`;
+          } else {
+            out.push(line);
+          }
         }
       }
     }
