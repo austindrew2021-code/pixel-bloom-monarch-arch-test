@@ -685,3 +685,96 @@ test("a shaped bake is shaped, not poured into one dish", () => {
   assert.match(thumb, /hollow|thumb/i);
   assert.equal(/Scrape into the dish/i.test(thumb), false, thumb);
 });
+
+test("an ingredient whose own name ends in \"meat\" is not re-expanded on top of itself", () => {
+  const turtle = polishSteps(
+    fake({
+      id: "so-turtle-soup",
+      name: "Pendennis turtle soup",
+      protein: "beef",
+      plate: "soup",
+      minutes: 120,
+      ingredients: [
+        { name: "veal or turtle meat", qty: 1.5, unit: "lb", aisle: "Meat & Seafood" },
+        { name: "onion", qty: 1, unit: "", aisle: "Produce" },
+        { name: "tomato", qty: 2, unit: "", aisle: "Produce" },
+      ],
+      steps: ["Simmer meat with onion and tomato until tender.", "Finish with sherry. Serve very hot."],
+    }),
+  ).join("\n");
+  assert.equal(/veal or turtle veal or turtle meat/i.test(turtle), false, turtle);
+  assert.equal(/veal or turtle the [\d½¼¾]/i.test(turtle), false, turtle);
+
+  const stew = polishSteps(
+    fake({
+      id: "so-creole-beef-stew",
+      name: "Creole beef stew",
+      protein: "beef",
+      plate: "skillet",
+      minutes: 120,
+      ingredients: [
+        { name: "beef stew meat", qty: 2, unit: "lb", aisle: "Meat & Seafood" },
+        { name: "green pepper", qty: 2, unit: "", aisle: "Produce" },
+      ],
+      steps: ["Brown beef. Add pepper. Add water to cover.", "Simmer 2 hours until the beef stew meat gives."],
+    }),
+  ).join("\n");
+  assert.equal(/beef stew beef stew meat/i.test(stew), false, stew);
+});
+
+test("a short spoon-onto line is not given two serving endings across two polishing passes", () => {
+  const steps = polishSteps(
+    fake({
+      id: "so-dried-beef-maryland",
+      name: "Dried beef à la Maryland",
+      protein: "beef",
+      plate: "skillet",
+      minutes: 20,
+      ingredients: [
+        { name: "dried beef", qty: 8, unit: "oz", aisle: "Meat & Seafood" },
+        { name: "butter", qty: 3, unit: "tbsp", aisle: "Dairy & Eggs" },
+        { name: "flour", qty: 3, unit: "tbsp", aisle: "Pantry" },
+        { name: "milk", qty: 1.5, unit: "cups", aisle: "Dairy & Eggs" },
+      ],
+      steps: ["Soak chipped beef in boiling water 5 minutes. Drain.", "Make a cream sauce. Add beef. Serve on toast."],
+    }),
+  ).join(" ");
+  assert.equal((steps.match(/\bserve\b/gi) ?? []).length, 1, steps);
+  assert.equal(/serve at once and serve/i.test(steps), false, steps);
+});
+
+test("an article before an unlisted adjective is not stranded when the quantity is inserted", () => {
+  const steps = polishSteps(
+    fake({
+      id: "so-guava-jelly",
+      name: "Guava jelly",
+      plate: "dessert",
+      minutes: 60,
+      ingredients: [
+        { name: "guavas", qty: 3, unit: "lb", aisle: "Produce" },
+        { name: "sugar", qty: 3, unit: "cups", aisle: "Pantry" },
+      ],
+      steps: ["Slice the unpeeled guavas and cover with water. Cook soft.", "Boil with sugar to the jelly point."],
+    }),
+  ).join(" ");
+  assert.equal(/\bthe unpeeled the [\d½¼¾]/i.test(steps), false, steps);
+});
+
+test("parboil is recognized as a cooking verb, not wrapped as a bare noun fragment", () => {
+  const steps = polishSteps(
+    fake({
+      id: "so-sweetbreads",
+      name: "Sweetbreads and mushrooms",
+      protein: "chicken",
+      plate: "skillet",
+      minutes: 35,
+      ingredients: [
+        { name: "sweetbreads", qty: 1.5, unit: "lb", aisle: "Meat & Seafood" },
+        { name: "mushrooms", qty: 0.5, unit: "lb", aisle: "Produce" },
+      ],
+      steps: ["Parboil sweetbreads, remove membrane. Slice the sweetbreads.", "Sauté mushrooms, add sweetbreads."],
+    }),
+  ).join(" ");
+  assert.equal(/^add the parboil/i.test(steps), false, steps);
+  assert.match(steps, /^Parboil/i);
+});

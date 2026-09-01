@@ -13,7 +13,7 @@ const JUNK_NAME =
   /^(ingredients?|directions?|instructions?|method|recipes?|index|contents|preface|introduction|chapter\s+\d+|camp cookery)$/i;
 
 const VERB =
-  /\b(heat|warm|preheat|toast|mix|stir|whisk|beat|fold|bake|roast|simmer|boil|brown|sear|saute|sauté|fry|grill|char|chop|dice|slice|cut|mince|add|pour|drain|pat|salt|season|cover|uncover|rest|serve|plate|spoon|spread|brush|toss|combine|blend|purée|puree|mash|shred|roll|knead|steam|pressure|nestle|rub|stuff|fill|layer|top|finish|grate|squeeze|taste|adjust|remove|return|transfer|flip|turn|skim|strain|chill|freeze|thaw|soak|marinate|deglaze|reduce|thicken|crumble|sprinkle|dust|dredge|coat|dip|broil|blanch|peel|core|trim|rinse|wash|set|put|place|drop|press|shape|form|score|tie|truss|cook|scald|dissolve|cream|sift|whip|baste|carve|ladle|dot|glaze|wilt|sweat|bloom|steep|frost|ice|crack|juice|zest|halve|quarter|cube|pull|lock|flatten|melt|wrap|scatter|drizzle|paint|scramble|crisp|reheat|keep|dollop|smash|wipe|blot|loosen|swirl|pack|unmold|line|lift|discard|nest|thread|prick|joint|skewer|try|lay|let|assemble|garnish|divide|cool|unmold|make|shake|eat|fluff|refrigerate|air-?fry|prick|griddle|work|open|flake|pipe|invert|bloom|get|moisten|lower|separate|pile|swipe|shave|smear|arrange|stack|blind-?bake|nestle)\b/i;
+  /\b(heat|warm|preheat|toast|mix|stir|whisk|beat|fold|bake|roast|simmer|boil|brown|sear|saute|sauté|fry|grill|char|chop|dice|slice|cut|mince|add|pour|drain|pat|salt|season|cover|uncover|rest|serve|plate|spoon|spread|brush|toss|combine|blend|purée|puree|mash|shred|roll|knead|steam|pressure|nestle|rub|stuff|fill|layer|top|finish|grate|squeeze|taste|adjust|remove|return|transfer|flip|turn|skim|strain|chill|freeze|thaw|soak|marinate|deglaze|reduce|thicken|crumble|sprinkle|dust|dredge|coat|dip|broil|blanch|peel|core|trim|rinse|wash|set|put|place|drop|press|shape|form|score|tie|truss|cook|scald|dissolve|cream|sift|whip|baste|carve|ladle|dot|glaze|wilt|sweat|bloom|steep|frost|ice|crack|juice|zest|halve|quarter|cube|pull|lock|flatten|melt|wrap|scatter|drizzle|paint|scramble|crisp|reheat|keep|dollop|smash|wipe|blot|loosen|swirl|pack|unmold|line|lift|discard|nest|thread|prick|joint|skewer|try|lay|let|assemble|garnish|divide|cool|unmold|make|shake|eat|fluff|refrigerate|air-?fry|prick|griddle|work|open|flake|pipe|invert|bloom|get|moisten|lower|separate|pile|swipe|shave|smear|arrange|stack|blind-?bake|nestle|parboil)\b/i;
 
 const HEAT_VERB = /\b(brown|sear|simmer|bake|roast|fry|boil|grill|broil|cook|toast|steam|pressure)\b|saut[eé]/i;
 
@@ -215,7 +215,11 @@ function unabbrev(s: string, recipe: RecipeLike): string {
   if (paste && !new RegExp(paste.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(t)) {
     t = t.replace(/\bpaste\b/gi, paste.name);
   }
-  if (meat !== "the main ingredient") {
+  // Guarded the same way as paste above: a step can pass through this function
+  // twice (foldShortSteps, then expandToMinCards), and without the guard the
+  // second pass finds "meat" again inside its own expansion — "veal or turtle
+  // meat" ends with the word "meat" — and expands it a second time.
+  if (meat !== "the main ingredient" && !t.toLowerCase().includes(meat.toLowerCase())) {
     t = t.replace(/\b(?:ground\s+)?meat\b/gi, meat);
   }
   t = t.replace(/\bspices\b/gi, (match) => {
@@ -1053,7 +1057,12 @@ function lengthenShortCard(s: string, recipe: RecipeLike): string {
   if (/^cover and (steam|roast|bake|simmer)/i.test(t)) {
     return finishSentence(`${t}, until tender all the way through`);
   }
-  if (/^spoon into cups/i.test(t) || /^spoon onto /i.test(t)) {
+  // This function can run twice on the same short line (once in foldShortSteps,
+  // again in alignCookToList's final pass). Its own output — "Spoon onto toast
+  // and serve at once." — is still under the length threshold and starts with
+  // "spoon onto", so without this guard the second pass appends a second,
+  // redundant serving clause: "...and serve at once and serve while they are hot."
+  if ((/^spoon into cups/i.test(t) || /^spoon onto /i.test(t)) && !/\bserve\b/i.test(t)) {
     return finishSentence(`${t} and serve while they are hot`);
   }
   if (/^chill /i.test(t)) {
@@ -1526,8 +1535,12 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       const tok = ingTokens(ing.name).sort((a, b) => b.length - a.length)[0] ?? ing.name;
       if (hasAmountNear(s, tok)) continue;
       const amt = amountPhrase(ing);
+      // A leading "the"/"a" can sit before the adjective too ("the unpeeled
+      // guavas", "the peeled shrimp"), not just before the noun. Without
+      // swallowing it here, only the bare noun matches and gets replaced,
+      // leaving the article stranded: "the unpeeled the 3 pounds of guavas".
       const full = new RegExp(
-        `\\b((?:soft|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|crushed|smashed|beaten|toasted|roasted|boiling|cold)\\s+)?(?:(?:the|a)\\s+(?:can|slice)\\s+of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
+        `\\b(?:(?:the|a)\\s+)?((?:soft|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|crushed|smashed|beaten|toasted|roasted|boiling|cold|peeled|unpeeled|whipped|bloomed|parboiled)\\s+)?(?:(?:the|a)\\s+(?:can|slice)\\s+of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
         "i",
       );
       if (full.test(s)) {
