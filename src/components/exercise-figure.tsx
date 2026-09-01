@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Exercise } from "@/lib/exercises";
+import type { Equipment, Exercise } from "@/lib/exercises";
 import { exerciseClipSrc } from "@/lib/exercise-clips";
 import { cn } from "@/lib/utils";
 
@@ -153,7 +153,7 @@ export function ExerciseFigure({
   size = "md",
   className,
 }: {
-  exercise: Pick<Exercise, "id" | "primary" | "secondary"> & { name?: string };
+  exercise: Pick<Exercise, "id" | "primary" | "secondary" | "equipment"> & { name?: string };
   size?: keyof typeof SIZES;
   className?: string;
 }) {
@@ -209,7 +209,7 @@ export function ExerciseFigure({
     >
       <rect width="160" height="160" rx="22" fill="var(--color-background)" />
       <g className={HOLD_POSES.has(pose) ? "pose-anim-hold" : "pose-anim-rep"}>
-        <PoseBody pose={pose} hot={hot} warm={warm} />
+        <PoseBody pose={pose} hot={hot} warm={warm} equipment={exercise.equipment} />
       </g>
     </svg>
   );
@@ -228,16 +228,26 @@ function ink() {
   return "color-mix(in oklab, var(--color-foreground) 55%, transparent)";
 }
 
-function PoseBody({ pose, hot, warm }: { pose: Pose; hot: Set<string>; warm: Set<string> }) {
+function PoseBody({
+  pose,
+  hot,
+  warm,
+  equipment,
+}: {
+  pose: Pose;
+  hot: Set<string>;
+  warm: Set<string>;
+  equipment: Equipment;
+}) {
   const f = (id: string) => fill(id, hot, warm);
-  if (pose === "bench") return <Bench f={f} />;
-  if (pose === "hinge") return <Hinge f={f} />;
+  if (pose === "bench") return <Bench f={f} equipment={equipment} />;
+  if (pose === "hinge") return <Hinge f={f} equipment={equipment} />;
   if (pose === "lunge") return <Lunge f={f} />;
   if (pose === "hip") return <Hip f={f} />;
-  if (pose === "press") return <Press f={f} />;
+  if (pose === "press") return <Press f={f} equipment={equipment} />;
   if (pose === "fly") return <Fly f={f} />;
   if (pose === "dip") return <Dip f={f} />;
-  if (pose === "row") return <Row f={f} />;
+  if (pose === "row") return <Row f={f} equipment={equipment} />;
   if (pose === "pulldown") return <Pulldown f={f} />;
   if (pose === "pullup") return <Pullup f={f} />;
   if (pose === "curl") return <Curl f={f} />;
@@ -246,7 +256,7 @@ function PoseBody({ pose, hot, warm }: { pose: Pose; hot: Set<string>; warm: Set
   if (pose === "machine") return <Machine f={f} />;
   if (pose === "calf") return <Calf f={f} />;
   if (pose === "swing") return <Swing f={f} />;
-  return <Squat f={f} />;
+  return <Squat f={f} equipment={equipment} />;
 }
 
 function Head({ cx, cy }: { cx: number; cy: number }) {
@@ -263,10 +273,40 @@ function Bar({ x, y, w = 86 }: { x: number; y: number; w?: number }) {
   );
 }
 
-function Squat({ f }: { f: (id: string) => string }) {
+function Dumbbells({ x, y, w = 86 }: { x: number; y: number; w?: number }) {
+  const plate = "color-mix(in oklab, var(--color-foreground) 55%, var(--color-muted))";
+  const handle = "color-mix(in oklab, var(--color-foreground) 42%, var(--color-muted))";
+  const dumbbell = (cx: number) => (
+    <g key={cx}>
+      <rect x={cx - 7} y={y - 2} width="14" height="4" rx="1.5" fill={handle} />
+      <rect x={cx - 9} y={y - 5} width="6" height="10" rx="1.5" fill={plate} />
+      <rect x={cx + 3} y={y - 5} width="6" height="10" rx="1.5" fill={plate} />
+    </g>
+  );
+  return (
+    <>
+      {dumbbell(x)}
+      {dumbbell(x + w)}
+    </>
+  );
+}
+
+/**
+ * The held-weight implement for poses that otherwise always drew a barbell
+ * regardless of what the exercise actually uses — the exact "says barbell,
+ * shows dumbbells" mismatch this fixes. Machine/cable/bodyweight moves skip
+ * the hand-weight graphic entirely rather than guess at their apparatus.
+ */
+function Implement({ equipment, x, y, w }: { equipment: Equipment; x: number; y: number; w?: number }) {
+  if (equipment === "barbell") return <Bar x={x} y={y} w={w} />;
+  if (equipment === "dumbbell" || equipment === "kettlebell") return <Dumbbells x={x} y={y} w={w} />;
+  return null;
+}
+
+function Squat({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
-      <Bar x={37} y={36} />
+      <Implement equipment={equipment} x={37} y={36} />
       <Head cx={80} cy={28} />
       <path d="M68 38h24v10H68z" fill={f("traps")} />
       <path d="M62 46h16v16H62z" fill={f("chest")} />
@@ -286,10 +326,10 @@ function Squat({ f }: { f: (id: string) => string }) {
   );
 }
 
-function Hinge({ f }: { f: (id: string) => string }) {
+function Hinge({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
-      <Bar x={48} y={108} w={70} />
+      <Implement equipment={equipment} x={48} y={108} w={70} />
       <Head cx={108} cy={42} />
       <path d="M92 48c8 4 14 10 18 16h-16c-4-6-8-12-12-16z" fill={f("traps")} />
       <path d="M70 62c16-2 30 2 40 10l-10 10c-8-6-20-8-34-6z" fill={f("upper-back")} />
@@ -337,7 +377,7 @@ function Hip({ f }: { f: (id: string) => string }) {
   );
 }
 
-function Bench({ f }: { f: (id: string) => string }) {
+function Bench({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
       <rect x="30" y="92" width="100" height="10" rx="2" fill="color-mix(in oklab, var(--color-foreground) 20%, var(--color-muted))" />
@@ -349,15 +389,15 @@ function Bench({ f }: { f: (id: string) => string }) {
       <path d="M104 80h16v14c-2 6-8 10-16 8z" fill={f("quads")} />
       <path d="M42 62c8-10 18-12 28-8 2 8 0 16-6 20-8 2-16 0-22-12z" fill={f("front-delts")} />
       <path d="M70 52c12-4 28-2 40 6-4 8-14 10-24 8-8-1-14-6-16-14z" fill={f("triceps")} />
-      <Bar x={48} y={46} w={72} />
+      <Implement equipment={equipment} x={48} y={46} w={72} />
     </g>
   );
 }
 
-function Press({ f }: { f: (id: string) => string }) {
+function Press({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
-      <Bar x={37} y={22} />
+      <Implement equipment={equipment} x={37} y={22} />
       <Head cx={80} cy={44} />
       <path d="M62 52h16v18H62z" fill={f("front-delts")} />
       <path d="M82 52h16v18H82z" fill={f("front-delts")} />
@@ -404,10 +444,10 @@ function Dip({ f }: { f: (id: string) => string }) {
   );
 }
 
-function Row({ f }: { f: (id: string) => string }) {
+function Row({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
-      <Bar x={44} y={86} w={72} />
+      <Implement equipment={equipment} x={44} y={86} w={72} />
       <Head cx={112} cy={38} />
       <path d="M86 46c12 2 20 8 24 14h-18c-4-6-10-10-16-12z" fill={f("traps")} />
       <path d="M62 58c18 0 34 6 42 16l-14 8c-8-8-20-10-34-8z" fill={f("lats")} />
