@@ -24,6 +24,7 @@ import {
   rankForXp,
   type Celebrate,
 } from "./ranks";
+import type { ProgressPhotoMeta } from "./progress-photos";
 import { brokenStreakInfo, type BrokenStreak } from "./streak";
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "./notify";
 import type { FitnessSourceId, SyncAccess } from "./devices";
@@ -133,6 +134,7 @@ type SpoonfulState = {
   body: BodyProfile;
   liftSessions: LiftSession[];
   weightLog: { date: string; kg: number }[];
+  progressPhotos: ProgressPhotoMeta[];
   locale: LocaleId;
   country: CountryId;
   navPins: NavPinId[];
@@ -239,6 +241,8 @@ type SpoonfulState = {
   consumeSnap: () => boolean;
   consumeLookup: () => boolean;
   chefRemaining: () => number;
+  addProgressPhoto: (meta: ProgressPhotoMeta) => void;
+  removeProgressPhoto: (id: string) => void;
   setNotifyPrefs: (patch: Partial<NotifyPrefs>) => void;
   setDinnerHour: (hour: number) => void;
   setFitnessSource: (id: FitnessSourceId | null) => void;
@@ -453,6 +457,7 @@ export const useSpoonful = create<SpoonfulState>()(
       body: DEFAULT_BODY,
       liftSessions: [],
       weightLog: [{ date: isoDate(), kg: DEFAULT_BODY.weightKg }],
+      progressPhotos: [],
       locale: "en",
       country: "CA",
       navPins: [...DEFAULT_NAV_PINS],
@@ -1192,6 +1197,7 @@ export const useSpoonful = create<SpoonfulState>()(
           body: s.body,
           liftSessions: s.liftSessions,
           weightLog: s.weightLog,
+          progressPhotos: s.progressPhotos,
           locale: s.locale,
           country: s.country,
           navPins: s.navPins,
@@ -1447,6 +1453,13 @@ export const useSpoonful = create<SpoonfulState>()(
         const s = get();
         return Math.max(0, chefCapOf(s) - s.chefCount);
       },
+      addProgressPhoto: (meta) =>
+        set((s) => ({
+          progressPhotos: [...s.progressPhotos.filter((p) => p.id !== meta.id), meta].sort((a, b) =>
+            a.date < b.date ? -1 : a.date > b.date ? 1 : 0,
+          ),
+        })),
+      removeProgressPhoto: (id) => set((s) => ({ progressPhotos: s.progressPhotos.filter((p) => p.id !== id) })),
       setNotifyPrefs: (patch) => set((s) => ({ notifyPrefs: { ...s.notifyPrefs, ...patch } })),
       setDinnerHour: (hour) => set({ dinnerHour: Math.max(15, Math.min(22, hour)) }),
       setFitnessSource: (id) => {
@@ -1536,6 +1549,7 @@ export const useSpoonful = create<SpoonfulState>()(
         body: s.body,
         liftSessions: s.liftSessions,
         weightLog: s.weightLog,
+        progressPhotos: s.progressPhotos,
         locale: s.locale,
         country: s.country,
         navPins: s.navPins,
