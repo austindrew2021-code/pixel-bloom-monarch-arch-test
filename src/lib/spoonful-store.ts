@@ -10,6 +10,7 @@ import { DEFAULT_GOAL, addNutrition, applyHealthToFuel, dayFuel, emptyNutrition,
 import { liveStepBump, pullFromSource, pullHealthDay, recoveryLabel, catchUpSteps, type HealthDay } from "./fitness-sync";
 import { hasNativeHealth, requestNativeHealth } from "./native-health";
 import { scaleQty } from "./cuisine";
+import { portionSyncFor } from "./portion-sync";
 import { ADDONS, RECIPES, recipeById } from "./recipes";
 import {
   CHEF_FREE_WEEK,
@@ -101,6 +102,8 @@ type SpoonfulState = {
   tab: TabId;
   walkthroughDone: boolean;
   nextGen: boolean;
+  portionSync: boolean;
+  portionMultByDate: Record<string, number>;
   goal: MacroGoal;
   stepsByDate: Record<string, number>;
   workouts: Workout[];
@@ -151,6 +154,7 @@ type SpoonfulState = {
   toggleAllergy: (id: AllergyId) => void;
   setTheme: (theme: "paper" | "midnight") => void;
   setNextGen: (nextGen: boolean) => void;
+  setPortionSync: (portionSync: boolean) => void;
   setGoal: (goal: MacroGoal) => void;
   assignMeal: (date: string, slot: MealSlotKind, recipeId: string) => void;
   assignCustom: (date: string, slot: MealSlotKind, custom: CustomMeal) => void;
@@ -383,6 +387,8 @@ export const useSpoonful = create<SpoonfulState>()(
       tab: "plan",
       walkthroughDone: false,
       nextGen: false,
+      portionSync: false,
+      portionMultByDate: {},
       goal: DEFAULT_GOAL,
       stepsByDate: {},
       workouts: [],
@@ -456,6 +462,7 @@ export const useSpoonful = create<SpoonfulState>()(
         }));
         if (nextGen) get().ensureProgram();
       },
+      setPortionSync: (portionSync) => set({ portionSync }),
       setGoal: (goal) => set({ goal }),
       assignMeal: (date, slot, recipeId) => {
         set((s) => {
@@ -1111,6 +1118,8 @@ export const useSpoonful = create<SpoonfulState>()(
           theme: s.theme,
           walkthroughDone: s.walkthroughDone,
           nextGen: s.nextGen,
+          portionSync: s.portionSync,
+          portionMultByDate: s.portionMultByDate,
           goal: s.goal,
           stepsByDate: s.stepsByDate,
           workouts: s.workouts,
@@ -1162,6 +1171,10 @@ export const useSpoonful = create<SpoonfulState>()(
           ...(payload.theme === "paper" || payload.theme === "midnight" ? { theme: payload.theme } : {}),
           ...(typeof payload.walkthroughDone === "boolean" ? { walkthroughDone: payload.walkthroughDone } : {}),
           ...(typeof payload.nextGen === "boolean" ? { nextGen: payload.nextGen } : {}),
+          ...(typeof payload.portionSync === "boolean" ? { portionSync: payload.portionSync } : {}),
+          ...(payload.portionMultByDate && typeof payload.portionMultByDate === "object"
+            ? { portionMultByDate: payload.portionMultByDate as Record<string, number> }
+            : {}),
           ...(payload.goal && typeof payload.goal === "object" ? { goal: payload.goal as MacroGoal } : {}),
           ...(payload.stepsByDate && typeof payload.stepsByDate === "object"
             ? { stepsByDate: payload.stepsByDate as Record<string, number> }
@@ -1225,6 +1238,33 @@ export const useSpoonful = create<SpoonfulState>()(
           cookedDates: s.cookedDates.includes(date) ? s.cookedDates : [...s.cookedDates, date],
         }));
         if (!already) get().awardXp(25, "cooked");
+
+        const s = get();
+        if (!s.portionSync) return;
+        const dinner = s.meals.find((m) => m.date === date && m.slot === "dinner" && !m.skip);
+        const recipe = dinner ? resolveMeal(dinner).recipe : undefined;
+        if (!dinner || !recipe) return;
+        const eatenElse = nutritionForDateExcluding(s.meals, date, s.snacks, dinner.id);
+        const dayWork = expectedWorkoutsForDate({
+          date,
+          today: isoDate(),
+          sessions: s.programWeek?.sessions ?? [],
+          logged: s.workouts.filter((w) => w.date === date),
+          bodyKg: s.body.weightKg,
+        });
+        let fuel = dayFuel({
+          goal: s.goal,
+          eaten: eatenElse,
+          workouts: dayWork,
+          steps: s.stepsByDate[date] ?? s.healthByDate[date]?.steps ?? 0,
+          body: s.body,
+        });
+        const health = s.healthByDate[date];
+        if (health) fuel = applyHealthToFuel(fuel, health);
+        const sync = portionSyncFor(recipe, fuel.remaining.cal);
+        if (sync) {
+          set((st) => ({ portionMultByDate: { ...st.portionMultByDate, [date]: sync.mult } }));
+        }
       },
       saveLeftovers: (fromDate) => {
         const dinner = get().meals.find((m) => m.date === fromDate && m.slot === "dinner");
@@ -1379,6 +1419,8 @@ export const useSpoonful = create<SpoonfulState>()(
         theme: s.theme,
         walkthroughDone: s.walkthroughDone,
         nextGen: s.nextGen,
+        portionSync: s.portionSync,
+        portionMultByDate: s.portionMultByDate,
         goal: s.goal,
         stepsByDate: s.stepsByDate,
         workouts: s.workouts,
@@ -1439,21 +1481,53 @@ export function resolveMeal(meal: PlannedMeal): {
   return { title: "Pick another dish", minutes: 0 };
 }
 
+/**
+ * @param portionMultByDate When a dinner's portion was scaled by Portion Sync
+ * (see markCooked), applies that recorded multiplier so tracked macros reflect
+ * what was actually cooked and eaten, not the recipe's unscaled base numbers.
+ */
 export function nutritionForDate(
   meals: PlannedMeal[],
   date: string,
   snacks: Snack[] = [],
+  portionMultByDate?: Record<string, number>,
 ): ReturnType<typeof emptyNutrition> {
+  const mult = portionMultByDate?.[date];
   const fromMeals = meals
     .filter((m) => m.date === date && !m.skip)
     .reduce((sum, m) => {
       const resolved = resolveMeal(m);
       const n = resolved.recipe?.nutrition ?? resolved.custom?.nutrition;
-      return n ? addNutrition(sum, n) : sum;
+      if (!n) return sum;
+      return addNutrition(sum, mult && m.slot === "dinner" ? scaleNutrition(n, mult) : n);
     }, emptyNutrition());
   return snacks
     .filter((s) => s.date === date)
     .reduce((sum, s) => addNutrition(sum, s.nutrition), fromMeals);
+}
+
+/** Same as nutritionForDate, but leaves one meal out — used to find how much
+ * calorie/macro room a not-yet-scaled dinner is meant to fill on its own. */
+export function nutritionForDateExcluding(
+  meals: PlannedMeal[],
+  date: string,
+  snacks: Snack[],
+  excludeMealId: string,
+): ReturnType<typeof emptyNutrition> {
+  return nutritionForDate(
+    meals.filter((m) => m.id !== excludeMealId),
+    date,
+    snacks,
+  );
+}
+
+function scaleNutrition(n: { cal: number; protein: number; carbs: number; fat: number }, mult: number) {
+  return {
+    cal: Math.round(n.cal * mult),
+    protein: Math.round(n.protein * mult),
+    carbs: Math.round(n.carbs * mult),
+    fat: Math.round(n.fat * mult),
+  };
 }
 
 function pantryHit(name: string, pantry: PantryItem[]): boolean {

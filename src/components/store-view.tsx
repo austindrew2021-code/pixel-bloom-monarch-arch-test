@@ -26,6 +26,8 @@ export function StoreView() {
   const setHousehold = useSpoonful((s) => s.setHousehold);
   const nextGen = useSpoonful((s) => s.nextGen);
   const setNextGen = useSpoonful((s) => s.setNextGen);
+  const portionSync = useSpoonful((s) => s.portionSync);
+  const setPortionSync = useSpoonful((s) => s.setPortionSync);
   const allergies = useSpoonful((s) => s.allergies);
   const toggleAllergy = useSpoonful((s) => s.toggleAllergy);
   const hidden = useSpoonful((s) => s.hidden);
@@ -218,6 +220,31 @@ export function StoreView() {
         >
           {nextGen ? "Switch to Simple Kitchen" : "Switch to Next Gen"}
         </Button>
+      </section>
+
+      <section className="mt-6 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="font-display text-xl">Portion Sync</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Groceries are bought for the week, so tonight's dish never swaps — Portion Sync just scales how much
+              of it you cook: a big-burn day pads the plate with extra produce, a lighter day trims it down to save
+              for tomorrow. Free, like the rest of Fuel.
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={portionSync}
+            onClick={() => setPortionSync(!portionSync)}
+            className={cn(
+              "h-11 w-16 shrink-0 rounded-full text-xs font-semibold",
+              portionSync ? "bg-spark text-spark-foreground" : "bg-background shadow-[var(--shadow-border)]",
+            )}
+          >
+            {portionSync ? "On" : "Off"}
+          </button>
+        </div>
       </section>
 
       <section className="mt-6 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">

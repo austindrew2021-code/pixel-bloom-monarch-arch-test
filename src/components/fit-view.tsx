@@ -84,6 +84,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const healthByDate = useSpoonful((s) => s.healthByDate) ?? {};
   const autoPlate = useSpoonful((s) => s.autoPlate);
   const setAutoPlate = useSpoonful((s) => s.setAutoPlate);
+  const portionMultByDate = useSpoonful((s) => s.portionMultByDate);
   const logWater = useSpoonful((s) => s.logWater);
   const syncAccess = useSpoonful((s) => s.syncAccess);
   const setSyncAccess = useSpoonful((s) => s.setSyncAccess);
@@ -99,7 +100,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
     bodyKg: body.weightKg,
   });
   const todaySnacks = snacks.filter((s) => s.date === today);
-  const eaten = nutritionForDate(meals, today, snacks);
+  const eaten = nutritionForDate(meals, today, snacks, portionMultByDate);
   const health = healthByDate[today];
   const synced = true;
   let fuel = dayFuel({
@@ -127,7 +128,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const advice = health ? healthAdvice(health) : null;
   const rank = rankProgress(xp);
   const weekDatesList = weekDates(weekStart);
-  const weekProtein = weekDatesList.reduce((sum, d) => sum + nutritionForDate(meals, d, snacks).protein, 0);
+  const weekProtein = weekDatesList.reduce((sum, d) => sum + nutritionForDate(meals, d, snacks, portionMultByDate).protein, 0);
   const [minutes, setMinutes] = useState("45");
   const [kind, setKind] = useState<WorkoutKind>("run");
   const [distance, setDistance] = useState("");

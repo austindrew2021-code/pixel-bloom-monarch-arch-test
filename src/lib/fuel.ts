@@ -304,6 +304,8 @@ export function pct(n: number, of: number): number {
   return Math.max(0, Math.min(100, Math.round((n / of) * 100)));
 }
 
+export { portionSyncFor, type PortionSync } from "./portion-sync";
+
 export function cookStreak(cookedDates: string[], today = isoDate()): number {
   const set = new Set(cookedDates);
   let streak = 0;

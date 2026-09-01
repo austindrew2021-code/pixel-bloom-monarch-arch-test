@@ -16,6 +16,7 @@ function WatchFace() {
   const workouts = useSpoonful((s) => s.workouts);
   const stepsByDate = useSpoonful((s) => s.stepsByDate);
   const snacks = useSpoonful((s) => s.snacks);
+  const portionMultByDate = useSpoonful((s) => s.portionMultByDate);
   const xp = useSpoonful((s) => s.xp);
   const onboarded = useSpoonful((s) => s.onboarded);
   const body = useSpoonful((s) => s.body);
@@ -35,7 +36,7 @@ function WatchFace() {
   const resolved = dinner ? resolveMeal(dinner) : null;
   const fuel = dayFuel({
     goal,
-    eaten: nutritionForDate(meals, today, snacks),
+    eaten: nutritionForDate(meals, today, snacks, portionMultByDate),
     workouts: workouts.filter((w) => w.date === today),
     steps: stepsByDate[today] ?? 0,
     body,
