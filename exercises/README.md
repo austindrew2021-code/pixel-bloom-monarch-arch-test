@@ -13,16 +13,7 @@
 
 **A comprehensive, ready-to-use fitness exercise dataset with 1,324 exercises — each with an animation GIF, 180×180 thumbnail image, category, body-part, equipment, target and muscle-group data, and step-by-step instructions in 10 languages (English, Spanish, Italian, Turkish, Russian, Chinese, Hindi, Polish, Korean, French).**
 
-[![Exercises](https://img.shields.io/badge/Exercises-1324-blue?style=flat-square)](data/exercises.json)
-[![Animation GIFs](https://img.shields.io/badge/Animation%20GIFs-1324-brightgreen?style=flat-square)](videos/)
-[![Thumbnails](https://img.shields.io/badge/Thumbnails-1324-orange?style=flat-square)](images/)
-[![Languages](https://img.shields.io/badge/Languages-10-green?style=flat-square)](#-overview)
-[![Mobile App](https://img.shields.io/badge/App-LogPress-111111?style=flat-square&logo=react)](https://github.com/hasaneyldrm/logpress-public)
-[![License](https://img.shields.io/badge/License-MIT%20%2B%20media%20terms-blue?style=flat-square)](LICENSE)
-
 </div>
-
-> **📱 Powers the [LogPress](https://github.com/hasaneyldrm/logpress-public) app** — an AI-assisted workout tracker; this dataset is its exercise data layer. Building your own fitness app? Drop it straight into your backend.
 
 ---
 
@@ -31,7 +22,7 @@
 **This repository provides:**
 
 - 1,324 exercises with category, body-part, equipment, target and muscle-group data
-- an animation GIF + 180×180 thumbnail for every exercise (media © [Gym visual](https://gymvisual.com/) — see [License](#-license--use))
+- an animation GIF
 - step-by-step instructions in 10 languages (🇬🇧 English, 🇪🇸 Spanish, 🇮🇹 Italian, 🇹🇷 Turkish, 🇷🇺 Russian, 🇨🇳 Chinese, 🇮🇳 Hindi, 🇵🇱 Polish, 🇰🇷 Korean, 🇫🇷 French)
 - the interactive browser (`index.html`) and developer setup guide (`setup.html`)
 
@@ -47,7 +38,6 @@
 - [Data Schema](#-data-schema)
 - [Sample Exercises](#-sample-exercises)
 - [Usage Examples](#-usage-examples)
-- [License & Use](#-license--use)
 
 ---
 
@@ -55,12 +45,8 @@
 
 This dataset is a curated collection of **1,324 fitness exercises** for educational and research purposes. It covers a wide range of muscle groups, equipment types, and exercise categories — making it ideal for:
 
-- Building fitness or workout planning applications
-- Machine learning projects involving exercise recognition or recommendation
-- Health and wellness research
-- Educational demonstrations and prototypes
-
-Each exercise entry contains:
+- Building fitness or workout planning
+-Each exercise entry contains:
 
 | Field | Description |
 |---|---|
@@ -100,21 +86,6 @@ A step-by-step guide for integrating the dataset into your own application:
 
 ---
 
-## 📂 File Structure
-
-```
-exercises-dataset/
-├── data/
-│   ├── exercises.json        # Full dataset — 1,324 exercise records (JSON array)
-│   └── exercises.schema.json # JSON Schema (2020-12) describing every record
-├── images/                  # 1,324 × 180×180 thumbnails  (© Gym visual)
-├── videos/                  # 1,324 × 180×180 animation GIFs  (© Gym visual)
-├── index.html               # Interactive exercise browser (client-side, no server needed)
-├── setup.html               # Developer setup guide (DB import + API integration)
-├── NOTICE.md                # Media attribution & license terms
-└── README.md
-```
-
 ### Key Files
 
 - **`data/exercises.json`** — The primary data file. A JSON array of 1,324 exercise objects with all metadata. `image` / `gif_url` point to the local 180×180 assets, and each record carries an `attribution` field; `media_id` holds the original media reference id.
@@ -122,7 +93,6 @@ exercises-dataset/
 - **`images/`, `videos/`** — 180×180 thumbnails and animation GIFs (© [Gym visual](https://gymvisual.com/), used with permission).
 - **`index.html`** — Standalone exercise browser. Open directly in any modern browser.
 - **`setup.html`** — Developer guide for DB setup, API integration, and LLM-assisted backend generation.
-- **`LICENSE`, `NOTICE.md`** — MIT (code/data) + the Gym visual media terms.
 
 ---
 
@@ -233,10 +203,6 @@ Each record in `data/exercises.json` follows this structure. A machine-readable 
 ```
 
 ---
-
-## 🎬 Sample Exercises
-
-> Each example ships a 180×180 thumbnail (`image`) and animation GIF (`gif_url`), © [Gym visual](https://gymvisual.com/).
 
 ### 1 — Barbell Bench Press · Chest
 
