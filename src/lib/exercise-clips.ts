@@ -9,6 +9,12 @@
  * movement pattern) and were removed rather than left mislabeled — those
  * exercises fall back to the SVG pose figure, which is always at least
  * generically correct for the movement category.
+ *
+ * That pass matched on movement pattern (is this a press? a row?) without
+ * checking equipment specifically. A follow-up equipment-only audit (see
+ * scripts/_qa-equipment-audit.mjs) found "machine-press" actually shows a
+ * dumbbell overhead press — same held-weight silhouette as the confirmed
+ * dumbbell presses — and removed it for the same reason.
  */
 export const EXERCISE_CLIPS = new Set([
   "ab-wheel",
@@ -42,7 +48,6 @@ export const EXERCISE_CLIPS = new Set([
   "leg-ext",
   "leg-press",
   "machine-crunch",
-  "machine-press",
   "ohp",
   "overhead-ext",
   "pec-deck",
