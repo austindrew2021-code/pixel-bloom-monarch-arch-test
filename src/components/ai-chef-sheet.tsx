@@ -63,6 +63,7 @@ export function AiChefSheet({
   const workouts = useSpoonful((s) => s.workouts);
   const stepsByDate = useSpoonful((s) => s.stepsByDate);
   const snacks = useSpoonful((s) => s.snacks);
+  const portionMultByDate = useSpoonful((s) => s.portionMultByDate);
   const [prompt, setPrompt] = useState(SUGGESTIONS[2] ?? SUGGESTIONS[0] ?? "");
   const [busy, setBusy] = useState(false);
   const [scope, setScope] = useState<"tonight" | "week">("tonight");
@@ -70,7 +71,7 @@ export function AiChefSheet({
   const today = isoDate();
   const remaining = dayFuel({
     goal,
-    eaten: nutritionForDate(meals, today, snacks),
+    eaten: nutritionForDate(meals, today, snacks, portionMultByDate),
     workouts: workouts.filter((w) => w.date === today),
     steps: stepsByDate[today] ?? 0,
     body,

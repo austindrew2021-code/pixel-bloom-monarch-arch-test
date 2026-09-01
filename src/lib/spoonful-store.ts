@@ -1,7 +1,7 @@
 import { addDays, parseISO } from "date-fns";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_BODY, macrosFromBody, normalizeBody, type BodyProfile, type FamilySeat, type GoalKind } from "./body";
+import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, type BodyProfile, type FamilySeat, type GoalKind } from "./body";
 import { isDinnerMain, isGlutenFree, isSugarFree, isVegan } from "./diet";
 import { fitsGoal, strictestGoal } from "./goal-fit";
 import { isUnlocked } from "./access";
@@ -10,6 +10,7 @@ import { DEFAULT_GOAL, addNutrition, applyHealthToFuel, dayFuel, emptyNutrition,
 import { liveStepBump, pullFromSource, pullHealthDay, recoveryLabel, catchUpSteps, type HealthDay } from "./fitness-sync";
 import { hasNativeHealth, requestNativeHealth } from "./native-health";
 import { scaleQty } from "./cuisine";
+import { portionSyncFor } from "./portion-sync";
 import { ADDONS, RECIPES, recipeById } from "./recipes";
 import {
   CHEF_FREE_WEEK,
@@ -18,17 +19,20 @@ import {
   CHEF_PLUS_WEEK,
   LOOKUP_FREE_WEEK,
   SNAP_FREE_WEEK,
+  STREAK_SAVE_FREE_MONTH,
   milestonesFor,
   rankForXp,
   type Celebrate,
 } from "./ranks";
+import { brokenStreakInfo, type BrokenStreak } from "./streak";
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "./notify";
 import type { FitnessSourceId, SyncAccess } from "./devices";
 import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
-import { plateCost, recipeSafe } from "./shield";
+import { mealSavings, plateCost, recipeSafe } from "./shield";
 import { postKitchenEvent } from "./family";
+import { shareAchievement, syncMyStats } from "./community";
 import type { LiftSession } from "./lift";
-import { liftKcal, sessionRomM, sessionVolumeKg } from "./lift";
+import { liftKcal, moveById, sessionPRs, sessionRomM, sessionVolumeKg } from "./lift";
 import {
   expectedWorkoutsForDate,
   isProgramWeek,
@@ -59,7 +63,7 @@ import type {
   Workout,
   WorkoutKind,
 } from "./types";
-import { mondayOf, weekDates } from "./week";
+import { mondayOf, shiftWeek, weekDates } from "./week";
 
 function rollAiWeek(
   get: () => SpoonfulState,
@@ -100,11 +104,18 @@ type SpoonfulState = {
   tab: TabId;
   walkthroughDone: boolean;
   nextGen: boolean;
+  portionSync: boolean;
+  portionMultByDate: Record<string, number>;
   goal: MacroGoal;
   stepsByDate: Record<string, number>;
   workouts: Workout[];
   favorites: string[];
   cookedDates: string[];
+  streakSavedDates: string[];
+  streakSaveMonth: string;
+  streakSaveBonus: number;
+  streakSaveUsed: number;
+  streakSaveOfferSeen: string[];
   snacks: Snack[];
   xp: number;
   seenMilestones: string[];
@@ -150,6 +161,7 @@ type SpoonfulState = {
   toggleAllergy: (id: AllergyId) => void;
   setTheme: (theme: "paper" | "midnight") => void;
   setNextGen: (nextGen: boolean) => void;
+  setPortionSync: (portionSync: boolean) => void;
   setGoal: (goal: MacroGoal) => void;
   assignMeal: (date: string, slot: MealSlotKind, recipeId: string) => void;
   assignCustom: (date: string, slot: MealSlotKind, custom: CustomMeal) => void;
@@ -213,11 +225,16 @@ type SpoonfulState = {
   replateFromFuel: (dates?: string[]) => { count: number; names: string[] };
   logWater: (ml: number) => void;
   markCooked: (date: string) => void;
+  streakSaveRemaining: () => number;
+  brokenStreak: () => BrokenStreak | null;
+  useStreakSave: (date: string) => boolean;
+  dismissStreakOffer: (date: string) => void;
   saveLeftovers: (fromDate: string) => boolean;
   addSnack: (input: { date: string; name: string; nutrition: Snack["nutrition"] }) => void;
   removeSnack: (id: string) => void;
   awardXp: (amount: number, reason?: string) => Celebrate | null;
   clearCelebrate: () => void;
+  shareCelebration: () => Promise<boolean>;
   consumeChef: () => boolean;
   consumeSnap: () => boolean;
   consumeLookup: () => boolean;
@@ -237,6 +254,28 @@ function chefCapOf(s: { unlocked: AddonId[]; chefBonus: number; chefBonusWeek: s
   const week = s.chefWeek || mondayOf();
   const bonus = s.chefBonusWeek === week ? s.chefBonus : 0;
   return (plus ? CHEF_PLUS_WEEK : CHEF_FREE_WEEK) + bonus;
+}
+
+function currentMonthKey(): string {
+  return new Date().toISOString().slice(0, 7);
+}
+
+// Relies on rollStreakSaveMonth already having run this call, same as chefCapOf
+// relies on rollAiWeek — by then streakSaveBonus/Used are for the current month.
+function streakSaveCapOf(s: { unlocked: AddonId[]; streakSaveBonus: number }): number {
+  const base = isUnlocked(s.unlocked, "kitchen-table") ? STREAK_SAVE_FREE_MONTH : 0;
+  return base + s.streakSaveBonus;
+}
+
+function rollStreakSaveMonth(
+  get: () => SpoonfulState,
+  set: (partial: Partial<SpoonfulState>) => void,
+) {
+  const month = currentMonthKey();
+  const s = get();
+  if (s.streakSaveMonth !== month) {
+    set({ streakSaveMonth: month, streakSaveBonus: 0, streakSaveUsed: 0 });
+  }
 }
 
 function uid(): string {
@@ -381,11 +420,18 @@ export const useSpoonful = create<SpoonfulState>()(
       tab: "plan",
       walkthroughDone: false,
       nextGen: false,
+      portionSync: false,
+      portionMultByDate: {},
       goal: DEFAULT_GOAL,
       stepsByDate: {},
       workouts: [],
       favorites: [],
       cookedDates: [],
+      streakSavedDates: [],
+      streakSaveMonth: currentMonthKey(),
+      streakSaveBonus: 0,
+      streakSaveUsed: 0,
+      streakSaveOfferSeen: [],
       snacks: [],
       xp: 0,
       seenMilestones: [],
@@ -454,6 +500,7 @@ export const useSpoonful = create<SpoonfulState>()(
         }));
         if (nextGen) get().ensureProgram();
       },
+      setPortionSync: (portionSync) => set({ portionSync }),
       setGoal: (goal) => set({ goal }),
       assignMeal: (date, slot, recipeId) => {
         set((s) => {
@@ -631,12 +678,16 @@ export const useSpoonful = create<SpoonfulState>()(
       unlock: (id) => {
         const already = get().unlocked.includes(id);
         rollAiWeek(get, set);
+        if (id === "streak-save") rollStreakSaveMonth(get, set);
         set((s) => {
           if (id === "plates-15" || id === "plates-40") {
             const week = mondayOf();
             const add = id === "plates-15" ? CHEF_PACK_15 : CHEF_PACK_40;
             const bonus = (s.chefBonusWeek === week ? s.chefBonus : 0) + add;
             return { chefBonus: bonus, chefBonusWeek: week };
+          }
+          if (id === "streak-save") {
+            return { streakSaveBonus: s.streakSaveBonus + 1 };
           }
           if (s.unlocked.includes(id)) return s;
           const extra: AddonId[] = [];
@@ -746,6 +797,7 @@ export const useSpoonful = create<SpoonfulState>()(
       },
       saveLiftSession: (session) => {
         const finished: LiftSession = { ...session, finishedAt: session.finishedAt ?? Date.now() };
+        const priorSessions = get().liftSessions;
         const minutes = Math.max(8, Math.round(((finished.finishedAt ?? Date.now()) - finished.startedAt) / 60000));
         const volumeKg = sessionVolumeKg(finished);
         const kcal = liftKcal(get().body.weightKg, minutes, volumeKg, sessionRomM(finished));
@@ -753,6 +805,20 @@ export const useSpoonful = create<SpoonfulState>()(
           liftSessions: [...s.liftSessions.filter((x) => x.id !== finished.id), finished].slice(-40),
         }));
         get().addWorkout({ date: finished.date, kind: "lift", minutes, kcal, volumeKg });
+        const prs = sessionPRs(priorSessions, finished);
+        if (prs[0]) {
+          const pr = prs[0];
+          const move = moveById(pr.moveId);
+          const imperial = get().body.units !== "metric";
+          const weight = imperial ? `${Math.round(lbFromKg(pr.weightKg))} lb` : `${Math.round(pr.weightKg * 10) / 10} kg`;
+          set({
+            lastCelebrate: {
+              id: `pr-${finished.id}-${pr.moveId}`,
+              title: "New PR!",
+              body: `${move?.name ?? pr.moveId} — ${weight} × ${pr.reps}. Your best yet.`,
+            },
+          });
+        }
         const week = get().programWeek;
         if (week) {
           const session = week.sessions.find((s) => s.date === finished.date && s.kind === "lift" && s.status !== "skipped");
@@ -766,6 +832,7 @@ export const useSpoonful = create<SpoonfulState>()(
             if (get().nextGen) get().replateFromFuel([finished.date]);
           }
         }
+        get().ensureProgram();
       },
       importFitness: ({ steps, workouts, body }) => {
         const today = isoDate();
@@ -921,7 +988,7 @@ export const useSpoonful = create<SpoonfulState>()(
       ensureProgram: () => {
         const s = get();
         const today = isoDate();
-        const week = rebuildProgram(s.programWeek, s.weekStart, s.body.goalKind, today);
+        const week = rebuildProgram(s.programWeek, s.weekStart, s.body.goalKind, today, s.liftSessions);
         const synced = week.sessions.map((session) => {
           if (session.status === "planned" && matchLoggedToSession(session, s.workouts)) {
             return { ...session, status: "done" as const };
@@ -1093,11 +1160,18 @@ export const useSpoonful = create<SpoonfulState>()(
           theme: s.theme,
           walkthroughDone: s.walkthroughDone,
           nextGen: s.nextGen,
+          portionSync: s.portionSync,
+          portionMultByDate: s.portionMultByDate,
           goal: s.goal,
           stepsByDate: s.stepsByDate,
           workouts: s.workouts,
           favorites: s.favorites,
           cookedDates: s.cookedDates,
+          streakSavedDates: s.streakSavedDates,
+          streakSaveMonth: s.streakSaveMonth,
+          streakSaveBonus: s.streakSaveBonus,
+          streakSaveUsed: s.streakSaveUsed,
+          streakSaveOfferSeen: s.streakSaveOfferSeen,
           snacks: s.snacks,
           xp: s.xp,
           seenMilestones: s.seenMilestones,
@@ -1144,6 +1218,17 @@ export const useSpoonful = create<SpoonfulState>()(
           ...(payload.theme === "paper" || payload.theme === "midnight" ? { theme: payload.theme } : {}),
           ...(typeof payload.walkthroughDone === "boolean" ? { walkthroughDone: payload.walkthroughDone } : {}),
           ...(typeof payload.nextGen === "boolean" ? { nextGen: payload.nextGen } : {}),
+          ...(typeof payload.portionSync === "boolean" ? { portionSync: payload.portionSync } : {}),
+          ...(payload.portionMultByDate && typeof payload.portionMultByDate === "object"
+            ? { portionMultByDate: payload.portionMultByDate as Record<string, number> }
+            : {}),
+          ...(Array.isArray(payload.streakSavedDates) ? { streakSavedDates: payload.streakSavedDates as string[] } : {}),
+          ...(typeof payload.streakSaveMonth === "string" ? { streakSaveMonth: payload.streakSaveMonth } : {}),
+          ...(typeof payload.streakSaveBonus === "number" ? { streakSaveBonus: payload.streakSaveBonus } : {}),
+          ...(typeof payload.streakSaveUsed === "number" ? { streakSaveUsed: payload.streakSaveUsed } : {}),
+          ...(Array.isArray(payload.streakSaveOfferSeen)
+            ? { streakSaveOfferSeen: payload.streakSaveOfferSeen as string[] }
+            : {}),
           ...(payload.goal && typeof payload.goal === "object" ? { goal: payload.goal as MacroGoal } : {}),
           ...(payload.stepsByDate && typeof payload.stepsByDate === "object"
             ? { stepsByDate: payload.stepsByDate as Record<string, number> }
@@ -1207,7 +1292,63 @@ export const useSpoonful = create<SpoonfulState>()(
           cookedDates: s.cookedDates.includes(date) ? s.cookedDates : [...s.cookedDates, date],
         }));
         if (!already) get().awardXp(25, "cooked");
+
+        const s = get();
+        if (!s.portionSync) return;
+        const dinner = s.meals.find((m) => m.date === date && m.slot === "dinner" && !m.skip);
+        const recipe = dinner ? resolveMeal(dinner).recipe : undefined;
+        if (!dinner || !recipe) return;
+        const eatenElse = nutritionForDateExcluding(s.meals, date, s.snacks, dinner.id);
+        const dayWork = expectedWorkoutsForDate({
+          date,
+          today: isoDate(),
+          sessions: s.programWeek?.sessions ?? [],
+          logged: s.workouts.filter((w) => w.date === date),
+          bodyKg: s.body.weightKg,
+        });
+        let fuel = dayFuel({
+          goal: s.goal,
+          eaten: eatenElse,
+          workouts: dayWork,
+          steps: s.stepsByDate[date] ?? s.healthByDate[date]?.steps ?? 0,
+          body: s.body,
+        });
+        const health = s.healthByDate[date];
+        if (health) fuel = applyHealthToFuel(fuel, health);
+        const sync = portionSyncFor(recipe, fuel.remaining.cal);
+        if (sync) {
+          set((st) => ({ portionMultByDate: { ...st.portionMultByDate, [date]: sync.mult } }));
+        }
       },
+      streakSaveRemaining: () => {
+        rollStreakSaveMonth(get, set);
+        const s = get();
+        return Math.max(0, streakSaveCapOf(s) - s.streakSaveUsed);
+      },
+      brokenStreak: () => {
+        const s = get();
+        const info = brokenStreakInfo(s.cookedDates, s.streakSavedDates, isoDate());
+        if (!info || s.streakSaveOfferSeen.includes(info.brokenDate)) return null;
+        return info;
+      },
+      useStreakSave: (date) => {
+        rollStreakSaveMonth(get, set);
+        const s = get();
+        if (s.streakSavedDates.includes(date) || s.cookedDates.includes(date)) return true;
+        if (s.streakSaveUsed >= streakSaveCapOf(s)) return false;
+        set((st) => ({
+          streakSavedDates: [...st.streakSavedDates, date],
+          streakSaveUsed: st.streakSaveUsed + 1,
+          streakSaveOfferSeen: st.streakSaveOfferSeen.includes(date)
+            ? st.streakSaveOfferSeen
+            : [...st.streakSaveOfferSeen, date],
+        }));
+        return true;
+      },
+      dismissStreakOffer: (date) =>
+        set((s) => ({
+          streakSaveOfferSeen: s.streakSaveOfferSeen.includes(date) ? s.streakSaveOfferSeen : [...s.streakSaveOfferSeen, date],
+        })),
       saveLeftovers: (fromDate) => {
         const dinner = get().meals.find((m) => m.date === fromDate && m.slot === "dinner");
         if (!dinner || dinner.skip) return false;
@@ -1242,10 +1383,13 @@ export const useSpoonful = create<SpoonfulState>()(
         const after = rankForXp(xp);
         const fresh = milestonesFor({
           cookedDates: s.cookedDates,
+          streakSavedDates: s.streakSavedDates,
           xp,
           seen: s.seenMilestones,
           snapped: s.snapped,
           family: isUnlocked(s.unlocked, "family"),
+          liftCount: s.liftSessions.length,
+          savedTotal: savingsSummary(s.meals, s.cookedDates, s.household).allTime,
         });
         let lastCelebrate: Celebrate | null = s.lastCelebrate;
         const seen = [...s.seenMilestones];
@@ -1256,9 +1400,20 @@ export const useSpoonful = create<SpoonfulState>()(
           seen.push(fresh[0].id);
         }
         set({ xp, seenMilestones: seen, lastCelebrate });
+        void syncMyStats({ data: { xp, liftCount: get().liftSessions.length } }).catch(() => {});
         return lastCelebrate && lastCelebrate !== s.lastCelebrate ? lastCelebrate : null;
       },
       clearCelebrate: () => set({ lastCelebrate: null }),
+      shareCelebration: async () => {
+        const last = get().lastCelebrate;
+        if (!last) return false;
+        try {
+          const res = await shareAchievement({ data: { title: last.title, body: last.body } });
+          return res.ok;
+        } catch {
+          return false;
+        }
+      },
       consumeChef: () => {
         rollAiWeek(get, set);
         const s = get();
@@ -1348,11 +1503,18 @@ export const useSpoonful = create<SpoonfulState>()(
         theme: s.theme,
         walkthroughDone: s.walkthroughDone,
         nextGen: s.nextGen,
+        portionSync: s.portionSync,
+        portionMultByDate: s.portionMultByDate,
         goal: s.goal,
         stepsByDate: s.stepsByDate,
         workouts: s.workouts,
         favorites: s.favorites,
         cookedDates: s.cookedDates,
+        streakSavedDates: s.streakSavedDates,
+        streakSaveMonth: s.streakSaveMonth,
+        streakSaveBonus: s.streakSaveBonus,
+        streakSaveUsed: s.streakSaveUsed,
+        streakSaveOfferSeen: s.streakSaveOfferSeen,
         snacks: s.snacks,
         xp: s.xp,
         seenMilestones: s.seenMilestones,
@@ -1408,21 +1570,53 @@ export function resolveMeal(meal: PlannedMeal): {
   return { title: "Pick another dish", minutes: 0 };
 }
 
+/**
+ * @param portionMultByDate When a dinner's portion was scaled by Portion Sync
+ * (see markCooked), applies that recorded multiplier so tracked macros reflect
+ * what was actually cooked and eaten, not the recipe's unscaled base numbers.
+ */
 export function nutritionForDate(
   meals: PlannedMeal[],
   date: string,
   snacks: Snack[] = [],
+  portionMultByDate?: Record<string, number>,
 ): ReturnType<typeof emptyNutrition> {
+  const mult = portionMultByDate?.[date];
   const fromMeals = meals
     .filter((m) => m.date === date && !m.skip)
     .reduce((sum, m) => {
       const resolved = resolveMeal(m);
       const n = resolved.recipe?.nutrition ?? resolved.custom?.nutrition;
-      return n ? addNutrition(sum, n) : sum;
+      if (!n) return sum;
+      return addNutrition(sum, mult && m.slot === "dinner" ? scaleNutrition(n, mult) : n);
     }, emptyNutrition());
   return snacks
     .filter((s) => s.date === date)
     .reduce((sum, s) => addNutrition(sum, s.nutrition), fromMeals);
+}
+
+/** Same as nutritionForDate, but leaves one meal out — used to find how much
+ * calorie/macro room a not-yet-scaled dinner is meant to fill on its own. */
+export function nutritionForDateExcluding(
+  meals: PlannedMeal[],
+  date: string,
+  snacks: Snack[],
+  excludeMealId: string,
+): ReturnType<typeof emptyNutrition> {
+  return nutritionForDate(
+    meals.filter((m) => m.id !== excludeMealId),
+    date,
+    snacks,
+  );
+}
+
+function scaleNutrition(n: { cal: number; protein: number; carbs: number; fat: number }, mult: number) {
+  return {
+    cal: Math.round(n.cal * mult),
+    protein: Math.round(n.protein * mult),
+    carbs: Math.round(n.carbs * mult),
+    fat: Math.round(n.fat * mult),
+  };
 }
 
 function pantryHit(name: string, pantry: PantryItem[]): boolean {
@@ -1509,6 +1703,60 @@ export function weekPulse(
     proteins: proteins.size,
     cost: Math.round(cost),
   };
+}
+
+export type SavingsSummary = { week: number; month: number; allTime: number; count: number };
+
+/** Estimated dollars saved cooking actually-cooked dinners instead of ordering them in. */
+export function savingsSummary(
+  meals: PlannedMeal[],
+  cookedDates: string[],
+  household: number,
+  today = isoDate(),
+): SavingsSummary {
+  const thisWeek = new Set(weekDates(mondayOf(parseISO(`${today}T12:00:00`))));
+  const monthPrefix = today.slice(0, 7);
+  let week = 0;
+  let month = 0;
+  let allTime = 0;
+  let count = 0;
+  for (const date of cookedDates) {
+    const dinner = meals.find((m) => m.date === date && m.slot === "dinner" && !m.skip);
+    if (!dinner) continue;
+    const recipe = resolveMeal(dinner).recipe;
+    if (!recipe) continue;
+    const savings = mealSavings(recipe, household);
+    allTime += savings;
+    count += 1;
+    if (date.slice(0, 7) === monthPrefix) month += savings;
+    if (thisWeek.has(date)) week += savings;
+  }
+  return { week: Math.round(week), month: Math.round(month), allTime: Math.round(allTime), count };
+}
+
+/** Estimated dollars saved per week, oldest to newest, for the last `weeks` weeks including this one. */
+export function weeklySavingsTrend(
+  meals: PlannedMeal[],
+  cookedDates: string[],
+  household: number,
+  weeks = 8,
+  today = isoDate(),
+): number[] {
+  const thisWeekStart = mondayOf(parseISO(`${today}T12:00:00`));
+  const totals: number[] = [];
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const start = shiftWeek(thisWeekStart, -i);
+    const dates = new Set(weekDates(start));
+    let sum = 0;
+    for (const date of cookedDates) {
+      if (!dates.has(date)) continue;
+      const dinner = meals.find((m) => m.date === date && m.slot === "dinner" && !m.skip);
+      const recipe = dinner ? resolveMeal(dinner).recipe : undefined;
+      if (recipe) sum += mealSavings(recipe, household);
+    }
+    totals.push(Math.round(sum));
+  }
+  return totals;
 }
 
 export function weekPlanText(meals: PlannedMeal[], weekStart: string): string {

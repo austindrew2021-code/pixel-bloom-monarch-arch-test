@@ -8,13 +8,15 @@ import {
   AISLE_ORDER,
   groceryForWeek,
   plannedForWeek,
+  savingsSummary,
   useSpoonful,
+  weeklySavingsTrend,
   weekPulse,
   type GroceryLine,
 } from "@/lib/spoonful-store";
 import { cn } from "@/lib/utils";
 
-export function ShopView() {
+export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
   const weekStart = useSpoonful((s) => s.weekStart);
   const meals = useSpoonful((s) => s.meals);
   const extra = useSpoonful((s) => s.extraGrocery);
@@ -33,8 +35,14 @@ export function ShopView() {
   const [shopQ, setShopQ] = useState("");
 
   const household = useSpoonful((s) => s.household);
+  const hasKitchenTable = useSpoonful((s) => s.hasAddon("kitchen-table"));
   const weekMeals = plannedForWeek(meals, weekStart);
   const pulse = weekPulse(meals, weekStart, cookedDates, household);
+  const savings = useMemo(() => savingsSummary(meals, cookedDates, household), [meals, cookedDates, household]);
+  const savingsTrend = useMemo(
+    () => (hasKitchenTable ? weeklySavingsTrend(meals, cookedDates, household) : []),
+    [hasKitchenTable, meals, cookedDates, household],
+  );
   const lines = useMemo(
     () => groceryForWeek(meals, weekStart, extra, pantry, household),
     [meals, weekStart, extra, pantry, household],
@@ -61,6 +69,55 @@ export function ShopView() {
         {weekMeals.filter((m) => !m.skip).length === 1 ? "" : "s"}, scaled for {household}{" "}
         {household === 1 ? "person" : "people"}. Eating-out nights stay off the list. About ${pulse.cost} this week.
       </p>
+
+      {hasKitchenTable ? (
+        savings.count === 0 ? (
+          <div className="mt-4 rounded-3xl bg-spark p-4 text-spark-foreground">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] opacity-80">Savings tracker</p>
+            <p className="mt-2 text-sm leading-relaxed opacity-90">
+              Cook your first dinner to start tracking what home cooking is worth versus takeout.
+            </p>
+          </div>
+        ) : (
+          <section className="mt-4 rounded-3xl bg-spark p-4 text-spark-foreground">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] opacity-80">Saved vs. takeout</p>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <SavingsStat label="This week" value={`$${savings.week}`} />
+              <SavingsStat label="This month" value={`$${savings.month}`} />
+              <SavingsStat label="All-time" value={`$${savings.allTime}`} />
+            </div>
+            {savingsTrend.some((v) => v > 0) ? (
+              <div className="mt-4">
+                <p className="text-xs opacity-80">Last {savingsTrend.length} weeks</p>
+                <div className="mt-2 flex h-16 items-end gap-1">
+                  {savingsTrend.map((v, i) => {
+                    const max = Math.max(1, ...savingsTrend);
+                    const h = 6 + (v / max) * 58;
+                    return (
+                      <div key={i} className="flex min-w-0 flex-1 flex-col items-center justify-end">
+                        <span className="w-full rounded-t-md bg-spark-foreground/70" style={{ height: `${h}px` }} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+          </section>
+        )
+      ) : (
+        <button
+          type="button"
+          onClick={onOpenStore}
+          className="mt-4 w-full rounded-3xl bg-card p-4 text-left shadow-[var(--shadow-border)]"
+        >
+          <p className="text-sm font-medium">
+            You've saved about ${savings.week} this week cooking instead of ordering in.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Kitchen Table ($7.99/mo) unlocks the full savings dashboard — this month, all-time, and a trend chart.
+          </p>
+        </button>
+      )}
 
       <div className="mt-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
         <div className="flex items-baseline justify-between">
@@ -233,6 +290,15 @@ export function ShopView() {
           ))}
         </ul>
       </section>
+    </div>
+  );
+}
+
+function SavingsStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 overflow-hidden">
+      <p className="text-xs opacity-80">{label}</p>
+      <p className="mt-1 truncate font-display text-2xl tabular-nums leading-tight sm:text-3xl">{value}</p>
     </div>
   );
 }

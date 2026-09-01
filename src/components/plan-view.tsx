@@ -13,12 +13,14 @@ import { dayFuel, isoDate } from "@/lib/fuel";
 import { formatMinutes } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { mealsFromPantry } from "@/lib/pantry-match";
+import { portionSyncFor } from "@/lib/portion-sync";
 import { expectedWorkoutsForDate, resolveStatus } from "@/lib/program";
 import { recipeById } from "@/lib/recipes";
 import { rankForXp } from "@/lib/ranks";
 import { proteinDot, skipTitle } from "@/lib/shield";
 import {
   nutritionForDate,
+  nutritionForDateExcluding,
   plannedForWeek,
   recipeAllowed,
   resolveMeal,
@@ -47,6 +49,8 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
   const pantry = useSpoonful((s) => s.pantry);
   const setTab = useSpoonful((s) => s.setTab);
   const nextGen = useSpoonful((s) => s.nextGen);
+  const portionSync = useSpoonful((s) => s.portionSync);
+  const portionMultByDate = useSpoonful((s) => s.portionMultByDate);
   const goal = useSpoonful((s) => s.goal);
   const workouts = useSpoonful((s) => s.workouts);
   const stepsByDate = useSpoonful((s) => s.stepsByDate);
@@ -91,21 +95,39 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           1,
         )[0]
       : undefined;
-  const fuel = nextGen
-    ? dayFuel({
-        goal,
-        eaten: nutritionForDate(meals, today, snacks),
-        workouts: expectedWorkoutsForDate({
-          date: today,
-          today,
-          sessions: programWeek?.sessions ?? [],
-          logged: workouts.filter((w) => w.date === today),
-          bodyKg: body.weightKg,
-        }),
-        steps: stepsByDate[today] ?? 0,
-        body,
-      })
-    : null;
+  const todayWorkouts = expectedWorkoutsForDate({
+    date: today,
+    today,
+    sessions: programWeek?.sessions ?? [],
+    logged: workouts.filter((w) => w.date === today),
+    bodyKg: body.weightKg,
+  });
+  const fuel =
+    nextGen || portionSync
+      ? dayFuel({
+          goal,
+          eaten: nutritionForDate(meals, today, snacks, portionMultByDate),
+          workouts: todayWorkouts,
+          steps: stepsByDate[today] ?? 0,
+          body,
+        })
+      : null;
+  // Same-day fuel, but with tonight's own dinner left out — the room dinner
+  // alone is meant to fill, so scaling it against that (rather than against
+  // what's left after eating it) is the correct basis for the multiplier.
+  const tonightSync =
+    portionSync && todayDate && tonight && !tonight.skip && resolveMeal(tonight).recipe
+      ? portionSyncFor(
+          resolveMeal(tonight).recipe!,
+          dayFuel({
+            goal,
+            eaten: nutritionForDateExcluding(meals, today, snacks, tonight.id),
+            workouts: todayWorkouts,
+            steps: stepsByDate[today] ?? 0,
+            body,
+          }).remaining.cal,
+        )
+      : null;
 
   function pickForMe(date: string) {
     const recipe = surpriseDinner(date);
@@ -187,7 +209,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
                 <p className="mt-1 text-sm opacity-90">
                   {formatMinutes(resolveMeal(tonight).minutes)}
                   {nextGen && resolveMeal(tonight).recipe
-                    ? ` · ${resolveMeal(tonight).recipe?.nutrition.protein}g protein`
+                    ? ` · ${tonightSync?.nutrition.protein ?? resolveMeal(tonight).recipe?.nutrition.protein}g protein`
                     : ""}
                 </p>
                 {nextGen && programWeek?.sessions.find((s) => s.date === todayDate) ? (
@@ -201,6 +223,11 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
                       if (st === "missed") return `${ses.name} missed`;
                       return `${ses.name} still on · ${ses.minutes} min`;
                     })()}
+                  </p>
+                ) : null}
+                {tonightSync ? (
+                  <p className="mt-2 text-xs opacity-80" data-testid="portion-sync-note">
+                    Portion Sync: {tonightSync.note}
                   </p>
                 ) : null}
               </div>

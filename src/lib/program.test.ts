@@ -10,6 +10,7 @@ import {
   isUnilateral,
   moveById,
   pctOfBest,
+  sessionPRs,
   suggestNextKg,
   volumeChangePct,
   warmupLoads,
@@ -18,6 +19,7 @@ import {
 } from "./lift.ts";
 import {
   applyMissed,
+  applyPerformanceAdjustment,
   applyVolumeCatchup,
   expectedWorkoutsForDate,
   generateProgram,
@@ -167,6 +169,34 @@ test("missed lifts add a set to remaining planned days", () => {
   assert.equal(later!.moves[0]!.sets, orig.moves[0]!.sets + 1);
 });
 
+test("an easy last session adds a set to the next planned lift; a grind holds it back a set", () => {
+  const p = generateProgram("2026-08-24", "lean");
+  const orig = p.sessions.find((s) => s.kind === "lift")!;
+  const doneLines = [{ id: "l", moveId: "bench", sets: [{ id: "s", reps: 8, weightKg: 80, done: true }] }];
+
+  const easySession: LiftSession = {
+    id: "e", date: "2026-08-23", name: "Push", startedAt: 1, finishedAt: 2, feel: "easy", lines: doneLines,
+  };
+  const bumped = applyPerformanceAdjustment(p, [easySession], "2026-08-24");
+  const bumpedSession = bumped.sessions.find((s) => s.id === orig.id)!;
+  assert.equal(bumpedSession.volumeBump, true);
+  assert.equal(bumpedSession.moves[0]!.sets, orig.moves[0]!.sets + 1);
+
+  const grindSession: LiftSession = {
+    id: "g", date: "2026-08-23", name: "Push", startedAt: 1, finishedAt: 2, feel: "grind", lines: doneLines,
+  };
+  const held = applyPerformanceAdjustment(p, [grindSession], "2026-08-24");
+  const heldSession = held.sessions.find((s) => s.id === orig.id)!;
+  assert.equal(heldSession.volumeBump, true);
+  assert.equal(heldSession.moves[0]!.sets, orig.moves[0]!.sets - 1);
+
+  const rightSession: LiftSession = {
+    id: "r", date: "2026-08-23", name: "Push", startedAt: 1, finishedAt: 2, feel: "right", lines: doneLines,
+  };
+  const unchanged = applyPerformanceAdjustment(p, [rightSession], "2026-08-24");
+  assert.equal(unchanged, p);
+});
+
 test("substitutes stay on the same muscle", () => {
   const alts = substituteMoves("leg-curl", 6);
   assert.ok(alts.length >= 2);
@@ -213,6 +243,36 @@ test("ghost last set and beat-last compare working sets only", () => {
   assert.equal(beatsPrevious({ id: "n", reps: 7, weightKg: 80, done: false }, prev, 0), false);
 });
 
+test("sessionPRs flags a move that beats every prior logged best, and only that move", () => {
+  const prior: LiftSession[] = [
+    {
+      id: "a",
+      date: "2026-08-20",
+      name: "Push",
+      startedAt: 1,
+      lines: [
+        { id: "l1", moveId: "bench", sets: [{ id: "s1", reps: 5, weightKg: 80, done: true }] },
+        { id: "l2", moveId: "ohp", sets: [{ id: "s2", reps: 5, weightKg: 50, done: true }] },
+      ],
+    },
+  ];
+  const finished: LiftSession = {
+    id: "b",
+    date: "2026-08-27",
+    name: "Push",
+    startedAt: 1,
+    lines: [
+      { id: "l1", moveId: "bench", sets: [{ id: "s1", reps: 5, weightKg: 85, done: true }] },
+      { id: "l2", moveId: "ohp", sets: [{ id: "s2", reps: 5, weightKg: 50, done: true }] },
+      { id: "l3", moveId: "curl", sets: [{ id: "s3", reps: 8, weightKg: 12, done: true, warmup: true }] },
+    ],
+  };
+  const prs = sessionPRs(prior, finished);
+  assert.equal(prs.length, 1);
+  assert.equal(prs[0]!.moveId, "bench");
+  assert.equal(prs[0]!.weightKg, 85);
+});
+
 test("volume change is percent vs last session", () => {
   const mk = (id: string, kg: number): LiftSession => ({
     id,
@@ -239,16 +299,24 @@ test("clip names match the movement in the clip", () => {
   assert.equal(moveById("goblet")?.name, "Goblet squat");
   assert.equal(moveById("sissy-squat")?.name, "Sissy squat");
   assert.equal(moveById("sumo-squat")?.name, "Sumo squat");
-  assert.equal(EXERCISE_CLIPS.has("smith-shrug"), true);
   assert.equal(EXERCISE_CLIPS.has("bench"), true);
   assert.equal(EXERCISE_CLIPS.has("ohp"), true);
   assert.equal(EXERCISE_CLIPS.has("row"), true);
-  assert.equal(EXERCISE_CLIPS.has("front-squat"), true);
   assert.equal(EXERCISE_CLIPS.has("ab-wheel"), true);
-  assert.equal(EXERCISE_CLIPS.has("goblet"), false);
+  assert.equal(EXERCISE_CLIPS.has("goblet"), true);
   assert.equal(EXERCISE_CLIPS.has("sissy-squat"), false);
   assert.equal(EXERCISE_CLIPS.has("sumo-squat"), false);
   assert.equal(EXERCISE_CLIPS.has("squat"), true);
+  // Reassigned by scripts/_apply-clip-reassignment.py after a frame-by-frame
+  // review found each of these ids' registered clip showed a different
+  // exercise. smith-shrug's video was actually a deadlift and front-squat's
+  // was actually a leg press — both clips moved to the id they truly show,
+  // leaving smith-shrug and front-squat themselves without a registered
+  // clip (falls back to the pose figure) rather than a wrong one.
+  assert.equal(EXERCISE_CLIPS.has("smith-shrug"), false);
+  assert.equal(EXERCISE_CLIPS.has("front-squat"), false);
+  assert.equal(EXERCISE_CLIPS.has("deadlift"), true);
+  assert.equal(EXERCISE_CLIPS.has("leg-press"), true);
 });
 
 test("drop load is 80 percent and recap names the work", () => {

@@ -8,6 +8,7 @@ import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import {
   createGroupChat,
   feedRecipes,
+  followedLeaderboard,
   getMyProfile,
   listConversations,
   listFollowing,
@@ -40,7 +41,7 @@ import { pushNote } from "@/lib/notify";
 import type { Visibility } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-type Section = "cooks" | "mine" | "chat" | "alerts" | "table";
+type Section = "cooks" | "mine" | "chat" | "alerts" | "table" | "board";
 
 export function PeopleView() {
   const { user, isPending } = useCurrentUserState();
@@ -86,6 +87,7 @@ function PeopleHome() {
           [
             ["cooks", "Cooks"],
             ["table", "Family"],
+            ["board", "Leaderboard"],
             ["mine", "My recipes"],
             ["chat", "Chat"],
             ["alerts", "Alerts"],
@@ -116,6 +118,7 @@ function PeopleHome() {
       {section === "mine" ? <MinePane /> : null}
       {section === "chat" ? <ChatPane activeId={activeChat} onActiveId={setActiveChat} /> : null}
       {section === "alerts" ? <AlertsPane /> : null}
+      {section === "board" ? <LeaderboardPane /> : null}
       {section === "table" ? (
         <>
           <SeatsPane />
@@ -649,6 +652,52 @@ function AlertsPane() {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function LeaderboardPane() {
+  const [rows, setRows] = useState<Awaited<ReturnType<typeof followedLeaderboard>>>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    void followedLeaderboard()
+      .then(setRows)
+      .finally(() => setLoaded(true));
+  }, []);
+
+  return (
+    <div className="mt-5">
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        Total XP and workouts logged among the people you follow. Follow more cooks from the Cooks tab to fill this out.
+      </p>
+      {loaded && rows.length <= 1 ? (
+        <p className="mt-4 rounded-2xl bg-card p-4 text-sm text-muted-foreground shadow-[var(--shadow-border)]">
+          Just you so far — follow someone to start a leaderboard.
+        </p>
+      ) : (
+        <ul className="mt-4 space-y-2">
+          {rows.map((row, i) => (
+            <li
+              key={row.user_id}
+              className={
+                row.you
+                  ? "flex items-center gap-3 rounded-2xl bg-spark px-4 py-3 text-spark-foreground shadow-[var(--shadow-border)]"
+                  : "flex items-center gap-3 rounded-2xl bg-card px-4 py-3 shadow-[var(--shadow-border)]"
+              }
+            >
+              <span className="w-5 shrink-0 text-center text-sm font-medium tabular-nums opacity-70">{i + 1}</span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {row.you ? "You" : row.display_name || `@${row.username}`}
+                </p>
+                <p className="text-xs opacity-70">{row.lift_count} workout{row.lift_count === 1 ? "" : "s"} logged</p>
+              </div>
+              <p className="shrink-0 text-sm font-medium tabular-nums">{row.xp} XP</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

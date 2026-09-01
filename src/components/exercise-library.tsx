@@ -55,7 +55,10 @@ export function ExerciseLibrary({
   }, [query, muscle, group, gear, savedOnly, favMoves]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background pt-[max(0.75rem,env(safe-area-inset-top))]">
+    <div
+      data-testid="exercise-library"
+      className="fixed inset-0 z-50 flex flex-col bg-background pt-[max(0.75rem,env(safe-area-inset-top))]"
+    >
       <div className="flex items-stretch">
         <div className="flex min-w-0 flex-1 items-center justify-between px-4">
           <div>

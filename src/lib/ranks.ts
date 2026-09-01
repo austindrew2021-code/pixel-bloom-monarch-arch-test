@@ -82,6 +82,26 @@ export const MILESTONES = [
     title: "Sous chef",
     body: "You cooked your way into the rank. Keep the board full.",
   },
+  {
+    id: "first-lift",
+    title: "First session",
+    body: "Logged your first workout. The training log starts here.",
+  },
+  {
+    id: "lift-10",
+    title: "Ten sessions",
+    body: "Ten workouts on the board. The habit is real.",
+  },
+  {
+    id: "lift-25",
+    title: "Twenty-five sessions",
+    body: "Twenty-five sessions logged. That's a serious training log.",
+  },
+  {
+    id: "saved-100",
+    title: "Hundred saved",
+    body: "You've saved about $100 cooking instead of ordering in.",
+  },
 ] as const;
 
 export type Celebrate = {
@@ -92,14 +112,21 @@ export type Celebrate = {
 
 export function milestonesFor(input: {
   cookedDates: string[];
+  streakSavedDates?: string[];
   xp: number;
   seen: string[];
   snapped: boolean;
   family: boolean;
+  liftCount?: number;
+  savedTotal?: number;
 }): Celebrate[] {
   const out: Celebrate[] = [];
-  const streak = cookStreak(input.cookedDates, isoDate());
+  // A saved night keeps the streak count alive for milestones too — that's the
+  // whole point of protecting it — but it never counts as a real cooked dinner.
+  const streak = cookStreak([...input.cookedDates, ...(input.streakSavedDates ?? [])], isoDate());
   const cooked = input.cookedDates.length;
+  const lifts = input.liftCount ?? 0;
+  const saved = input.savedTotal ?? 0;
   const ok: Record<string, boolean> = {
     "first-plate": cooked >= 1,
     "streak-3": streak >= 3,
@@ -108,6 +135,10 @@ export function milestonesFor(input: {
     "snap-1": input.snapped,
     "family-1": input.family,
     "xp-sous": input.xp >= 560,
+    "first-lift": lifts >= 1,
+    "lift-10": lifts >= 10,
+    "lift-25": lifts >= 25,
+    "saved-100": saved >= 100,
   };
   for (const row of MILESTONES) {
     if (ok[row.id] && !input.seen.includes(row.id)) {
@@ -117,9 +148,18 @@ export function milestonesFor(input: {
   return out;
 }
 
+const WORKOUT_MILESTONE_IDS = new Set(["first-lift", "lift-10", "lift-25"]);
+
+/** True for a PR celebration or a workout-count milestone — the ones worth offering to share. */
+export function isWorkoutCelebration(id: string): boolean {
+  return id.startsWith("pr-") || WORKOUT_MILESTONE_IDS.has(id);
+}
+
 export const CHEF_FREE_WEEK = 3;
 export const CHEF_PLUS_WEEK = 40;
 export const CHEF_PACK_15 = 15;
 export const CHEF_PACK_40 = 40;
 export const SNAP_FREE_WEEK = 8;
 export const LOOKUP_FREE_WEEK = 3;
+/** Free Streak Saves Kitchen Table bundles in every month, before it charges for more. */
+export const STREAK_SAVE_FREE_MONTH = 3;

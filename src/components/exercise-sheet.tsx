@@ -71,7 +71,7 @@ export function ExerciseSheet({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground">
+    <div data-testid="exercise-sheet" className="fixed inset-0 z-50 flex flex-col bg-background text-foreground">
       <header className="pt-[max(0.75rem,env(safe-area-inset-top))]">
         <div className="flex items-stretch">
           <div className="flex h-14 min-w-0 flex-1 items-center justify-between gap-2 px-3">

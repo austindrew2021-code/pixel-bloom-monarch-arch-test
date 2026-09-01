@@ -13,7 +13,7 @@ const JUNK_NAME =
   /^(ingredients?|directions?|instructions?|method|recipes?|index|contents|preface|introduction|chapter\s+\d+|camp cookery)$/i;
 
 const VERB =
-  /\b(heat|warm|preheat|toast|mix|stir|whisk|beat|fold|bake|roast|simmer|boil|brown|sear|saute|sauté|fry|grill|char|chop|dice|slice|cut|mince|add|pour|drain|pat|salt|season|cover|uncover|rest|serve|plate|spoon|spread|brush|toss|combine|blend|purée|puree|mash|shred|roll|knead|steam|pressure|nestle|rub|stuff|fill|layer|top|finish|grate|squeeze|taste|adjust|remove|return|transfer|flip|turn|skim|strain|chill|freeze|thaw|soak|marinate|deglaze|reduce|thicken|crumble|sprinkle|dust|dredge|coat|dip|broil|blanch|peel|core|trim|rinse|wash|set|put|place|drop|press|shape|form|score|tie|truss|cook|scald|dissolve|cream|sift|whip|baste|carve|ladle|dot|glaze|wilt|sweat|bloom|steep|frost|ice|crack|juice|zest|halve|quarter|cube|pull|lock|flatten|melt|wrap|scatter|drizzle|paint|scramble|crisp|reheat|keep|dollop|smash|wipe|blot|loosen|swirl|pack|unmold|line|lift|discard|nest|thread|prick|joint|skewer|try|lay|let|assemble|garnish|divide|cool|unmold|make|shake|eat|fluff|refrigerate|air-?fry|prick|griddle|work|open|flake|pipe|invert|bloom|get|moisten|lower|separate|pile|swipe|shave|smear|arrange|stack|blind-?bake|nestle)\b/i;
+  /\b(heat|warm|preheat|toast|mix|stir|whisk|beat|fold|bake|roast|simmer|boil|brown|sear|saute|sauté|fry|grill|char|chop|dice|slice|cut|mince|add|pour|drain|pat|salt|season|cover|uncover|rest|serve|plate|spoon|spread|brush|toss|combine|blend|purée|puree|mash|shred|roll|knead|steam|pressure|nestle|rub|stuff|fill|layer|top|finish|grate|squeeze|taste|adjust|remove|return|transfer|flip|turn|skim|strain|chill|freeze|thaw|soak|marinate|deglaze|reduce|thicken|crumble|sprinkle|dust|dredge|coat|dip|broil|blanch|peel|core|trim|rinse|wash|set|put|place|drop|press|shape|form|score|tie|truss|cook|scald|dissolve|cream|sift|whip|baste|carve|ladle|dot|glaze|wilt|sweat|bloom|steep|frost|ice|crack|juice|zest|halve|quarter|cube|pull|lock|flatten|melt|wrap|scatter|drizzle|paint|scramble|crisp|reheat|keep|dollop|smash|wipe|blot|loosen|swirl|pack|unmold|line|lift|discard|nest|thread|prick|joint|skewer|try|lay|let|assemble|garnish|divide|cool|unmold|make|shake|eat|fluff|refrigerate|air-?fry|prick|griddle|work|open|flake|pipe|invert|bloom|get|moisten|lower|separate|pile|swipe|shave|smear|arrange|stack|blind-?bake|nestle|parboil)\b/i;
 
 const HEAT_VERB = /\b(brown|sear|simmer|bake|roast|fry|boil|grill|broil|cook|toast|steam|pressure)\b|saut[eé]/i;
 
@@ -215,7 +215,11 @@ function unabbrev(s: string, recipe: RecipeLike): string {
   if (paste && !new RegExp(paste.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(t)) {
     t = t.replace(/\bpaste\b/gi, paste.name);
   }
-  if (meat !== "the main ingredient") {
+  // Guarded the same way as paste above: a step can pass through this function
+  // twice (foldShortSteps, then expandToMinCards), and without the guard the
+  // second pass finds "meat" again inside its own expansion — "veal or turtle
+  // meat" ends with the word "meat" — and expands it a second time.
+  if (meat !== "the main ingredient" && !t.toLowerCase().includes(meat.toLowerCase())) {
     t = t.replace(/\b(?:ground\s+)?meat\b/gi, meat);
   }
   t = t.replace(/\bspices\b/gi, (match) => {
@@ -1053,7 +1057,12 @@ function lengthenShortCard(s: string, recipe: RecipeLike): string {
   if (/^cover and (steam|roast|bake|simmer)/i.test(t)) {
     return finishSentence(`${t}, until tender all the way through`);
   }
-  if (/^spoon into cups/i.test(t) || /^spoon onto /i.test(t)) {
+  // This function can run twice on the same short line (once in foldShortSteps,
+  // again in alignCookToList's final pass). Its own output — "Spoon onto toast
+  // and serve at once." — is still under the length threshold and starts with
+  // "spoon onto", so without this guard the second pass appends a second,
+  // redundant serving clause: "...and serve at once and serve while they are hot."
+  if ((/^spoon into cups/i.test(t) || /^spoon onto /i.test(t)) && !/\bserve\b/i.test(t)) {
     return finishSentence(`${t} and serve while they are hot`);
   }
   if (/^chill /i.test(t)) {
@@ -1308,14 +1317,35 @@ function ingTokens(name: string): string[] {
     .filter((w) => w.length > 2 && !STOP_TOK.has(w));
 }
 
+/**
+ * Words too common to prove an ingredient was used: a method that says
+ * “season with salt” has not thereby called for the salt pork on the list.
+ */
+const WEAK_TOK = new Set([
+  "salt", "pepper", "water", "oil", "sugar", "flour", "butter", "milk", "stock",
+  "broth", "sauce", "cream", "powder", "fat", "dry", "mix", "bean", "beans",
+]);
+
 function ingIsMentioned(blob: string, ing: { name: string }): boolean {
   const t = blob.toLowerCase();
   const n = ing.name.toLowerCase();
   if (t.includes(n)) return true;
+  // A shape of pasta is used when the method says “pasta” or “noodles”, and the
+  // same for a variety of rice or a kind of stock. Without these the polisher
+  // thinks the ingredient went unused and bolts it onto an unrelated step.
+  if (/spaghetti|penne|linguine|fettuccine|macaroni|rigatoni|orzo|noodle|lasagna|ziti|farfalle|bucatini|tagliatelle|pappardelle|rotini|fusilli|shells|elbow|vermicelli|ramen|udon|soba|couscous/.test(n) &&
+    /\b(pasta|noodles?|spaghetti|macaroni)\b/.test(t)) return true;
+  if (/\brice\b/.test(n) && /\brice\b/.test(t)) return true;
+  if (/\b(stock|broth|bouillon|consomm)/.test(n) && /\b(stock|broth|liquid)\b/.test(t)) return true;
+  if (/\b(yogurt|yoghurt)\b/.test(n) && /\b(yogurt|yoghurt)\b/.test(t)) return true;
+  if (/\bmayonnaise\b/.test(n) && /\bmayo\b/.test(t)) return true;
   if (/kale|chard|spinach|collard|mustard green/.test(n) && /\bgreens?\b/.test(t)) return true;
   if (/sourdough|bread|toast|bun|tortilla|wrap/.test(n) && /\b(toast|bread|tortilla|wrap|bun|crouton)\b/.test(t)) return true;
   if (/flour|cornmeal|baking powder|baking soda|sugar/.test(n) && /\bdry ingredients\b/.test(t)) return true;
-  if (/onion|carrot|celery|tomato|pepper|potato|cabbage|okra|lima|pea/.test(n) && /\bvegetables?\b/.test(t)) return true;
+  // “Chop the vegetables” is prep, not use — a soup whose method only ever says
+  // that has still never put the tomatoes in the pot.
+  const cooked = t.replace(/\b(chop|dice|slice|mince|cut|prep|wash|peel|trim|scrub|get out)\b[^.]*?\bvegetables?\b/g, " ");
+  if (/onion|carrot|celery|tomato|pepper|potato|cabbage|okra|lima|pea/.test(n) && /\bvegetables?\b/.test(cooked)) return true;
   if (/beef|chicken|pork|lamb|turkey|veal/.test(n) && /\bmeats?\b/.test(t)) return true;
   if (/\beggs?\b/.test(n) && /\b(yolk|white|meringue|beaten|egg)\b/.test(t)) return true;
   if (/bourbon|whiskey|whisky|rum|brandy/.test(n) && /\b(whiskey|whisky|bourbon|spirit|rum|brandy)\b/.test(t)) return true;
@@ -1336,7 +1366,12 @@ function ingIsMentioned(blob: string, ing: { name: string }): boolean {
   if (/cheddar|american cheese|grated cheese/.test(n) && /\b(cheese|cheddar|rarebit)\b/.test(t)) return true;
   if (/bread crumbs|breadcrumb|crumbs/.test(n) && /\b(crumb|egg and crumb|crumbs)\b/.test(t)) return true;
   if (/strawberry jam|\bjam\b/.test(n) && /\bjam\b/.test(t)) return true;
-  return ingTokens(ing.name).some((w) => w.length > 2 && new RegExp(`\\b${escapeRe(w)}s?\\b`, "i").test(t));
+  const toks = ingTokens(ing.name);
+  // Prefer the distinctive words. “Salt pork” is only used if the method says
+  // “pork” — a stray “season with salt” elsewhere does not count.
+  const strong = toks.filter((w) => !WEAK_TOK.has(w));
+  const useful = strong.length ? strong : toks;
+  return useful.some((w) => w.length > 2 && new RegExp(`\\b${escapeRe(w)}s?\\b`, "i").test(t));
 }
 
 function isMeasuredIng(ing: { unit: string }): boolean {
@@ -1419,7 +1454,10 @@ function expandNicknames(step: string, recipe: RecipeLike): string {
       i.name,
     ),
   );
-  if (veg.length >= 2 && /\bvegetables?\b/i.test(s) && !veg.some((v) => s.toLowerCase().includes(v.name.toLowerCase()))) {
+  // “any … vegetables” and “more vegetables” mean whatever is left over, so
+  // spelling them out re-lists food the cook already put in the pot.
+  const vague = /\b(any|more|remaining|other|extra|leftover)\b[^.]{0,24}\bvegetables?\b/i.test(s);
+  if (!vague && veg.length >= 2 && /\bvegetables?\b/i.test(s) && !veg.some((v) => s.toLowerCase().includes(v.name.toLowerCase()))) {
     const phrase = joinList(veg.map(amountPhrase));
     s = s.replace(/\bthe vegetables\b/gi, phrase);
     s = s.replace(/\bvegetables\b/gi, phrase);
@@ -1449,6 +1487,11 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
 
   let out = steps.map((s) => expandNicknames(tidyThe(s), recipe));
 
+  // An amount belongs on the line that first calls for the ingredient. Repeating
+  // it later turns a doneness cue into nonsense — "until the 8 slices of bread
+  // is deep gold" — so each ingredient is spelled out once and referred to after.
+  const quantified = new Set<string>();
+
   out = out.map((step) => {
     let s = step;
     if (spicePhrase) {
@@ -1472,32 +1515,50 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
     for (const ing of ings) {
       if (/^(kosher salt|salt|black pepper|pepper)$/i.test(ing.name)) continue;
       if (!(Number(ing.qty) > 0)) continue;
+      if (quantified.has(ing.name)) continue;
+      // "a little of the dressing" is a deliberate part of the whole — leave it.
       const vague = new RegExp(
-        `\\b(?:a splash of|a little|a bit of|enough|some)\\s+(?:of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
+        `\\b(?:a splash of|a little|a bit of|enough|some)\\s+(?:the\\s+)?${escapeRe(ing.name)}\\b(?!\\s+water\\b)`,
         "i",
       );
-      if (vague.test(s)) s = s.replace(vague, amountPhrase(ing));
+      if (vague.test(s)) {
+        s = s.replace(vague, amountPhrase(ing));
+        quantified.add(ing.name);
+      }
     }
     for (const ing of ings) {
       if (!isMeasuredIng(ing) || !(Number(ing.qty) > 0)) continue;
       if (/^(kosher salt|salt|black pepper|pepper)$/i.test(ing.name)) continue;
+      if (quantified.has(ing.name)) continue;
       if (!ingIsMentioned(s, ing)) continue;
       if (hasAmountNear(s, ing.name)) continue;
       const tok = ingTokens(ing.name).sort((a, b) => b.length - a.length)[0] ?? ing.name;
       if (hasAmountNear(s, tok)) continue;
       const amt = amountPhrase(ing);
+      // A leading "the"/"a" can sit before the adjective too ("the unpeeled
+      // guavas", "the peeled shrimp"), not just before the noun. Without
+      // swallowing it here, only the bare noun matches and gets replaced,
+      // leaving the article stranded: "the unpeeled the 3 pounds of guavas".
       const full = new RegExp(
-        `\\b((?:soft|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|crushed|smashed|beaten|toasted|roasted|boiling|cold)\\s+)?(?:(?:the|a)\\s+(?:can|slice)\\s+of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
+        `\\b(?:(?:the|a)\\s+)?((?:soft|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|crushed|smashed|beaten|toasted|roasted|boiling|cold|peeled|unpeeled|whipped|bloomed|parboiled)\\s+)?(?:(?:the|a)\\s+(?:can|slice)\\s+of\\s+)?(?:the\\s+)?${escapeRe(ing.name)}\\b`,
         "i",
       );
       if (full.test(s)) {
         s = s.replace(full, (m: string, adj: string, offset: number, whole: string) => {
           const before = typeof whole === "string" ? whole.slice(0, offset) : "";
+          const after = typeof whole === "string" ? whole.slice(offset + m.length) : "";
+          // “the pasta water” is the starchy cooking liquid, not 12 oz of pasta.
+          if (/^\s*water\b/i.test(after)) return m;
+          // “each slice of bread” already counts the bread — don't restate it.
+          if (/\b(slices?|pieces?|cans?|cups?|cloves?|stalks?|sprigs?|spoonfuls?)\s+of\s+$/i.test(before)) return m;
           if (/(?:^|[.!?]\s+)$/.test(before) && !adj && /^(butter|oil|salt|pepper|milk|flour|sugar|cream|toast|warm)\b/i.test(m)) {
             return m;
           }
-          if (/\b(splash|little|bit|more|cream sauce|white sauce)\s+$/i.test(before)) return m;
+          // A doneness cue points back at food already in the pan.
+          if (/\buntil\s+(?:the\s+)?$/i.test(before)) return m;
+          if (/\b(splash|little|bit|more|cream sauce|white sauce)\s+(?:of\s+)?(?:the\s+)?$/i.test(before)) return m;
           if (/\bremaining\s+$/i.test(before)) return ing.name;
+          quantified.add(ing.name);
           if (!adj) return amt;
           return amt.replace(new RegExp(`\\b${escapeRe(ing.name)}\\b`, "i"), `${adj.trim()} ${ing.name}`);
         });
@@ -1507,7 +1568,7 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
   });
 
   const blob = out.join(" ");
-  const unused = ings.filter((i) => {
+  let unused = ings.filter((i) => {
     if (/^(kosher salt|salt|black pepper|pepper|oil|olive oil|ice|crushed ice)$/i.test(i.name)) return false;
     if (/^water$/i.test(i.name) && !volumeWater) return false;
     return !ingIsMentioned(blob, i);
@@ -1517,6 +1578,63 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
       /\b(bread|toast|sourdough|bun|roll|tortilla|wrap|pita|naan|rice|quinoa|potato|noodle|pasta|couscous|baguette)\b/i.test(
         i.name,
       );
+    // Things that go on at the table. Stirring yogurt or cilantro into a pot
+    // that then simmers for half an hour is not a recipe anyone should follow.
+    const isGarnish = (i: { name: string }) =>
+      /\b(yogurt|yoghurt|sour cream|cr[eè]me fra[iî]che|cilantro|scallions?|green onions?|chives?|hot sauce|sriracha|lime wedges?|lemon wedges?|sesame seeds?|croutons?)\b/i.test(
+        i.name,
+      );
+    // A fat left over from a roast belongs on the meat before it goes in, not
+    // stirred into a bird that has been in the oven for an hour and a half.
+    // Only for something that actually gets rubbed and roasted — butter in a
+    // cobbler belongs in the topping, not smeared on the dish.
+    const roasts =
+      recipe.plate !== "dessert" &&
+      out.some((s) => /\b(roast|bake|oven)\b/i.test(s)) &&
+      out.some((s) => /\b(pat|dry|salt it|rub|sear|brown|dredge|dust|coat|season)\b/i.test(s));
+    const isRoastFat = (i: { name: string }) =>
+      roasts && /^(butter|oil|olive oil|neutral oil|lard|drippings?|bacon fat|chicken fat|pork fat|fat)\b/i.test(i.name);
+    // A coating goes on raw food. Stirring panko into a cutlet that has already
+    // been seared is the difference between schnitzel and a pan of crumbs.
+    const cooksHot = out.some((s) => /\b(sear|fry|roast|bake|griddle|brown)\b/i.test(s));
+    const isCoating = (i: { name: string }) =>
+      cooksHot &&
+      /\b(breadcrumbs?|bread crumbs|panko|cornstarch|corn starch|potato starch|rice flour|cornmeal|semolina|matzo meal|cracker crumbs)\b/i.test(
+        i.name,
+      );
+    const garnishes = unused.filter((i) => isGarnish(i) && !isSide(i));
+    const roastFats = unused.filter((i) => !isGarnish(i) && !isSide(i) && isRoastFat(i));
+    const coatings = unused.filter((i) => !garnishes.includes(i) && !roastFats.includes(i) && isCoating(i));
+    unused = unused.filter(
+      (i) => !garnishes.includes(i) && !roastFats.includes(i) && !coatings.includes(i),
+    );
+    if (coatings.length) {
+      // The egg and flour that bind the coating belong with it, not stirred in later.
+      const binders = unused.filter((i) => /^(eggs?|flour|all-purpose flour|milk|buttermilk)$/i.test(i.name));
+      unused = unused.filter((i) => !binders.includes(i));
+      const all = [...binders, ...coatings];
+      const line = finishSentence(
+        binders.length
+          ? `Set out ${joinList(all.map(amountPhrase))} in shallow dishes. Dip each piece in the egg, then press it through the crumbs so it is coated all over`
+          : `Press each piece through ${joinList(coatings.map(amountPhrase))} so it is coated all over, and shake off the loose crumbs`,
+      );
+      const cookAt = out.findIndex((s) => /\b(sear|fry|roast|bake|griddle|brown)\b/i.test(s));
+      out.splice(Math.max(0, cookAt), 0, line);
+    }
+    if (garnishes.length) {
+      const line = finishSentence(`Top each bowl with ${joinList(garnishes.map(amountPhrase))} at the table`);
+      const at = out.findIndex((s) => /\b(serve|plate|ladle|spoon into)\b/i.test(s));
+      const target = at >= 0 ? at : out.length - 1;
+      if (target >= 0) out[target] = `${out[target]!.replace(/[.]+$/, "")}. ${line}`;
+      else out.push(line);
+    }
+    if (roastFats.length) {
+      const line = finishSentence(`Rub ${joinList(roastFats.map(amountPhrase))} over it before it goes in`);
+      const at = out.findIndex((s) => /\b(pat|dry|salt it|dredge|season|heat the oven)\b/i.test(s));
+      const target = at >= 0 ? at : 0;
+      if (out[target]) out[target] = `${out[target]!.replace(/[.]+$/, "")}. ${line}`;
+      else out.unshift(line);
+    }
     const flavor = unused.filter((i) => !isSide(i));
     const sides = unused.filter(isSide);
     const pasteAt = out.findIndex((s) => /\b(mash|glaze|paste|rub the)\b/i.test(s));
@@ -1525,11 +1643,18 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
     const mixIn = pasteAt >= 0 ? flavor.filter((i) => !bigFood(i)) : flavor;
     if (mixIn.length) {
       const add = finishSentence(`Stir in ${joinList(mixIn.map(amountPhrase))}`);
-      const idx = out.findIndex(
-        (s) =>
-          /\b(add|stir|mix|whisk|combine|season|simmer|toss|pour|beat|layer|sift)\b/i.test(s) &&
-          !/\b(serve|plate|ladle|wilt|saute|sauté|brown|sear|fry|bake|roast)\b/i.test(s),
+      // Prefer a step that is still loading the pot. Tacking an ingredient onto
+      // “simmer until the greens are silk” tells the cook to add it an hour late.
+      const usable = (s: string) => !/\b(serve|plate|ladle|wilt|saute|sauté|brown|sear|fry|bake|roast)\b/i.test(s);
+      const loading = out.findIndex(
+        (s) => /\b(add|stir|mix|whisk|combine|cover|put|place|bring)\b/i.test(s) && usable(s) && !/\buntil\b/i.test(s),
       );
+      const idx =
+        loading >= 0
+          ? loading
+          : out.findIndex(
+              (s) => /\b(add|stir|mix|whisk|combine|season|simmer|toss|pour|beat|layer|sift)\b/i.test(s) && usable(s),
+            );
       if (idx >= 0) {
         out[idx] = `${out[idx]!.replace(/[.]+$/, "")}. ${add}`;
       } else if (out.length) {
@@ -1555,12 +1680,35 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
         }
       }
       if (rest.length) {
-        const last = out.length - 1;
-        const line = finishSentence(`Serve with ${joinList(rest.map(amountPhrase))}`);
-        if (last >= 0 && /\b(serve|plate)\b/i.test(out[last]!)) {
-          out[last] = `${out[last]!.replace(/[.]+$/, "")}. ${line}`;
-        } else {
-          out.push(line);
+        // Fried rice whose rice is served on the side is not fried rice. When the
+        // dish is named for the starch, it belongs in the pan, not beside it.
+        const dishName = recipe.name.toLowerCase();
+        const central = rest.filter((i) =>
+          ingTokens(i.name).some((w) => w.length > 3 && dishName.includes(w.replace(/e?s$/, ""))),
+        );
+        const beside = rest.filter((i) => !central.includes(i));
+        if (central.length) {
+          const line = finishSentence(
+            `Add ${joinList(central.map(amountPhrase))} to the pan and toss over the heat until it is hot through and coated, 2–3 minutes`,
+          );
+          // The last plating line, not the first mention of a plate — searing
+          // meat "move to a plate" is mid-method, and the rice goes in near the end.
+          let at = -1;
+          out.forEach((s, i) => {
+            if (/^(plate|serve|spoon onto|ladle|scoop)\b/i.test(s.trim())) at = i;
+          });
+          const target = at > 0 ? at - 1 : Math.max(0, out.length - 2);
+          if (out[target]) out[target] = `${out[target]!.replace(/[.]+$/, "")}. ${line}`;
+          else out.push(line);
+        }
+        if (beside.length) {
+          const last = out.length - 1;
+          const line = finishSentence(`Serve with ${joinList(beside.map(amountPhrase))}`);
+          if (last >= 0 && /\b(serve|plate)\b/i.test(out[last]!)) {
+            out[last] = `${out[last]!.replace(/[.]+$/, "")}. ${line}`;
+          } else {
+            out.push(line);
+          }
         }
       }
     }

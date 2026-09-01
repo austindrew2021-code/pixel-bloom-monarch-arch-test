@@ -48,7 +48,8 @@ export type AddonId =
   | "kitchen-table"
   | "plates-15"
   | "plates-40"
-  | "body-sync";
+  | "body-sync"
+  | "streak-save";
 
 export type PrefId = "vegetarian" | "pescatarian" | "vegan" | "gluten-free" | "sugar-free" | "quick" | "budget";
 

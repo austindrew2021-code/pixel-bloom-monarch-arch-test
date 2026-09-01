@@ -172,6 +172,8 @@ export function ExerciseFigure({
   if (clip && !failed) {
     return (
       <span
+        data-testid="exercise-figure"
+        data-exercise-id={exercise.id}
         className={cn(
           SIZES[size],
           "relative inline-block shrink-0 overflow-hidden rounded-2xl bg-background",
@@ -198,6 +200,8 @@ export function ExerciseFigure({
   const warm = new Set(exercise.secondary);
   return (
     <svg
+      data-testid="exercise-figure"
+      data-exercise-id={exercise.id}
       viewBox="0 0 160 160"
       className={cn(SIZES[size], "shrink-0", className)}
       role="img"
