@@ -54,6 +54,12 @@ export type LiftSeed = {
   name: string;
   moveIds: string[];
   date?: string;
+  /**
+   * What the program prescribed for this session, by move. Without it a
+   * seeded session opens with a single set of 8 no matter what the plan
+   * said, so "4 × 5" on the day card became "1 × 8" the moment you started.
+   */
+  plan?: { moveId: string; sets: number; reps: string }[];
 };
 
 export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () => void; seed?: LiftSeed }) {
@@ -76,6 +82,8 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
   const [now, setNow] = useState(Date.now());
   const [tickOf, setTickOf] = useState<{ lineId: string; setId: string } | null>(null);
   const [swapOf, setSwapOf] = useState<string | null>(null);
+  /** Which line has its advanced actions open. Mid-workout the set grid comes first. */
+  const [moreOf, setMoreOf] = useState<string | null>(null);
   const [restHold, setRestHold] = useState(false);
   const [restMove, setRestMove] = useState<string | null>(null);
   const restWas = useRef(0);
@@ -209,6 +217,8 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     return sec > 0 ? Math.max(1, Math.round(sec / 60)) : 0;
   }, [session, restPreset]);
   const restCue = restMove ? exerciseById(restMove)?.steps[0] : undefined;
+  /** What today's plan asked for on this move, so the goal stays visible while logging. */
+  const targetFor = (moveId: string) => seed?.plan?.find((p) => p.moveId === moveId);
   const moves = useMemo(() => {
     const q = query.trim().toLowerCase();
     return LIFT_MOVES.filter((m) => {
@@ -226,7 +236,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     const move = moveById(moveId);
     const prev = previousLine(sessions, moveId);
     const prevSess = previousSessionForMove(sessions, moveId);
-    const defaultKg = move?.bodyweight ? body.weightKg : imperial ? kgFromLb(95) : 40;
+    const defaultKg = openingKg(moveId, body.weightKg, imperial);
     const suggested = nextWorkingKg(sessions, moveId, prev, prevSess?.feel);
     const unit = logUnit(moveId);
     const defaultReps = unit === "sec" ? 40 : unit === "m" ? 30 : 8;
@@ -267,9 +277,8 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
       const next = { ...cur, name: tpl.name, lines: [...cur.lines] };
       for (const moveId of tpl.moves) {
         if (next.lines.some((l) => l.moveId === moveId)) continue;
-        const move = moveById(moveId);
         const prev = previousLine(sessions, moveId);
-        const defaultKg = move?.bodyweight ? body.weightKg : imperial ? kgFromLb(95) : 40;
+        const defaultKg = openingKg(moveId, body.weightKg, imperial);
         next.lines.push({
           id: nid(),
           moveId,
@@ -739,6 +748,11 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                   {paired ? (
                     <p className="mt-0.5 text-xs font-medium text-spark">Superset with {moveById(paired.moveId)?.name}</p>
                   ) : null}
+                  {targetFor(line.moveId) ? (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Target {targetFor(line.moveId)!.sets} × {targetFor(line.moveId)!.reps}
+                    </p>
+                  ) : null}
                   {prev ? (
                     <p className="mt-1 text-xs text-muted-foreground">
                       Last{" "}
@@ -947,40 +961,56 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                     : ""}
                 </p>
               ) : null}
-              <Input
-                className="mt-2 h-11"
-                value={line.note ?? ""}
-                placeholder="Note for next time"
-                onChange={(e) =>
-                  setSession((cur) => ({
-                    ...cur,
-                    lines: cur.lines.map((l) => (l.id === line.id ? { ...l, note: e.target.value } : l)),
-                  }))
-                }
-              />
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Button variant="ghost" onClick={() => addSet(line)}>
                   <Plus /> Add set
                 </Button>
                 <Button variant="ghost" onClick={() => addLadder(line)}>
                   Warm-up
                 </Button>
-                <Button variant="ghost" onClick={() => pairLine(line)}>
-                  Pair
-                </Button>
-                <Button variant="ghost" onClick={() => fillRest(line)}>
-                  Fill rest
-                </Button>
                 <Button variant="ghost" onClick={() => setSwapOf(swapOf === line.id ? null : line.id)}>
                   <ArrowLeftRight /> Swap
                 </Button>
-                <Button variant="ghost" onClick={() => addDrop(line)}>
-                  Drop 20%
-                </Button>
-                <Button variant="ghost" onClick={() => restPause(line)}>
-                  Rest-pause
+                <Button
+                  variant="ghost"
+                  className="ml-auto text-muted-foreground"
+                  aria-expanded={moreOf === line.id}
+                  onClick={() => setMoreOf(moreOf === line.id ? null : line.id)}
+                >
+                  {moreOf === line.id ? "Less" : "More"}
                 </Button>
               </div>
+              {moreOf === line.id ? (
+                <>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <Button variant="ghost" onClick={() => pairLine(line)}>
+                      Pair
+                    </Button>
+                    <Button variant="ghost" onClick={() => fillRest(line)}>
+                      Fill rest
+                    </Button>
+                    <Button variant="ghost" onClick={() => addDrop(line)}>
+                      Drop 20%
+                    </Button>
+                    <Button variant="ghost" onClick={() => restPause(line)}>
+                      Rest-pause
+                    </Button>
+                  </div>
+                  <Input
+                    className="mt-2 h-11"
+                    value={line.note ?? ""}
+                    placeholder="Note for next time"
+                    onChange={(e) =>
+                      setSession((cur) => ({
+                        ...cur,
+                        lines: cur.lines.map((l) => (l.id === line.id ? { ...l, note: e.target.value } : l)),
+                      }))
+                    }
+                  />
+                </>
+              ) : line.note ? (
+                <p className="mt-2 text-xs italic text-muted-foreground">{line.note}</p>
+              ) : null}
               {swapOf === line.id ? (
                 <div className="mt-2 grid grid-cols-2 gap-1">
                   {substituteMoves(line.moveId, 6).map((alt) => (
@@ -1145,6 +1175,29 @@ function emptySession(): LiftSession {
   };
 }
 
+/**
+ * A first-session starting load, before there's any history to go on. Scaled
+ * by how much movement it is: a barbell squat and a lateral raise both
+ * opening at 95 lb means editing every line before you can start.
+ */
+function openingKg(moveId: string, bodyKg: number, imperial: boolean): number {
+  const ex = exerciseById(moveId);
+  if (ex?.bodyweight) return bodyKg;
+  const lb = (ex?.compound ?? 2) >= 4 ? 95 : (ex?.compound ?? 2) >= 2 ? 45 : 20;
+  return imperial ? kgFromLb(lb) : Math.round(kgFromLb(lb) / 2.5) * 2.5;
+}
+
+/**
+ * Turns a prescription like "6-8", "5" or "30-45s" into the number the first
+ * set opens on — the bottom of the range, the rep count you have to hit
+ * before the range counts. Falls back to a sane default per logging unit.
+ */
+function plannedReps(reps: string | undefined, unit: "reps" | "sec" | "m"): number {
+  const low = reps ? Number.parseInt(reps, 10) : Number.NaN;
+  if (Number.isFinite(low) && low > 0) return low;
+  return unit === "sec" ? 40 : unit === "m" ? 30 : 8;
+}
+
 function sessionFromSeed(
   seed: LiftSeed,
   sessions: LiftSession[],
@@ -1157,10 +1210,11 @@ function sessionFromSeed(
     if (!move) continue;
     const prev = previousLine(sessions, moveId);
     const prevSess = previousSessionForMove(sessions, moveId);
-    const defaultKg = move.bodyweight ? bodyKg : imperial ? kgFromLb(95) : 40;
+    const defaultKg = openingKg(moveId, bodyKg, imperial);
     const suggested = nextWorkingKg(sessions, moveId, prev, prevSess?.feel);
     const unit = logUnit(moveId);
-    const defaultReps = unit === "sec" ? 40 : unit === "m" ? 30 : 8;
+    const planned = seed.plan?.find((p) => p.moveId === moveId);
+    const defaultReps = plannedReps(planned?.reps, unit);
     lines.push({
       id: nid(),
       moveId,
@@ -1172,7 +1226,13 @@ function sessionFromSeed(
           weightKg: !s.warmup && i === (prev.sets.findIndex((x) => !x.warmup) ?? 0) && suggested ? suggested : s.weightKg,
           done: false,
           warmup: s.warmup,
-        })) ?? [{ id: nid(), reps: defaultReps, weightKg: defaultKg, done: false }],
+        })) ??
+        Array.from({ length: Math.max(1, planned?.sets ?? 1) }, () => ({
+          id: nid(),
+          reps: defaultReps,
+          weightKg: defaultKg,
+          done: false,
+        })),
     });
   }
   return {

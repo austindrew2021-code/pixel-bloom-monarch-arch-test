@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ExerciseLibrary } from "@/components/exercise-library";
 import { ExerciseSheet } from "@/components/exercise-sheet";
-import { LiftSheet } from "@/components/lift-sheet";
+import { LiftSheet, type LiftSeed } from "@/components/lift-sheet";
 import { MealPhoto } from "@/components/meal-photo";
 import { MuscleMap } from "@/components/muscle-map";
 import { Button } from "@/components/ui/button";
-import { goalLabel } from "@/lib/body";
+import { goalLabel, lbFromKg } from "@/lib/body";
 import { exerciseById, substituteMoves, EXERCISES, muscleReadiness, MUSCLE_LABEL, type Exercise, type MuscleId } from "@/lib/exercises";
 import { isoDate } from "@/lib/fuel";
 import { nextWorkingKg, previousLine, previousSessionForMove } from "@/lib/lift";
@@ -42,7 +42,7 @@ export function TrainView() {
   const [library, setLibrary] = useState(false);
   const [detail, setDetail] = useState<Exercise | null>(null);
   const [liftOpen, setLiftOpen] = useState(false);
-  const [liftSeed, setLiftSeed] = useState<{ name: string; moveIds: string[]; date: string } | undefined>();
+  const [liftSeed, setLiftSeed] = useState<LiftSeed | undefined>();
   const [swapOf, setSwapOf] = useState<string | null>(null);
   const today = isoDate();
 
@@ -77,6 +77,7 @@ export function TrainView() {
       name: session.name,
       date: session.date,
       moveIds: session.moves.map((m) => m.moveId),
+      plan: session.moves.map((m) => ({ moveId: m.moveId, sets: m.sets, reps: m.reps })),
     });
     setLiftOpen(true);
   }
@@ -245,7 +246,12 @@ export function TrainView() {
               const ids = session.moves.some((m) => m.moveId === id)
                 ? session.moves.map((m) => m.moveId)
                 : [...session.moves.map((m) => m.moveId), id];
-              setLiftSeed({ name: session.name, date: session.date, moveIds: ids });
+              setLiftSeed({
+                name: session.name,
+                date: session.date,
+                moveIds: ids,
+                plan: session.moves.map((m) => ({ moveId: m.moveId, sets: m.sets, reps: m.reps })),
+              });
               setLiftOpen(true);
             } else {
               setLiftSeed({ name: exerciseById(id)?.name ?? "Lift", date: today, moveIds: [id] });
@@ -294,7 +300,9 @@ function SessionCard({
   const muscles = sessionMuscles(session);
   const primary = (muscles as MuscleId[]).slice(0, 4);
   const lifts = useSpoonful((s) => s.liftSessions);
+  const imperial = useSpoonful((s) => s.body.units) !== "metric";
   const copy = dinnerFollowsCopy(session, status, plated?.title);
+  const showWeight = (kg: number) => `${Math.round(imperial ? lbFromKg(kg) : kg)} ${imperial ? "lb" : "kg"}`;
 
   return (
     <section className="mt-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
@@ -324,20 +332,20 @@ function SessionCard({
                     {ex ? <img src={ex.image} alt="" className="h-12 w-12 rounded-lg bg-muted object-cover" /> : null}
                   </button>
                   <button type="button" onClick={() => onOpenMove(m.moveId)} className="min-w-0 flex-1 py-2 text-left">
-                    <p className="truncate text-sm font-medium">{ex?.name ?? m.moveId}</p>
+                    <p className="line-clamp-2 text-sm font-medium leading-snug">{ex?.name ?? m.moveId}</p>
                     <p className="text-xs tabular-nums text-muted-foreground">
                       {m.sets} × {m.reps}
                       {(() => {
                         const last = prev?.sets.filter((s) => s.done && !s.warmup).at(-1);
                         if (!last) return "";
                         const next = nextWorkingKg(lifts, m.moveId, prev, previousSessionForMove(lifts, m.moveId)?.feel);
-                        const lastTxt = ` · last ${Math.round(last.weightKg)} kg`;
+                        const lastTxt = ` · last ${showWeight(last.weightKg)}`;
                         const rir = last.rir != null ? ` @${last.rir}` : "";
                         const tryTxt =
                           next && next > last.weightKg
-                            ? ` · try ${Math.round(next)}`
+                            ? ` · try ${showWeight(next)}`
                             : next && next < last.weightKg
-                              ? ` · deload to ${Math.round(next)}`
+                              ? ` · deload to ${showWeight(next)}`
                               : "";
                         return `${lastTxt}${rir}${tryTxt}`;
                       })()}

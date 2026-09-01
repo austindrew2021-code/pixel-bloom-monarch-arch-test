@@ -85,6 +85,10 @@ export type Exercise = LiftMove & {
   restSec: number;
   /** A passive stretch/mobility drill — real catalog entry, but never picked as a working set. */
   isStretch: boolean;
+  /** 0–5: how heavy and multi-joint the movement is. Openers want a high score. */
+  compound: number;
+  /** 0–3: how mainstream the movement is, so plans lead with lifts people know. */
+  common: number;
 };
 
 type RawExercise = {
@@ -102,6 +106,8 @@ type RawExercise = {
   image: string;
   gif: string;
   isStretch: boolean;
+  compound: number;
+  common: number;
 };
 
 const META = new Map<string, RawExercise>((EXERCISE_DB as RawExercise[]).map((e) => [e.id, e]));
@@ -122,6 +128,8 @@ export const EXERCISES: Exercise[] = LIFT_MOVES.map((move) => {
     defaultReps: meta.defaultReps,
     restSec: meta.restSec,
     isStretch: meta.isStretch,
+    compound: meta.compound,
+    common: meta.common,
   };
 });
 

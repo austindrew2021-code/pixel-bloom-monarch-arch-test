@@ -171,6 +171,83 @@ function logUnit(name, holdBased) {
   return "reps";
 }
 
+// ---- how heavy/compound a movement is, and how mainstream ------------
+//
+// The catalog is mostly long-tail variants, so picking uniformly at random
+// within a target muscle lands on "Gironda Sternum Chin" far more often than
+// "Pull-Up", and can open a heavy 4x5 slot with an assisted machine curl.
+// These two scores let the program engine ask for the right *kind* of
+// movement per slot instead of any movement that hits the right muscle.
+
+/** Loads that scale into real strength work. */
+const HEAVY_EQUIPMENT = new Set([
+  "barbell",
+  "olympic barbell",
+  "trap bar",
+  "ez barbell",
+  "smith machine",
+  "leverage machine",
+  "sled machine",
+]);
+/** Loads capped low — fine for accessories, wrong for a top set. */
+const LIGHT_EQUIPMENT = new Set([
+  "band",
+  "resistance band",
+  "stability ball",
+  "bosu ball",
+  "medicine ball",
+  "roller",
+  "wheel roller",
+  "rope",
+  "tire",
+  "hammer",
+  "assisted",
+]);
+
+const COMPOUND_RE =
+  /\b(squat|deadlift|press|row|pull[- ]?up|chin[- ]?up|pulldown|lunge|dip|thrust|clean|snatch|jerk|step[- ]?up|good morning|pullover|hip thrust)\b/i;
+const ISOLATION_RE =
+  /\b(raise|fly|flye|curl|extension|kickback|shrug|crunch|twist|pushdown|abduction|adduction|wiper|rotation|pull[- ]?through)\b/i;
+/** Name markers for regressions and gym-lore variants a default plan shouldn't lead with. */
+const NICHE_RE = /\b(assisted|isometric|gironda|sternum|behind head|bosu|zercher|jefferson|sissy|hovering|frog|scissor|windmill|v\. ?\d)\b/i;
+/**
+ * A handful of catalog entries are named for the muscle rather than the
+ * movement ("Quads", "Standing Calves"). They're too vague to headline a
+ * plan, and the short-name bonus below would otherwise rank them highly.
+ */
+const BARE_MUSCLE_RE =
+  /^(standing |seated |lying )?(quads?|calves|calf|abs|biceps|triceps|delts|glutes|hamstrings|chest|back|shoulders|forearms|traps|lats)$/i;
+
+/** 0 (pure isolation / unloadable) … 5 (heavy multi-joint barbell work). */
+function compoundScore(name, equipment, secondaryCount) {
+  let score = 1;
+  if (COMPOUND_RE.test(name) && !ISOLATION_RE.test(name)) score += 2;
+  else if (ISOLATION_RE.test(name)) score -= 1;
+  if (HEAVY_EQUIPMENT.has(equipment)) score += 2;
+  else if (LIGHT_EQUIPMENT.has(equipment)) score -= 1;
+  if (secondaryCount >= 2) score += 1;
+  if (NICHE_RE.test(name)) score -= 2;
+  return Math.max(0, Math.min(5, score));
+}
+
+/**
+ * 0 … 3, biased toward the movements people actually know. Canonical lifts
+ * have short names ("Barbell Squat"); the long tail earns its length in
+ * qualifiers ("Smith Standing Behind Head Military Press").
+ */
+function commonScore(name) {
+  if (BARE_MUSCLE_RE.test(name.trim())) return 0;
+  const words = name.trim().split(/\s+/).length;
+  let score = 3;
+  if (words >= 5) score -= 1;
+  if (words >= 7) score -= 1;
+  // Parenthetical qualifiers mark a variant of something: "Pull Up (Neutral
+  // Grip)", "Barbell Squat (On Knees)". The canonical lift is the bare name.
+  if (name.includes("(")) score -= 1;
+  if (NICHE_RE.test(name)) score -= 2;
+  return Math.max(0, Math.min(3, score));
+}
+
 function deriveTiming(category, equipment) {
   const base = CATEGORY_DEFAULTS[category] ?? CATEGORY_DEFAULTS.waist;
   if (!BAR_EQUIPMENT.has(equipment)) return { ...base };
@@ -215,6 +292,8 @@ function trim(record) {
     unilateral: UNILATERAL_RE.test(name),
     holdBased,
     isStretch: STRETCH_RE.test(name),
+    compound: compoundScore(name, equipment, secondary.length),
+    common: commonScore(name),
     logUnit: logUnit(name, holdBased),
     defaultSets: timing.sets,
     defaultReps: timing.reps,

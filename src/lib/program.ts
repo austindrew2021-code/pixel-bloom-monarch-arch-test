@@ -61,34 +61,81 @@ function hashSeed(input: string): number {
   return h >>> 0;
 }
 
+/**
+ * The pool a slot may draw from, widening only as far as it has to:
+ *
+ *  1. the exact target muscle (honoring the equipment toggle);
+ *  2. in no-equipment mode, anything else in the same body region that still
+ *     needs no gear — some targets have only one bodyweight movement in the
+ *     whole catalog, and a second pike push-up beats the same punch twice;
+ *  3. the exact target on any equipment, so a slot is never left empty.
+ */
 function candidatesForTarget(target: string, equipmentAccess: EquipmentAccess): Exercise[] {
-  const wantBodyweight = equipmentAccess === "bodyweight";
   const trainable = EXERCISES.filter((e) => e.target === target && !e.isStretch);
-  const exact = trainable.filter((e) => !wantBodyweight || e.bodyweight);
-  if (exact.length > 0) return exact;
-  // No no-equipment move exists for this target — better a real exercise than an empty slot.
+  if (equipmentAccess !== "bodyweight") return trainable;
+
+  const bodyweight = trainable.filter((e) => e.bodyweight);
+  if (bodyweight.length >= 3) return bodyweight;
+
+  const category = trainable[0]?.category;
+  const region = category
+    ? EXERCISES.filter((e) => e.category === category && e.bodyweight && !e.isStretch)
+    : [];
+  const widened = [...new Set([...bodyweight, ...region])];
+  if (widened.length > 0) return widened;
   return trainable;
 }
 
 /**
+ * A slot resting two minutes or more is an opener — it wants a loadable,
+ * multi-joint lift. Short rests are accessory work, where an isolation move
+ * is the point.
+ */
+function wantsCompound(restSec: number): boolean {
+  return restSec >= 120;
+}
+
+/** How well an exercise suits this slot. Mainstream lifts win ties either way. */
+function slotFit(exercise: Exercise, heavy: boolean): number {
+  const shape = heavy ? exercise.compound * 2 : Math.max(0, 3 - exercise.compound);
+  return shape + exercise.common;
+}
+
+/** How many of the best-fitting candidates stay in the running, for week-to-week variety. */
+const ROTATION_POOL = 8;
+
+/**
  * Picks one exercise for a training slot from the full 1,324-exercise
  * catalog: matches the slot's target muscle, honors the equipment toggle
- * when possible, avoids repeating an exercise already used earlier in the
- * same session, and is seeded off the week/day/slot so the pick is stable
- * across re-renders of the same week but rotates from week to week.
+ * when possible, asks for the right *kind* of movement for the slot (a
+ * barbell opener vs. an accessory), avoids repeating an exercise already
+ * used earlier in the same session, and is seeded off the week/day/slot so
+ * the pick is stable across re-renders of the same week but rotates from
+ * week to week.
  */
 function pickExerciseForTarget(
   target: string,
   equipmentAccess: EquipmentAccess,
+  restSec: number,
   seed: string,
-  excludeIds: Set<string>,
+  usedNames: Set<string>,
 ): Exercise | undefined {
   const pool = candidatesForTarget(target, equipmentAccess);
-  if (pool.length === 0) return undefined;
-  const fresh = pool.filter((e) => !excludeIds.has(e.id));
-  const from = fresh.length > 0 ? fresh : pool;
-  const sorted = [...from].sort((a, b) => a.id.localeCompare(b.id));
-  return sorted[hashSeed(seed) % sorted.length];
+  // Matched on name, not id: the catalog carries the same movement under
+  // several ids, so an id-only check still repeats it inside one session.
+  const from = pool.filter((e) => !usedNames.has(e.name.toLowerCase()));
+  // Nothing new left for this slot — drop it rather than prescribe the same
+  // movement twice. Bodyweight shoulders, for instance, has exactly one entry
+  // in the whole catalog, so that session is simply one exercise shorter.
+  if (from.length === 0) return undefined;
+  const heavy = wantsCompound(restSec);
+  // Rank by fit, then rotate within the best few rather than the whole pool:
+  // every pick stays a sensible choice, and the plan still varies each week.
+  const ranked = [...from].sort(
+    (a, b) => slotFit(b, heavy) - slotFit(a, heavy) || a.id.localeCompare(b.id),
+  );
+  const shortlist = ranked.slice(0, Math.min(ROTATION_POOL, ranked.length));
+  return shortlist[hashSeed(seed) % shortlist.length];
 }
 
 function fromBlueprint(
@@ -99,9 +146,9 @@ function fromBlueprint(
   const used = new Set<string>();
   const moves: ProgramMove[] = [];
   (b.moves ?? []).forEach(([target, sets, reps, restSec], i) => {
-    const ex = pickExerciseForTarget(target, equipmentAccess, `${seedPrefix}-${i}-${target}`, used);
+    const ex = pickExerciseForTarget(target, equipmentAccess, restSec, `${seedPrefix}-${i}-${target}`, used);
     if (!ex) return;
-    used.add(ex.id);
+    used.add(ex.name.toLowerCase());
     moves.push({ moveId: ex.id, sets, reps, restSec });
   });
   return {

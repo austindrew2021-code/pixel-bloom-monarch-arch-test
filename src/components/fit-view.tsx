@@ -22,6 +22,7 @@ import {
   kgFromLb,
   lbFromKg,
   macrosFromBody,
+  normalizeGoalKind,
   tdeeKcal,
 } from "@/lib/body";
 import { cuisineBar } from "@/lib/cuisine";
@@ -171,7 +172,9 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Live Fuel</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Fuel</h1>
       <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-        Training follows {goalLabel(tableGoal)}. Done, skipped, or missed sessions rewrite tonight automatically — calories from your body ({bmrMethod(body)}
+        Training follows {goalLabel(body.goalKind)}
+        {tableGoal !== normalizeGoalKind(body.goalKind) ? `; dinner follows the table's ${goalLabel(tableGoal)}` : ""}. Done,
+        skipped, or missed sessions rewrite tonight automatically — calories from your body ({bmrMethod(body)}
         {formatBodyFat(body) ? `, ${formatBodyFat(body)}` : ""}), ACSM METs for cardio, and the load on the bar for lifts.
       </p>
 
