@@ -1,6 +1,7 @@
 import { Dumbbell, Droplets, Flame, Footprints, HeartPulse, Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { DeviceSyncCard } from "@/components/device-sync-card";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MacroBar } from "@/components/macro-bar";
 import { Plate } from "@/components/plate";
@@ -363,9 +364,15 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
       ) : fitnessSource ? (
         <p className="mt-3 text-sm text-muted-foreground">Pulling the watch snapshot…</p>
       ) : (
-        <p className="mt-3 text-sm text-muted-foreground">
-          Link Apple Health, Health Connect, Garmin, Fitbit, or Strava in Extras — Fuel fills live. You can still type steps and workouts below.
-        </p>
+        <div className="mt-3">
+          <p className="text-sm text-muted-foreground">
+            Link Apple Health, Health Connect, Garmin, Fitbit, or Strava and Fuel fills live. You can still type steps
+            and workouts below.
+          </p>
+          <div className="mt-3">
+            <DeviceSyncCard />
+          </div>
+        </div>
       )}
 
       <div className="mt-3 grid grid-cols-3 gap-2">

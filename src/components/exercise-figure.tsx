@@ -243,14 +243,14 @@ function PoseBody({
   if (pose === "bench") return <Bench f={f} equipment={equipment} />;
   if (pose === "hinge") return <Hinge f={f} equipment={equipment} />;
   if (pose === "lunge") return <Lunge f={f} />;
-  if (pose === "hip") return <Hip f={f} />;
+  if (pose === "hip") return <Hip f={f} equipment={equipment} />;
   if (pose === "press") return <Press f={f} equipment={equipment} />;
   if (pose === "fly") return <Fly f={f} />;
   if (pose === "dip") return <Dip f={f} />;
   if (pose === "row") return <Row f={f} equipment={equipment} />;
   if (pose === "pulldown") return <Pulldown f={f} />;
   if (pose === "pullup") return <Pullup f={f} />;
-  if (pose === "curl") return <Curl f={f} />;
+  if (pose === "curl") return <Curl f={f} equipment={equipment} />;
   if (pose === "raise") return <Raise f={f} />;
   if (pose === "plank") return <Plank f={f} />;
   if (pose === "machine") return <Machine f={f} />;
@@ -362,7 +362,7 @@ function Lunge({ f }: { f: (id: string) => string }) {
   );
 }
 
-function Hip({ f }: { f: (id: string) => string }) {
+function Hip({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
       <rect x="28" y="78" width="44" height="10" rx="2" fill="color-mix(in oklab, var(--color-foreground) 22%, var(--color-muted))" />
@@ -372,7 +372,7 @@ function Hip({ f }: { f: (id: string) => string }) {
       <path d="M86 78h18v16c4 2 10 4 16 4v12c-10 0-20-2-28-8z" fill={f("hamstrings")} />
       <path d="M116 96h16v22c-6 2-12 0-16-4z" fill={f("calves")} />
       <path d="M64 86h28v10H64z" fill={f("quads")} />
-      <Bar x={58} y={70} w={48} />
+      <Implement equipment={equipment} x={58} y={70} w={48} />
     </g>
   );
 }
@@ -491,7 +491,7 @@ function Pullup({ f }: { f: (id: string) => string }) {
   );
 }
 
-function Curl({ f }: { f: (id: string) => string }) {
+function Curl({ f, equipment }: { f: (id: string) => string; equipment: Equipment }) {
   return (
     <g stroke={ink()} strokeWidth="1.2" strokeLinejoin="round">
       <Head cx={80} cy={26} />
@@ -501,8 +501,7 @@ function Curl({ f }: { f: (id: string) => string }) {
       <path d="M110 42c6 8 6 16 2 24-6 0-10-8-10-16 0-5 3-8 8-8z" fill={f("biceps")} />
       <path d="M44 64c-4 8-4 14 0 20 5 0 8-6 8-12 0-5-3-8-8-8z" fill={f("forearms")} />
       <path d="M116 64c4 8 4 14 0 20-5 0-8-6-8-12 0-5 3-8 8-8z" fill={f("forearms")} />
-      <circle cx="46" cy="90" r="6" fill="color-mix(in oklab, var(--color-foreground) 32%, var(--color-muted))" />
-      <circle cx="114" cy="90" r="6" fill="color-mix(in oklab, var(--color-foreground) 32%, var(--color-muted))" />
+      <Implement equipment={equipment} x={46} y={88} w={68} />
       <path d="M66 68h28v12c-4 4-10 4-14 4s-10 0-14-4z" fill={f("glutes")} />
       <path d="M68 80h10v36H70c-2-12-2-24-2-36z" fill={f("quads")} />
       <path d="M82 80h10c0 12 0 24-2 36H82V80z" fill={f("quads")} />
