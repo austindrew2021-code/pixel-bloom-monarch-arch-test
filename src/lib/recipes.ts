@@ -1513,7 +1513,7 @@ export const ADDONS: Addon[] = [
     name: "Kitchen Table",
     tagline: "Chef + family, one bill",
     description:
-      "40 AI Chef plates a week, any homemade dish fitted to each eater's calories and body goal, plus six family seats with live meal pings, plus a savings tracker showing what home cooking is worth versus takeout, plus a training dashboard — PR history, best lifts, and a volume trend. Includes a few free Streak Saves a month so one missed night never costs you the streak. Kitchen+ and Family a la carte are $4.99 each ($9.98). Together here they're $7.99. Body Sync stays free. Extra plate packs are below if you run out. Nothing is charged in this test kitchen.",
+      "40 AI Chef plates a week, any homemade dish fitted to each eater's calories and body goal, plus six family seats with live meal pings, plus a savings tracker showing what home cooking is worth versus takeout, plus a training dashboard — PR history, best lifts, and a volume trend. Includes a few free Streak Saves a month so one missed night never costs you the streak, plus a side-by-side before/after compare on your progress photos. Kitchen+ and Family a la carte are $4.99 each ($9.98). Together here they're $7.99. Body Sync stays free. Extra plate packs are below if you run out. Nothing is charged in this test kitchen.",
     price: 7.99,
     period: "month",
   },

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MacroBar } from "@/components/macro-bar";
 import { Plate } from "@/components/plate";
+import { ProgressPhotos } from "@/components/progress-photos";
 import { TrainingAnalytics } from "@/components/training-analytics";
 import { TrainView } from "@/components/train-view";
 import { Button } from "@/components/ui/button";
@@ -543,6 +544,8 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           </div>
         ) : null}
       </section>
+
+      <ProgressPhotos onOpenStore={() => onOpenStore?.()} />
 
       <section className="mt-5 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
         <h2 className="font-display text-xl">Today</h2>
