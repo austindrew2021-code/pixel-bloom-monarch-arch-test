@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MacroBar } from "@/components/macro-bar";
 import { Plate } from "@/components/plate";
+import { TrainingAnalytics } from "@/components/training-analytics";
 import { TrainView } from "@/components/train-view";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -216,7 +217,12 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
         </button>
       </div>
 
-      {pane === "train" ? <TrainView /> : null}
+      {pane === "train" ? (
+        <>
+          <TrainView />
+          <TrainingAnalytics onOpenStore={() => onOpenStore?.()} />
+        </>
+      ) : null}
 
       {pane === "fuel" ? (
       <>

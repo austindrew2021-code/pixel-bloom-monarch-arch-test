@@ -1,5 +1,8 @@
 /** Strength math: volume, 1RM, plates, and calories that rise with the load on the bar. */
 
+import { format, parseISO } from "date-fns";
+import { mondayOf, shiftWeek, weekDates } from "./week.ts";
+
 export type Muscle = "legs" | "push" | "pull" | "core" | "full";
 
 export type LiftMove = {
@@ -429,5 +432,82 @@ export function formatRecap(session: LiftSession, imperial: boolean): string {
   const shown = imperial ? Math.round(vol * 2.2046226218) : Math.round(vol);
   lines.push(`${shown} ${imperial ? "lb" : "kg"} moved`);
   return lines.join("\n");
+}
+
+export type LiftAnalyticsBucket = { sessions: number; volumeKg: number };
+export type LiftAnalyticsSummary = {
+  week: LiftAnalyticsBucket;
+  month: LiftAnalyticsBucket;
+  allTime: LiftAnalyticsBucket & { prCount: number };
+};
+
+const todayKey = () => format(new Date(), "yyyy-MM-dd");
+
+/** This week / this month / all-time sessions, volume, and total PRs ever hit. */
+export function liftAnalyticsSummary(liftSessions: LiftSession[], today = todayKey()): LiftAnalyticsSummary {
+  const finished = liftSessions
+    .filter((s) => s.finishedAt)
+    .sort((a, b) => (a.finishedAt ?? 0) - (b.finishedAt ?? 0));
+  const thisWeek = new Set(weekDates(mondayOf(parseISO(`${today}T12:00:00`))));
+  const monthPrefix = today.slice(0, 7);
+
+  const week: LiftAnalyticsBucket = { sessions: 0, volumeKg: 0 };
+  const month: LiftAnalyticsBucket = { sessions: 0, volumeKg: 0 };
+  const allTime = { sessions: 0, volumeKg: 0, prCount: 0 };
+
+  for (let i = 0; i < finished.length; i += 1) {
+    const session = finished[i]!;
+    const vol = sessionVolumeKg(session);
+    allTime.sessions += 1;
+    allTime.volumeKg += vol;
+    // PRs are relative to everything logged before this session, in order.
+    allTime.prCount += sessionPRs(finished.slice(0, i), session).length;
+    if (session.date.slice(0, 7) === monthPrefix) {
+      month.sessions += 1;
+      month.volumeKg += vol;
+    }
+    if (thisWeek.has(session.date)) {
+      week.sessions += 1;
+      week.volumeKg += vol;
+    }
+  }
+  return {
+    week: { sessions: week.sessions, volumeKg: Math.round(week.volumeKg) },
+    month: { sessions: month.sessions, volumeKg: Math.round(month.volumeKg) },
+    allTime: { sessions: allTime.sessions, volumeKg: Math.round(allTime.volumeKg), prCount: allTime.prCount },
+  };
+}
+
+/** Total volume per week, oldest to newest, for the last `weeks` weeks including this one. */
+export function weeklyVolumeTrend(liftSessions: LiftSession[], weeks = 8, today = todayKey()): number[] {
+  const finished = liftSessions.filter((s) => s.finishedAt);
+  const thisWeekStart = mondayOf(parseISO(`${today}T12:00:00`));
+  const totals: number[] = [];
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const start = shiftWeek(thisWeekStart, -i);
+    const dates = new Set(weekDates(start));
+    let sum = 0;
+    for (const session of finished) {
+      if (dates.has(session.date)) sum += sessionVolumeKg(session);
+    }
+    totals.push(Math.round(sum));
+  }
+  return totals;
+}
+
+export type BestLift = { moveId: string; name: string; best1rm: number };
+
+/** Every move ever logged, ranked by best estimated 1RM, strongest first. */
+export function bestLifts(liftSessions: LiftSession[], limit = 5): BestLift[] {
+  const finished = liftSessions.filter((s) => s.finishedAt);
+  const moveIds = new Set<string>();
+  for (const session of finished) {
+    for (const line of session.lines) moveIds.add(line.moveId);
+  }
+  return Array.from(moveIds)
+    .map((moveId) => ({ moveId, name: moveById(moveId)?.name ?? moveId, best1rm: bestEpley(finished, moveId) }))
+    .filter((m) => m.best1rm > 0)
+    .sort((a, b) => b.best1rm - a.best1rm)
+    .slice(0, limit);
 }
 

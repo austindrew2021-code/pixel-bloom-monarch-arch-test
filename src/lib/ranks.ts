@@ -112,6 +112,7 @@ export type Celebrate = {
 
 export function milestonesFor(input: {
   cookedDates: string[];
+  streakSavedDates?: string[];
   xp: number;
   seen: string[];
   snapped: boolean;
@@ -120,7 +121,9 @@ export function milestonesFor(input: {
   savedTotal?: number;
 }): Celebrate[] {
   const out: Celebrate[] = [];
-  const streak = cookStreak(input.cookedDates, isoDate());
+  // A saved night keeps the streak count alive for milestones too — that's the
+  // whole point of protecting it — but it never counts as a real cooked dinner.
+  const streak = cookStreak([...input.cookedDates, ...(input.streakSavedDates ?? [])], isoDate());
   const cooked = input.cookedDates.length;
   const lifts = input.liftCount ?? 0;
   const saved = input.savedTotal ?? 0;
@@ -158,3 +161,5 @@ export const CHEF_PACK_15 = 15;
 export const CHEF_PACK_40 = 40;
 export const SNAP_FREE_WEEK = 8;
 export const LOOKUP_FREE_WEEK = 3;
+/** Free Streak Saves Kitchen Table bundles in every month, before it charges for more. */
+export const STREAK_SAVE_FREE_MONTH = 3;

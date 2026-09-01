@@ -305,20 +305,4 @@ export function pct(n: number, of: number): number {
 }
 
 export { portionSyncFor, type PortionSync } from "./portion-sync";
-
-export function cookStreak(cookedDates: string[], today = isoDate()): number {
-  const set = new Set(cookedDates);
-  let streak = 0;
-  let cursor = new Date(`${today}T12:00:00`);
-  if (!set.has(today)) {
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  for (;;) {
-    const key = format(cursor, "yyyy-MM-dd");
-    if (!set.has(key)) break;
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-    if (streak > 60) break;
-  }
-  return streak;
-}
+export { cookStreak, brokenStreakInfo, type BrokenStreak } from "./streak";

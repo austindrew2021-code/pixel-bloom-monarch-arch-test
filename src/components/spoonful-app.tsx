@@ -12,6 +12,7 @@ import { SaucesView } from "@/components/sauces-view";
 import { ShopView } from "@/components/shop-view";
 import { SnapView } from "@/components/snap-view";
 import { StoreView } from "@/components/store-view";
+import { StreakOfferCard } from "@/components/streak-offer";
 import { TesterGate } from "@/components/tester-gate";
 import { UsernameGate } from "@/components/username-gate";
 import { Walkthrough } from "@/components/walkthrough";
@@ -50,6 +51,7 @@ export function SpoonfulApp() {
   const nextGen = useSpoonful((s) => s.nextGen);
   const setNextGen = useSpoonful((s) => s.setNextGen);
   const cookedDates = useSpoonful((s) => s.cookedDates);
+  const streakSavedDates = useSpoonful((s) => s.streakSavedDates);
   const xp = useSpoonful((s) => s.xp);
   const notifyPrefs = useSpoonful((s) => s.notifyPrefs);
   const dinnerHour = useSpoonful((s) => s.dinnerHour);
@@ -63,7 +65,7 @@ export function SpoonfulApp() {
   const [unread, setUnread] = useState(0);
   const [allowed, setAllowed] = useState(false);
   const [previewChrome, setPreviewChrome] = useState(false);
-  const streak = cookStreak(cookedDates, isoDate());
+  const streak = cookStreak([...cookedDates, ...streakSavedDates], isoDate());
   const rank = rankForXp(xp);
   const pins = normalizePins(navPins);
 
@@ -234,6 +236,7 @@ export function SpoonfulApp() {
   return (
     <div className="min-h-dvh max-w-full overflow-x-clip bg-transparent text-foreground">
       <CelebrateOverlay />
+      <StreakOfferCard />
       <header className="pt-[max(0.5rem,env(safe-area-inset-top))]">
         <div className="mx-auto flex max-w-2xl items-center">
           <div className="flex h-14 min-w-0 flex-1 items-center px-4">

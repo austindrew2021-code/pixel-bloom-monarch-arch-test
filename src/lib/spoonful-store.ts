@@ -19,10 +19,12 @@ import {
   CHEF_PLUS_WEEK,
   LOOKUP_FREE_WEEK,
   SNAP_FREE_WEEK,
+  STREAK_SAVE_FREE_MONTH,
   milestonesFor,
   rankForXp,
   type Celebrate,
 } from "./ranks";
+import { brokenStreakInfo, type BrokenStreak } from "./streak";
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "./notify";
 import type { FitnessSourceId, SyncAccess } from "./devices";
 import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
@@ -109,6 +111,11 @@ type SpoonfulState = {
   workouts: Workout[];
   favorites: string[];
   cookedDates: string[];
+  streakSavedDates: string[];
+  streakSaveMonth: string;
+  streakSaveBonus: number;
+  streakSaveUsed: number;
+  streakSaveOfferSeen: string[];
   snacks: Snack[];
   xp: number;
   seenMilestones: string[];
@@ -218,6 +225,10 @@ type SpoonfulState = {
   replateFromFuel: (dates?: string[]) => { count: number; names: string[] };
   logWater: (ml: number) => void;
   markCooked: (date: string) => void;
+  streakSaveRemaining: () => number;
+  brokenStreak: () => BrokenStreak | null;
+  useStreakSave: (date: string) => boolean;
+  dismissStreakOffer: (date: string) => void;
   saveLeftovers: (fromDate: string) => boolean;
   addSnack: (input: { date: string; name: string; nutrition: Snack["nutrition"] }) => void;
   removeSnack: (id: string) => void;
@@ -243,6 +254,28 @@ function chefCapOf(s: { unlocked: AddonId[]; chefBonus: number; chefBonusWeek: s
   const week = s.chefWeek || mondayOf();
   const bonus = s.chefBonusWeek === week ? s.chefBonus : 0;
   return (plus ? CHEF_PLUS_WEEK : CHEF_FREE_WEEK) + bonus;
+}
+
+function currentMonthKey(): string {
+  return new Date().toISOString().slice(0, 7);
+}
+
+// Relies on rollStreakSaveMonth already having run this call, same as chefCapOf
+// relies on rollAiWeek — by then streakSaveBonus/Used are for the current month.
+function streakSaveCapOf(s: { unlocked: AddonId[]; streakSaveBonus: number }): number {
+  const base = isUnlocked(s.unlocked, "kitchen-table") ? STREAK_SAVE_FREE_MONTH : 0;
+  return base + s.streakSaveBonus;
+}
+
+function rollStreakSaveMonth(
+  get: () => SpoonfulState,
+  set: (partial: Partial<SpoonfulState>) => void,
+) {
+  const month = currentMonthKey();
+  const s = get();
+  if (s.streakSaveMonth !== month) {
+    set({ streakSaveMonth: month, streakSaveBonus: 0, streakSaveUsed: 0 });
+  }
 }
 
 function uid(): string {
@@ -394,6 +427,11 @@ export const useSpoonful = create<SpoonfulState>()(
       workouts: [],
       favorites: [],
       cookedDates: [],
+      streakSavedDates: [],
+      streakSaveMonth: currentMonthKey(),
+      streakSaveBonus: 0,
+      streakSaveUsed: 0,
+      streakSaveOfferSeen: [],
       snacks: [],
       xp: 0,
       seenMilestones: [],
@@ -640,12 +678,16 @@ export const useSpoonful = create<SpoonfulState>()(
       unlock: (id) => {
         const already = get().unlocked.includes(id);
         rollAiWeek(get, set);
+        if (id === "streak-save") rollStreakSaveMonth(get, set);
         set((s) => {
           if (id === "plates-15" || id === "plates-40") {
             const week = mondayOf();
             const add = id === "plates-15" ? CHEF_PACK_15 : CHEF_PACK_40;
             const bonus = (s.chefBonusWeek === week ? s.chefBonus : 0) + add;
             return { chefBonus: bonus, chefBonusWeek: week };
+          }
+          if (id === "streak-save") {
+            return { streakSaveBonus: s.streakSaveBonus + 1 };
           }
           if (s.unlocked.includes(id)) return s;
           const extra: AddonId[] = [];
@@ -1125,6 +1167,11 @@ export const useSpoonful = create<SpoonfulState>()(
           workouts: s.workouts,
           favorites: s.favorites,
           cookedDates: s.cookedDates,
+          streakSavedDates: s.streakSavedDates,
+          streakSaveMonth: s.streakSaveMonth,
+          streakSaveBonus: s.streakSaveBonus,
+          streakSaveUsed: s.streakSaveUsed,
+          streakSaveOfferSeen: s.streakSaveOfferSeen,
           snacks: s.snacks,
           xp: s.xp,
           seenMilestones: s.seenMilestones,
@@ -1174,6 +1221,13 @@ export const useSpoonful = create<SpoonfulState>()(
           ...(typeof payload.portionSync === "boolean" ? { portionSync: payload.portionSync } : {}),
           ...(payload.portionMultByDate && typeof payload.portionMultByDate === "object"
             ? { portionMultByDate: payload.portionMultByDate as Record<string, number> }
+            : {}),
+          ...(Array.isArray(payload.streakSavedDates) ? { streakSavedDates: payload.streakSavedDates as string[] } : {}),
+          ...(typeof payload.streakSaveMonth === "string" ? { streakSaveMonth: payload.streakSaveMonth } : {}),
+          ...(typeof payload.streakSaveBonus === "number" ? { streakSaveBonus: payload.streakSaveBonus } : {}),
+          ...(typeof payload.streakSaveUsed === "number" ? { streakSaveUsed: payload.streakSaveUsed } : {}),
+          ...(Array.isArray(payload.streakSaveOfferSeen)
+            ? { streakSaveOfferSeen: payload.streakSaveOfferSeen as string[] }
             : {}),
           ...(payload.goal && typeof payload.goal === "object" ? { goal: payload.goal as MacroGoal } : {}),
           ...(payload.stepsByDate && typeof payload.stepsByDate === "object"
@@ -1266,6 +1320,35 @@ export const useSpoonful = create<SpoonfulState>()(
           set((st) => ({ portionMultByDate: { ...st.portionMultByDate, [date]: sync.mult } }));
         }
       },
+      streakSaveRemaining: () => {
+        rollStreakSaveMonth(get, set);
+        const s = get();
+        return Math.max(0, streakSaveCapOf(s) - s.streakSaveUsed);
+      },
+      brokenStreak: () => {
+        const s = get();
+        const info = brokenStreakInfo(s.cookedDates, s.streakSavedDates, isoDate());
+        if (!info || s.streakSaveOfferSeen.includes(info.brokenDate)) return null;
+        return info;
+      },
+      useStreakSave: (date) => {
+        rollStreakSaveMonth(get, set);
+        const s = get();
+        if (s.streakSavedDates.includes(date) || s.cookedDates.includes(date)) return true;
+        if (s.streakSaveUsed >= streakSaveCapOf(s)) return false;
+        set((st) => ({
+          streakSavedDates: [...st.streakSavedDates, date],
+          streakSaveUsed: st.streakSaveUsed + 1,
+          streakSaveOfferSeen: st.streakSaveOfferSeen.includes(date)
+            ? st.streakSaveOfferSeen
+            : [...st.streakSaveOfferSeen, date],
+        }));
+        return true;
+      },
+      dismissStreakOffer: (date) =>
+        set((s) => ({
+          streakSaveOfferSeen: s.streakSaveOfferSeen.includes(date) ? s.streakSaveOfferSeen : [...s.streakSaveOfferSeen, date],
+        })),
       saveLeftovers: (fromDate) => {
         const dinner = get().meals.find((m) => m.date === fromDate && m.slot === "dinner");
         if (!dinner || dinner.skip) return false;
@@ -1300,6 +1383,7 @@ export const useSpoonful = create<SpoonfulState>()(
         const after = rankForXp(xp);
         const fresh = milestonesFor({
           cookedDates: s.cookedDates,
+          streakSavedDates: s.streakSavedDates,
           xp,
           seen: s.seenMilestones,
           snapped: s.snapped,
@@ -1426,6 +1510,11 @@ export const useSpoonful = create<SpoonfulState>()(
         workouts: s.workouts,
         favorites: s.favorites,
         cookedDates: s.cookedDates,
+        streakSavedDates: s.streakSavedDates,
+        streakSaveMonth: s.streakSaveMonth,
+        streakSaveBonus: s.streakSaveBonus,
+        streakSaveUsed: s.streakSaveUsed,
+        streakSaveOfferSeen: s.streakSaveOfferSeen,
         snacks: s.snacks,
         xp: s.xp,
         seenMilestones: s.seenMilestones,

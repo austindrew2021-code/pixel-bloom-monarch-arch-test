@@ -62,6 +62,9 @@ export function StoreView() {
   const paid = ADDONS.filter((a) => {
     if (a.price <= 0) return false;
     if (table && (a.id === "chef-plus" || a.id === "family")) return false;
+    // Streak Save only ever appears on the offer card at the moment a streak
+    // actually breaks — not browsable here, so that stays true.
+    if (a.id === "streak-save") return false;
     return true;
   });
   const access = syncAccess ?? (fitnessSource ? "while-using" : null);
