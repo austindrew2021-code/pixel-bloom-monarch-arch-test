@@ -309,3 +309,38 @@
     animation: none;
   }
 }
+
+/* Exercise pose figures loop a small rep cadence so every move — not just the
+   ones with a filmed clip — reads as a moving demo. The global
+   prefers-reduced-motion rule above already collapses these to a still frame. */
+@keyframes pose-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pose-hold-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.015);
+    opacity: 0.94;
+  }
+}
+
+.pose-anim-rep {
+  animation: pose-bob 1.35s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.pose-anim-hold {
+  animation: pose-hold-pulse 2.4s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}

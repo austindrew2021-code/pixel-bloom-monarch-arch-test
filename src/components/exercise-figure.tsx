@@ -208,10 +208,15 @@ export function ExerciseFigure({
       aria-hidden
     >
       <rect width="160" height="160" rx="22" fill="var(--color-background)" />
-      <PoseBody pose={pose} hot={hot} warm={warm} />
+      <g className={HOLD_POSES.has(pose) ? "pose-anim-hold" : "pose-anim-rep"}>
+        <PoseBody pose={pose} hot={hot} warm={warm} />
+      </g>
     </svg>
   );
 }
+
+/** Isometric holds get a slow breathing pulse instead of a rep bob — there's no rep to loop. */
+const HOLD_POSES = new Set<Pose>(["plank"]);
 
 function fill(id: string, hot: Set<string>, warm: Set<string>) {
   if (hot.has(id)) return "var(--color-spark)";

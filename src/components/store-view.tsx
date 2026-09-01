@@ -502,9 +502,9 @@ export function StoreView() {
       </section>
 
       <section className="mt-6 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
-        <h2 className="font-display text-xl">Live meal pings</h2>
+        <h2 className="font-display text-xl">Live pings</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Dinner reminder, family table updates, and milestone pop-ups. Each one can be off.
+          Dinner reminder, family table updates, milestone pop-ups, and your rest timer. Each one can be off.
         </p>
         <div className="mt-3 grid gap-2">
           {(
@@ -513,6 +513,7 @@ export function StoreView() {
               ["family", "Family table"],
               ["milestones", "Ranks and streaks"],
               ["dinner", "Dinner-time reminder"],
+              ["rest", "Rest timer done"],
             ] as const
           ).map(([key, label]) => (
             <button

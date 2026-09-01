@@ -249,6 +249,10 @@ type SpoonfulState = {
   markSnapped: () => void;
 };
 
+// Well beyond a year of near-daily training (~500 sessions) before old PRs and
+// analytics history start silently falling off the back of the array.
+const MAX_LIFT_SESSIONS = 500;
+
 function chefCapOf(s: { unlocked: AddonId[]; chefBonus: number; chefBonusWeek: string; chefWeek: string }): number {
   const plus = isUnlocked(s.unlocked, "chef-plus");
   const week = s.chefWeek || mondayOf();
@@ -802,7 +806,7 @@ export const useSpoonful = create<SpoonfulState>()(
         const volumeKg = sessionVolumeKg(finished);
         const kcal = liftKcal(get().body.weightKg, minutes, volumeKg, sessionRomM(finished));
         set((s) => ({
-          liftSessions: [...s.liftSessions.filter((x) => x.id !== finished.id), finished].slice(-40),
+          liftSessions: [...s.liftSessions.filter((x) => x.id !== finished.id), finished].slice(-MAX_LIFT_SESSIONS),
         }));
         get().addWorkout({ date: finished.date, kind: "lift", minutes, kcal, volumeKg });
         const prs = sessionPRs(priorSessions, finished);
@@ -1479,6 +1483,7 @@ export const useSpoonful = create<SpoonfulState>()(
           ...current,
           ...p,
           body,
+          notifyPrefs: { ...current.notifyPrefs, ...(p.notifyPrefs ?? {}) },
           seats: Array.isArray(p.seats) ? p.seats : current.seats,
           chefBonus: typeof p.chefBonus === "number" ? p.chefBonus : 0,
           chefBonusWeek: typeof p.chefBonusWeek === "string" ? p.chefBonusWeek : current.chefBonusWeek,

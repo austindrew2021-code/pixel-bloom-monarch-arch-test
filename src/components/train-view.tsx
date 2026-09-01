@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { goalLabel } from "@/lib/body";
 import { exerciseById, substituteMoves, EXERCISES, muscleReadiness, MUSCLE_LABEL, type Exercise, type MuscleId } from "@/lib/exercises";
 import { isoDate } from "@/lib/fuel";
-import { previousLine, previousSessionForMove, suggestNextKg } from "@/lib/lift";
+import { nextWorkingKg, previousLine, previousSessionForMove } from "@/lib/lift";
 import {
   dinnerFollowsCopy,
   programHint,
@@ -302,10 +302,15 @@ function SessionCard({
                       {(() => {
                         const last = prev?.sets.filter((s) => s.done && !s.warmup).at(-1);
                         if (!last) return "";
-                        const next = suggestNextKg(prev, previousSessionForMove(lifts, m.moveId)?.feel);
+                        const next = nextWorkingKg(lifts, m.moveId, prev, previousSessionForMove(lifts, m.moveId)?.feel);
                         const lastTxt = ` · last ${Math.round(last.weightKg)} kg`;
                         const rir = last.rir != null ? ` @${last.rir}` : "";
-                        const tryTxt = next && next > last.weightKg ? ` · try ${Math.round(next)}` : "";
+                        const tryTxt =
+                          next && next > last.weightKg
+                            ? ` · try ${Math.round(next)}`
+                            : next && next < last.weightKg
+                              ? ` · deload to ${Math.round(next)}`
+                              : "";
                         return `${lastTxt}${rir}${tryTxt}`;
                       })()}
                     </p>

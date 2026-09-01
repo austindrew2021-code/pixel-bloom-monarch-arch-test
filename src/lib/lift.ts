@@ -1,6 +1,7 @@
 /** Strength math: volume, 1RM, plates, and calories that rise with the load on the bar. */
 
 import { format, parseISO } from "date-fns";
+import { kgFromLb } from "./body.ts";
 import { mondayOf, shiftWeek, weekDates } from "./week.ts";
 
 export type Muscle = "legs" | "push" | "pull" | "core" | "full";
@@ -310,6 +311,61 @@ export function suggestNextKg(prev?: LiftLine, feel?: SessionFeel): number | nul
 
 export function warmupLoads(workKg: number): number[] {
   return [0.5, 0.7, 0.85].map((p) => Math.round(workKg * p * 4) / 4);
+}
+
+/** Rep count per warm-up rung, tapering down as the ramp gets heavier. */
+export function warmupReps(workReps: number): number[] {
+  return [1.5, 1, 0.5].map((mult) => Math.max(1, Math.round(workReps * mult)));
+}
+
+/**
+ * True when the last two sessions that logged this move both look like a
+ * grind (session feel or a last-set RIR of 1 or less) at the same working
+ * weight — a real stall, not just one hard day, worth deloading rather than
+ * repeating a third time.
+ */
+export function stalledAt(sessions: LiftSession[], moveId: string, exceptId?: string): boolean {
+  const isGrind = (s: LiftSession): number | null => {
+    const line = s.lines.find((l) => l.moveId === moveId);
+    if (!line) return null;
+    const last = previousWorkingSets(line).at(-1);
+    if (!last) return null;
+    const grind = s.feel === "grind" || (last.rir != null && last.rir <= 1);
+    return grind ? last.weightKg : null;
+  };
+  const withMove = sessions
+    .filter((s) => s.finishedAt && s.id !== exceptId)
+    .filter((s) => s.lines.some((l) => l.moveId === moveId && l.sets.some((x) => x.done)));
+  if (withMove.length < 2) return false;
+  const w1 = isGrind(withMove.at(-1)!);
+  const w2 = isGrind(withMove.at(-2)!);
+  return w1 != null && w2 != null && Math.abs(w1 - w2) < 0.01;
+}
+
+/**
+ * Next working weight for a move, layering stall detection on top of
+ * suggestNextKg: two grinding sessions in a row at the same weight drops the
+ * load 20% (the same deload used for an in-session drop set) instead of
+ * suggesting the same weight a third time.
+ */
+export function nextWorkingKg(
+  sessions: LiftSession[],
+  moveId: string,
+  prev?: LiftLine,
+  feel?: SessionFeel,
+  exceptId?: string,
+): number | null {
+  const base = suggestNextKg(prev, feel);
+  if (base == null) return null;
+  return stalledAt(sessions, moveId, exceptId) ? dropLoadKg(base) : base;
+}
+
+/** Nearest loadable barbell total at or below the target — real plates, not a rounded guess. */
+export function snapToLoadable(weightKg: number, imperial: boolean): number {
+  const bar = imperial ? 45 : 20;
+  const perSide = platesPerSide(weightKg, imperial).reduce((n, p) => n + p.plate * p.count, 0);
+  const totalDisplay = bar + perSide * 2;
+  return imperial ? kgFromLb(totalDisplay) : totalDisplay;
 }
 
 export function lastWorkingRir(line?: LiftLine): number | undefined {
