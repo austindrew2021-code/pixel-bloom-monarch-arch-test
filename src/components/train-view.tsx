@@ -1,14 +1,17 @@
-import { ArrowLeftRight, Dumbbell, Footprints, Library, Play, SkipForward, Undo2 } from "lucide-react";
+import { ArrowLeftRight, BookOpen, Dumbbell, Footprints, Library, Play, SkipForward, Undo2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ExerciseDetailCard } from "@/components/exercise-detail-card";
 import { ExerciseFigure } from "@/components/exercise-figure";
 import { ExerciseLibrary } from "@/components/exercise-library";
+import { ExerciseList } from "@/components/exercise-list";
 import { ExerciseSheet } from "@/components/exercise-sheet";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MealPhoto } from "@/components/meal-photo";
 import { MuscleMap } from "@/components/muscle-map";
 import { Button } from "@/components/ui/button";
 import { goalLabel } from "@/lib/body";
+import type { ExerciseDbRecord } from "@/lib/exercise-db";
 import { exerciseById, substituteMoves, EXERCISES, muscleReadiness, MUSCLE_LABEL, type Exercise, type MuscleId } from "@/lib/exercises";
 import { isoDate } from "@/lib/fuel";
 import { nextWorkingKg, previousLine, previousSessionForMove } from "@/lib/lift";
@@ -41,6 +44,8 @@ export function TrainView() {
   const [selectedDate, setSelectedDate] = useState(isoDate());
   const [library, setLibrary] = useState(false);
   const [detail, setDetail] = useState<Exercise | null>(null);
+  const [encyclopedia, setEncyclopedia] = useState(false);
+  const [encyclopediaDetail, setEncyclopediaDetail] = useState<ExerciseDbRecord | null>(null);
   const [liftOpen, setLiftOpen] = useState(false);
   const [liftSeed, setLiftSeed] = useState<{ name: string; moveIds: string[]; date: string } | undefined>();
   const [swapOf, setSwapOf] = useState<string | null>(null);
@@ -196,6 +201,26 @@ export function TrainView() {
         </div>
         <Library className="size-5 text-spark" />
       </button>
+
+      <button
+        type="button"
+        onClick={() => setEncyclopedia(true)}
+        className="mt-2 flex w-full items-center justify-between rounded-3xl bg-card px-4 py-4 text-left shadow-[var(--shadow-border)]"
+      >
+        <div>
+          <p className="font-medium">Exercise encyclopedia</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">1,324 exercises · search, filter & step-by-step form</p>
+        </div>
+        <BookOpen className="size-5 text-spark" />
+      </button>
+
+      {encyclopedia ? (
+        <ExerciseList onClose={() => setEncyclopedia(false)} onOpen={(ex) => setEncyclopediaDetail(ex)} />
+      ) : null}
+
+      {encyclopediaDetail ? (
+        <ExerciseDetailCard exercise={encyclopediaDetail} onClose={() => setEncyclopediaDetail(null)} />
+      ) : null}
 
       {library ? (
         <ExerciseLibrary
