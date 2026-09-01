@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/hasaneyldrm/exercises-dataset/blob/main/data/exercises.schema.json",
   "title": "Exercises Dataset",
-  "description": "Schema for data/exercises.json — an array of fitness exercise records with multilingual instructions and media references.",
+  "description": "Schema for data/exercises.json \u2014 an array of fitness exercise records with multilingual instructions and media references.",
   "type": "array",
   "items": {
     "$ref": "#/$defs/exercise"
@@ -12,41 +12,110 @@
       "type": "object",
       "description": "Instruction text keyed by ISO 639-1 language code.",
       "properties": {
-        "en": { "type": "string" },
-        "es": { "type": "string" },
-        "it": { "type": "string" },
-        "tr": { "type": "string" },
-        "ru": { "type": "string" },
-        "zh": { "type": "string" },
-        "hi": { "type": "string" },
-        "pl": { "type": "string" },
-        "ko": { "type": "string" },
-        "fr": { "type": "string" }
+        "en": {
+          "type": "string"
+        },
+        "es": {
+          "type": "string"
+        },
+        "it": {
+          "type": "string"
+        },
+        "tr": {
+          "type": "string"
+        },
+        "ru": {
+          "type": "string"
+        },
+        "zh": {
+          "type": "string"
+        },
+        "hi": {
+          "type": "string"
+        },
+        "pl": {
+          "type": "string"
+        },
+        "ko": {
+          "type": "string"
+        },
+        "fr": {
+          "type": "string"
+        }
       },
-      "required": ["en", "es", "it", "tr", "ru", "zh", "hi", "pl", "ko", "fr"],
-      "additionalProperties": { "type": "string" }
+      "required": [
+        "en",
+        "es",
+        "it",
+        "tr",
+        "ru",
+        "zh",
+        "hi",
+        "pl",
+        "ko",
+        "fr"
+      ],
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "languageStepsMap": {
       "type": "object",
       "description": "Step-by-step instructions as an array of strings, keyed by ISO 639-1 language code.",
       "properties": {
-        "en": { "$ref": "#/$defs/steps" },
-        "es": { "$ref": "#/$defs/steps" },
-        "it": { "$ref": "#/$defs/steps" },
-        "tr": { "$ref": "#/$defs/steps" },
-        "ru": { "$ref": "#/$defs/steps" },
-        "zh": { "$ref": "#/$defs/steps" },
-        "hi": { "$ref": "#/$defs/steps" },
-        "pl": { "$ref": "#/$defs/steps" },
-        "ko": { "$ref": "#/$defs/steps" },
-        "fr": { "$ref": "#/$defs/steps" }
+        "en": {
+          "$ref": "#/$defs/steps"
+        },
+        "es": {
+          "$ref": "#/$defs/steps"
+        },
+        "it": {
+          "$ref": "#/$defs/steps"
+        },
+        "tr": {
+          "$ref": "#/$defs/steps"
+        },
+        "ru": {
+          "$ref": "#/$defs/steps"
+        },
+        "zh": {
+          "$ref": "#/$defs/steps"
+        },
+        "hi": {
+          "$ref": "#/$defs/steps"
+        },
+        "pl": {
+          "$ref": "#/$defs/steps"
+        },
+        "ko": {
+          "$ref": "#/$defs/steps"
+        },
+        "fr": {
+          "$ref": "#/$defs/steps"
+        }
       },
-      "required": ["en", "es", "it", "tr", "ru", "zh", "hi", "pl", "ko", "fr"],
-      "additionalProperties": { "$ref": "#/$defs/steps" }
+      "required": [
+        "en",
+        "es",
+        "it",
+        "tr",
+        "ru",
+        "zh",
+        "hi",
+        "pl",
+        "ko",
+        "fr"
+      ],
+      "additionalProperties": {
+        "$ref": "#/$defs/steps"
+      }
     },
     "steps": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "exercise": {
       "type": "object",
@@ -103,7 +172,10 @@
         "secondary_muscles": {
           "type": "array",
           "description": "Additional muscles involved.",
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "target": {
           "type": "string",
@@ -117,18 +189,13 @@
         },
         "image": {
           "type": "string",
-          "description": "Path to the 180x180 thumbnail (e.g. \"images/0001-2gPfomN.jpg\").",
+          "description": "Path to the 180x180 thumbnail (e.g. \"images/ex_0001.jpg\").",
           "pattern": "^images/.+\\.(jpg|jpeg|png)$"
         },
         "gif_url": {
           "type": "string",
-          "description": "Path to the 180x180 animation GIF (e.g. \"videos/0001-2gPfomN.gif\").",
+          "description": "Path to the 180x180 animation GIF (e.g. \"videos/ex_0001.gif\").",
           "pattern": "^videos/.+\\.gif$"
-        },
-        "attribution": {
-          "type": "string",
-          "description": "Media copyright notice.",
-          "minLength": 1
         },
         "created_at": {
           "type": "string",
