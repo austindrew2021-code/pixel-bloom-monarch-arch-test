@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bestLifts, liftAnalyticsSummary, weeklyVolumeTrend } from "./lift.ts";
-import type { LiftSession } from "./lift.ts";
+import {
+  bestLifts,
+  liftAnalyticsSummary,
+  nextWorkingKg,
+  snapToLoadable,
+  stalledAt,
+  warmupReps,
+  weeklyVolumeTrend,
+} from "./lift.ts";
+import type { LiftSession, SessionFeel } from "./lift.ts";
 
 function session(id: string, date: string, finishedAt: number, kg: number, reps = 5): LiftSession {
   return {
@@ -15,6 +23,29 @@ function session(id: string, date: string, finishedAt: number, kg: number, reps 
         id: `${id}-line`,
         moveId: "bench",
         sets: [{ id: `${id}-set`, reps, weightKg: kg, done: true }],
+      },
+    ],
+  };
+}
+
+function feltSession(
+  id: string,
+  finishedAt: number,
+  kg: number,
+  opts: { feel?: SessionFeel; rir?: number } = {},
+): LiftSession {
+  return {
+    id,
+    date: `2026-02-${String(finishedAt).padStart(2, "0")}`,
+    name: "Push",
+    startedAt: finishedAt - 1000,
+    finishedAt,
+    feel: opts.feel,
+    lines: [
+      {
+        id: `${id}-line`,
+        moveId: "bench",
+        sets: [{ id: `${id}-set`, reps: 5, weightKg: kg, done: true, rir: opts.rir }],
       },
     ],
   };
@@ -86,4 +117,65 @@ test("bestLifts ranks moves by best estimated 1RM, strongest first, and skips mo
   assert.equal(ranked[0]?.moveId, "squat");
   assert.equal(ranked[1]?.moveId, "bench");
   assert.equal(ranked.some((r) => r.moveId === "row"), false, "an unworked move should not appear");
+});
+
+test("stalledAt is false with fewer than two sessions on the move", () => {
+  assert.equal(stalledAt([feltSession("s1", 1, 100, { feel: "grind" })], "bench"), false);
+});
+
+test("stalledAt is true after two grinding sessions in a row at the same weight", () => {
+  const sessions = [
+    feltSession("s1", 1, 100, { feel: "grind" }),
+    feltSession("s2", 2, 100, { feel: "grind" }),
+  ];
+  assert.equal(stalledAt(sessions, "bench"), true);
+});
+
+test("stalledAt is false when the weight changed between the two grinds", () => {
+  const sessions = [
+    feltSession("s1", 1, 97.5, { feel: "grind" }),
+    feltSession("s2", 2, 100, { feel: "grind" }),
+  ];
+  assert.equal(stalledAt(sessions, "bench"), false);
+});
+
+test("stalledAt is false when only the most recent session was a grind", () => {
+  const sessions = [
+    feltSession("s1", 1, 100, { feel: "easy" }),
+    feltSession("s2", 2, 100, { feel: "grind" }),
+  ];
+  assert.equal(stalledAt(sessions, "bench"), false);
+});
+
+test("stalledAt also fires from a rir of 1 or less without an explicit grind feel", () => {
+  const sessions = [feltSession("s1", 1, 100, { rir: 0 }), feltSession("s2", 2, 100, { rir: 1 })];
+  assert.equal(stalledAt(sessions, "bench"), true);
+});
+
+test("nextWorkingKg behaves like suggestNextKg when there is no stall", () => {
+  const sessions = [feltSession("s1", 1, 100, { feel: "easy" })];
+  const prev = sessions[0]!.lines[0]!;
+  assert.equal(nextWorkingKg(sessions, "bench", prev, "easy"), 102.5);
+});
+
+test("nextWorkingKg drops the weight ~20% on a real two-session stall instead of holding a third time", () => {
+  const sessions = [
+    feltSession("s1", 1, 100, { feel: "grind" }),
+    feltSession("s2", 2, 100, { feel: "grind" }),
+  ];
+  const prev = sessions[1]!.lines[0]!;
+  assert.equal(nextWorkingKg(sessions, "bench", prev, "grind"), 80);
+});
+
+test("warmupReps tapers down from the work set and never drops below 1", () => {
+  assert.deepEqual(warmupReps(8), [12, 8, 4]);
+  assert.deepEqual(warmupReps(1), [2, 1, 1]);
+});
+
+test("snapToLoadable rounds down to a real plate-loadable total", () => {
+  assert.equal(snapToLoadable(61, false), 60); // 20 bar + 2x20kg = 60, next plate would overshoot
+  assert.equal(snapToLoadable(20, false), 20); // bar alone
+  const snapped = snapToLoadable(60, true);
+  assert.ok(snapped <= 60, "never rounds up past the target");
+  assert.equal(snapToLoadable(snapped, true), snapped, "an already-loadable weight snaps to itself");
 });

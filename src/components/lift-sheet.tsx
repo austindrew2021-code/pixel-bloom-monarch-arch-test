@@ -1,12 +1,13 @@
-import { ArrowLeftRight, ChevronDown, ChevronUp, History, Pause, Play, Plus, Share2, Timer, X } from "lucide-react";
+import { ArrowLeftRight, Bookmark, ChevronDown, ChevronUp, History, Pause, Play, Plus, Share2, Timer, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ExerciseFigure } from "@/components/exercise-figure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DEFAULT_BODY, kgFromLb, lbFromKg } from "@/lib/body";
-import { exerciseById, substituteMoves } from "@/lib/exercises";
+import { EQUIPMENT_FILTER, EQUIPMENT_LABEL, exerciseById, substituteMoves, type Equipment } from "@/lib/exercises";
 import { isoDate } from "@/lib/fuel";
+import { pushNote } from "@/lib/notify";
 import {
   LIFT_MOVES,
   LIFT_TEMPLATES,
@@ -24,15 +25,18 @@ import {
   lineVolumeKg,
   logUnit,
   moveById,
+  nextWorkingKg,
   pctOfBest,
   platesPerSide,
   previousLine,
   previousSessionForMove,
   sessionSetCount,
   sessionVolumeKg,
-  suggestNextKg,
+  snapToLoadable,
+  stalledAt,
   volumeChangePct,
   warmupLoads,
+  warmupReps,
   type LiftLine,
   type LiftSession,
   type LiftSet,
@@ -57,6 +61,9 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
   const body = useSpoonful((s) => s.body) ?? DEFAULT_BODY;
   const sessions = useSpoonful((s) => s.liftSessions);
   const saveLiftSession = useSpoonful((s) => s.saveLiftSession);
+  const notifyPrefs = useSpoonful((s) => s.notifyPrefs);
+  const favMoves = useSpoonful((s) => s.favMoves);
+  const toggleFavMove = useSpoonful((s) => s.toggleFavMove);
   const imperial = body.units !== "metric";
   const [session, setSession] = useState<LiftSession>(() => emptySession());
   const [picker, setPicker] = useState(false);
@@ -65,6 +72,8 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
   const [restPreset, setRestPreset] = useState(90);
   const [query, setQuery] = useState("");
   const [muscle, setMuscle] = useState<"all" | Muscle>("all");
+  const [gear, setGear] = useState<Equipment | "all">("all");
+  const [savedOnly, setSavedOnly] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [tickOf, setTickOf] = useState<{ lineId: string; setId: string } | null>(null);
   const [swapOf, setSwapOf] = useState<string | null>(null);
@@ -124,10 +133,14 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           /* ignore */
         }
         toast("Rest's up");
+        if (notifyPrefs.rest) {
+          const move = restMove ? moveById(restMove)?.name : undefined;
+          pushNote("Rest's up", move ? `Back to ${move}` : "Next set is ready");
+        }
       }
     }
     restWas.current = rest;
-  }, [rest]);
+  }, [rest, notifyPrefs.rest, restMove]);
 
   useEffect(() => {
     if (!open || !tickOf) return;
@@ -200,11 +213,13 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
   const moves = useMemo(() => {
     const q = query.trim().toLowerCase();
     return LIFT_MOVES.filter((m) => {
+      if (savedOnly && !favMoves.includes(m.id)) return false;
       if (muscle !== "all" && m.muscle !== muscle) return false;
+      if (gear !== "all" && exerciseById(m.id)?.equipment !== gear) return false;
       if (!q) return true;
       return m.name.toLowerCase().includes(q) || m.muscle.includes(q);
     });
-  }, [query, muscle]);
+  }, [query, muscle, gear, savedOnly, favMoves]);
 
   if (!open) return null;
 
@@ -213,7 +228,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     const prev = previousLine(sessions, moveId);
     const prevSess = previousSessionForMove(sessions, moveId);
     const defaultKg = move?.bodyweight ? body.weightKg : imperial ? kgFromLb(95) : 40;
-    const suggested = suggestNextKg(prev, prevSess?.feel);
+    const suggested = nextWorkingKg(sessions, moveId, prev, prevSess?.feel);
     const unit = logUnit(moveId);
     const defaultReps = unit === "sec" ? 40 : unit === "m" ? 30 : 8;
     const sets: LiftSet[] = prev?.sets.slice(0, 4).map((s, i) => ({
@@ -223,6 +238,10 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
       done: false,
       warmup: s.warmup,
     })) ?? [{ id: nid(), reps: defaultReps, weightKg: defaultKg, done: false }];
+    if (stalledAt(sessions, moveId) && suggested != null) {
+      const shown = imperial ? Math.round(lbFromKg(suggested)) : Math.round(suggested);
+      toast(`Two grinding sessions at that weight — dropping to ${shown} to reset`);
+    }
     setSession((cur) => ({
       ...cur,
       name: cur.lines.length === 0 ? (move?.name ?? "Lift") : cur.name,
@@ -310,6 +329,8 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     const kg = work?.weightKg ?? 40;
     const reps = work?.reps ?? 5;
     const loads = warmupLoads(kg);
+    const reps3 = warmupReps(reps);
+    const onBar = moveById(line.moveId)?.bar === true;
     setSession((cur) => ({
       ...cur,
       lines: cur.lines.map((l) =>
@@ -318,10 +339,10 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           : {
               ...l,
               sets: [
-                ...loads.map((weightKg) => ({
+                ...loads.map((weightKg, i) => ({
                   id: nid(),
-                  reps,
-                  weightKg,
+                  reps: reps3[i] ?? reps,
+                  weightKg: onBar ? snapToLoadable(weightKg, imperial) : weightKg,
                   done: false,
                   warmup: true as const,
                 })),
@@ -687,7 +708,8 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           const best = bestEpley(sessions, line.moveId);
           const lineVol = lineVolumeKg(line);
           const unit = logUnit(line.moveId);
-          const nextKg = suggestNextKg(prev, prevSess?.feel);
+          const stalled = stalledAt(sessions, line.moveId, session.id);
+          const nextKg = nextWorkingKg(sessions, line.moveId, prev, prevSess?.feel, session.id);
           const paired = line.pairId ? session.lines.find((l) => l.pairId === line.pairId && l.id !== line.id) : undefined;
           return (
             <section key={line.id} id={`lift-line-${line.id}`} className="mb-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
@@ -728,7 +750,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                         })
                         .join("  ")}
                       {nextKg && nextKg !== prev.sets.filter((s) => s.done && !s.warmup).at(-1)?.weightKg
-                        ? ` · try ${imperial ? Math.round(lbFromKg(nextKg)) : nextKg}`
+                        ? ` · ${stalled ? "deload to" : "try"} ${imperial ? Math.round(lbFromKg(nextKg)) : nextKg}`
                         : ""}
                       {prevSess?.feel ? ` · felt ${prevSess.feel === "right" ? "on it" : prevSess.feel}` : ""}
                     </p>
@@ -993,6 +1015,16 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           <div className="px-4">
             <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Squat, bench, pull-up…" />
             <div className="chip-row mt-2 pb-1">
+              <button
+                type="button"
+                onClick={() => setSavedOnly((v) => !v)}
+                className={cn(
+                  "flex h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-sm",
+                  savedOnly ? "bg-spark text-spark-foreground" : "bg-card shadow-[var(--shadow-border)]",
+                )}
+              >
+                <Bookmark className="size-3.5" /> Saved
+              </button>
               {(["all", "legs", "push", "pull", "core", "full"] as const).map((id) => (
                 <button
                   key={id}
@@ -1004,6 +1036,31 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                   )}
                 >
                   {id}
+                </button>
+              ))}
+            </div>
+            <div className="chip-row mt-2 pb-1">
+              <button
+                type="button"
+                onClick={() => setGear("all")}
+                className={cn(
+                  "h-11 shrink-0 rounded-full px-3 text-sm",
+                  gear === "all" ? "bg-primary text-primary-foreground" : "bg-card shadow-[var(--shadow-border)]",
+                )}
+              >
+                Any kit
+              </button>
+              {EQUIPMENT_FILTER.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setGear(id)}
+                  className={cn(
+                    "h-11 shrink-0 rounded-full px-3 text-sm",
+                    gear === id ? "bg-primary text-primary-foreground" : "bg-card shadow-[var(--shadow-border)]",
+                  )}
+                >
+                  {EQUIPMENT_LABEL[id]}
                 </button>
               ))}
             </div>
@@ -1024,14 +1081,22 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                 ))
               : null}
             {moves.map((m) => (
-              <li key={m.id}>
+              <li key={m.id} className="flex min-h-12 items-stretch gap-1 rounded-2xl bg-card pr-1 shadow-[var(--shadow-border)]">
                 <button
                   type="button"
-                  className="flex min-h-12 w-full items-center justify-between rounded-2xl bg-card px-4 text-left text-sm shadow-[var(--shadow-border)]"
+                  className="flex min-w-0 flex-1 items-center justify-between gap-2 px-4 text-left text-sm"
                   onClick={() => addMove(m.id)}
                 >
-                  {m.name}
-                  <span className="text-xs capitalize text-muted-foreground">{m.muscle}</span>
+                  <span className="truncate">{m.name}</span>
+                  <span className="shrink-0 text-xs capitalize text-muted-foreground">{m.muscle}</span>
+                </button>
+                <button
+                  type="button"
+                  className="flex w-10 shrink-0 items-center justify-center"
+                  aria-label={favMoves.includes(m.id) ? `Remove ${m.name} from favorites` : `Save ${m.name}`}
+                  onClick={() => toggleFavMove(m.id)}
+                >
+                  <Bookmark className={cn("size-3.5", favMoves.includes(m.id) ? "fill-current text-spark" : "text-muted-foreground")} />
                 </button>
               </li>
             ))}
@@ -1092,7 +1157,7 @@ function sessionFromSeed(
     const prev = previousLine(sessions, moveId);
     const prevSess = previousSessionForMove(sessions, moveId);
     const defaultKg = move.bodyweight ? bodyKg : imperial ? kgFromLb(95) : 40;
-    const suggested = suggestNextKg(prev, prevSess?.feel);
+    const suggested = nextWorkingKg(sessions, moveId, prev, prevSess?.feel);
     const unit = logUnit(moveId);
     const defaultReps = unit === "sec" ? 40 : unit === "m" ? 30 : 8;
     lines.push({

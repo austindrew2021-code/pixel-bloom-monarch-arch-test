@@ -3,6 +3,7 @@ export type NotifyPrefs = {
   family: boolean;
   milestones: boolean;
   dinner: boolean;
+  rest: boolean;
 };
 
 export const DEFAULT_NOTIFY: NotifyPrefs = {
@@ -10,6 +11,7 @@ export const DEFAULT_NOTIFY: NotifyPrefs = {
   family: true,
   milestones: true,
   dinner: true,
+  rest: true,
 };
 
 export function canPush(): boolean {
