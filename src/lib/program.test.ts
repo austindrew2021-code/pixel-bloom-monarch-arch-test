@@ -299,16 +299,24 @@ test("clip names match the movement in the clip", () => {
   assert.equal(moveById("goblet")?.name, "Goblet squat");
   assert.equal(moveById("sissy-squat")?.name, "Sissy squat");
   assert.equal(moveById("sumo-squat")?.name, "Sumo squat");
-  assert.equal(EXERCISE_CLIPS.has("smith-shrug"), true);
   assert.equal(EXERCISE_CLIPS.has("bench"), true);
   assert.equal(EXERCISE_CLIPS.has("ohp"), true);
   assert.equal(EXERCISE_CLIPS.has("row"), true);
-  assert.equal(EXERCISE_CLIPS.has("front-squat"), true);
   assert.equal(EXERCISE_CLIPS.has("ab-wheel"), true);
-  assert.equal(EXERCISE_CLIPS.has("goblet"), false);
+  assert.equal(EXERCISE_CLIPS.has("goblet"), true);
   assert.equal(EXERCISE_CLIPS.has("sissy-squat"), false);
   assert.equal(EXERCISE_CLIPS.has("sumo-squat"), false);
   assert.equal(EXERCISE_CLIPS.has("squat"), true);
+  // Reassigned by scripts/_apply-clip-reassignment.py after a frame-by-frame
+  // review found each of these ids' registered clip showed a different
+  // exercise. smith-shrug's video was actually a deadlift and front-squat's
+  // was actually a leg press — both clips moved to the id they truly show,
+  // leaving smith-shrug and front-squat themselves without a registered
+  // clip (falls back to the pose figure) rather than a wrong one.
+  assert.equal(EXERCISE_CLIPS.has("smith-shrug"), false);
+  assert.equal(EXERCISE_CLIPS.has("front-squat"), false);
+  assert.equal(EXERCISE_CLIPS.has("deadlift"), true);
+  assert.equal(EXERCISE_CLIPS.has("leg-press"), true);
 });
 
 test("drop load is 80 percent and recap names the work", () => {
