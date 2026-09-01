@@ -1,11 +1,10 @@
 import { Bookmark, History, Share2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ExerciseFigure } from "@/components/exercise-figure";
 import { MuscleLegend, MuscleMap } from "@/components/muscle-map";
 import { Button } from "@/components/ui/button";
 import { lbFromKg } from "@/lib/body";
-import { EQUIPMENT_LABEL, MUSCLE_LABEL, type Exercise } from "@/lib/exercises";
+import { equipmentLabel, MUSCLE_LABEL, type Exercise } from "@/lib/exercises";
 import { bestEpley, epley1rm, previousLine } from "@/lib/lift";
 import { isPreviewChrome } from "@/lib/preview-chrome";
 import { useSpoonful } from "@/lib/spoonful-store";
@@ -53,7 +52,7 @@ export function ExerciseSheet({
   const peak = Math.max(1, ...history.map((h) => h.est));
 
   async function share() {
-    const text = `${exercise.name}\n${exercise.setup}\n${exercise.cues.map((c) => `• ${c}`).join("\n")}`;
+    const text = `${exercise.name}\n${exercise.steps.map((c, i) => `${i + 1}. ${c}`).join("\n")}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: exercise.name, text });
@@ -93,8 +92,12 @@ export function ExerciseSheet({
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-32">
-        <div className="flex flex-col items-center rounded-3xl bg-card px-4 py-5 shadow-[var(--shadow-border)]">
-          <ExerciseFigure exercise={exercise} size="lg" />
+        <div className="flex flex-col items-center rounded-3xl bg-card p-3 shadow-[var(--shadow-border)]">
+          <img
+            src={exercise.gif}
+            alt={`${exercise.name} demonstration`}
+            className="aspect-square w-full max-w-xs rounded-2xl bg-muted object-cover"
+          />
           <p className="mt-3 text-center text-sm text-muted-foreground">
             {exercise.primary.map((id) => MUSCLE_LABEL[id]).join(", ")}
             {exercise.secondary.length ? ` · ${exercise.secondary.map((id) => MUSCLE_LABEL[id]).join(", ")}` : ""}
@@ -131,10 +134,9 @@ export function ExerciseSheet({
 
         {tab === "about" ? (
           <section className="mt-4 space-y-4">
-            <p className="text-sm leading-relaxed text-foreground/85">{exercise.setup}</p>
             <div className="flex flex-wrap gap-1.5">
-              <span className="rounded-full bg-card px-3 py-1.5 text-xs shadow-[var(--shadow-border)]">
-                {EQUIPMENT_LABEL[exercise.equipment]}
+              <span className="rounded-full bg-card px-3 py-1.5 text-xs capitalize shadow-[var(--shadow-border)]">
+                {equipmentLabel(exercise.equipment)}
               </span>
               <span className="rounded-full bg-card px-3 py-1.5 text-xs shadow-[var(--shadow-border)]">
                 {exercise.defaultSets} × {exercise.defaultReps}
@@ -144,14 +146,18 @@ export function ExerciseSheet({
               </span>
             </div>
             <div>
-              <h2 className="font-display text-xl">Cues</h2>
-              <ul className="mt-2 space-y-2">
-                {exercise.cues.map((c) => (
-                  <li key={c} className="rounded-2xl bg-card px-4 py-3 text-sm shadow-[var(--shadow-border)]">
-                    {c}
+              <h2 className="font-display text-xl">Instructions</h2>
+              <ol className="mt-2 space-y-2">
+                {exercise.steps.map((step, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 rounded-2xl bg-card px-4 py-3 text-sm leading-relaxed shadow-[var(--shadow-border)]"
+                  >
+                    <span className="shrink-0 font-display text-spark">{i + 1}</span>
+                    <span>{step}</span>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </div>
             <div>
               <h2 className="font-display text-xl">How this hits</h2>

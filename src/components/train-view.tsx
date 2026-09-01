@@ -1,17 +1,13 @@
-import { ArrowLeftRight, BookOpen, Dumbbell, Footprints, Library, Play, SkipForward, Undo2 } from "lucide-react";
+import { ArrowLeftRight, Dumbbell, Footprints, Library, Play, SkipForward, Undo2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ExerciseDetailCard } from "@/components/exercise-detail-card";
-import { ExerciseFigure } from "@/components/exercise-figure";
 import { ExerciseLibrary } from "@/components/exercise-library";
-import { ExerciseList } from "@/components/exercise-list";
 import { ExerciseSheet } from "@/components/exercise-sheet";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MealPhoto } from "@/components/meal-photo";
 import { MuscleMap } from "@/components/muscle-map";
 import { Button } from "@/components/ui/button";
 import { goalLabel } from "@/lib/body";
-import type { ExerciseDbRecord } from "@/lib/exercise-db";
 import { exerciseById, substituteMoves, EXERCISES, muscleReadiness, MUSCLE_LABEL, type Exercise, type MuscleId } from "@/lib/exercises";
 import { isoDate } from "@/lib/fuel";
 import { nextWorkingKg, previousLine, previousSessionForMove } from "@/lib/lift";
@@ -36,6 +32,7 @@ export function TrainView() {
   const programWeek = useSpoonful((s) => s.programWeek);
   const ensureProgram = useSpoonful((s) => s.ensureProgram);
   const markSession = useSpoonful((s) => s.markSession);
+  const setBody = useSpoonful((s) => s.setBody);
   const restoreSession = useSpoonful((s) => s.restoreSession);
   const swapSessionMove = useSpoonful((s) => s.swapSessionMove);
   const favMoves = useSpoonful((s) => s.favMoves);
@@ -44,8 +41,6 @@ export function TrainView() {
   const [selectedDate, setSelectedDate] = useState(isoDate());
   const [library, setLibrary] = useState(false);
   const [detail, setDetail] = useState<Exercise | null>(null);
-  const [encyclopedia, setEncyclopedia] = useState(false);
-  const [encyclopediaDetail, setEncyclopediaDetail] = useState<ExerciseDbRecord | null>(null);
   const [liftOpen, setLiftOpen] = useState(false);
   const [liftSeed, setLiftSeed] = useState<{ name: string; moveIds: string[]; date: string } | undefined>();
   const [swapOf, setSwapOf] = useState<string | null>(null);
@@ -106,6 +101,34 @@ export function TrainView() {
           {summary.missed ? ` · ${summary.missed} missed` : ""}
         </p>
       ) : null}
+
+      <div className="mt-3 flex gap-1.5 rounded-full bg-card p-1 shadow-[var(--shadow-border)]">
+        {(
+          [
+            { id: "full" as const, label: "Full gym" },
+            { id: "bodyweight" as const, label: "No equipment" },
+          ]
+        ).map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => setBody({ equipmentAccess: opt.id })}
+            className={cn(
+              "h-9 flex-1 rounded-full text-sm",
+              (body.equipmentAccess ?? "full") === opt.id
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground",
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+      <p className="mt-1.5 text-xs text-muted-foreground">
+        {(body.equipmentAccess ?? "full") === "bodyweight"
+          ? "This week only picks moves that need no gear at all."
+          : "This week can pull any equipment from the full exercise library."}
+      </p>
 
       {ready.sore.length || ready.ready.length ? (
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -201,26 +224,6 @@ export function TrainView() {
         </div>
         <Library className="size-5 text-spark" />
       </button>
-
-      <button
-        type="button"
-        onClick={() => setEncyclopedia(true)}
-        className="mt-2 flex w-full items-center justify-between rounded-3xl bg-card px-4 py-4 text-left shadow-[var(--shadow-border)]"
-      >
-        <div>
-          <p className="font-medium">Exercise encyclopedia</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">1,324 exercises · search, filter & step-by-step form</p>
-        </div>
-        <BookOpen className="size-5 text-spark" />
-      </button>
-
-      {encyclopedia ? (
-        <ExerciseList onClose={() => setEncyclopedia(false)} onOpen={(ex) => setEncyclopediaDetail(ex)} />
-      ) : null}
-
-      {encyclopediaDetail ? (
-        <ExerciseDetailCard exercise={encyclopediaDetail} onClose={() => setEncyclopediaDetail(null)} />
-      ) : null}
 
       {library ? (
         <ExerciseLibrary
@@ -318,7 +321,7 @@ function SessionCard({
               <li key={m.moveId} className="overflow-hidden rounded-2xl bg-background">
                 <div className="flex min-h-14 items-center gap-2 px-2">
                   <button type="button" onClick={() => onOpenMove(m.moveId)} className="shrink-0">
-                    {ex ? <ExerciseFigure exercise={ex} size="sm" className="h-12 w-12" /> : null}
+                    {ex ? <img src={ex.image} alt="" className="h-12 w-12 rounded-lg bg-muted object-cover" /> : null}
                   </button>
                   <button type="button" onClick={() => onOpenMove(m.moveId)} className="min-w-0 flex-1 py-2 text-left">
                     <p className="truncate text-sm font-medium">{ex?.name ?? m.moveId}</p>
@@ -358,7 +361,7 @@ function SessionCard({
                         onClick={() => onSwap(m.moveId, alt.id)}
                         className="flex flex-col items-center rounded-xl bg-card px-1 py-2 text-center"
                       >
-                        <ExerciseFigure exercise={alt} size="sm" className="h-10 w-10" />
+                        <img src={alt.image} alt="" className="h-10 w-10 rounded-lg bg-muted object-cover" />
                         <span className="mt-1 line-clamp-2 text-[10px] leading-tight">{alt.name}</span>
                       </button>
                     ))}

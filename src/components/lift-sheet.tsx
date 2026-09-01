@@ -1,11 +1,10 @@
 import { ArrowLeftRight, Bookmark, ChevronDown, ChevronUp, History, Pause, Play, Plus, Share2, Timer, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ExerciseFigure } from "@/components/exercise-figure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DEFAULT_BODY, kgFromLb, lbFromKg } from "@/lib/body";
-import { EQUIPMENT_FILTER, EQUIPMENT_LABEL, exerciseById, substituteMoves, type Equipment } from "@/lib/exercises";
+import { EQUIPMENT_FILTER, equipmentLabel, exerciseById, substituteMoves, type Equipment } from "@/lib/exercises";
 import { isoDate } from "@/lib/fuel";
 import { pushNote } from "@/lib/notify";
 import {
@@ -209,7 +208,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
     }
     return sec > 0 ? Math.max(1, Math.round(sec / 60)) : 0;
   }, [session, restPreset]);
-  const restCue = restMove ? exerciseById(restMove)?.cues[0] : undefined;
+  const restCue = restMove ? exerciseById(restMove)?.steps[0] : undefined;
   const moves = useMemo(() => {
     const q = query.trim().toLowerCase();
     return LIFT_MOVES.filter((m) => {
@@ -714,7 +713,9 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
           return (
             <section key={line.id} id={`lift-line-${line.id}`} className="mb-4 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
               <div className="flex items-start gap-3">
-                {ex ? <ExerciseFigure exercise={ex} size="sm" className="h-14 w-14 rounded-xl" /> : null}
+                {ex ? (
+                  <img src={ex.image} alt="" className="h-14 w-14 shrink-0 rounded-xl bg-muted object-cover" />
+                ) : null}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start gap-1">
                     <h2 className="min-w-0 flex-1 font-display text-xl leading-tight">{move?.name ?? line.moveId}</h2>
@@ -1060,7 +1061,7 @@ export function LiftSheet({ open, onClose, seed }: { open: boolean; onClose: () 
                     gear === id ? "bg-primary text-primary-foreground" : "bg-card shadow-[var(--shadow-border)]",
                   )}
                 >
-                  {EQUIPMENT_LABEL[id]}
+                  {equipmentLabel(id)}
                 </button>
               ))}
             </div>

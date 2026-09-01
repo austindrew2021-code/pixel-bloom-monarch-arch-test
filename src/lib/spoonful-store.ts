@@ -798,7 +798,7 @@ export const useSpoonful = create<SpoonfulState>()(
           }
           return { body, weightLog, goal: macrosFromBody(body) };
         });
-        if (patch.goalKind) get().ensureProgram();
+        if (patch.goalKind || patch.equipmentAccess) get().ensureProgram();
       },
       applyBodyGoal: () => {
         const body = get().body;
@@ -997,7 +997,14 @@ export const useSpoonful = create<SpoonfulState>()(
       ensureProgram: () => {
         const s = get();
         const today = isoDate();
-        const week = rebuildProgram(s.programWeek, s.weekStart, s.body.goalKind, today, s.liftSessions);
+        const week = rebuildProgram(
+          s.programWeek,
+          s.weekStart,
+          s.body.goalKind,
+          today,
+          s.liftSessions,
+          s.body.equipmentAccess,
+        );
         const synced = week.sessions.map((session) => {
           if (session.status === "planned" && matchLoggedToSession(session, s.workouts)) {
             return { ...session, status: "done" as const };

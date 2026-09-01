@@ -4,6 +4,7 @@ export type Sex = "female" | "male";
 export type ActivityId = "sedentary" | "light" | "moderate" | "very" | "extra";
 export type GoalKind = "lose" | "recomp" | "maintain" | "lean" | "performance";
 export type UnitSystem = "metric" | "imperial";
+export type EquipmentAccess = "full" | "bodyweight";
 
 export type BodyProfile = {
   sex: Sex;
@@ -15,6 +16,8 @@ export type BodyProfile = {
   units: UnitSystem;
   /** Optional body-fat %. When set, BMR uses Katch–McArdle on lean mass. */
   bodyFatPct?: number;
+  /** "bodyweight" limits auto-built training sessions to no-equipment moves. */
+  equipmentAccess?: EquipmentAccess;
 };
 
 export type FamilySeat = {
@@ -57,6 +60,10 @@ export function normalizeGoalKind(kind: string | undefined | null): GoalKind {
   return "maintain";
 }
 
+export function normalizeEquipmentAccess(access: string | undefined | null): EquipmentAccess {
+  return access === "bodyweight" ? "bodyweight" : "full";
+}
+
 export function clampBodyFat(pct: number | undefined | null): number | undefined {
   if (pct == null || !Number.isFinite(pct) || pct <= 0) return undefined;
   return Math.round(Math.max(4, Math.min(60, pct)) * 10) / 10;
@@ -66,6 +73,7 @@ export function normalizeBody(body: BodyProfile): BodyProfile {
   return {
     ...body,
     goalKind: normalizeGoalKind(body.goalKind),
+    equipmentAccess: normalizeEquipmentAccess(body.equipmentAccess),
     bodyFatPct: clampBodyFat(body.bodyFatPct),
     age: Math.max(16, Math.min(90, Math.round(body.age || 34))),
     heightCm: Math.max(120, Math.min(220, body.heightCm || 168)),

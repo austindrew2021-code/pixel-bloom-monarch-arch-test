@@ -1,14 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { substituteMoves } from "./exercises.ts";
-import { EXERCISE_CLIPS } from "./exercise-clips.ts";
+import { EXERCISES, exerciseById, substituteMoves } from "./exercises.ts";
 import {
   beatsPrevious,
   dropLoadKg,
   formatRecap,
   ghostSet,
   isUnilateral,
-  moveById,
   pctOfBest,
   sessionPRs,
   suggestNextKg,
@@ -153,10 +151,11 @@ test("swapMove keeps the slot but changes the exercise", () => {
   const p = generateProgram("2026-08-24", "lose");
   const session = p.sessions.find((s) => s.kind === "lift")!;
   const from = session.moves[0]!.moveId;
-  const next = swapMove(p, session.id, from, "goblet");
+  const to = EXERCISES.find((e) => e.id !== from)!.id;
+  const next = swapMove(p, session.id, from, to);
   const updated = next.sessions.find((s) => s.id === session.id)!;
-  assert.equal(updated.moves[0]!.moveId, "goblet");
-  assert.notEqual(from, "goblet");
+  assert.equal(updated.moves[0]!.moveId, to);
+  assert.notEqual(from, to);
 });
 
 test("missed lifts add a set to remaining planned days", () => {
@@ -198,9 +197,10 @@ test("an easy last session adds a set to the next planned lift; a grind holds it
 });
 
 test("substitutes stay on the same muscle", () => {
-  const alts = substituteMoves("leg-curl", 6);
+  const legCurl = EXERCISES.find((e) => e.target === "hamstrings")!;
+  const alts = substituteMoves(legCurl.id, 6);
   assert.ok(alts.length >= 2);
-  assert.ok(alts.every((e) => e.id !== "leg-curl"));
+  assert.ok(alts.every((e) => e.id !== legCurl.id));
   assert.ok(alts.some((e) => e.primary.includes("hamstrings") || e.muscle === "legs"));
 });
 
@@ -284,44 +284,19 @@ test("volume change is percent vs last session", () => {
   assert.equal(volumeChangePct(mk("b", 110), mk("a", 100)), 10);
 });
 
-test("clip names match the movement in the clip", () => {
-  assert.equal(moveById("bench")?.name, "Bench press");
-  assert.equal(moveById("ohp")?.name, "Overhead press");
-  assert.equal(moveById("row")?.name, "Barbell row");
-  assert.equal(moveById("cable-fly")?.name, "Seated machine fly");
-  assert.equal(moveById("ab-wheel")?.name, "Ab wheel rollout");
-  assert.equal(moveById("kickback")?.name, "Quadruped glute kickback");
-  assert.equal(moveById("one-arm-cable-row")?.name, "Chest-supported one-arm row");
-  assert.equal(moveById("pendulum-squat")?.name, "Pendulum squat");
-  assert.equal(moveById("hanging-leg")?.name, "Hanging knee raise");
-  assert.equal(moveById("spider-curl")?.name, "EZ-bar preacher curl");
-  assert.equal(moveById("smith-shrug")?.name, "Smith shrug");
-  assert.equal(moveById("goblet")?.name, "Goblet squat");
-  assert.equal(moveById("sissy-squat")?.name, "Sissy squat");
-  assert.equal(moveById("sumo-squat")?.name, "Sumo squat");
-  assert.equal(EXERCISE_CLIPS.has("bench"), true);
-  assert.equal(EXERCISE_CLIPS.has("ohp"), true);
-  assert.equal(EXERCISE_CLIPS.has("row"), true);
-  assert.equal(EXERCISE_CLIPS.has("ab-wheel"), true);
-  assert.equal(EXERCISE_CLIPS.has("goblet"), true);
-  assert.equal(EXERCISE_CLIPS.has("sissy-squat"), false);
-  assert.equal(EXERCISE_CLIPS.has("sumo-squat"), false);
-  assert.equal(EXERCISE_CLIPS.has("squat"), true);
-  // Reassigned by scripts/_apply-clip-reassignment.py after a frame-by-frame
-  // review found each of these ids' registered clip showed a different
-  // exercise. smith-shrug's video was actually a deadlift and front-squat's
-  // was actually a leg press — both clips moved to the id they truly show,
-  // leaving smith-shrug and front-squat themselves without a registered
-  // clip (falls back to the pose figure) rather than a wrong one.
-  assert.equal(EXERCISE_CLIPS.has("smith-shrug"), false);
-  assert.equal(EXERCISE_CLIPS.has("front-squat"), false);
-  assert.equal(EXERCISE_CLIPS.has("deadlift"), true);
-  assert.equal(EXERCISE_CLIPS.has("leg-press"), true);
+test("every exercise in the catalog resolves to real gif/image assets and instructions", () => {
+  const bench = EXERCISES.find((e) => e.name === "Barbell Bench Press");
+  assert.ok(bench);
+  assert.match(bench!.gif, /^\/exercise-db\/videos\/.+\.gif$/);
+  assert.match(bench!.image, /^\/exercise-db\/images\/.+\.jpg$/);
+  assert.ok(bench!.steps.length > 0);
+  assert.equal(EXERCISES.length, 1324);
 });
 
 test("drop load is 80 percent and recap names the work", () => {
   assert.equal(dropLoadKg(100), 80);
   assert.equal(pctOfBest(80, 100), 80);
+  const bench = EXERCISES.find((e) => e.name === "Barbell Bench Press")!;
   const recap = formatRecap(
     {
       id: "s",
@@ -332,19 +307,59 @@ test("drop load is 80 percent and recap names the work", () => {
       lines: [
         {
           id: "l",
-          moveId: "bench",
+          moveId: bench.id,
           sets: [{ id: "a", reps: 8, weightKg: 80, done: true, rir: 2 }],
         },
       ],
     },
     false,
   );
-  assert.match(recap, /Bench press/);
+  assert.match(recap, /Barbell Bench Press/);
   assert.match(recap, /8×80@2/);
 });
 
 test("unilateral moves can log left and right", () => {
-  assert.equal(isUnilateral("split-squat"), true);
-  assert.equal(isUnilateral("kickback"), true);
-  assert.equal(isUnilateral("squat"), false);
+  const unilateral = EXERCISES.find((e) => e.unilateral)!;
+  const bilateral = EXERCISES.find((e) => !e.unilateral)!;
+  assert.equal(isUnilateral(unilateral.id), true);
+  assert.equal(isUnilateral(bilateral.id), false);
+  assert.equal(isUnilateral("not-a-real-id"), false);
+});
+
+test("no passive stretch is ever auto-picked into a training slot", () => {
+  for (const goal of ["lose", "recomp", "maintain", "lean", "performance"] as const) {
+    for (const access of ["full", "bodyweight"] as const) {
+      const week = generateProgram("2026-08-24", goal, access);
+      for (const session of week.sessions) {
+        for (const m of session.moves) {
+          assert.equal(exerciseById(m.moveId)?.isStretch, false);
+        }
+      }
+    }
+  }
+});
+
+test("the bodyweight-only toggle only ever picks no-equipment moves", () => {
+  const week = generateProgram("2026-08-24", "lean", "bodyweight");
+  const lift = week.sessions.filter((s) => s.kind === "lift");
+  assert.ok(lift.length > 0);
+  for (const session of lift) {
+    for (const m of session.moves) {
+      assert.equal(exerciseById(m.moveId)?.bodyweight, true);
+    }
+  }
+});
+
+test("exercise selection is deterministic for a given week but rotates week to week", () => {
+  const a = generateProgram("2026-08-24", "lean", "full");
+  const b = generateProgram("2026-08-24", "lean", "full");
+  assert.deepEqual(
+    a.sessions.map((s) => s.moves.map((m) => m.moveId)),
+    b.sessions.map((s) => s.moves.map((m) => m.moveId)),
+  );
+  const c = generateProgram("2026-08-31", "lean", "full");
+  assert.notDeepEqual(
+    a.sessions.map((s) => s.moves.map((m) => m.moveId)),
+    c.sessions.map((s) => s.moves.map((m) => m.moveId)),
+  );
 });

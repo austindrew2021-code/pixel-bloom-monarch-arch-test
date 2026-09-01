@@ -217,6 +217,34 @@ export function Onboarding() {
         <p className="mt-3 text-sm tabular-nums text-foreground">
           {tdee} kcal to stay here · {macros.cal} kcal target · {macros.protein}g protein
         </p>
+        <p className="mt-3 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Equipment</p>
+        <div className="mt-2 flex gap-2">
+          {(
+            [
+              { id: "full" as const, label: "Full gym", hint: "Barbells, machines, cables" },
+              { id: "bodyweight" as const, label: "No equipment", hint: "Bodyweight only" },
+            ]
+          ).map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => setBody((b) => ({ ...b, equipmentAccess: opt.id }))}
+              className={cn(
+                "h-11 flex-1 rounded-full text-sm",
+                (body.equipmentAccess ?? "full") === opt.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card shadow-[var(--shadow-border)]",
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {(body.equipmentAccess ?? "full") === "bodyweight"
+            ? "Your training week only picks moves that need no gear at all."
+            : "Your training week can use any equipment. Change this anytime in Train."}
+        </p>
       </section>
 
       <section className="mt-8">

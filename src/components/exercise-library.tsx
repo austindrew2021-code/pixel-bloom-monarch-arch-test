@@ -1,13 +1,11 @@
 import { Bookmark, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { ExerciseFigure } from "@/components/exercise-figure";
 import { MuscleMap } from "@/components/muscle-map";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { EXERCISE_CLIPS } from "@/lib/exercise-clips";
 import {
   EQUIPMENT_FILTER,
-  EQUIPMENT_LABEL,
+  equipmentLabel,
   EXERCISES,
   MUSCLE_GROUPS,
   MUSCLE_LABEL,
@@ -18,6 +16,8 @@ import {
 import type { Muscle } from "@/lib/lift";
 import { isPreviewChrome } from "@/lib/preview-chrome";
 import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 150;
 
 export function ExerciseLibrary({
   favMoves,
@@ -34,7 +34,7 @@ export function ExerciseLibrary({
   const [gear, setGear] = useState<Equipment | "all">("all");
   const [savedOnly, setSavedOnly] = useState(false);
 
-  const list = useMemo(() => {
+  const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     return EXERCISES.filter((e) => {
       if (savedOnly && !favMoves.includes(e.id)) return false;
@@ -45,14 +45,12 @@ export function ExerciseLibrary({
       return (
         e.name.toLowerCase().includes(q) ||
         e.primary.some((id) => MUSCLE_LABEL[id].toLowerCase().includes(q)) ||
-        EQUIPMENT_LABEL[e.equipment].toLowerCase().includes(q)
+        e.equipment.toLowerCase().includes(q)
       );
-    }).sort((a, b) => {
-      const ac = EXERCISE_CLIPS.has(a.id) ? 0 : 1;
-      const bc = EXERCISE_CLIPS.has(b.id) ? 0 : 1;
-      return ac - bc || a.name.localeCompare(b.name);
-    });
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [query, muscle, group, gear, savedOnly, favMoves]);
+
+  const list = matches.slice(0, PAGE_SIZE);
 
   return (
     <div
@@ -128,7 +126,7 @@ export function ExerciseLibrary({
                 gear === id ? "bg-primary text-primary-foreground" : "bg-card shadow-[var(--shadow-border)]",
               )}
             >
-              {EQUIPMENT_LABEL[id]}
+              {equipmentLabel(id)}
             </button>
           ))}
         </div>
@@ -155,8 +153,8 @@ export function ExerciseLibrary({
       </div>
       <p className="px-4 pt-1 text-center text-xs text-muted-foreground">
         {muscle === "all"
-          ? `${list.length} moves · tap a muscle to filter`
-          : `${MUSCLE_LABEL[muscle]} · ${list.length} moves`}
+          ? `${matches.length} moves · tap a muscle to filter`
+          : `${MUSCLE_LABEL[muscle]} · ${matches.length} moves`}
       </p>
 
       <ul className="mt-2 grid min-h-0 flex-1 grid-cols-2 content-start gap-2 overflow-y-auto px-4 pb-10">
@@ -168,21 +166,31 @@ export function ExerciseLibrary({
               className="flex h-full w-full flex-col rounded-3xl bg-card p-3 text-left shadow-[var(--shadow-border)]"
             >
               <div className="relative flex items-start justify-center">
-                <ExerciseFigure exercise={ex} size="sm" />
+                <img
+                  src={ex.image}
+                  alt=""
+                  loading="lazy"
+                  className="aspect-square w-full rounded-2xl bg-muted object-cover"
+                />
                 {favMoves.includes(ex.id) ? (
-                  <Bookmark className="absolute right-0 top-0 size-3.5 fill-current text-spark" />
+                  <Bookmark className="absolute right-1 top-1 size-3.5 fill-current text-spark drop-shadow" />
                 ) : null}
               </div>
               <p className="mt-2 line-clamp-2 text-sm font-medium leading-snug">{ex.name}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                {MUSCLE_LABEL[ex.primary[0] ?? "chest"]} · {EQUIPMENT_LABEL[ex.equipment]}
+                {MUSCLE_LABEL[ex.primary[0] ?? "chest"]} · {equipmentLabel(ex.equipment)}
               </p>
             </button>
           </li>
         ))}
       </ul>
-      {list.length === 0 ? (
+      {matches.length === 0 ? (
         <p className="px-4 pb-10 text-center text-sm text-muted-foreground">No moves match that filter.</p>
+      ) : null}
+      {matches.length > PAGE_SIZE ? (
+        <p className="px-4 pb-10 text-center text-xs text-muted-foreground">
+          Showing the first {PAGE_SIZE}. Search or filter to narrow it down.
+        </p>
       ) : null}
     </div>
   );

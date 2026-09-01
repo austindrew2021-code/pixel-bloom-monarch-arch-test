@@ -1,8 +1,8 @@
 /** Next Gen training week: goal-specific sessions that drive dinner. */
 
-import type { GoalKind } from "./body.ts";
-import { normalizeGoalKind } from "./body.ts";
-import { exerciseById } from "./exercises.ts";
+import type { EquipmentAccess, GoalKind } from "./body.ts";
+import { normalizeEquipmentAccess, normalizeGoalKind } from "./body.ts";
+import { EXERCISES, exerciseById, type Exercise } from "./exercises.ts";
 import { lastFinishedSession, type LiftSession } from "./lift.ts";
 import type { Workout, WorkoutKind } from "./types.ts";
 import { weekDates } from "./week.ts";
@@ -39,25 +39,76 @@ export type ProgramWeek = {
   generatedAt: number;
 };
 
+/** [target muscle from exercises/data's `target` field, sets, reps, restSec]. */
+type MoveSlot = [string, number, string, number];
+
 type Blueprint = {
   name: string;
   kind: SessionKind;
   minutes: number;
-  moves?: Array<[string, number, string, number]>;
+  moves?: MoveSlot[];
   cardioKind?: WorkoutKind;
   why: string;
 };
 
-function move(moveId: string, sets: number, reps: string, restSec: number): ProgramMove {
-  return { moveId, sets, reps, restSec };
+/** FNV-1a — deterministic so the same (week, day, slot) always picks the same exercise. */
+function hashSeed(input: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i += 1) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
 }
 
-function fromBlueprint(b: Blueprint): Omit<ProgramSession, "id" | "date" | "weekday" | "status"> {
+function candidatesForTarget(target: string, equipmentAccess: EquipmentAccess): Exercise[] {
+  const wantBodyweight = equipmentAccess === "bodyweight";
+  const trainable = EXERCISES.filter((e) => e.target === target && !e.isStretch);
+  const exact = trainable.filter((e) => !wantBodyweight || e.bodyweight);
+  if (exact.length > 0) return exact;
+  // No no-equipment move exists for this target — better a real exercise than an empty slot.
+  return trainable;
+}
+
+/**
+ * Picks one exercise for a training slot from the full 1,324-exercise
+ * catalog: matches the slot's target muscle, honors the equipment toggle
+ * when possible, avoids repeating an exercise already used earlier in the
+ * same session, and is seeded off the week/day/slot so the pick is stable
+ * across re-renders of the same week but rotates from week to week.
+ */
+function pickExerciseForTarget(
+  target: string,
+  equipmentAccess: EquipmentAccess,
+  seed: string,
+  excludeIds: Set<string>,
+): Exercise | undefined {
+  const pool = candidatesForTarget(target, equipmentAccess);
+  if (pool.length === 0) return undefined;
+  const fresh = pool.filter((e) => !excludeIds.has(e.id));
+  const from = fresh.length > 0 ? fresh : pool;
+  const sorted = [...from].sort((a, b) => a.id.localeCompare(b.id));
+  return sorted[hashSeed(seed) % sorted.length];
+}
+
+function fromBlueprint(
+  b: Blueprint,
+  equipmentAccess: EquipmentAccess,
+  seedPrefix: string,
+): Omit<ProgramSession, "id" | "date" | "weekday" | "status"> {
+  const used = new Set<string>();
+  const moves: ProgramMove[] = [];
+  (b.moves ?? []).forEach(([target, sets, reps, restSec], i) => {
+    const ex = pickExerciseForTarget(target, equipmentAccess, `${seedPrefix}-${i}-${target}`, used);
+    if (!ex) return;
+    used.add(ex.id);
+    moves.push({ moveId: ex.id, sets, reps, restSec });
+  });
   return {
     name: b.name,
     kind: b.kind,
     minutes: b.minutes,
-    moves: (b.moves ?? []).map(([moveId, sets, reps, restSec]) => move(moveId, sets, reps, restSec)),
+    moves,
     cardioKind: b.cardioKind,
     why: b.why,
   };
@@ -70,6 +121,15 @@ const REST: Blueprint = {
   why: "Walk if you want. Dinner stays near the daily target — no training carbs stacked on.",
 };
 
+/**
+ * Each slot names a `target` from exercises/data/exercises.json (e.g.
+ * "pectorals", "lats", "quads") rather than a literal exercise id —
+ * fromBlueprint() resolves each slot to a concrete exercise from the full
+ * catalog at generation time, honoring the equipment toggle and rotating
+ * week to week. The sets/reps/rest progression below is the same
+ * goal-specific periodization the app always used; only which exact
+ * exercise fills each slot is now dynamic.
+ */
 function templates(kind: GoalKind): Blueprint[] {
   if (kind === "lose") {
     return [
@@ -79,11 +139,11 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Keep muscle on a cut. Tonight needs protein more than extra carbs.",
         moves: [
-          ["squat", 4, "6-8", 150],
-          ["bench", 3, "8-10", 120],
-          ["row", 3, "8-10", 120],
-          ["rdl", 3, "8-10", 120],
-          ["plank", 3, "30-45s", 45],
+          ["quads", 4, "6-8", 150],
+          ["pectorals", 3, "8-10", 120],
+          ["lats", 3, "8-10", 120],
+          ["hamstrings", 3, "8-10", 120],
+          ["abs", 3, "30-45s", 45],
         ],
       },
       {
@@ -99,11 +159,11 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 45,
         why: "Upper volume without a huge calorie dump. Close protein at dinner.",
         moves: [
-          ["ohp", 4, "6-8", 150],
-          ["incline", 3, "8-10", 120],
-          ["chest-press", 3, "10-12", 90],
-          ["lateral", 3, "12-15", 60],
-          ["tricep", 3, "12-15", 60],
+          ["delts", 4, "6-8", 150],
+          ["pectorals", 3, "8-10", 120],
+          ["pectorals", 3, "10-12", 90],
+          ["delts", 3, "12-15", 60],
+          ["triceps", 3, "12-15", 60],
         ],
       },
       {
@@ -119,11 +179,11 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Posterior chain so the cut does not flatten you. Protein at dinner, carbs modest.",
         moves: [
-          ["deadlift", 3, "5", 180],
-          ["lat", 3, "8-12", 90],
-          ["row", 3, "8-12", 90],
-          ["face-pull", 3, "12-15", 60],
-          ["curl", 3, "10-12", 60],
+          ["hamstrings", 3, "5", 180],
+          ["lats", 3, "8-12", 90],
+          ["lats", 3, "8-12", 90],
+          ["delts", 3, "12-15", 60],
+          ["biceps", 3, "10-12", 60],
         ],
       },
       {
@@ -144,12 +204,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Build the upper body at near-maintenance. Dinner should actually close protein.",
         moves: [
-          ["bench", 4, "6-8", 150],
-          ["ohp", 3, "6-8", 120],
-          ["incline", 3, "8-10", 90],
-          ["lateral", 3, "12-15", 60],
-          ["dip", 3, "8-12", 90],
-          ["tricep", 2, "12-15", 60],
+          ["pectorals", 4, "6-8", 150],
+          ["delts", 3, "6-8", 120],
+          ["pectorals", 3, "8-10", 90],
+          ["delts", 3, "12-15", 60],
+          ["pectorals", 3, "8-12", 90],
+          ["triceps", 2, "12-15", 60],
         ],
       },
       {
@@ -158,12 +218,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Rows and lats. A normal plate — not a surplus, not a cut dinner.",
         moves: [
-          ["row", 4, "6-8", 150],
-          ["lat", 3, "8-12", 90],
-          ["pullup", 3, "6-10", 120],
-          ["face-pull", 3, "12-15", 60],
-          ["curl", 3, "10-12", 60],
-          ["hammer", 2, "10-12", 60],
+          ["lats", 4, "6-8", 150],
+          ["lats", 3, "8-12", 90],
+          ["lats", 3, "6-10", 120],
+          ["delts", 3, "12-15", 60],
+          ["biceps", 3, "10-12", 60],
+          ["biceps", 2, "10-12", 60],
         ],
       },
       REST,
@@ -173,11 +233,11 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 55,
         why: "Squat and hinge. Carbs at dinner earn their place tonight.",
         moves: [
-          ["squat", 4, "6-8", 150],
-          ["rdl", 3, "8-10", 120],
-          ["lunge", 3, "8-10", 90],
-          ["hip-thrust", 3, "8-12", 90],
-          ["calf", 3, "12-15", 60],
+          ["quads", 4, "6-8", 150],
+          ["hamstrings", 3, "8-10", 120],
+          ["quads", 3, "8-10", 90],
+          ["glutes", 3, "8-12", 90],
+          ["calves", 3, "12-15", 60],
         ],
       },
       {
@@ -186,12 +246,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 45,
         why: "Push plus pull to finish the week. Keep protein high, calories near the line.",
         moves: [
-          ["chest-press", 3, "8-12", 90],
-          ["row", 3, "8-12", 90],
-          ["ohp", 3, "8-10", 90],
-          ["lat", 3, "8-12", 90],
-          ["curl", 2, "10-12", 60],
-          ["tricep", 2, "12-15", 60],
+          ["pectorals", 3, "8-12", 90],
+          ["lats", 3, "8-12", 90],
+          ["delts", 3, "8-10", 90],
+          ["lats", 3, "8-12", 90],
+          ["biceps", 2, "10-12", 60],
+          ["triceps", 2, "12-15", 60],
         ],
       },
       {
@@ -212,12 +272,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 55,
         why: "Heavy press day. Surplus is small — carbs at dinner, not dessert as dinner.",
         moves: [
-          ["bench", 4, "6-8", 150],
-          ["ohp", 4, "6-8", 150],
-          ["incline", 3, "8-10", 120],
-          ["lateral", 3, "12-15", 60],
-          ["dip", 3, "8-12", 90],
-          ["tricep", 3, "12-15", 60],
+          ["pectorals", 4, "6-8", 150],
+          ["delts", 4, "6-8", 150],
+          ["pectorals", 3, "8-10", 120],
+          ["delts", 3, "12-15", 60],
+          ["pectorals", 3, "8-12", 90],
+          ["triceps", 3, "12-15", 60],
         ],
       },
       {
@@ -226,12 +286,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 55,
         why: "Rows and chins. Eat the extra protein; keep the surplus honest.",
         moves: [
-          ["deadlift", 3, "5", 180],
-          ["row", 4, "6-8", 150],
-          ["lat", 3, "8-12", 90],
-          ["pullup", 3, "6-10", 120],
-          ["face-pull", 3, "12-15", 60],
-          ["curl", 3, "10-12", 60],
+          ["hamstrings", 3, "5", 180],
+          ["lats", 4, "6-8", 150],
+          ["lats", 3, "8-12", 90],
+          ["lats", 3, "6-10", 120],
+          ["delts", 3, "12-15", 60],
+          ["biceps", 3, "10-12", 60],
         ],
       },
       {
@@ -240,12 +300,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 60,
         why: "Biggest session of the week. Plate the carbs tonight.",
         moves: [
-          ["squat", 4, "5-8", 180],
-          ["rdl", 3, "8-10", 120],
-          ["leg-press", 3, "10-12", 90],
-          ["reverse-lunge", 3, "8-10", 90],
-          ["leg-curl", 3, "10-12", 75],
-          ["calf", 3, "12-15", 60],
+          ["quads", 4, "5-8", 180],
+          ["hamstrings", 3, "8-10", 120],
+          ["quads", 3, "10-12", 90],
+          ["quads", 3, "8-10", 90],
+          ["hamstrings", 3, "10-12", 75],
+          ["calves", 3, "12-15", 60],
         ],
       },
       REST,
@@ -255,12 +315,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Volume press. Still a surplus day — do not skip dinner after this.",
         moves: [
-          ["ohp", 4, "6-8", 150],
-          ["chest-press", 3, "8-12", 90],
-          ["fly", 3, "12-15", 75],
-          ["lateral", 3, "12-15", 60],
-          ["skullcrusher", 3, "10-12", 75],
-          ["close-grip", 2, "8-10", 90],
+          ["delts", 4, "6-8", 150],
+          ["pectorals", 3, "8-12", 90],
+          ["pectorals", 3, "12-15", 75],
+          ["delts", 3, "12-15", 60],
+          ["triceps", 3, "10-12", 75],
+          ["triceps", 2, "8-10", 90],
         ],
       },
       {
@@ -269,12 +329,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "More back volume. Protein and a normal carb plate.",
         moves: [
-          ["pullup", 4, "6-10", 120],
-          ["row", 3, "8-12", 90],
-          ["cable-row", 3, "10-12", 75],
-          ["rear-fly", 3, "12-15", 60],
-          ["hammer", 3, "10-12", 60],
-          ["preacher", 2, "10-12", 60],
+          ["lats", 4, "6-10", 120],
+          ["lats", 3, "8-12", 90],
+          ["lats", 3, "10-12", 75],
+          ["delts", 3, "12-15", 60],
+          ["biceps", 3, "10-12", 60],
+          ["biceps", 2, "10-12", 60],
         ],
       },
       REST,
@@ -288,12 +348,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 65,
         why: "Bodybuilding volume. Eat the carbs — this is a fuel day, not a cut.",
         moves: [
-          ["bench", 4, "6-8", 150],
-          ["incline", 4, "8-10", 120],
-          ["fly", 3, "12-15", 75],
-          ["dip", 3, "8-12", 90],
-          ["close-grip", 3, "8-10", 90],
-          ["tricep", 3, "12-15", 60],
+          ["pectorals", 4, "6-8", 150],
+          ["pectorals", 4, "8-10", 120],
+          ["pectorals", 3, "12-15", 75],
+          ["pectorals", 3, "8-12", 90],
+          ["triceps", 3, "8-10", 90],
+          ["triceps", 3, "12-15", 60],
         ],
       },
       {
@@ -302,12 +362,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 65,
         why: "Big pulling day. Keep calories and carbs up tonight.",
         moves: [
-          ["deadlift", 3, "5", 180],
-          ["row", 4, "6-8", 150],
-          ["lat", 4, "8-12", 90],
-          ["pullup", 3, "6-10", 120],
-          ["curl", 3, "10-12", 60],
-          ["hammer", 3, "10-12", 60],
+          ["hamstrings", 3, "5", 180],
+          ["lats", 4, "6-8", 150],
+          ["lats", 4, "8-12", 90],
+          ["lats", 3, "6-10", 120],
+          ["biceps", 3, "10-12", 60],
+          ["biceps", 3, "10-12", 60],
         ],
       },
       {
@@ -316,12 +376,12 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 70,
         why: "Highest burn of the week. Dinner should look like training food.",
         moves: [
-          ["squat", 5, "5-8", 180],
-          ["rdl", 4, "8-10", 120],
-          ["lunge", 3, "8-10", 90],
-          ["leg-press", 3, "10-12", 90],
-          ["hip-thrust", 3, "8-12", 90],
-          ["calf", 4, "12-15", 60],
+          ["quads", 5, "5-8", 180],
+          ["hamstrings", 4, "8-10", 120],
+          ["quads", 3, "8-10", 90],
+          ["quads", 3, "10-12", 90],
+          ["glutes", 3, "8-12", 90],
+          ["calves", 4, "12-15", 60],
         ],
       },
       {
@@ -330,11 +390,11 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 50,
         why: "Delts and upper back. Carbs stay in the plan.",
         moves: [
-          ["ohp", 4, "6-8", 150],
-          ["lateral", 4, "12-15", 60],
-          ["face-pull", 3, "12-15", 60],
-          ["rear-fly", 3, "12-15", 60],
-          ["shrug", 3, "10-12", 75],
+          ["delts", 4, "6-8", 150],
+          ["delts", 4, "12-15", 60],
+          ["delts", 3, "12-15", 60],
+          ["delts", 3, "12-15", 60],
+          ["traps", 3, "10-12", 75],
         ],
       },
       {
@@ -343,13 +403,13 @@ function templates(kind: GoalKind): Blueprint[] {
         minutes: 45,
         why: "Shorter session. Still eat enough — this week is a surplus.",
         moves: [
-          ["curl", 3, "10-12", 60],
-          ["preacher", 3, "10-12", 60],
-          ["hammer", 2, "10-12", 60],
-          ["skullcrusher", 3, "10-12", 75],
-          ["tricep", 3, "12-15", 60],
-          ["hanging-leg", 3, "8-12", 60],
-          ["plank", 3, "30-45s", 45],
+          ["biceps", 3, "10-12", 60],
+          ["biceps", 3, "10-12", 60],
+          ["biceps", 2, "10-12", 60],
+          ["triceps", 3, "10-12", 75],
+          ["triceps", 3, "12-15", 60],
+          ["abs", 3, "8-12", 60],
+          ["abs", 3, "30-45s", 45],
         ],
       },
       {
@@ -369,11 +429,11 @@ function templates(kind: GoalKind): Blueprint[] {
       minutes: 45,
       why: "One of each pattern. Dinner stays balanced — no extra surplus.",
       moves: [
-        ["squat", 3, "6-8", 150],
-        ["bench", 3, "6-8", 120],
-        ["row", 3, "8-10", 120],
-        ["rdl", 3, "8-10", 120],
-        ["plank", 3, "30-45s", 45],
+        ["quads", 3, "6-8", 150],
+        ["pectorals", 3, "6-8", 120],
+        ["lats", 3, "8-10", 120],
+        ["hamstrings", 3, "8-10", 120],
+        ["abs", 3, "30-45s", 45],
       ],
     },
     {
@@ -390,11 +450,11 @@ function templates(kind: GoalKind): Blueprint[] {
       minutes: 45,
       why: "Same idea, different pressing and pulling. Balanced plate.",
       moves: [
-        ["deadlift", 3, "5", 180],
-        ["ohp", 3, "6-8", 120],
-        ["lat", 3, "8-12", 90],
-        ["lunge", 3, "8-10", 90],
-        ["face-pull", 3, "12-15", 60],
+        ["hamstrings", 3, "5", 180],
+        ["delts", 3, "6-8", 120],
+        ["lats", 3, "8-12", 90],
+        ["quads", 3, "8-10", 90],
+        ["delts", 3, "12-15", 60],
       ],
     },
     REST,
@@ -427,8 +487,13 @@ export function programHint(kind: GoalKind | string | undefined): string {
   return "Two full-body days and walks. Dinner stays even unless you actually train.";
 }
 
-export function generateProgram(weekStart: string, goalKind: GoalKind | string | undefined): ProgramWeek {
+export function generateProgram(
+  weekStart: string,
+  goalKind: GoalKind | string | undefined,
+  equipmentAccess: EquipmentAccess | string | undefined = "full",
+): ProgramWeek {
   const kind = normalizeGoalKind(goalKind);
+  const access = normalizeEquipmentAccess(equipmentAccess);
   const dates = weekDates(weekStart);
   const days = templates(kind);
   return {
@@ -438,11 +503,11 @@ export function generateProgram(weekStart: string, goalKind: GoalKind | string |
     sessions: dates.map((date, weekday) => {
       const b = days[weekday] ?? REST;
       return {
-        id: `${weekStart}-${weekday}-${kind}`,
+        id: `${weekStart}-${weekday}-${kind}-${access}`,
         date,
         weekday,
         status: "planned",
-        ...fromBlueprint(b),
+        ...fromBlueprint(b, access, `${weekStart}-${kind}-${access}-${weekday}`),
       };
     }),
   };
@@ -499,8 +564,9 @@ export function rebuildProgram(
   goalKind: GoalKind | string | undefined,
   today: string,
   liftSessions: LiftSession[] = [],
+  equipmentAccess: EquipmentAccess | string | undefined = "full",
 ): ProgramWeek {
-  const fresh = generateProgram(weekStart, goalKind);
+  const fresh = generateProgram(weekStart, goalKind, equipmentAccess);
   if (!prev || prev.weekStart !== weekStart) {
     const built = applyVolumeCatchup(scheduleMakeups(applyMissed(fresh, today), today), today);
     return applyPerformanceAdjustment(built, liftSessions, today);

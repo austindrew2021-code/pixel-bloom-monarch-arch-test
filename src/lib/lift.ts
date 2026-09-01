@@ -1,6 +1,7 @@
 /** Strength math: volume, 1RM, plates, and calories that rise with the load on the bar. */
 
 import { format, parseISO } from "date-fns";
+import EXERCISE_DB from "./generated/exercise-db.json" with { type: "json" };
 import { kgFromLb } from "./body.ts";
 import { mondayOf, shiftWeek, weekDates } from "./week.ts";
 
@@ -13,131 +14,97 @@ export type LiftMove = {
   romM: number;
   bar?: boolean;
   bodyweight?: boolean;
+  unilateral?: boolean;
+  holdBased?: boolean;
+  logUnit?: "reps" | "sec" | "m";
 };
 
-export const LIFT_MOVES: LiftMove[] = [
-  { id: "squat", name: "Back squat", muscle: "legs", romM: 0.7, bar: true },
-  { id: "front-squat", name: "Front squat", muscle: "legs", romM: 0.65, bar: true },
-  { id: "goblet", name: "Goblet squat", muscle: "legs", romM: 0.6 },
-  { id: "split-squat", name: "Bulgarian split squat", muscle: "legs", romM: 0.55 },
-  { id: "rdl", name: "Dumbbell RDL", muscle: "legs", romM: 0.55 },
-  { id: "deadlift", name: "Deadlift", muscle: "full", romM: 0.65, bar: true },
-  { id: "lunge", name: "Walking lunge", muscle: "legs", romM: 0.5 },
-  { id: "hip-thrust", name: "Hip thrust", muscle: "legs", romM: 0.4, bar: true },
-  { id: "leg-press", name: "Leg press", muscle: "legs", romM: 0.45 },
-  { id: "calf", name: "Standing calf raise", muscle: "legs", romM: 0.2 },
-  { id: "bench", name: "Bench press", muscle: "push", romM: 0.4, bar: true },
-  { id: "incline", name: "Incline bench", muscle: "push", romM: 0.4, bar: true },
-  { id: "ohp", name: "Overhead press", muscle: "push", romM: 0.55, bar: true },
-  { id: "dip", name: "Dip", muscle: "push", romM: 0.4, bodyweight: true },
-  { id: "pushup", name: "Push-up", muscle: "push", romM: 0.35, bodyweight: true },
-  { id: "fly", name: "Dumbbell fly", muscle: "push", romM: 0.4 },
-  { id: "tricep", name: "Cable pushdown", muscle: "push", romM: 0.3 },
-  { id: "lateral", name: "Dumbbell lateral raise", muscle: "push", romM: 0.4 },
-  { id: "row", name: "Barbell row", muscle: "pull", romM: 0.45, bar: true },
-  { id: "pullup", name: "Pull-up", muscle: "pull", romM: 0.55, bodyweight: true },
-  { id: "lat", name: "Lat pulldown", muscle: "pull", romM: 0.55 },
-  { id: "face-pull", name: "Face pull", muscle: "pull", romM: 0.35 },
-  { id: "curl", name: "Dumbbell curl", muscle: "pull", romM: 0.35 },
-  { id: "hammer", name: "Hammer curl", muscle: "pull", romM: 0.35 },
-  { id: "shrug", name: "Dumbbell shrug", muscle: "pull", romM: 0.25 },
-  { id: "smith-shrug", name: "Smith shrug", muscle: "pull", romM: 0.25 },
-  { id: "swing", name: "Kettlebell swing", muscle: "full", romM: 0.7 },
-  { id: "farmer", name: "Farmer carry", muscle: "full", romM: 0.15 },
-  { id: "plank", name: "Plank", muscle: "core", romM: 0.1, bodyweight: true },
-  { id: "ab-wheel", name: "Ab wheel rollout", muscle: "core", romM: 0.45, bodyweight: true },
-  { id: "hanging-leg", name: "Hanging knee raise", muscle: "core", romM: 0.4, bodyweight: true },
-  { id: "step-up", name: "Step-up", muscle: "legs", romM: 0.5 },
-  { id: "leg-curl", name: "Lying leg curl", muscle: "legs", romM: 0.35 },
-  { id: "leg-ext", name: "Leg extension", muscle: "legs", romM: 0.35 },
-  { id: "chest-press", name: "Machine chest press", muscle: "push", romM: 0.4 },
-  { id: "seated-row", name: "Seated cable row", muscle: "pull", romM: 0.45 },
-  { id: "cable-row", name: "Close-grip seated row", muscle: "pull", romM: 0.45 },
-  { id: "rear-fly", name: "Rear delt fly", muscle: "pull", romM: 0.3 },
-  { id: "good-morning", name: "Good morning", muscle: "legs", romM: 0.5, bar: true },
-  { id: "skullcrusher", name: "Skull crusher", muscle: "push", romM: 0.3, bar: true },
-  { id: "preacher", name: "Dumbbell preacher curl", muscle: "pull", romM: 0.3 },
-  { id: "pullover", name: "Dumbbell pullover", muscle: "pull", romM: 0.4 },
-  { id: "crunch", name: "Crunch", muscle: "core", romM: 0.2, bodyweight: true },
-  { id: "woodchop", name: "Standing woodchop", muscle: "core", romM: 0.5 },
-  { id: "hip-abduction", name: "Hip abduction", muscle: "legs", romM: 0.3 },
-  { id: "reverse-lunge", name: "Reverse lunge", muscle: "legs", romM: 0.5 },
-  { id: "close-grip", name: "Close-grip bench", muscle: "push", romM: 0.35, bar: true },
-  { id: "chin-up", name: "Chin-up", muscle: "pull", romM: 0.55, bodyweight: true },
-  { id: "ham-slide", name: "Sliding floor curl", muscle: "legs", romM: 0.4, bodyweight: true },
-  { id: "nordic", name: "Nordic hamstring curl", muscle: "legs", romM: 0.45, bodyweight: true },
-  { id: "cossack", name: "Cossack squat", muscle: "legs", romM: 0.55 },
-  { id: "kickback", name: "Quadruped glute kickback", muscle: "legs", romM: 0.4, bodyweight: true },
-  { id: "glute-bridge", name: "Glute bridge", muscle: "legs", romM: 0.3, bodyweight: true },
-  { id: "pec-deck", name: "Pec deck", muscle: "push", romM: 0.35 },
-  { id: "arnold", name: "Arnold press", muscle: "push", romM: 0.45 },
-  { id: "hack-squat", name: "Hack squat", muscle: "legs", romM: 0.55 },
-  { id: "cable-fly", name: "Seated machine fly", muscle: "push", romM: 0.4 },
-  { id: "suspension-curl", name: "Suspension leg curl", muscle: "legs", romM: 0.4, bodyweight: true },
-  { id: "concentration", name: "Concentration curl", muscle: "pull", romM: 0.3 },
-  { id: "hip-adduction", name: "Hip adduction", muscle: "legs", romM: 0.25 },
-  { id: "decline", name: "Decline bench", muscle: "push", romM: 0.4, bar: true },
-  { id: "decline-db", name: "Decline dumbbell press", muscle: "push", romM: 0.4 },
-  { id: "cable-crossover", name: "Cable crossover", muscle: "push", romM: 0.4 },
-  { id: "incline-db", name: "Incline dumbbell press", muscle: "push", romM: 0.4 },
-  { id: "db-bench", name: "Dumbbell bench", muscle: "push", romM: 0.4 },
-  { id: "straight-arm-pulldown", name: "Straight-arm pulldown", muscle: "pull", romM: 0.45 },
-  { id: "one-arm-row", name: "One-arm dumbbell row", muscle: "pull", romM: 0.4 },
-  { id: "t-bar-row", name: "T-bar row", muscle: "pull", romM: 0.45, bar: true },
-  { id: "chest-supported-row", name: "Chest-supported row", muscle: "pull", romM: 0.4 },
-  { id: "one-arm-cable-row", name: "Chest-supported one-arm row", muscle: "pull", romM: 0.45 },
-  { id: "smith-squat", name: "Smith squat", muscle: "legs", romM: 0.65 },
-  { id: "sumo-squat", name: "Sumo squat", muscle: "legs", romM: 0.6 },
-  { id: "seated-leg-curl", name: "Seated leg curl", muscle: "legs", romM: 0.35 },
-  { id: "sissy-squat", name: "Sissy squat", muscle: "legs", romM: 0.4, bodyweight: true },
-  { id: "pendulum-squat", name: "Pendulum squat", muscle: "legs", romM: 0.55 },
-  { id: "donkey-kick", name: "Donkey kick", muscle: "legs", romM: 0.35, bodyweight: true },
-  { id: "pull-through", name: "Cable pull-through", muscle: "legs", romM: 0.45 },
-  { id: "seated-db-press", name: "Seated dumbbell press", muscle: "push", romM: 0.5 },
-  { id: "cable-lateral", name: "Cable lateral raise", muscle: "push", romM: 0.4 },
-  { id: "front-raise", name: "Dumbbell front raise", muscle: "push", romM: 0.4 },
-  { id: "machine-press", name: "Machine shoulder press", muscle: "push", romM: 0.5 },
-  { id: "reverse-pec-deck", name: "Reverse pec deck", muscle: "pull", romM: 0.3 },
-  { id: "upright-row", name: "Dumbbell upright row", muscle: "pull", romM: 0.35 },
-  { id: "cable-curl", name: "Cable curl", muscle: "pull", romM: 0.35 },
-  { id: "ez-curl", name: "EZ-bar curl", muscle: "pull", romM: 0.35, bar: true },
-  { id: "spider-curl", name: "EZ-bar preacher curl", muscle: "pull", romM: 0.3, bar: true },
-  { id: "incline-curl", name: "Incline curl", muscle: "pull", romM: 0.35 },
-  { id: "preacher-machine", name: "Machine preacher curl", muscle: "pull", romM: 0.3 },
-  { id: "overhead-ext", name: "Overhead dumbbell extension", muscle: "push", romM: 0.3 },
-  { id: "tricep-kickback", name: "Dumbbell kickback", muscle: "push", romM: 0.3 },
-  { id: "overhead-cable", name: "Overhead cable extension", muscle: "push", romM: 0.3 },
-  { id: "bench-dip", name: "Bench dip", muscle: "push", romM: 0.35, bodyweight: true },
-  { id: "bicycle", name: "Bicycle crunch", muscle: "core", romM: 0.25, bodyweight: true },
-  { id: "sit-up", name: "Sit-up", muscle: "core", romM: 0.3, bodyweight: true },
-  { id: "reverse-crunch", name: "Reverse crunch", muscle: "core", romM: 0.25, bodyweight: true },
-  { id: "russian-twist", name: "Russian twist", muscle: "core", romM: 0.25, bodyweight: true },
-  { id: "cable-crunch", name: "Cable crunch", muscle: "core", romM: 0.3 },
-  { id: "v-up", name: "V-up", muscle: "core", romM: 0.35, bodyweight: true },
-  { id: "flutter-kick", name: "Flutter kick", muscle: "core", romM: 0.15, bodyweight: true },
-  { id: "decline-situp", name: "Decline sit-up", muscle: "core", romM: 0.35, bodyweight: true },
-  { id: "machine-crunch", name: "Machine crunch", muscle: "core", romM: 0.25 },
-  { id: "seated-calf", name: "Seated calf raise", muscle: "legs", romM: 0.15 },
-  { id: "single-calf", name: "Single-leg calf raise", muscle: "legs", romM: 0.2, bodyweight: true },
-  { id: "jump-rope", name: "Jump rope", muscle: "full", romM: 0.15, bodyweight: true },
-  { id: "mountain-climber", name: "Mountain climber", muscle: "full", romM: 0.3, bodyweight: true },
-  { id: "jumping-jack", name: "Jumping jack", muscle: "full", romM: 0.25, bodyweight: true },
-  { id: "high-knees", name: "High knees", muscle: "full", romM: 0.3, bodyweight: true },
-  { id: "burpee", name: "Burpee", muscle: "full", romM: 0.5, bodyweight: true },
-  { id: "bike", name: "Exercise bike", muscle: "full", romM: 0.35 },
-  { id: "jump-squat", name: "Jump squat", muscle: "legs", romM: 0.5, bodyweight: true },
-  { id: "rower", name: "Rowing machine", muscle: "full", romM: 0.55 },
-  { id: "sprint", name: "Sprint", muscle: "full", romM: 0.6, bodyweight: true },
-  { id: "battle-rope", name: "Battle rope", muscle: "full", romM: 0.4 },
-];
+type RawExercise = {
+  id: string;
+  name: string;
+  category: string;
+  target: string;
+  equipment: string;
+  split: Muscle;
+  romM: number;
+  bar: boolean;
+  bodyweight: boolean;
+  unilateral: boolean;
+  holdBased: boolean;
+  logUnit: "reps" | "sec" | "m";
+};
+type RawExerciseDb = RawExercise[];
+
+/** The full training catalog, derived from exercises/data/exercises.json by scripts/build-exercise-db.mjs. */
+export const LIFT_MOVES: LiftMove[] = (EXERCISE_DB as RawExerciseDb).map((e) => ({
+  id: e.id,
+  name: e.name,
+  muscle: e.split,
+  romM: e.romM,
+  bar: e.bar || undefined,
+  bodyweight: e.bodyweight || undefined,
+  unilateral: e.unilateral || undefined,
+  holdBased: e.holdBased || undefined,
+  logUnit: e.logUnit,
+}));
+
+/**
+ * Picks one exercise per listed target, preferring a loadable barbell move
+ * (the old hand-picked templates leaned on compounds) and skipping ids
+ * already used earlier in the same template so repeated targets (e.g. two
+ * "pectorals" slots on a push day) land on two different exercises.
+ */
+function pickTemplateMoves(targets: string[]): string[] {
+  const db = EXERCISE_DB as RawExerciseDb;
+  const used = new Set<string>();
+  const picks: string[] = [];
+  for (const target of targets) {
+    const candidates = db.filter((e) => e.target === target && !used.has(e.id));
+    if (candidates.length === 0) continue;
+    const pick = candidates.find((e) => e.bar) ?? candidates[0]!;
+    used.add(pick.id);
+    picks.push(pick.id);
+  }
+  return picks;
+}
 
 export const LIFT_TEMPLATES: { id: string; name: string; hint: string; moves: string[] }[] = [
-  { id: "push", name: "Push", hint: "Chest, shoulders, triceps", moves: ["bench", "ohp", "incline", "dip", "lateral", "tricep"] },
-  { id: "pull", name: "Pull", hint: "Back and biceps", moves: ["deadlift", "row", "pullup", "lat", "face-pull", "curl"] },
-  { id: "legs", name: "Legs", hint: "Squat and hinge", moves: ["squat", "rdl", "lunge", "leg-press", "hip-thrust", "calf"] },
-  { id: "upper", name: "Upper", hint: "Push + pull", moves: ["bench", "row", "ohp", "lat", "curl", "tricep"] },
-  { id: "lower", name: "Lower", hint: "Squat + hinge", moves: ["squat", "deadlift", "lunge", "hip-thrust", "calf"] },
-  { id: "full", name: "Full body", hint: "One of each", moves: ["squat", "bench", "row", "rdl", "ohp"] },
+  {
+    id: "push",
+    name: "Push",
+    hint: "Chest, shoulders, triceps",
+    moves: pickTemplateMoves(["pectorals", "delts", "pectorals", "delts", "pectorals", "triceps"]),
+  },
+  {
+    id: "pull",
+    name: "Pull",
+    hint: "Back and biceps",
+    moves: pickTemplateMoves(["hamstrings", "lats", "lats", "lats", "delts", "biceps"]),
+  },
+  {
+    id: "legs",
+    name: "Legs",
+    hint: "Squat and hinge",
+    moves: pickTemplateMoves(["quads", "hamstrings", "quads", "quads", "glutes", "calves"]),
+  },
+  {
+    id: "upper",
+    name: "Upper",
+    hint: "Push + pull",
+    moves: pickTemplateMoves(["pectorals", "lats", "delts", "lats", "biceps", "triceps"]),
+  },
+  {
+    id: "lower",
+    name: "Lower",
+    hint: "Squat + hinge",
+    moves: pickTemplateMoves(["quads", "hamstrings", "quads", "glutes", "calves"]),
+  },
+  {
+    id: "full",
+    name: "Full body",
+    hint: "One of each",
+    moves: pickTemplateMoves(["quads", "pectorals", "lats", "hamstrings", "delts"]),
+  },
 ];
 
 export const REST_PRESETS = [60, 90, 120, 180] as const;
@@ -276,22 +243,8 @@ export function previousLine(sessions: LiftSession[], moveId: string, exceptId?:
   return undefined;
 }
 
-const HOLD_MOVES = new Set([
-  "plank",
-  "jump-rope",
-  "bike",
-  "rower",
-  "sprint",
-  "battle-rope",
-  "mountain-climber",
-  "high-knees",
-  "jumping-jack",
-]);
-
 export function logUnit(moveId: string): "reps" | "sec" | "m" {
-  if (moveId === "farmer") return "m";
-  if (HOLD_MOVES.has(moveId)) return "sec";
-  return "reps";
+  return moveById(moveId)?.logUnit ?? "reps";
 }
 
 export function displayStep(imperial: boolean): number {
@@ -442,21 +395,8 @@ export function formatElapsed(ms: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-const UNILATERAL = new Set([
-  "split-squat",
-  "lunge",
-  "reverse-lunge",
-  "one-arm-row",
-  "one-arm-cable-row",
-  "single-calf",
-  "kickback",
-  "donkey-kick",
-  "concentration",
-  "tricep-kickback",
-]);
-
 export function isUnilateral(moveId: string): boolean {
-  return UNILATERAL.has(moveId);
+  return moveById(moveId)?.unilateral === true;
 }
 
 /** How heavy this set is vs your estimated 1RM. */
