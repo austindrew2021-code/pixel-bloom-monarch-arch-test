@@ -108,6 +108,19 @@ const STARS: [number, number, number, number, number][] = [
   [22.1,17.8,0.63,0.44,5.7]
 ];
 
+/**
+ * Three comets in different lanes of the sky. They share the CSS travel
+ * vector, so each one's `angle` matches that diagonal and its tail streams
+ * out behind the head; `x`/`y` just place the lane. Their staggered periods
+ * (27s, 34s, 43s) never line up, so you get one every several seconds
+ * without them ever arriving as a pair.
+ */
+const COMETS = [
+  { variant: "a", x: -70, y: 90, angle: 35, length: 120, width: 2.6 },
+  { variant: "b", x: -110, y: 330, angle: 35, length: 92, width: 2 },
+  { variant: "c", x: -40, y: -60, angle: 35, length: 145, width: 3 },
+] as const;
+
 function BrassArt() {
   return (
     <svg className="theme-art__svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden>
@@ -215,6 +228,17 @@ function NebulaArt() {
           <stop offset="45%" stopColor="#0c0718" stopOpacity="0.42" />
           <stop offset="100%" stopColor="#0c0718" stopOpacity="0.6" />
         </linearGradient>
+        {/* Tail: bright at the head, gone by the end, so the streak tapers. */}
+        <linearGradient id="comet-tail" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="55%" stopColor="#e7cbff" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="1" />
+        </linearGradient>
+        <radialGradient id="comet-glow">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="40%" stopColor="#dcbcff" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#c77dff" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* Gas first, then the bright core, then stars on top — depth order matters. */}
@@ -231,19 +255,34 @@ function NebulaArt() {
        */}
       <rect x="0" y="0" width="400" height="800" fill="url(#neb-settle)" />
 
+      {/* Stars hold still. The only thing that moves in this sky is a comet. */}
       <g fill="#ffffff">
-        {STARS.map(([x, y, r, o, delay], i) => (
-          <circle
-            key={i}
-            className="theme-art__twinkle"
-            cx={`${x}%`}
-            cy={`${y}%`}
-            r={r}
-            opacity={o}
-            style={{ animationDelay: `${delay}s` }}
-          />
+        {STARS.map(([x, y, r, o], i) => (
+          <circle key={i} cx={`${x}%`} cy={`${y}%`} r={r} opacity={o} />
         ))}
       </g>
+
+      {COMETS.map((c) => (
+        <g key={c.variant} className={`theme-art__comet theme-art__comet--${c.variant}`}>
+          {/* Rotated to its travel direction so the tail streams out behind the head. */}
+          <g transform={`translate(${c.x} ${c.y}) rotate(${c.angle})`}>
+            {/*
+             * The tail is a tapered wedge, not a stroked line: it narrows to a
+             * point the way a real one does, and a line would not paint at all
+             * here — a horizontal path has a zero-height bounding box, and an
+             * objectBoundingBox gradient is dropped on a degenerate box.
+             */}
+            <path
+              d={`M0 ${-c.width * 2.6} L0 ${c.width * 2.6} L${-c.length * 1.15} 0 Z`}
+              fill="url(#comet-tail)"
+              opacity="0.3"
+            />
+            <path d={`M0 ${-c.width} L0 ${c.width} L${-c.length} 0 Z`} fill="url(#comet-tail)" />
+            <circle r={c.width * 5} fill="url(#comet-glow)" />
+            <circle r={c.width * 0.9} fill="#ffffff" />
+          </g>
+        </g>
+      ))}
     </svg>
   );
 }

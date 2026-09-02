@@ -283,38 +283,38 @@
   }
 
   /*
-   * The lightning: a rare, fast double-flash across the grid. Long gap, low
-   * peak opacity — atmosphere you catch out of the corner of your eye, not a
-   * strobe over content you're trying to read.
+   * The charge in the grid — a light that travels, not a flash.
+   *
+   * This was a full-viewport double-flash, which is the shape of thing that
+   * can trigger photosensitive seizures: a whole-screen luminance jump,
+   * repeated, in quick succession. It is a slow diagonal sweep now. The pane
+   * never changes brightness in place; it moves, taking several seconds to
+   * cross, so the effect reads as current running through the grid.
    */
   [data-theme="neon"] body::after {
     content: "";
     position: fixed;
-    inset: 0;
+    inset: -40%;
     z-index: -1;
     pointer-events: none;
-    background-image: linear-gradient(200deg, rgb(180 240 255 / 0.9), transparent 42%);
-    opacity: 0;
-    animation: theme-lightning 14s var(--ease-smooth-out) infinite;
+    background-image: linear-gradient(
+      200deg,
+      transparent 38%,
+      rgb(150 235 255 / 0.09) 47%,
+      rgb(210 245 255 / 0.14) 50%,
+      rgb(150 235 255 / 0.09) 53%,
+      transparent 62%
+    );
+    animation: theme-charge 19s linear infinite;
   }
 
-  @keyframes theme-lightning {
-    0%,
-    88%,
+  @keyframes theme-charge {
+    0% {
+      transform: translate3d(-42%, -28%, 0);
+    }
+    55%,
     100% {
-      opacity: 0;
-    }
-    89% {
-      opacity: 0.14;
-    }
-    90.5% {
-      opacity: 0.02;
-    }
-    92% {
-      opacity: 0.1;
-    }
-    95% {
-      opacity: 0;
+      transform: translate3d(42%, 28%, 0);
     }
   }
 
@@ -392,17 +392,55 @@
     }
   }
 
-  .theme-art__twinkle {
-    animation: theme-twinkle 5.5s ease-in-out infinite;
+  /*
+   * Comets, not twinkling.
+   *
+   * Stars used to animate opacity, and with dozens of them on staggered
+   * delays the screen carried a constant scatter of luminance changes — no
+   * single star broke a flash threshold, but together they read as jitter
+   * and are exactly the kind of thing that can affect photosensitive people.
+   * The stars are painted static now, and the movement in this sky is one
+   * comet drifting across every several seconds: a slow translate with a
+   * gentle fade at each end, never an abrupt change in brightness.
+   */
+  .theme-art__comet {
+    opacity: 0;
+    animation: theme-comet 27s linear infinite;
   }
 
-  @keyframes theme-twinkle {
-    0%,
-    100% {
-      opacity: inherit;
+  .theme-art__comet--b {
+    animation-duration: 34s;
+    animation-delay: 11s;
+  }
+
+  .theme-art__comet--c {
+    animation-duration: 43s;
+    animation-delay: 23s;
+  }
+
+  /*
+   * Most of the cycle is spent off-screen and invisible; the streak itself
+   * lasts a couple of seconds, and both the fade in and the fade out take
+   * roughly half a second so there is no snap at either end.
+   */
+  @keyframes theme-comet {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0);
     }
-    45% {
-      opacity: 0.12;
+    2% {
+      opacity: 0.8;
+    }
+    6% {
+      opacity: 0.8;
+    }
+    8% {
+      opacity: 0;
+      transform: translate(430px, 300px);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(430px, 300px);
     }
   }
 
@@ -411,7 +449,7 @@
     [data-theme="neon"] body::after,
     .theme-art__spin,
     .theme-art__drift,
-    .theme-art__twinkle {
+    .theme-art__comet {
       animation: none;
     }
   }
