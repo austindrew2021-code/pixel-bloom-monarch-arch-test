@@ -224,7 +224,9 @@ function apkDownloadPlugin(): Plugin {
           next();
           return;
         }
-        const file = join(server.config.root, "public/spoonful-test.apk");
+        // One APK on disk: the lower-case twin was a byte-identical copy that
+        // only this middleware read, and it shipped 62 MB to the CDN for nothing.
+        const file = join(server.config.root, "public/Spoonful-Test.apk");
         if (!existsSync(file)) {
           res.statusCode = 404;
           res.setHeader("content-type", "text/plain; charset=utf-8");
