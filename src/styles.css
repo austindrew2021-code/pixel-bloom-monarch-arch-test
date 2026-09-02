@@ -223,7 +223,13 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: var(--color-background);
+    /*
+     * html above paints the opaque base colour, so body stays transparent and
+     * only carries the washes. An opaque colour here would paint over the
+     * negative-z-index decoration layers (body::before and .theme-art), which
+     * is exactly where the per-theme atmosphere and ornament live.
+     */
+    background-color: transparent;
     background-image:
       radial-gradient(1000px 520px at 0% -10%, color-mix(in oklab, var(--color-spark) 26%, transparent), transparent 58%),
       radial-gradient(720px 420px at 100% 0%, color-mix(in oklab, var(--color-food-yolk) 22%, transparent), transparent 55%),
@@ -327,9 +333,85 @@
       repeating-linear-gradient(rgb(61 255 154 / 0.05) 0 1px, transparent 1px 3px);
   }
 
-  /* Atmosphere is decoration; motion in it is optional. */
+  /*
+   * The ornament layer (src/components/theme-ornament.tsx). Sits above the
+   * atmosphere wash and below every pixel of app chrome, and never takes a
+   * pointer event.
+   */
+  .theme-art {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .theme-art__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Meshed gears: same period, opposite directions, so the teeth stay honest. */
+  .theme-art__spin {
+    animation: theme-gear 62s linear infinite;
+  }
+
+  .theme-art__spin--ccw {
+    animation-direction: reverse;
+    animation-duration: 46s;
+  }
+
+  .theme-art__spin--cw-slow {
+    animation-duration: 96s;
+  }
+
+  @keyframes theme-gear {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Gas drifts; it should never look like it is scrolling. */
+  .theme-art__drift {
+    animation: theme-drift 120s ease-in-out infinite alternate;
+    transform-origin: center;
+  }
+
+  .theme-art__drift--slow {
+    animation-duration: 180s;
+    animation-direction: alternate-reverse;
+  }
+
+  @keyframes theme-drift {
+    from {
+      transform: translate3d(-1.5%, 0, 0) scale(1.04);
+    }
+    to {
+      transform: translate3d(2.5%, -2%, 0) scale(1.12);
+    }
+  }
+
+  .theme-art__twinkle {
+    animation: theme-twinkle 5.5s ease-in-out infinite;
+  }
+
+  @keyframes theme-twinkle {
+    0%,
+    100% {
+      opacity: inherit;
+    }
+    45% {
+      opacity: 0.12;
+    }
+  }
+
+  /* Atmosphere and ornament are decoration; motion in them is optional. */
   @media (prefers-reduced-motion: reduce) {
-    [data-theme="neon"] body::after {
+    [data-theme="neon"] body::after,
+    .theme-art__spin,
+    .theme-art__drift,
+    .theme-art__twinkle {
       animation: none;
     }
   }

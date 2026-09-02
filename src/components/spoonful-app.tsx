@@ -14,6 +14,7 @@ import { SnapView } from "@/components/snap-view";
 import { StoreView } from "@/components/store-view";
 import { StreakOfferCard } from "@/components/streak-offer";
 import { TesterGate } from "@/components/tester-gate";
+import { ThemeOrnament } from "@/components/theme-ornament";
 import { ThemePicker } from "@/components/theme-picker";
 import { UsernameGate } from "@/components/username-gate";
 import { Walkthrough } from "@/components/walkthrough";
@@ -238,6 +239,7 @@ export function SpoonfulApp() {
 
   return (
     <div className="min-h-dvh max-w-full overflow-x-clip bg-transparent text-foreground">
+      <ThemeOrnament theme={theme} />
       <CelebrateOverlay />
       <StreakOfferCard />
       <header className="pt-[max(0.5rem,env(safe-area-inset-top))]">
