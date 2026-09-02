@@ -228,26 +228,19 @@ function NebulaArt() {
           <stop offset="45%" stopColor="#0c0718" stopOpacity="0.42" />
           <stop offset="100%" stopColor="#0c0718" stopOpacity="0.6" />
         </linearGradient>
-        {/* Tail: bright at the head, gone by the end, so the streak tapers. */}
-        <linearGradient id="comet-tail" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="55%" stopColor="#e7cbff" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="1" />
-        </linearGradient>
-        <radialGradient id="comet-glow">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="40%" stopColor="#dcbcff" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#c77dff" stopOpacity="0" />
-        </radialGradient>
       </defs>
 
-      {/* Gas first, then the bright core, then stars on top — depth order matters. */}
-      <g className="theme-art__drift">
-        <rect x="-60" y="-60" width="520" height="920" filter="url(#neb-cloud)" opacity="0.42" />
-      </g>
-      <g className="theme-art__drift theme-art__drift--slow">
-        <rect x="-60" y="-60" width="520" height="920" filter="url(#neb-cloud-2)" opacity="0.28" />
-      </g>
+      {/*
+       * Gas first, then the bright core, then stars on top — depth order matters.
+       *
+       * These two rects are deliberately motionless. They carry fractal-noise
+       * filters over a 520x920 area, and animating a filtered element makes the
+       * browser re-run the whole filter every frame: expensive enough to matter
+       * on a phone someone leaves open mid-workout, and it can flicker as tiles
+       * re-rasterise. Painted once, they cost nothing to keep on screen.
+       */}
+      <rect x="-60" y="-60" width="520" height="920" filter="url(#neb-cloud)" opacity="0.42" />
+      <rect x="-40" y="-90" width="520" height="920" filter="url(#neb-cloud-2)" opacity="0.28" />
       <ellipse cx="168" cy="272" rx="260" ry="300" fill="url(#neb-core)" opacity="0.75" />
       {/*
        * Gas is prettiest where there is no text. Settle it back down behind the
@@ -262,6 +255,32 @@ function NebulaArt() {
         ))}
       </g>
 
+    </svg>
+  );
+}
+
+/**
+ * Comets ride in their own layer, above the gas but painted separately.
+ * Sharing a canvas with the filtered clouds would make every frame of a
+ * comet's flight re-run those filters; alone, they are a handful of cheap
+ * vector shapes.
+ */
+function NebulaComets() {
+  return (
+    <svg className="theme-art__svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden>
+      <defs>
+        {/* Tail: bright at the head, gone by the end, so the streak tapers. */}
+        <linearGradient id="comet-tail" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="55%" stopColor="#e7cbff" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="1" />
+        </linearGradient>
+        <radialGradient id="comet-glow">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="40%" stopColor="#dcbcff" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#c77dff" stopOpacity="0" />
+        </radialGradient>
+      </defs>
       {COMETS.map((c) => (
         <g key={c.variant} className={`theme-art__comet theme-art__comet--${c.variant}`}>
           {/* Rotated to its travel direction so the tail streams out behind the head. */}
@@ -291,7 +310,14 @@ export function ThemeOrnament({ theme }: { theme: ThemeId }) {
   if (theme !== "brass" && theme !== "nebula") return null;
   return (
     <div className="theme-art" aria-hidden>
-      {theme === "brass" ? <BrassArt /> : <NebulaArt />}
+      {theme === "brass" ? (
+        <BrassArt />
+      ) : (
+        <>
+          <NebulaArt />
+          <NebulaComets />
+        </>
+      )}
     </div>
   );
 }

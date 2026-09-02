@@ -346,7 +346,10 @@
     overflow: hidden;
   }
 
+  /* Layers stack rather than flow, so a theme can split static art from moving art. */
   .theme-art__svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     display: block;
@@ -369,26 +372,6 @@
   @keyframes theme-gear {
     to {
       transform: rotate(360deg);
-    }
-  }
-
-  /* Gas drifts; it should never look like it is scrolling. */
-  .theme-art__drift {
-    animation: theme-drift 120s ease-in-out infinite alternate;
-    transform-origin: center;
-  }
-
-  .theme-art__drift--slow {
-    animation-duration: 180s;
-    animation-direction: alternate-reverse;
-  }
-
-  @keyframes theme-drift {
-    from {
-      transform: translate3d(-1.5%, 0, 0) scale(1.04);
-    }
-    to {
-      transform: translate3d(2.5%, -2%, 0) scale(1.12);
     }
   }
 
@@ -448,7 +431,6 @@
   @media (prefers-reduced-motion: reduce) {
     [data-theme="neon"] body::after,
     .theme-art__spin,
-    .theme-art__drift,
     .theme-art__comet {
       animation: none;
     }
