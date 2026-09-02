@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { authMiddleware } from "@/lib/auth/middleware";
 import { isBannedDishName, polishSteps } from "./cook-steps";
 import { chefGoalRules, fitsInventedGoal } from "./goal-fit";
 import type { PlateKind, Protein, Recipe } from "./types";
@@ -148,6 +149,9 @@ const STEP_RULE =
   "Steps: as many full sentences as the dish actually needs (usually 4–12). Yeast bread, gumbo, beans, and braises need more than 5. A salad or sauce may need fewer. Never pad with dummy lines like 'taste for salt'. Never stop early if the food still has a rise, a second cook, or a rest.";
 
 export const planWeekWithChef = createServerFn({ method: "POST" })
+  // Every other kitchen server function is gated; without this one the chef is
+  // an open LLM proxy any origin can POST to on our provider key.
+  .middleware([authMiddleware])
   .validator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     const { kitchenJson } = await import("./kitchen-llm.server");

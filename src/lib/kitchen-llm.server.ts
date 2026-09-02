@@ -19,7 +19,9 @@ type Provider = {
 };
 
 function groqKey(): string | undefined {
-  return process.env.GROQ_API_KEY || "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";
+  // Environment only. A literal fallback here is readable by anyone with the
+  // repo, so the key it names is public the moment it is committed.
+  return process.env.GROQ_API_KEY?.trim() || undefined;
 }
 
 function xaiKey(): string | undefined {
