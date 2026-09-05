@@ -269,8 +269,8 @@ export function Onboarding() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-base font-medium">Skip these</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Kitchen Shield hides them from every suggestion.</p>
+        <h2 className="text-base font-medium">Allergies to skip</h2>
+        <p className="mt-1 text-sm text-muted-foreground">We'll hide recipes that use these.</p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {ALLERGIES.map((a) => {
             const on = allergies.includes(a.id);

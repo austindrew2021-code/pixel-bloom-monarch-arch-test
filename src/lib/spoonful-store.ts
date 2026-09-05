@@ -54,6 +54,7 @@ import type {
   AllergyId,
   CustomMeal,
   ExtraGroceryItem,
+  Ingredient,
   MacroGoal,
   MealSlotKind,
   PantryItem,
@@ -80,6 +81,8 @@ function rollAiWeek(
 
 export type TabId = "plan" | "recipes" | "snap" | "people" | "shop" | "fit" | "sauces" | "desserts";
 
+export type ShopScope = "tonight" | "week";
+
 export type GroceryLine = {
   key: string;
   name: string;
@@ -101,6 +104,8 @@ type SpoonfulState = {
   pantry: PantryItem[];
   extraGrocery: ExtraGroceryItem[];
   checked: Record<string, boolean>;
+  shopScope: ShopScope;
+  focusLock: number;
   unlocked: AddonId[];
   theme: ThemeId;
   tab: TabId;
@@ -168,6 +173,7 @@ type SpoonfulState = {
   setGoal: (goal: MacroGoal) => void;
   assignMeal: (date: string, slot: MealSlotKind, recipeId: string) => void;
   assignCustom: (date: string, slot: MealSlotKind, custom: CustomMeal) => void;
+  logTonight: (input: { name: string; ingredients?: Ingredient[]; notes?: string; cooked?: boolean }) => void;
   skipNight: (date: string, kind: "takeout" | "rest") => void;
   removeMeal: (id: string) => void;
   fillWeek: (overwrite: boolean) => number;
@@ -182,6 +188,10 @@ type SpoonfulState = {
   removeExtraGrocery: (id: string) => void;
   toggleChecked: (key: string) => void;
   clearChecked: () => void;
+  setShopScope: (scope: ShopScope) => void;
+  rebuildShopFromTonight: () => void;
+  lockKitchen: () => void;
+  unlockKitchen: () => void;
   stashCheckedToPantry: () => number;
   unlock: (id: AddonId) => void;
   hasAddon: (id: AddonId) => boolean;
@@ -424,6 +434,8 @@ export const useSpoonful = create<SpoonfulState>()(
       pantry: [],
       extraGrocery: [],
       checked: {},
+      shopScope: "tonight",
+      focusLock: 0,
       unlocked: [],
       theme: "paper",
       tab: "plan",
@@ -534,6 +546,23 @@ export const useSpoonful = create<SpoonfulState>()(
           const rest = s.meals.filter((m) => mealKey(m.date, m.slot) !== mealKey(date, slot));
           return { meals: [...rest, { id: uid(), date, slot, custom }] };
         }),
+      logTonight: ({ name, ingredients, notes, cooked = true }) => {
+        const date = isoDate();
+        const trimmed = name.trim();
+        if (!trimmed) return;
+        get().assignCustom(date, "dinner", {
+          id: `log-${Date.now()}`,
+          name: trimmed,
+          minutes: 20,
+          notes: notes?.trim() || "Logged from the kitchen",
+          ingredients:
+            ingredients && ingredients.length > 0
+              ? ingredients
+              : [{ name: trimmed, qty: 1, unit: "", aisle: "Other" }],
+        });
+        if (cooked) get().markCooked(date);
+        set({ shopScope: "tonight" });
+      },
       skipNight: (date, kind) =>
         set((s) => {
           const rest = s.meals.filter((m) => mealKey(m.date, m.slot) !== mealKey(date, "dinner"));
@@ -673,6 +702,13 @@ export const useSpoonful = create<SpoonfulState>()(
         }
         set({ checked: next });
       },
+      setShopScope: (scope) => set({ shopScope: scope }),
+      rebuildShopFromTonight: () => {
+        get().clearChecked();
+        set({ shopScope: "tonight" });
+      },
+      lockKitchen: () => set((s) => ({ focusLock: s.focusLock + 1 })),
+      unlockKitchen: () => set((s) => ({ focusLock: Math.max(0, s.focusLock - 1) })),
       stashCheckedToPantry: () => {
         const { weekStart, meals, extraGrocery, pantry, checked, household } = get();
         const lines = groceryForWeek(meals, weekStart, extraGrocery, pantry, household);
@@ -1173,6 +1209,7 @@ export const useSpoonful = create<SpoonfulState>()(
           pantry: s.pantry,
           extraGrocery: s.extraGrocery,
           checked: s.checked,
+          shopScope: s.shopScope,
           unlocked: s.unlocked,
           theme: s.theme,
           walkthroughDone: s.walkthroughDone,
@@ -1232,6 +1269,7 @@ export const useSpoonful = create<SpoonfulState>()(
           ...(Array.isArray(payload.pantry) ? { pantry: payload.pantry as PantryItem[] } : {}),
           ...(Array.isArray(payload.extraGrocery) ? { extraGrocery: payload.extraGrocery as ExtraGroceryItem[] } : {}),
           ...(payload.checked && typeof payload.checked === "object" ? { checked: payload.checked as Record<string, boolean> } : {}),
+          ...(payload.shopScope === "tonight" || payload.shopScope === "week" ? { shopScope: payload.shopScope } : {}),
           ...(Array.isArray(payload.unlocked) ? { unlocked: payload.unlocked as AddonId[] } : {}),
           ...(isThemeId(payload.theme) ? { theme: payload.theme } : {}),
           ...(typeof payload.walkthroughDone === "boolean" ? { walkthroughDone: payload.walkthroughDone } : {}),
@@ -1511,6 +1549,8 @@ export const useSpoonful = create<SpoonfulState>()(
           autoPlate: typeof p.autoPlate === "boolean" ? p.autoPlate : true,
           programWeek: isProgramWeek(p.programWeek) ? p.programWeek : current.programWeek,
           favMoves: Array.isArray(p.favMoves) ? p.favMoves : current.favMoves,
+          shopScope: p.shopScope === "week" || p.shopScope === "tonight" ? p.shopScope : current.shopScope,
+          focusLock: 0,
         };
       },
       partialize: (s) => ({
@@ -1525,6 +1565,7 @@ export const useSpoonful = create<SpoonfulState>()(
         pantry: s.pantry,
         extraGrocery: s.extraGrocery,
         checked: s.checked,
+        shopScope: s.shopScope,
         unlocked: s.unlocked,
         theme: s.theme,
         walkthroughDone: s.walkthroughDone,
@@ -1586,7 +1627,7 @@ export function resolveMeal(meal: PlannedMeal): {
   skip?: PlannedMeal["skip"];
 } {
   if (meal.skip === "takeout") return { title: "Eating out", minutes: 0, skip: "takeout" };
-  if (meal.skip === "rest") return { title: "Kitchen closed", minutes: 0, skip: "rest" };
+  if (meal.skip === "rest") return { title: "Night off", minutes: 0, skip: "rest" };
   if (meal.custom) {
     return { title: meal.custom.name, minutes: meal.custom.minutes, custom: meal.custom };
   }
@@ -1660,8 +1701,11 @@ export function groceryForWeek(
   extra: ExtraGroceryItem[],
   pantry: PantryItem[],
   household = 4,
+  opts?: { scope?: ShopScope; date?: string },
 ): GroceryLine[] {
-  const dates = new Set(weekDates(weekStart));
+  const scope = opts?.scope ?? "week";
+  const tonight = opts?.date ?? isoDate();
+  const dates = scope === "tonight" ? new Set([tonight]) : new Set(weekDates(weekStart));
   const map = new Map<string, GroceryLine>();
 
   const add = (name: string, qty: number, unit: string, aisle: Aisle) => {

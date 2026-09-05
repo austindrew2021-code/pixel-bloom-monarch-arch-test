@@ -10,16 +10,17 @@ export function CelebrateOverlay() {
   const clear = useSpoonful((s) => s.clearCelebrate);
   const share = useSpoonful((s) => s.shareCelebration);
   const prefs = useSpoonful((s) => s.notifyPrefs);
+  const focusLock = useSpoonful((s) => s.focusLock);
   const shareable = last ? isWorkoutCelebration(last.id) : false;
 
   useEffect(() => {
-    if (!last) return;
+    if (!last || focusLock > 0) return;
     if (prefs.milestones) pushNote(last.title, last.body);
     const id = window.setTimeout(() => clear(), shareable ? 6000 : 3200);
     return () => window.clearTimeout(id);
-  }, [last, clear, prefs.milestones, shareable]);
+  }, [last, clear, prefs.milestones, shareable, focusLock]);
 
-  if (!last) return null;
+  if (!last || focusLock > 0) return null;
 
   return (
     <div className="pointer-events-none chrome-gutter fixed inset-x-0 top-[max(5.5rem,env(safe-area-inset-top))] z-50 flex justify-start pl-4">

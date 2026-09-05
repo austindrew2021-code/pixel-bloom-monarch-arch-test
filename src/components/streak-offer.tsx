@@ -27,6 +27,7 @@ export function StreakOfferCard() {
   const dismissStreakOffer = useSpoonful((s) => s.dismissStreakOffer);
   const unlock = useSpoonful((s) => s.unlock);
   const hasAddon = useSpoonful((s) => s.hasAddon);
+  const focusLock = useSpoonful((s) => s.focusLock);
   const [buying, setBuying] = useState(false);
 
   // streakSaveBonus/Used/unlocked are read only to keep this reactive to the
@@ -36,7 +37,7 @@ export function StreakOfferCard() {
   void unlocked;
 
   const info = brokenStreakInfo(cookedDates, streakSavedDates);
-  if (!info || streakSaveOfferSeen.includes(info.brokenDate)) return null;
+  if (!info || streakSaveOfferSeen.includes(info.brokenDate) || focusLock > 0) return null;
 
   const remaining = streakSaveRemaining();
   const table = hasAddon("kitchen-table");

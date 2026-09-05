@@ -26,7 +26,7 @@ import { recipesByCuisine, searchRecipes } from "@/lib/search";
 import { recipeAllergens, recipeSafe } from "@/lib/shield";
 import { unlockedRecipes, useSpoonful } from "@/lib/spoonful-store";
 import type { PlannedMeal, Protein, Recipe } from "@/lib/types";
-import { mondayOf } from "@/lib/week";
+import { isoDate } from "@/lib/fuel";
 import { cn } from "@/lib/utils";
 
 const DIET_CHIPS: { id: DietFlag | "all" | "healthy" | "quick"; key: string }[] = [
@@ -98,7 +98,6 @@ type SpeechRec = {
 export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
   const unlocked = useSpoonful((s) => s.unlocked);
   const assignCustom = useSpoonful((s) => s.assignCustom);
-  const setTab = useSpoonful((s) => s.setTab);
   const favorites = useSpoonful((s) => s.favorites);
   const nextGen = useSpoonful((s) => s.nextGen);
   const consumeLookup = useSpoonful((s) => s.consumeLookup);
@@ -184,11 +183,12 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
       (tableGoal === "lose" || tableGoal === "recomp") &&
       !query.trim() &&
       more !== "dessert" &&
-      more !== "breakfast";
+      more !== "breakfast" &&
+      more !== "saved";
     const filtered = pool.filter((r) => {
       if (hidden.includes(r.id)) return false;
       if (!showBlocked && allergies.length > 0 && !recipeSafe(r, allergies)) return false;
-      if (hideOffGoal && !fitsGoal(r, tableGoal, "dinner")) return false;
+      if (hideOffGoal && !favorites.includes(r.id) && !fitsGoal(r, tableGoal, "dinner")) return false;
       if (timeMax !== null && r.minutes > timeMax) return false;
       if (protein === "fish") {
         if (r.protein !== "fish" && r.protein !== "seafood") return false;
@@ -264,7 +264,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
         toast(res.error);
         return;
       }
-      assignCustom(mondayOf(), "dinner", {
+      assignCustom(isoDate(), "dinner", {
         id: `lookup-${Date.now()}`,
         name: res.recipe.name,
         minutes: res.recipe.minutes,
@@ -278,8 +278,8 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
         nutrition: res.recipe.nutrition,
         steps: res.recipe.steps,
       });
-      toast(`Found ${res.recipe.name} — plated on Monday`);
-      setTab("plan");
+      toast(`Found ${res.recipe.name} — plated tonight`);
+      useSpoonful.getState().setShopScope("tonight");
     } catch {
       toast("Look-up failed");
     } finally {
@@ -292,12 +292,12 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">{t(locale, "kitchen")}</p>
       <h1 className="mt-1 font-display text-4xl">{t(locale, "recipes")}</h1>
       <p className="mt-2 text-sm text-foreground/80">
-        {RECIPES.length} dishes, grouped by diet, how you cook, and the table they belong on.
-        {allergies.length > 0 ? " Kitchen Shield is on." : ""}
+        {RECIPES.length} dishes. Browse by diet, how you cook, or cuisine.
+        {allergies.length > 0 ? " Recipes that clash with your allergies are hidden." : ""}
       </p>
       {nextGen && (tableGoal === "lose" || tableGoal === "recomp") ? (
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Next Gen is locked to {goalLabel(tableGoal)}. Off-goal dinners stay hidden unless you search. Desserts stay a treat — Fill, Surprise, and the Chef will not auto-plate them.
+          Only dinners that fit {goalLabel(tableGoal)} are shown. Search to see the rest. Desserts stay a treat — they won't be picked as dinner for you.
         </p>
       ) : null}
 
@@ -417,7 +417,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
           className="mt-2 text-xs text-muted-foreground"
           onClick={() => setShowBlocked((v) => !v)}
         >
-          {showBlocked ? "Hide blocked dishes" : "Show dishes Kitchen Shield hid"}
+          {showBlocked ? "Hide allergy dishes" : "Show dishes your allergies hid"}
         </button>
       ) : null}
 
@@ -580,7 +580,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
               onCook={() => {
                 const meal: PlannedMeal = {
                   id: `cook-${active.id}`,
-                  date: mondayOf(),
+                  date: isoDate(),
                   slot: "dinner",
                   recipeId: active.id,
                 };
@@ -588,9 +588,9 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
                 setActive(null);
               }}
               onPlan={() => {
-                useSpoonful.getState().assignMeal(mondayOf(), "dinner", active.id);
+                useSpoonful.getState().assignMeal(isoDate(), "dinner", active.id);
+                useSpoonful.getState().setShopScope("tonight");
                 setActive(null);
-                useSpoonful.getState().setTab("plan");
               }}
             />
           ) : null}

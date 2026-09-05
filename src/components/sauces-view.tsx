@@ -43,7 +43,7 @@ export function SaucesView() {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Kitchen</p>
       <h1 className="mt-1 font-display text-4xl">Sauces</h1>
       <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-        Donair shops, dry rubs, mother sauces, and the rest of the world. Its own menu — not buried in Recipes.
+        Sauces, dips, and dry rubs — from donair shops to homemade pesto. Pick one to cook or add to the shop list.
       </p>
 
       <Input

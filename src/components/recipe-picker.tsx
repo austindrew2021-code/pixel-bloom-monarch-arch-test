@@ -1,11 +1,10 @@
 import { Heart, Lock, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MealPhoto } from "@/components/meal-photo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { goalLabel } from "@/lib/body";
 import { dietFlags } from "@/lib/diet";
 import { formatMinutes } from "@/lib/format";
 import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
@@ -37,6 +36,7 @@ export function RecipePicker({
   const prefs = useSpoonful((s) => s.prefs);
   const allergies = useSpoonful((s) => s.allergies);
   const hidden = useSpoonful((s) => s.hidden);
+  const favorites = useSpoonful((s) => s.favorites);
   const nextGen = useSpoonful((s) => s.nextGen);
   const body = useSpoonful((s) => s.body);
   const seats = useSpoonful((s) => s.seats) ?? [];
@@ -44,6 +44,14 @@ export function RecipePicker({
   const [query, setQuery] = useState("");
   const [customOpen, setCustomOpen] = useState(false);
   const available = unlockedRecipes(unlocked);
+  const lockKitchen = useSpoonful((s) => s.lockKitchen);
+  const unlockKitchen = useSpoonful((s) => s.unlockKitchen);
+
+  useEffect(() => {
+    if (!open) return;
+    lockKitchen();
+    return () => unlockKitchen();
+  }, [open, lockKitchen, unlockKitchen]);
 
   const list = useMemo(() => {
     const base = query.trim() ? searchRecipes(query, RECIPES) : RECIPES;
@@ -55,8 +63,17 @@ export function RecipePicker({
     const offGoal = preferred.filter((r) => !fitsGoal(r, tableGoal, "dinner"));
     const hideOff = (tableGoal === "lose" || tableGoal === "recomp") && !query.trim();
     const visibleOff = hideOff ? [] : offGoal;
-    return [...onGoal, ...visibleOff, ...rest, ...locked.filter((r) => recipeSafe(r, allergies))];
-  }, [query, available, prefs, allergies, hidden, tableGoal]);
+    const favSet = new Set(favorites);
+    const favs = openRecipes.filter((r) => favSet.has(r.id) && recipeSafe(r, allergies));
+    const skip = new Set(favs.map((r) => r.id));
+    return [
+      ...favs,
+      ...onGoal.filter((r) => !skip.has(r.id)),
+      ...visibleOff.filter((r) => !skip.has(r.id)),
+      ...rest.filter((r) => !skip.has(r.id)),
+      ...locked.filter((r) => recipeSafe(r, allergies)),
+    ];
+  }, [query, available, prefs, allergies, hidden, tableGoal, favorites]);
 
   return (
     <Sheet
@@ -82,7 +99,7 @@ export function RecipePicker({
           <>
             <h2 className="font-display text-2xl">Add to the week</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Dishes that fit {goalLabel(tableGoal)} sit first. Off-goal plates stay hidden unless you search for them.
+              Saved plates stay on top even after you change a preference. Off-goal plates stay hidden unless you search.
             </p>
             {onSurprise || onSkip ? (
               <div className="mt-3 grid grid-cols-2 gap-2">
@@ -98,7 +115,7 @@ export function RecipePicker({
                 ) : null}
                 {onSkip ? (
                   <Button variant="ghost" className="col-span-2 w-full" onClick={() => onSkip("rest")}>
-                    Kitchen closed
+                    Night off
                   </Button>
                 ) : null}
               </div>
@@ -116,6 +133,9 @@ export function RecipePicker({
               Use your own meal
             </Button>
             <ul className="mt-4 space-y-2">
+              {list.some((r) => favorites.includes(r.id)) ? (
+                <li className="px-1 pt-1 text-xs font-medium uppercase tracking-[0.14em] text-spark">Favorites</li>
+              ) : null}
               {list.map((recipe) => (
                 <RecipeRow
                   key={recipe.id}

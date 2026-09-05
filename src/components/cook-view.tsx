@@ -36,6 +36,8 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
   const household = useSpoonful((s) => s.household);
   const markCooked = useSpoonful((s) => s.markCooked);
   const saveLeftovers = useSpoonful((s) => s.saveLeftovers);
+  const lockKitchen = useSpoonful((s) => s.lockKitchen);
+  const unlockKitchen = useSpoonful((s) => s.unlockKitchen);
   const rawSteps = recipe?.steps ?? resolved.custom?.steps ?? (resolved.custom?.notes ? [resolved.custom.notes] : ["Cook it how you like."]);
   const ingredients = recipe?.ingredients ?? resolved.custom?.ingredients ?? [];
   const servings = recipe?.servings ?? household;
@@ -51,6 +53,11 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
   const [stepLeft, setStepLeft] = useState<number | null>(parsed);
   const [stepTicking, setStepTicking] = useState(false);
   const used = foodsUsedInStep(current ?? "", ingredients);
+
+  useEffect(() => {
+    lockKitchen();
+    return () => unlockKitchen();
+  }, [lockKitchen, unlockKitchen]);
 
   useEffect(() => {
     if (!ticking) return;

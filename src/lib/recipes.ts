@@ -1513,25 +1513,25 @@ export const ADDONS: Addon[] = [
     name: "Kitchen Table",
     tagline: "Chef + family, one bill",
     description:
-      "40 AI Chef plates a week, any homemade dish fitted to each eater's calories and body goal, plus six family seats with live meal pings, plus a savings tracker showing what home cooking is worth versus takeout, plus a training dashboard — PR history, best lifts, and a volume trend. Includes a few free Streak Saves a month so one missed night never costs you the streak, plus a side-by-side before/after compare on your progress photos. Kitchen+ and Family a la carte are $4.99 each ($9.98). Together here they're $7.99. Body Sync stays free. Extra plate packs are below if you run out. Nothing is charged in this test kitchen.",
+      "Extra chef dinners each week, six family seats, a savings tracker, and training stats. $7.99/mo instead of $9.98 if you buy Kitchen+ and Family separately. Nothing is charged in this test kitchen.",
     price: 7.99,
     period: "month",
   },
   {
     id: "chef-plus",
     name: "Kitchen+",
-    tagline: "The chef cooks the whole world",
+    tagline: "More chef dinners each week",
     description:
-      "Free kitchens get 3 AI Chef plates a week from the library. Kitchen+ raises that to 40 plates a week, and the chef invents homemade dishes fitted to your goal, calories, allergies, and what you lifted. Unlimited Snap. Kitchen Table already includes this.",
+      "Free kitchens get 3 chef dinners a week from the library. Kitchen+ raises that to 40 a week, and the chef can invent a homemade dish that fits your goal, calories, and allergies. Unlimited Snap. Kitchen Table already includes this.",
     price: 4.99,
     period: "month",
   },
   {
     id: "family",
     name: "Family table",
-    tagline: "One kitchen, six seats, live updates",
+    tagline: "Share tonight with family",
     description:
-      "Share tonight with the people who eat it. Invite codes, live meal pings, and a feed when someone plates, cooks, or heads to the store. Each seat can keep its own body goal — the table follows the strictest Cut so nobody gets fritters on a diet. Kitchen Table already includes this.",
+      "Invite the people who eat with you. They get updates when dinner is picked or cooked. Each person can keep their own body goal. Kitchen Table already includes this.",
     price: 4.99,
     period: "month",
   },
@@ -1565,9 +1565,9 @@ export const ADDONS: Addon[] = [
   {
     id: "body-sync",
     name: "Body Sync",
-    tagline: "Included — your watch plates dinner",
+    tagline: "Included — your watch updates dinner",
     description:
-      "Apple Health, Health Connect, Garmin, and Fitbit already hold the day: rings, heart, sleep, water. Body Sync is free. It reads that and plates tonight to match. Short sleep gets an easier dinner. A hard session puts the carbs back. Always allow keeps Fuel current after you leave.",
+      "Reads steps, heart, sleep, and workouts from Apple Health, Health Connect, Garmin, or Fitbit. A hard session puts carbs back. Short sleep gets an easier dinner. Always allow keeps this updating after you close the app. Free.",
     price: 0,
     period: "once",
   },

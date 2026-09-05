@@ -436,7 +436,7 @@ function PinEditor({ onDone }: { onDone: () => void }) {
               >
                 <Icon className="size-4 shrink-0" />
                 <span className="min-w-0 flex-1 truncate font-medium">{t(locale, menu.labelKey)}</span>
-                <span className="text-xs">{on ? "On" : full ? "Full" : "Add"}</span>
+                <span className="text-xs">{on ? "Pinned" : full ? "Max 6" : "Add"}</span>
               </button>
             </li>
           );

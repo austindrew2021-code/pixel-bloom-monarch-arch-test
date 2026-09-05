@@ -2,6 +2,8 @@ import { Dumbbell, Droplets, Flame, Footprints, HeartPulse, Plus, Trash2 } from 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DeviceSyncCard } from "@/components/device-sync-card";
+import { EasyLogCard } from "@/components/easy-log";
+import { BarcodeScanCard } from "@/components/barcode-scan";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MacroBar } from "@/components/macro-bar";
 import { Plate } from "@/components/plate";
@@ -66,7 +68,6 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const removeWorkout = useSpoonful((s) => s.removeWorkout);
   const assignMeal = useSpoonful((s) => s.assignMeal);
   const fillFromFuel = useSpoonful((s) => s.fillFromFuel);
-  const setTab = useSpoonful((s) => s.setTab);
   const unlocked = useSpoonful((s) => s.unlocked);
   const prefs = useSpoonful((s) => s.prefs);
   const allergies = useSpoonful((s) => s.allergies);
@@ -169,13 +170,14 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
 
   return (
     <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
-      <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Live Fuel</p>
+      <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Today</p>
       <h1 className="mt-1 font-display text-4xl leading-tight">Fuel</h1>
       <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-        Training follows {goalLabel(body.goalKind)}
-        {tableGoal !== normalizeGoalKind(body.goalKind) ? `; dinner follows the table's ${goalLabel(tableGoal)}` : ""}. Done,
-        skipped, or missed sessions rewrite tonight automatically — calories from your body ({bmrMethod(body)}
-        {formatBodyFat(body) ? `, ${formatBodyFat(body)}` : ""}), ACSM METs for cardio, and the load on the bar for lifts.
+        Calories and protein for today, based on your body
+        {tableGoal !== normalizeGoalKind(body.goalKind)
+          ? ` and the table's ${goalLabel(tableGoal)} goal`
+          : ` and your ${goalLabel(body.goalKind)} goal`}
+        . Finish, skip, or miss a workout and tonight's dinner updates to match.
       </p>
 
       <section className="mt-5 rounded-3xl bg-spark p-4 text-spark-foreground" data-tour="fuel-now">
@@ -198,6 +200,9 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           </p>
         ) : null}
       </section>
+
+      <EasyLogCard className="mt-4" />
+      <BarcodeScanCard className="mt-4" />
 
       <div className="mt-4 grid grid-cols-2 gap-1 rounded-full bg-card p-1 shadow-[var(--shadow-border)]" data-tour="train-pane">
         <button
@@ -238,8 +243,8 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
               <h2 className="font-display text-xl">From the watch</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {access === "always"
-                  ? "Rings, heart, sleep, and water — still pulling after you leave the kitchen."
-                  : "Rings, heart, sleep, and water — updates while Fuel is open. Switch to Always allow in Extras to keep going when you leave."}
+                  ? "Steps, heart, sleep, and water from your watch. They keep updating after you close the app."
+                  : "Steps, heart, sleep, and water from your watch. Updates while Fuel is open. Switch to Always allow in Extras to keep going after you leave."}
               </p>
             </div>
             <HeartPulse className="size-5 shrink-0 text-spark" />
@@ -607,7 +612,9 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
 
       <section className="mt-5 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
         <h2 className="font-display text-xl">Already ate</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Closes the gap before dinner. Values are per serving.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Food you already ate today, so dinner can fill what's left. Amounts are for one serving.
+        </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {SNACKS.map((s) => (
             <button
@@ -747,7 +754,6 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
                 type="button"
                 onClick={() => {
                   assignMeal(today, "dinner", hit.recipe.id);
-                  setTab("plan");
                   toast(`Plated ${hit.recipe.name} tonight`);
                 }}
                 className="relative flex w-full items-center gap-3 overflow-hidden rounded-3xl bg-card p-3 text-left shadow-[var(--shadow-border)]"
@@ -771,7 +777,6 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           onClick={() => {
             const n = fillFromFuel();
             toast(n ? `Plated ${n} night${n === 1 ? "" : "s"} from training` : "This week is already full");
-            setTab("plan");
           }}
         >
           <Dumbbell />

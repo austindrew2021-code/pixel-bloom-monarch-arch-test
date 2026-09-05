@@ -1,11 +1,14 @@
 import { Camera, Check, Leaf, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { BarcodeScanCard } from "@/components/barcode-scan";
+import { EasyLogCard } from "@/components/easy-log";
 import { KitchenHero } from "@/components/kitchen-hero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { scanPantryPhoto, suggestMealsFromPantry, suggestSubstitutes } from "@/lib/kitchen-ai";
+import { isoDate } from "@/lib/fuel";
 import { mealsFromPantry, type PantryIdea } from "@/lib/pantry-match";
 import { RECIPES } from "@/lib/recipes";
 import { recipeAllowed, unlockedRecipes, useSpoonful } from "@/lib/spoonful-store";
@@ -52,8 +55,7 @@ function SnapFlow() {
   const pantry = useSpoonful((s) => s.pantry);
   const assignCustom = useSpoonful((s) => s.assignCustom);
   const assignMeal = useSpoonful((s) => s.assignMeal);
-  const weekStart = useSpoonful((s) => s.weekStart);
-  const setTab = useSpoonful((s) => s.setTab);
+  const setShopScope = useSpoonful((s) => s.setShopScope);
   const unlocked = useSpoonful((s) => s.unlocked);
   const prefs = useSpoonful((s) => s.prefs);
   const allergies = useSpoonful((s) => s.allergies);
@@ -148,11 +150,13 @@ function SnapFlow() {
   return (
     <div className="mx-auto max-w-2xl px-4 pb-36 pt-4">
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Snap</p>
-      <h1 className="mt-1 font-display text-3xl">What is in the kitchen?</h1>
+      <h1 className="mt-1 font-display text-3xl">What did you eat?</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        Photograph a shelf or a pile of ingredients. We list what we see, suggest dinners, then ask yes or
-        no for anything missing — and substitutions if you say no.
+        Write the meal, take a photo of the fridge, or scan a barcode. Saving stays on this screen.
       </p>
+
+      <EasyLogCard className="mt-5" />
+      <BarcodeScanCard className="mt-4" />
 
       <input
         ref={fileRef}
@@ -173,7 +177,7 @@ function SnapFlow() {
           disabled={busy || isPending}
         >
           <Camera className="size-6" />
-          Pantry photo
+          Photo of my fridge
         </Button>
         <Button
           variant="secondary"
@@ -185,7 +189,7 @@ function SnapFlow() {
           disabled={busy || isPending}
         >
           <Leaf className="size-6" />
-          Ingredients together
+          Photo of ingredients
         </Button>
       </div>
       {!user && !isPending ? (
@@ -194,13 +198,13 @@ function SnapFlow() {
           <a href="/login" className="font-medium text-spark underline-offset-4 hover:underline">
             Sign in
           </a>{" "}
-          — or type what you have below. Catalog matching works either way.
+          — or type what you have below. Finding matching recipes still works.
         </p>
       ) : null}
-      {busy ? <p className="mt-4 text-sm text-spark">Looking closely…</p> : null}
+      {busy ? <p className="mt-4 text-sm text-spark">Reading the photo…</p> : null}
 
       <section className="mt-6">
-        <h2 className="font-display text-xl">On hand</h2>
+        <h2 className="font-display text-xl">What I have</h2>
         {items.length === 0 ? (
           <KitchenHero plates={["bowl", "skillet", "green"]} className="mx-auto mt-2" />
         ) : null}
@@ -337,16 +341,17 @@ function SnapFlow() {
           ) : (
             <>
               <p className="mt-3 text-sm text-muted-foreground">
-                You are ready. Cook it tonight, or save it to the week.
+                Ready for tonight. Stay here — Plan and Shop pick this up.
               </p>
               <div className="mt-4 flex flex-col gap-2">
                 <Button
                   className="w-full"
                   onClick={() => {
+                    const date = isoDate();
                     if (active.recipeId) {
-                      assignMeal(weekStart, "dinner", active.recipeId);
+                      assignMeal(date, "dinner", active.recipeId);
                     } else {
-                      assignCustom(weekStart, "dinner", {
+                      assignCustom(date, "dinner", {
                         id: `snap-${Date.now()}`,
                         name: active.title,
                         minutes: active.minutes,
@@ -357,11 +362,12 @@ function SnapFlow() {
                         ],
                       });
                     }
-                    setTab("plan");
-                    toast("Plated on Monday dinner");
+                    setShopScope("tonight");
+                    toast("Plated tonight");
+                    setActive(null);
                   }}
                 >
-                  Put on Monday
+                  Plate tonight
                 </Button>
                 <Button variant="ghost" className="w-full" onClick={() => setActive(null)}>
                   Back to ideas

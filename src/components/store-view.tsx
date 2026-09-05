@@ -62,7 +62,7 @@ export function StoreView() {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Kitchen</p>
       <h1 className="mt-1 font-display text-4xl" data-tour="extras-head">Extras</h1>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/80">
-        The library, Midnight, nutrition, Kitchen Shield, Sauces, Next Gen Fuel, and Body Sync are free — people would riot if those cost extra. You pay for extra Chef plates and for Kitchen Table: Chef plus family seats, $7.99/mo instead of $9.98 a la carte.
+        The main kitchen is free — recipes, logging, Snap, tonight's plan, and shopping. You only pay if you want extra chef plates or family seats.
       </p>
 
       <section className="mt-6 rounded-3xl bg-spark p-4 text-spark-foreground">
@@ -410,9 +410,9 @@ export function StoreView() {
       </section>
 
       <section className="mt-6 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
-        <h2 className="font-display text-xl">Kitchen Shield</h2>
+        <h2 className="font-display text-xl">Allergies</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Hidden from Fill, Surprise me, Fuel, and the recipe library.
+          We'll hide matching recipes from dinner picks and the recipe list.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {ALLERGIES.map((a) => {

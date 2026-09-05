@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "theme": "nebula",
+  "hasArt": true,
+  "src": "/exercise-db/videos/ex_0001.gif",
+  "gifInfo": {
+    "status": 200,
+    "type": "image/gif",
+    "bytes": 92828
+  },
+  "libLabel": "Exercise library\n\n1324 moves · tap a muscle to filter",
+  "errors": [],
+  "log": [
+    "tester gate gone",
+    "onboarding",
+    "skip tour",
+    "shot qa-theme-picker",
+    "theme=nebula art=true",
+    "shot qa-nebula",
+    "shot qa-fuel",
+    "libLabel=\"Exercise library\\n\\n1324 moves · tap a muscle to filter\"",
+    "lib snippet=\"LIBRARY\\n\\nExercises\\nSaved\\nAll\\nLegs\\nPush\\nPull\\nCore\\nFull\\nAny kit\\nBody Weight\\nDumbbell\\nCable\\nBarbell\\nLeverage Machine\\nBand\\nSmith Machine\\nKettlebell\\nWeighted\\nStability Ball\\nEz Barbell\\nAssisted\\nChest\\nBack\\nShoulders\\nBiceps\\nTriceps\\nAbs\\nQuads\\nHams\\nGlutes\\nCalves\\nForearms\\nAdductors\\n\\n1324 mo\"",
+    "shot qa-library",
+    "gif src=/exercise-db/videos/ex_0001.gif info={\"status\":200,\"type\":\"image/gif\",\"bytes\":92828}",
+    "shot qa-exercise-gif"
+  ]
+}

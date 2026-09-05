@@ -69,11 +69,11 @@ export function DessertsView() {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">{t(locale, "kitchen")}</p>
       <h1 className="mt-1 font-display text-4xl" data-tour="desserts-head">{t(locale, "desserts")}</h1>
       <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-        Its own menu. Fruit, bakery, chilled, and the world — plus a Healthy toggle that still tastes like dessert.
+        Sweets in their own list so they don't mix in with dinner. Fruit, bakery, or chilled.
       </p>
       {tableGoal === "lose" ? (
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          A treat, not on your Cut fat plate. Fill, Surprise, Fuel, and the Chef will not auto-plate these.
+          These won't be picked as dinner while you're losing fat. Choose one here when you want a treat.
         </p>
       ) : null}
 

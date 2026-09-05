@@ -1,4 +1,4 @@
-import { Check, Copy, Plus, Refrigerator, X } from "lucide-react";
+import { Check, Copy, Plus, Refrigerator, RotateCcw, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,13 +7,13 @@ import { formatQty } from "@/lib/format";
 import {
   AISLE_ORDER,
   groceryForWeek,
-  plannedForWeek,
+  resolveMeal,
   savingsSummary,
   useSpoonful,
   weeklySavingsTrend,
-  weekPulse,
   type GroceryLine,
 } from "@/lib/spoonful-store";
+import { isoDate } from "@/lib/fuel";
 import { cn } from "@/lib/utils";
 
 export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
@@ -29,6 +29,10 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
   const removePantry = useSpoonful((s) => s.removePantry);
   const stashCheckedToPantry = useSpoonful((s) => s.stashCheckedToPantry);
   const cookedDates = useSpoonful((s) => s.cookedDates);
+  const shopScope = useSpoonful((s) => s.shopScope);
+  const setShopScope = useSpoonful((s) => s.setShopScope);
+  const rebuildShopFromTonight = useSpoonful((s) => s.rebuildShopFromTonight);
+  const setTab = useSpoonful((s) => s.setTab);
   const [hidePantry, setHidePantry] = useState(true);
   const [newItem, setNewItem] = useState("");
   const [pantryName, setPantryName] = useState("");
@@ -36,16 +40,21 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
 
   const household = useSpoonful((s) => s.household);
   const hasKitchenTable = useSpoonful((s) => s.hasAddon("kitchen-table"));
-  const weekMeals = plannedForWeek(meals, weekStart);
-  const pulse = weekPulse(meals, weekStart, cookedDates, household);
+  const today = isoDate();
+  const tonight = meals.find((m) => m.date === today && m.slot === "dinner" && !m.skip);
+  const tonightTitle = tonight ? resolveMeal(tonight).title : null;
   const savings = useMemo(() => savingsSummary(meals, cookedDates, household), [meals, cookedDates, household]);
   const savingsTrend = useMemo(
     () => (hasKitchenTable ? weeklySavingsTrend(meals, cookedDates, household) : []),
     [hasKitchenTable, meals, cookedDates, household],
   );
   const lines = useMemo(
-    () => groceryForWeek(meals, weekStart, extra, pantry, household),
-    [meals, weekStart, extra, pantry, household],
+    () =>
+      groceryForWeek(meals, weekStart, extra, pantry, household, {
+        scope: shopScope,
+        date: today,
+      }),
+    [meals, weekStart, extra, pantry, household, shopScope, today],
   );
   const visible = (hidePantry ? lines.filter((l) => !l.fromPantry) : lines).filter((l) =>
     shopQ.trim() ? l.name.toLowerCase().includes(shopQ.trim().toLowerCase()) : true,
@@ -65,10 +74,30 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Groceries</p>
       <h1 className="mt-1 font-display text-4xl" data-tour="shop-head">Shop</h1>
       <p className="mt-2 text-sm text-foreground/80">
-        Built from {weekMeals.filter((m) => !m.skip).length} meal
-        {weekMeals.filter((m) => !m.skip).length === 1 ? "" : "s"}, scaled for {household}{" "}
-        {household === 1 ? "person" : "people"}. Eating-out nights stay off the list. About ${pulse.cost} this week.
+        {shopScope === "tonight"
+          ? tonightTitle
+            ? `Shopping list for tonight: ${tonightTitle}.`
+            : "Tap From tonight to make a list from dinner."
+          : `Shopping list for this week's meals, for ${household} ${household === 1 ? "person" : "people"}.`}
       </p>
+
+      <div className="mt-4 flex gap-2">
+        <Button
+          variant={shopScope === "tonight" ? "spark" : "secondary"}
+          className="flex-1"
+          onClick={() => rebuildShopFromTonight()}
+        >
+          <RotateCcw />
+          From tonight
+        </Button>
+        <Button
+          variant={shopScope === "week" ? "spark" : "secondary"}
+          className="flex-1"
+          onClick={() => setShopScope("week")}
+        >
+          Whole week
+        </Button>
+      </div>
 
       {hasKitchenTable ? (
         savings.count === 0 ? (
@@ -205,9 +234,24 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
       </button>
 
       {total === 0 ? (
-        <p className="mt-10 text-sm text-muted-foreground">
-          Plan a few dinners and the list will fill in here.
-        </p>
+        <div className="mt-10 text-center">
+          <p className="text-sm text-muted-foreground">
+            {shopScope === "tonight" && !tonightTitle
+              ? "Tap From tonight after you pick dinner."
+              : shopScope === "tonight"
+                ? "Tonight has no ingredients yet — add them when you log the meal."
+                : "Plan a few dinners and the list will fill in here."}
+          </p>
+          {!tonightTitle ? (
+            <Button className="mt-4" variant="spark" onClick={() => setTab("plan")}>
+              Plate tonight
+            </Button>
+          ) : (
+            <Button className="mt-4" variant="spark" onClick={() => rebuildShopFromTonight()}>
+              Generate from tonight
+            </Button>
+          )}
+        </div>
       ) : (
         <div className="mt-6 space-y-6">
           {groups.map((group) => (

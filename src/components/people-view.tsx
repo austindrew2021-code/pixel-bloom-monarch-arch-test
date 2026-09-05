@@ -81,7 +81,10 @@ function PeopleHome() {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">
         {profile ? `@${profile.username}` : "People"}
       </p>
-      <h1 className="mt-1 font-display text-3xl" data-tour="people-head">Kitchen table</h1>
+      <h1 className="mt-1 font-display text-3xl" data-tour="people-head">People</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Find other cooks, add family, and send private messages.
+      </p>
       <div className="chip-row mt-4">
         {(
           [

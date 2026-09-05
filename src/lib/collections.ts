@@ -42,7 +42,7 @@ export const COLLECTIONS: Collection[] = [
   {
     id: "gluten-free",
     label: "Gluten-free",
-    hint: "No wheat, still dinner",
+    hint: "No wheat, barley, or rye",
     match: (r) => isGlutenFree(r),
   },
   {
@@ -84,7 +84,7 @@ export const COLLECTIONS: Collection[] = [
   {
     id: "air-fryer",
     label: "Air fryer",
-    hint: "Crisp without a vat",
+    hint: "Crisp with less oil",
     match: (r) => has(r, "air-fryer"),
   },
   {
@@ -156,7 +156,7 @@ export const COLLECTIONS: Collection[] = [
   {
     id: "international",
     label: "International",
-    hint: "Tables from everywhere",
+    hint: "Dishes from around the world",
     match: (r) => has(r, "international", "world") || (r.tags ?? []).includes("world"),
   },
   {

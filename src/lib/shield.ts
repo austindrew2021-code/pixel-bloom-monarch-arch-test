@@ -109,6 +109,6 @@ export const SNACKS: { name: string; nutrition: Nutrition }[] = [
 
 export function skipTitle(skip?: PlannedMeal["skip"]): string {
   if (skip === "takeout") return "Eating out";
-  if (skip === "rest") return "Kitchen closed";
-  return "Open night";
+  if (skip === "rest") return "Night off";
+  return "No dinner planned";
 }

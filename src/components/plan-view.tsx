@@ -1,4 +1,4 @@
-import { Check, ChevronLeft, ChevronRight, Sparkles, UtensilsCrossed, WandSparkles } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Heart, ShoppingBasket, Sparkles, UtensilsCrossed, WandSparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { MealPhoto } from "@/components/meal-photo";
@@ -71,6 +71,8 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
   const [active, setActive] = useState<PlannedMeal | null>(null);
   const [chefOpen, setChefOpen] = useState(false);
   const [cooking, setCooking] = useState<PlannedMeal | null>(null);
+  const [weekOpen, setWeekOpen] = useState(false);
+  const rebuildShopFromTonight = useSpoonful((s) => s.rebuildShopFromTonight);
 
   useEffect(() => {
     if (nextGen) ensureProgram();
@@ -142,8 +144,8 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           <h1 className="mt-1 font-display text-3xl leading-tight">{weekHeading(weekStart)}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {nextGen
-              ? "The red card is dinner tonight. Training done, skipped, or missed rewrites the plate."
-              : "The red card is dinner tonight. Fill empty nights picks the rest of the week."}
+              ? "Dinner tonight. If you finish, skip, or miss a workout, this dinner updates to match."
+              : "Dinner tonight. Tap Rest of the week when you want more days."}
           </p>
         </div>
         <div className="flex shrink-0 gap-1">
@@ -166,6 +168,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         </div>
       </header>
 
+      {weekOpen ? (
       <div className="mt-5 flex min-w-0 items-center gap-1.5 overflow-hidden" aria-label="Protein rainbow">
         {dates.map((date) => {
           const dinner = weekMeals.find((m) => m.date === date && m.slot === "dinner");
@@ -184,6 +187,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           );
         })}
       </div>
+      ) : null}
 
       {todayDate ? (
         <section className="mt-5 overflow-hidden rounded-3xl bg-spark text-spark-foreground shadow-[var(--shadow-lift)]" data-tour="tonight">
@@ -217,11 +221,11 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
                     {(() => {
                       const ses = programWeek.sessions.find((s) => s.date === todayDate)!;
                       const st = resolveStatus(ses, today);
-                      if (ses.kind === "rest") return "Rest day · dinner stays even";
-                      if (st === "done") return `${ses.name} done · plate follows the work`;
-                      if (st === "skipped") return `${ses.name} skipped · lighter plate`;
+                      if (ses.kind === "rest") return "Rest day · dinner stays the same";
+                      if (st === "done") return `${ses.name} done · dinner matches the workout`;
+                      if (st === "skipped") return `${ses.name} skipped · lighter dinner`;
                       if (st === "missed") return `${ses.name} missed`;
-                      return `${ses.name} still on · ${ses.minutes} min`;
+                      return `${ses.name} still to do · ${ses.minutes} min`;
                     })()}
                   </p>
                 ) : null}
@@ -283,6 +287,25 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
                 </Button>
               </>
             )}
+            <Button
+              variant="ghost"
+              className="w-full text-spark-foreground hover:bg-spark-foreground/10"
+              onClick={() => setPicker({ date: todayDate, slot: "dinner" })}
+            >
+              <Heart className="size-4" />
+              Add from favorites
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full text-spark-foreground hover:bg-spark-foreground/10"
+              onClick={() => {
+                rebuildShopFromTonight();
+                setTab("shop");
+              }}
+            >
+              <ShoppingBasket className="size-4" />
+              Shop tonight
+            </Button>
           </div>
         </section>
       ) : null}
@@ -335,6 +358,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         </button>
       ) : null}
 
+      {weekOpen ? (
       <div className="mt-4 flex flex-wrap gap-2 text-sm text-muted-foreground">
         <span className="rounded-full bg-spark px-3 py-1.5 text-spark-foreground">
           {rank.title}
@@ -359,6 +383,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           ~${pulse.cost}
         </span>
       </div>
+      ) : null}
 
       {pantryIdea && !tonight ? (
         <button
@@ -381,7 +406,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           }}
         >
           <WandSparkles />
-          {nextGen ? "Plate from training" : "Fill empty nights"}
+          {nextGen ? "Fill from workouts" : "Fill empty nights"}
         </Button>
         <Button
           variant="spark"
@@ -436,6 +461,15 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         </button>
       )}
 
+      <button
+        type="button"
+        onClick={() => setWeekOpen((v) => !v)}
+        className="mt-6 w-full rounded-full bg-card px-4 py-3 text-sm font-medium shadow-[var(--shadow-border)]"
+      >
+        {weekOpen ? "Hide the rest of the week" : "Rest of the week"}
+      </button>
+
+      {weekOpen ? (
       <ol className="mt-6 grid gap-3 sm:grid-cols-2">
         {dates.map((date) => {
           const meta = dayLabel(date);
@@ -527,6 +561,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           );
         })}
       </ol>
+      ) : null}
 
       <RecipePicker
         open={picker !== null}
