@@ -169,6 +169,10 @@ export function BarcodeScanCard({ className }: { className?: string }) {
     }
   }
 
+  /**
+   * Done closes the sheet and the log stays: the confirmation moves to the card
+   * so the cook can see the food landed. A new scan or lookup clears it.
+   */
   function close() {
     stopCamera();
     setOpen(false);
@@ -177,7 +181,6 @@ export function BarcodeScanCard({ className }: { className?: string }) {
     setError("");
     setProduct(null);
     setServings(1);
-    setDone("");
     setDraftName("");
   }
 

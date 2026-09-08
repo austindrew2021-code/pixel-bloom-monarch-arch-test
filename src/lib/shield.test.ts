@@ -3,7 +3,7 @@ import test from "node:test";
 import { mealSavings, plateCost, takeoutCost } from "./shield.ts";
 import type { Protein, Recipe } from "./types.ts";
 
-const PROTEINS: Protein[] = ["chicken", "beef", "pork", "fish", "seafood", "veg", "eggs", "turkey"];
+const PROTEINS: Protein[] = ["chicken", "beef", "lamb", "pork", "fish", "seafood", "veg", "eggs", "turkey"];
 
 function mk(protein: Protein, servings = 4, ingredientCount = 6): Recipe {
   return {

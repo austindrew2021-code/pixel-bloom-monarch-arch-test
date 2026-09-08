@@ -1,5 +1,5 @@
 import type { HealthDay } from "./fitness-sync";
-import { isoDate } from "./fuel";
+import { isoDate } from "./fuel.ts";
 
 type NativePayload = Partial<HealthDay> & {
   steps?: number;

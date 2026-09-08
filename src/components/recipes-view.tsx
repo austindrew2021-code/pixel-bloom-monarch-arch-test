@@ -61,6 +61,7 @@ const PROTEIN_CHIPS: { id: Protein | null; key: string }[] = [
   { id: null, key: "anyProtein" },
   { id: "chicken", key: "chicken" },
   { id: "beef", key: "beef" },
+  { id: "lamb", key: "lamb" },
   { id: "pork", key: "pork" },
   { id: "fish", key: "fish" },
   { id: "veg", key: "veg" },

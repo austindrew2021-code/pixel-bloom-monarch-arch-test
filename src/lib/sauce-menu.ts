@@ -1,4 +1,4 @@
-import { SAUCE_RECIPES } from "./catalog-sauces";
+import { SAUCE_RECIPES } from "./catalog-sauces.ts";
 import type { Recipe } from "./types";
 
 export const SAUCE_MENUS = [

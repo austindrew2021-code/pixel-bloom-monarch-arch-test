@@ -1,4 +1,4 @@
-import { RECIPES } from "./recipes";
+import { RECIPES } from "./recipes.ts";
 import type { Recipe } from "./types";
 
 export type PantryIdea = {

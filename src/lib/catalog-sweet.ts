@@ -1,4 +1,4 @@
-import { I, dish } from "./catalog-kit";
+import { I, dish } from "./catalog-kit.ts";
 import type { Recipe, RecipeSource } from "./types";
 
 function src(book: string, author: string, year: number, era: string, archiveId: string, credit: string): RecipeSource {

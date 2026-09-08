@@ -2,11 +2,11 @@ import { createHash } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { isBannedDishName, polishSteps } from "./cook-steps";
-import { chefGoalRules, fitsInventedGoal } from "./goal-fit";
+import { isBannedDishName, polishSteps } from "./cook-steps.ts";
+import { chefGoalRules, fitsInventedGoal } from "./goal-fit.ts";
 import type { PlateKind, Protein, Recipe } from "./types";
 
-const PROTEINS = new Set<string>(["chicken", "beef", "pork", "fish", "seafood", "veg", "eggs", "turkey"]);
+const PROTEINS = new Set<string>(["chicken", "beef", "lamb", "pork", "fish", "seafood", "veg", "eggs", "turkey"]);
 
 const AISLES = ["Produce", "Meat & Seafood", "Dairy & Eggs", "Pantry", "Bakery", "Frozen", "Herbs & Spices", "Other"] as const;
 

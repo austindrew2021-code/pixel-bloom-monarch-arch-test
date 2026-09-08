@@ -670,7 +670,7 @@ export const WORLD_RECIPES: Recipe[] = [
     name: "Irish stew",
     description: "Lamb or mutton, potato, onion. Patience is the fourth ingredient.",
     minutes: 140,
-    protein: "beef",
+    protein: "lamb",
     plate: "soup",
     cuisine: "Old school",
     tags: ["old-school", "irish"],

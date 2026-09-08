@@ -68,6 +68,9 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       I("butter", 3, "tbsp", "Dairy & Eggs"),
       I("blueberries", 1, "cup", "Produce"),
       I("maple syrup", 0.25, "cup", "Pantry"),
+      I("sugar", 2, "tbsp", "Pantry"),
+      I("baking powder", 2, "tsp", "Pantry"),
+      I("salt", 0.5, "tsp", "Herbs & Spices"),
     ],
     steps: [
       "Whisk flour, a spoon of sugar, baking powder, and salt.",
@@ -142,6 +145,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       I("cheddar", 0.5, "cup", "Dairy & Eggs"),
       I("salsa", 0.5, "cup", "Pantry"),
       I("spinach", 1, "handful", "Produce"),
+      I("butter", 1, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
       "Warm the 1 cup of black beans in a small pan. Scramble the 4 eggs in butter over medium-low until just set, still a little wet.",

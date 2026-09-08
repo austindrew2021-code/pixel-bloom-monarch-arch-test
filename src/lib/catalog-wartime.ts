@@ -1,4 +1,4 @@
-import { I, dish } from "./catalog-kit";
+import { I, dish } from "./catalog-kit.ts";
 import type { Recipe, RecipeSource } from "./types";
 
 const ww1: RecipeSource = {
@@ -170,6 +170,8 @@ export const WARTIME_RECIPES: Recipe[] = [
       I("shortening or butter", 0.5, "cup", "Dairy & Eggs"),
       I("brown sugar", 0.5, "cup", "Pantry"),
       I("egg", 1, "", "Dairy & Eggs"),
+      I("baking soda", 1, "tsp", "Pantry"),
+      I("salt", 0.5, "tsp", "Herbs & Spices"),
     ],
     [
       "Heat the oven to 375°F. Cream the shortening with the brown sugar until even, 2 minutes.",
@@ -349,6 +351,8 @@ export const WARTIME_RECIPES: Recipe[] = [
       I("butter", 4, "tbsp", "Dairy & Eggs"),
       I("egg", 1, "", "Dairy & Eggs"),
       I("cinnamon", 1, "tsp", "Herbs & Spices"),
+      I("baking soda", 1, "tsp", "Pantry"),
+      I("salt", 0.5, "tsp", "Herbs & Spices"),
     ],
     [
       "Heat the oven to 350°F. Grease a loaf pan.",

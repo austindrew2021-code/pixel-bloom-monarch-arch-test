@@ -1,4 +1,4 @@
-import { enablePush } from "./notify";
+import { enablePush } from "./notify.ts";
 
 const TAG = "spoonful-fuel";
 const PENDING = "/__spoonful-pending-sync";

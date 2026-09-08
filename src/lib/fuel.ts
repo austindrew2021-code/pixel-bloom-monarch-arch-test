@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 import type { BodyProfile, GoalKind } from "./body";
-import { DEFAULT_BODY } from "./body";
-import { recoveryLabel, type HealthDay } from "./fitness-sync";
-import { goalRankBoost } from "./goal-fit";
-import { liftKcal } from "./lift";
+import { DEFAULT_BODY } from "./body.ts";
+import { recoveryLabel, type HealthDay } from "./fitness-sync.ts";
+import { goalRankBoost } from "./goal-fit.ts";
+import { liftKcal } from "./lift.ts";
 import type { MacroGoal, Nutrition, Recipe, Workout, WorkoutKind } from "./types";
 
 export const DEFAULT_GOAL: MacroGoal = { cal: 2200, protein: 130, carbs: 220, fat: 70 };
@@ -304,5 +304,5 @@ export function pct(n: number, of: number): number {
   return Math.max(0, Math.min(100, Math.round((n / of) * 100)));
 }
 
-export { portionSyncFor, type PortionSync } from "./portion-sync";
-export { cookStreak, brokenStreakInfo, type BrokenStreak } from "./streak";
+export { portionSyncFor, type PortionSync } from "./portion-sync.ts";
+export { cookStreak, brokenStreakInfo, type BrokenStreak } from "./streak.ts";

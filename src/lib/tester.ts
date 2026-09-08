@@ -1,7 +1,7 @@
 import {
   isSandboxPreviewGuestHost,
   resolveParentEmbedderOrigin,
-} from "./preview-embedder-origin";
+} from "./preview-embedder-origin.ts";
 
 declare global {
   interface Window {

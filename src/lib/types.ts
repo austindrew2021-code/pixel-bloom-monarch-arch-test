@@ -13,6 +13,7 @@ export type Aisle =
 export type Protein =
   | "chicken"
   | "beef"
+  | "lamb"
   | "pork"
   | "fish"
   | "seafood"

@@ -2,21 +2,21 @@ import { toast } from "sonner";
 import { addDays, parseISO } from "date-fns";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, seatAvoidsName, type BodyProfile, type FamilySeat, type GoalKind } from "./body";
-import { isComfort, isDinnerMain, isGlutenFree, isHighProtein, isSugarFree, isVegan } from "./diet";
-import { fitsGoal, strictestGoal } from "./goal-fit";
-import { isUnlocked, seatCap } from "./access";
-import { giftUntilFrom, isGiftCode, mintGiftCode, normalizeGiftCode } from "./gift";
+import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, seatAvoidsName, type BodyProfile, type FamilySeat, type GoalKind } from "./body.ts";
+import { isComfort, isDinnerMain, isGlutenFree, isHighProtein, isSugarFree, isVegan } from "./diet.ts";
+import { fitsGoal, strictestGoal } from "./goal-fit.ts";
+import { isUnlocked, seatCap } from "./access.ts";
+import { giftUntilFrom, isGiftCode, mintGiftCode, normalizeGiftCode } from "./gift.ts";
 import type { CountryId, LocaleId } from "./i18n";
-import { DEFAULT_GOAL, addNutrition, applyHealthToFuel, dayFuel, emptyNutrition, isoDate, rankForFuel, workoutKcal } from "./fuel";
-import { mealsCountTowardFuel, snackCountsTowardFuel } from "./eaten";
-import { liveStepBump, pullFromSource, pullHealthDay, recoveryLabel, catchUpSteps, type HealthDay } from "./fitness-sync";
-import { hasNativeHealth, requestNativeHealth } from "./native-health";
-import { mealsFromPantry } from "./pantry-match";
-import { isAlwaysHave, isBasicStaple } from "./grocery-always";
-import { scaleQty } from "./cuisine";
-import { portionSyncFor } from "./portion-sync";
-import { ADDONS, RECIPES, recipeById } from "./recipes";
+import { DEFAULT_GOAL, addNutrition, applyHealthToFuel, dayFuel, emptyNutrition, isoDate, rankForFuel, workoutKcal } from "./fuel.ts";
+import { mealsCountTowardFuel, snackCountsTowardFuel } from "./eaten.ts";
+import { liveStepBump, pullFromSource, pullHealthDay, recoveryLabel, catchUpSteps, type HealthDay } from "./fitness-sync.ts";
+import { hasNativeHealth, requestNativeHealth } from "./native-health.ts";
+import { mealsFromPantry } from "./pantry-match.ts";
+import { isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
+import { scaleQty } from "./cuisine.ts";
+import { portionSyncFor } from "./portion-sync.ts";
+import { ADDONS, RECIPES, recipeById } from "./recipes.ts";
 import {
   CHEF_FREE_WEEK,
   CHEF_PACK_15,
@@ -28,21 +28,21 @@ import {
   milestonesFor,
   rankForXp,
   type Celebrate,
-} from "./ranks";
+} from "./ranks.ts";
 import type { ProgressPhotoMeta } from "./progress-photos";
-import { brokenStreakInfo, type BrokenStreak } from "./streak";
-import { isThemeId, type ThemeId } from "./themes";
-import { DEFAULT_NOTIFY, pushNote, type NotifyPrefs } from "./notify";
-import { coachSay, DEFAULT_COACH, normalizeCoach, type CoachEvent, type CoachPrefs } from "./coach";
-import { plateChangeKind, plateChangeWhy, type KitchenUpdate } from "./kitchen-log";
+import { brokenStreakInfo, type BrokenStreak } from "./streak.ts";
+import { isThemeId, type ThemeId } from "./themes.ts";
+import { DEFAULT_NOTIFY, pushNote, type NotifyPrefs } from "./notify.ts";
+import { coachSay, DEFAULT_COACH, normalizeCoach, type CoachEvent, type CoachPrefs } from "./coach.ts";
+import { plateChangeKind, plateChangeWhy, type KitchenUpdate } from "./kitchen-log.ts";
 import type { NearbyStore } from "./grocery-stores";
 import type { FitnessSourceId, SyncAccess } from "./devices";
-import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
-import { mealSavings, plateCost, recipeSafe } from "./shield";
-import { postKitchenEvent } from "./family";
-import { shareAchievement, syncMyStats } from "./community";
+import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav.ts";
+import { mealSavings, plateCost, recipeSafe } from "./shield.ts";
+import { postKitchenEvent } from "./family.ts";
+import { shareAchievement, syncMyStats } from "./community.ts";
 import type { LiftSession } from "./lift";
-import { liftKcal, moveById, sessionPRs, sessionRomM, sessionVolumeKg } from "./lift";
+import { liftKcal, moveById, sessionPRs, sessionRomM, sessionVolumeKg } from "./lift.ts";
 import {
   expectedWorkoutsForDate,
   isProgramWeek,
@@ -55,7 +55,7 @@ import {
   swapMove,
   type ProgramWeek,
   type SessionStatus,
-} from "./program";
+} from "./program.ts";
 import type {
   AddonId,
   Aisle,
@@ -74,7 +74,7 @@ import type {
   Workout,
   WorkoutKind,
 } from "./types";
-import { mondayOf, shiftWeek, weekDates } from "./week";
+import { mondayOf, shiftWeek, weekDates } from "./week.ts";
 
 function rollAiWeek(
   get: () => SpoonfulState,
@@ -101,7 +101,7 @@ export type GroceryLine = {
   dishes: string[];
 };
 
-export { BASIC_STAPLES, DEFAULT_ALWAYS_HAVE, isAlwaysHave, isBasicStaple } from "./grocery-always";
+export { BASIC_STAPLES, DEFAULT_ALWAYS_HAVE, isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
 
 type SpoonfulState = {
   onboarded: boolean;
@@ -2074,6 +2074,11 @@ export const useSpoonful = create<SpoonfulState>()(
 );
 
 if (typeof window !== "undefined") {
+  // Rehydrate BEFORE any set(). The store persists on every write, so a set()
+  // made while the store still holds its defaults writes those defaults over
+  // the saved kitchen — and the rehydrate that follows then reads the wipe. It
+  // cost a reloading cook their week, their log, and their spent Chef plates.
+  void useSpoonful.persist.rehydrate();
   try {
     const raw = window.localStorage.getItem("spoonful-v1");
     if (raw) {
@@ -2088,7 +2093,6 @@ if (typeof window !== "undefined") {
   } catch {
     /* private mode */
   }
-  void useSpoonful.persist.rehydrate();
 }
 
 export function plannedForWeek(meals: PlannedMeal[], weekStart: string): PlannedMeal[] {

@@ -1,6 +1,7 @@
 import { Beef, Check, ChevronLeft, ChevronRight, Clock, Heart, Refrigerator, ShoppingBasket, Sparkles, UtensilsCrossed, WandSparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { ChefPlateLine } from "@/components/chef-plate-line";
 import { MealPhoto } from "@/components/meal-photo";
 import { Plate } from "@/components/plate";
 import { RecipePicker } from "@/components/recipe-picker";
@@ -16,7 +17,7 @@ import { mealsFromPantry } from "@/lib/pantry-match";
 import { portionSyncFor } from "@/lib/portion-sync";
 import { expectedWorkoutsForDate, resolveStatus } from "@/lib/program";
 import { recipeById } from "@/lib/recipes";
-import { rankForXp } from "@/lib/ranks";
+import { CHEF_FREE_WEEK, rankForXp } from "@/lib/ranks";
 import { proteinDot, skipTitle } from "@/lib/shield";
 import {
   nutritionForDate,
@@ -632,7 +633,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
               toast(
                 hasPlus
                   ? "Chef is spent this week"
-                  : "Free kitchens get 3 chef plates a week. Kitchen+ raises the cap.",
+                  : `${CHEF_FREE_WEEK} free Chef plates this week. More plates are extra.`,
               );
               return;
             }
@@ -648,6 +649,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           AI Chef
         </Button>
       </div>
+      <ChefPlateLine onOpenStore={onOpenStore} className="mt-3" />
       {undoMeals ? (
         <button
           type="button"
@@ -850,7 +852,14 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         nextGen={nextGen}
       />
 
-      <AiChefSheet open={chefOpen} onOpenChange={setChefOpen} />
+      <AiChefSheet
+        open={chefOpen}
+        onOpenChange={setChefOpen}
+        onOpenStore={() => {
+          setChefOpen(false);
+          onOpenStore();
+        }}
+      />
       {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
     </div>
   );

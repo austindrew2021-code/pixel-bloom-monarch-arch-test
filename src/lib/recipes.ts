@@ -1,22 +1,22 @@
 import type { Addon, Recipe } from "./types";
-import { BREAKFAST_RECIPES } from "./catalog-breakfast";
-import { DESSERT_RECIPES } from "./catalog-desserts";
-import { EXPAND_RECIPES } from "./catalog-expand";
-import { EXTRA_RECIPES } from "./catalog-extra";
-import { PLACE_RECIPES } from "./catalog-places";
-import { SAUCE_RECIPES } from "./catalog-sauces";
-import { SOUTHERN_RECIPES } from "./catalog-southern";
-import { WORLD_RECIPES } from "./catalog-world";
-import { PLUS_RECIPES } from "./catalog-plus";
-import { MORE_RECIPES } from "./catalog-more";
-import { CLASSIC_RECIPES } from "./catalog-classics";
-import { WARTIME_RECIPES } from "./catalog-wartime";
-import { HERITAGE_RECIPES } from "./catalog-heritage";
-import { BOOK_RECIPES } from "./catalog-books";
-import { TABLE_RECIPES } from "./catalog-table";
-import { SWEET_ERA_RECIPES } from "./catalog-sweet";
-import { polishCatalog } from "./cook-steps";
-import { decorateDietTags } from "./diet";
+import { BREAKFAST_RECIPES } from "./catalog-breakfast.ts";
+import { DESSERT_RECIPES } from "./catalog-desserts.ts";
+import { EXPAND_RECIPES } from "./catalog-expand.ts";
+import { EXTRA_RECIPES } from "./catalog-extra.ts";
+import { PLACE_RECIPES } from "./catalog-places.ts";
+import { SAUCE_RECIPES } from "./catalog-sauces.ts";
+import { SOUTHERN_RECIPES } from "./catalog-southern.ts";
+import { WORLD_RECIPES } from "./catalog-world.ts";
+import { PLUS_RECIPES } from "./catalog-plus.ts";
+import { MORE_RECIPES } from "./catalog-more.ts";
+import { CLASSIC_RECIPES } from "./catalog-classics.ts";
+import { WARTIME_RECIPES } from "./catalog-wartime.ts";
+import { HERITAGE_RECIPES } from "./catalog-heritage.ts";
+import { BOOK_RECIPES } from "./catalog-books.ts";
+import { TABLE_RECIPES } from "./catalog-table.ts";
+import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
+import { polishCatalog } from "./cook-steps.ts";
+import { decorateDietTags } from "./diet.ts";
 
 const I = (
   name: string,
@@ -1483,6 +1483,9 @@ function withSource(list: Recipe[], source: Recipe["source"], extraTags: string[
 	}));
 }
 
+// Diet flags are stamped after the polish so they read the rows the cook is
+// actually shown: aligning the list to the method can add a butter, and a
+// dairy-free badge computed before that would be a lie.
 export const RECIPES: Recipe[] = polishCatalog(
   [
     ...withFlavor(CORE_RECIPES),
@@ -1502,8 +1505,8 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...BOOK_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
-  ].map(decorateDietTags),
-);
+  ],
+).map(decorateDietTags);
 
 const RECIPE_BY_ID = new Map(RECIPES.map((r) => [r.id, r]));
 
