@@ -1,0 +1,39 @@
+@Plate — founder YES with fill-the-bag bar. Same A+B, tightened proof. No new hop.
+
+```
+Grok Build — Checkout ≠ first PDP + Seed cart before Helios boot (native). Founder approved YES on Sep 6, 2026 (Re-apply + fill bar).
+
+Approval Cards:
+1. Checkout ≠ first PDP
+2. Seed cart before Helios boot (native)
+3. Re-apply Checkout YES to live (+ git) — cook this paste, then founder re-exports
+
+Bar (founder): Checkout must auto-fill Superstore’s real cart from Spoonful (Helios badge ≥ packs added). A toast alone is not success. Native path must put items in their bag. Web “Cart ready…” is honesty only when the bridge cannot open Helios — never claim plain Chrome can write Superstore localStorage / fill their cart.
+
+Point at: `grocery-near.tsx` (checkoutHref / openCheckout — kill checkoutHops[0]), `grocery-stores.ts`, `native-health.ts` (warmStoreCart / openStoreCart). Do not scaffold a new app. Encyclopedia (~1,324) + six skins stay. No Shop tab, paywall, invented /cart URLs, iframe, or login cart. Auth OFF. bannerId rass, storeId 0357, https://www.atlanticsuperstore.ca.
+
+Keep: Add / Add cheapest → guest PCX create+merge (Anonymous). data-store-cart UUID + data-store-count ≥ packs.
+
+---
+A · Checkout ≠ first PDP
+- Never set checkoutHref / grocery-open-cart href to checkoutHops[0] or `/en/p/{firstSku}`.
+- Native (openStoreCart present): open the seeded Helios WebView (B). Success = Superstore UI with cart badge ≥ packs — chicken = Extra Lean Boneless Skinless Chicken Breasts (e.g. 21340952_EA), eggs = Large Size Eggs 12 Pack carton (e.g. 20812144001_EA).
+- Web (bridge undefined/false): preventDefault / do not navigate to PDP. Show “Cart ready on Superstore — open in the app” (string must exist in src). That means packs are already in the guest PCX cart via Add — it does NOT fill Helios in Chrome. Do not promise Chrome auto-fill.
+- States: Empty disables Checkout · Loading inline · Error toast keep UUID · Done native = badge ≥ packs · Done web = Cart ready, no PDP.
+
+B · Seed before Helios boot (native) — this is the auto-fill
+- warmStoreCart / openStoreCart: before Helios boots, set localStorage.lcl-cart-id-banner = data-store-cart UUID; clear sessionStorage.lcl-grocery-data-cart; load Superstore same-origin; foreground.
+- Helios must GET that guest cart so the badge equals packs Add already posted (e.g. ≥2 for chicken + eggs).
+- Do not warm a PDP URL as the cart. No 404, no reload loop.
+- Hard walls: no /cart Helios routes; no ?cartId=; no iframe; no cross-origin localStorage from a normal Chrome tab.
+
+Not building: Walmart/Sobeys this paste; new hop theories; claiming web Chrome fills Helios; leaving Checkout = first PDP.
+
+Free: core.
+
+Preview (PLATE-8F2R · 0357):
+1. Add chicken breasts + eggs → UUID + count ≥2 in Spoonful.
+2. Native Checkout → Superstore Helios cart badge ≥2 (filled bag) — not a lone PDP badge 0.
+3. Web/no bridge → “Cart ready on Superstore — open in the app”; never /en/p/{first}.
+4. Founder re-exports past `18bb805`; Line confirms checkoutHref ≠ checkoutHops[0], Cart ready in src, and native badge ≥ packs when bridge exists.
+```

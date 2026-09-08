@@ -1,0 +1,80 @@
+@Plate — founder YES on both. One paste.
+
+```
+Grok Build — Checkout ≠ first PDP + Seed cart before Helios boot (native). Founder approved YES on Sep 6, 2026.
+
+Approval Cards (do not invent scope beyond these two):
+1. Checkout ≠ first PDP
+2. Seed cart before Helios boot (native)
+
+Point at existing Shop Add / Add cheapest / Checkout / grocery-cart / SpoonfulHealth.warmStoreCart + openStoreCart in this app. Do not scaffold a new app. Encyclopedia (~1,324) and the six skins stay. Barcode, Snap, log, Tonight, Shop-from-tonight stay free. No new Shop tab. No paywall. Auth stays OFF — guest PCX cart only. Atlantic Superstore first (bannerId rass, storeId 0357, origin https://www.atlanticsuperstore.ca).
+
+Proven wiring to keep (do not re-break):
+- Add / Add cheapest already POSTs into guest PCX cart: create POST https://api.pcexpress.ca/pcx-bff/api/v1/carts body {"bannerId":"rass","language":"en","storeId":"0357"} → { id }; add merges POST /pcx-bff/api/v1/carts/{cartId} entries with fulfillmentMethod pickup, sellerId 0357.
+- UI already can show “N on Superstore”, data-store-cart UUID, data-store-count.
+- Search uses public web X-Apikey; product pages that 200 are /en/p/{productId}.
+
+Broken today (fix):
+- Checkout href = checkoutHopsFor()[0] → /en/p/{firstSku} (e.g. /en/p/21403060_EA). Cart badge 0. Parent still taps Add on Superstore.
+- SpoonfulHealth.openStoreCart / warmStoreCart undefined in ordinary Chrome → preview just opens the PDP.
+
+---
+A · Checkout ≠ first PDP
+
+Screens: Shop Add / Add cheapest; Checkout control (data-testid=grocery-open-cart); web no-bridge state; native Superstore WebView.
+
+User steps:
+1. Shop list with chicken breasts + eggs (or any packs) → Atlantic Superstore → Add / Add cheapest for all. Stay in Spoonful.
+2. Confirm data-store-cart is a UUID and data-store-count ≥ packs added.
+3. Tap Checkout at Atlantic Superstore.
+4. Native (bridge present): open Superstore WebView path in B — never navigate to /en/p/{firstSku} as “Checkout.”
+5. Web (SpoonfulHealth.openStoreCart / warmStoreCart undefined): stay in Spoonful with clear copy e.g. “Cart ready on Superstore — open in the app” (packs already in guest PCX cart). Do not open a first-SKU PDP. Do not open /cart or invented Helios routes.
+
+States:
+- Empty list: Checkout disabled.
+- Loading: inline on Add; keep prior UUID on error toast.
+- Error: toast; keep data-store-cart UUID; never fall back to first PDP.
+- Done (native): Superstore UI with cart badge ≥ packs added.
+- Done (web): honest in-Spoonful “cart ready” — no /en/p/{first} with badge 0.
+
+Line repro: After Add cheapest, Checkout must not be href /en/p/{firstSku} with badge 0.
+
+---
+B · Seed cart before Helios boot (native)
+
+Screens: in-app Superstore WebView via warmStoreCart / openStoreCart.
+
+User steps:
+1. On Checkout (or warm on Add if already wired), open Superstore WebView same-origin to https://www.atlanticsuperstore.ca.
+2. Before Helios JS boots: set localStorage.lcl-cart-id-banner = data-store-cart UUID; clear sessionStorage.lcl-grocery-data-cart (Helios prefers session cart and overwrites after-boot sets).
+3. Let Helios boot / single reload if required — must not 404, must not loop-reload.
+4. Foreground that WebView. Cart badge must be ≥ number of packs Add put in PCX (chicken breasts + eggs → ≥2).
+5. Chicken = Extra Lean Boneless Skinless Chicken Breasts (e.g. 21340952_EA), eggs = Large Size Eggs 12 Pack carton (e.g. 20812144001_EA) — not deli/frozen meals, not egg noodles.
+
+States:
+- Loading: WebView warm/seed; Spoonful stays responsive.
+- Error: toast in Spoonful; keep guest cart UUID; never open first PDP as fake success.
+- Done: Helios shows guest cart; badge ≥ packs; customer Anonymous path (no login).
+
+Hard walls (do not fight):
+- Do not invent /cart, /en/cart, /cart?add= — Helios Page not found.
+- Do not use ?cartId= / #cartId= — Akamai Access Denied or ignored (new empty cart).
+- Do not iframe Superstore (X-Frame-Options: SAMEORIGIN).
+- Do not expect plain Chrome window.open to write their localStorage.
+- Do not require PC Express Bearer login cart.
+
+---
+Not building: new Shop tab; paywall; invented Helios cart URLs; iframe; login-required cart; Walmart/Sobeys this paste; encyclopedia/skins changes; Shop week lobster polish; leaving Checkout = hop #1 PDP.
+
+Free vs add-on: free (core).
+
+Why / how it helps:
+- A: Checkout stops lying — tired parent doesn’t land on a product page with an empty bag.
+- B: Packs already in the guest PCX cart show in Superstore’s real cart UI via pre-boot seed.
+
+Preview check (PLATE-8F2R · Atlantic Superstore 0357):
+1. Add chicken breasts + eggs (or Add cheapest including those) → data-store-cart UUID + count ≥2.
+2. Native Checkout → Superstore with badge ≥2; not only /en/p/{firstItem} with badge 0.
+3. Web/no bridge → “Cart ready…” in Spoonful; no first-SKU PDP hop.
+4. No Helios “Page not found.” Encyclopedia + six skins untouched.
+```

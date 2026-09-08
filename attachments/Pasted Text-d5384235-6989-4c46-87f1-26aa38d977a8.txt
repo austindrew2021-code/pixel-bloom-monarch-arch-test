@@ -1,0 +1,83 @@
+@Plate — founder YES on all three. One paste, specs A–C only (not local 9–12).
+
+```
+Grok Build — Favorites plate ≠ eaten + One Fuel leftover + Plain Fuel session words. Founder approved YES on Sep 5, 2026.
+
+Approval Cards (do not invent scope beyond these three):
+1. Favorites plate ≠ eaten
+2. One Fuel leftover
+3. Plain Fuel session words
+
+Point at the existing Next Gen / Training kitchen screens and files in this app. Do not scaffold a new app. Encyclopedia (~1,324) and the six skins stay. Barcode, Snap, log, Tonight, Shop-from-tonight stay free. Simple Kitchen stays basic — no Fuel tab, no forced log path.
+
+---
+A · Favorites plate ≠ eaten (Line finding 1 — blocker)
+
+Screens: Plan Tonight; Add from favorites; Fuel totals / “· logged” chip.
+
+User steps:
+1. Next Gen Plan → Add from favorites → pick a dinner (e.g. Weeknight mole chicken).
+2. Tonight updates to that dish only.
+3. Open Fuel — totals and “· logged” are unchanged; dinner is not marked eaten.
+4. Explicit log Done (Snap / barcode / Fuel) is the only path that moves Fuel and shows “· logged”.
+
+States:
+- Empty: Tonight can be empty; Fuel stays prior totals.
+- Loading: inline on the favorites add; Fuel does not jump.
+- Error: toast; keep prior Tonight and prior Fuel.
+- Done: plated dinner on Tonight; Fuel still pre-add until an explicit log Done.
+
+Line repro: Next Gen Plan → Add from favorites → pick dinner → Open Fuel — Fuel must NOT jump (e.g. ~15g/150 → ~51g/630) and must NOT show “· logged” from favorites alone.
+
+---
+B · One Fuel leftover (Line finding 2)
+
+Screens: Plan “Fuel left today” chip; Fuel tab “Left”.
+
+User steps:
+1. Log two foods (e.g. leftover pasta + yogurt) via Snap/barcode Done.
+2. Read Plan Fuel-left chip (kcal + protein).
+3. Open Fuel → Left — same leftover kcal + protein as the Plan chip.
+
+States:
+- Empty: both surfaces show the same starting leftover.
+- Loading: both sync; no split numbers mid-update.
+- Error: toast; keep last agreed kcal + protein pair on both.
+- Done: Plan chip equals Fuel Left (kcal and protein).
+
+Line repro: Log pasta + yogurt → Plan “Fuel left today” equals Fuel “Left”.
+
+---
+C · Plain Fuel session words (Line finding 5)
+
+Screens: Fuel training / session / goal lines (Next Gen only).
+
+User steps:
+1. Open Fuel in Training kitchen.
+2. Replace jargon with one-read lines a tired parent or 14yo gets, e.g.:
+   - “Hold weight” → “Keep weight”
+   - “Makeup · Full body A” → “Catch-up workout”
+   - “Compounds only” → “Big lifts today”
+   - “dinner follows this session” → “Dinner follows this workout”
+3. Meaning clear in one pass; no glossary.
+
+States: copy swap only. Done = no Hold weight / Makeup / Compounds on Fuel.
+
+Line repro: Open Next Gen Fuel → read session/goal lines → clear without gym jargon.
+
+---
+Not building: new log modes; Simple Kitchen Fuel tab; Family price; encyclopedia cuts; new tabs; snack→workout rewrite; Shop week merge; tour auto-open; age rewrite; barcode 0g/0kcal (those are later cards); social Cooks; paywalls on Snap/log/barcode/Tonight/Shop-from-tonight.
+
+Free vs add-on: free (core). Body Sync / Fuel leftover / favorites plating stay free.
+
+Why / how it helps:
+- A: Protect the log — plating Tonight is not eating; week-1 parent never gets a false dinner log.
+- B: One leftover number so 5pm math is honest on Plan and Fuel.
+- C: Training kitchen without a cockpit manual.
+
+Preview check:
+1. Guest Next Gen → Add Weeknight mole from favorites → Fuel unchanged, no “· logged”.
+2. Snap pasta → Fuel moves; Plan Fuel-left chip equals Fuel Left (kcal + protein).
+3. Open Fuel → no Hold weight / Makeup / Compounds; teen gets the next step in one read.
+4. Simple mode still has no Fuel tab and no forced log path.
+```

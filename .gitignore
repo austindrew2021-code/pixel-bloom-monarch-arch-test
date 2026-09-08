@@ -1,0 +1,5 @@
+node_modules
+.vercel
+.spoonful-exercise-gifs
+android-test/app/build
+*.apk

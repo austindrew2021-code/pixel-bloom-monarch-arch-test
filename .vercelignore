@@ -1,0 +1,10 @@
+node_modules
+.vercel
+.spoonful-exercise-gifs
+android-test
+apk-www
+apk-public
+artifacts
+attachments
+screenshots
+*.apk

@@ -1,0 +1,86 @@
+@Plate — founder YES TO ALL on 9–11. One paste, D–F only.
+
+```
+Grok Build — Skip the 21-step tour + Age stays as entered + No silent 0g / 0 kcal log. Founder approved YES on Sep 5, 2026.
+
+Approval Cards (do not invent scope beyond these three):
+1. Skip the 21-step tour
+2. Age stays as entered
+3. No silent 0g / 0 kcal log
+
+Point at existing screens and files in this app. Do not scaffold a new app. Encyclopedia (~1,324) and the six skins stay. Barcode, Snap, log, Tonight, Shop-from-tonight stay free. Simple Kitchen stays basic — no Fuel tab, no forced log path. Protect the log: never interrupt an in-progress meal log with overlays, and never treat empty macros as a finished log.
+
+---
+D · Skip the 21-step tour (Line finding 9)
+
+Screens: first open; tour / tips overlay.
+
+User steps:
+1. Fresh guest opens the app.
+2. Lands on Plan / Tonight usable — tour never auto-covers the kitchen.
+3. Tips only if they open them on purpose (“Show tips later” / skip is the default).
+
+States:
+- Empty / first open: kitchen visible, no quiz wall.
+- Done: cook path clear; tips content still available if opened deliberately.
+
+Not-building: deleting tips content; encyclopedia; prices.
+
+Line repro: Fresh guest open on local `main` → kitchen usable with no auto 21-step tour.
+
+---
+E · Age stays as entered (Line finding 10)
+
+Screens: Body age display / edit.
+
+User steps:
+1. Set Body age to 14.
+2. UI shows 14.
+3. If a rule bumps the age, show the bumped value only with a plain why line — never a silent rewrite.
+
+States:
+- Error / rule bump: plain why, never silent 14→16.
+- Done: age matches entry, or 16 with a clear why.
+
+Not-building: training program redesign; Family price; Simple Kitchen.
+
+Line repro: Body age 14 → UI shows 14 (or 16 with a clear why line). No silent 16y.
+
+---
+F · No silent 0g / 0 kcal log (Line finding 11)
+
+Screens: Snap typed leftover; barcode fallback; “Log this anyway”; Fuel row.
+
+User steps:
+1. Typed leftover pasta or barcode with OFF / failed lookup (e.g. `038000845227`).
+2. Failed lookup → clear empty / error state — not a quiet success.
+3. “Log this anyway” works without editing the name field.
+4. Never success-toast or mark eaten a silent 0g / 0 kcal as “done.”
+5. If they explicitly Log this anyway, the Fuel row must show unknown macros honestly (not fake 0/0 success).
+
+States:
+- Empty: honest empty macros / clear “unknown” — not a finished log look.
+- Loading: inline; form stays editable.
+- Error: toast + keep draft; never wipe the meal; never treat 0/0 as success.
+- Done: real macros, or explicit anyway that labels unknown macros — stay on the log path (protect-the-log: no focus-stealing celebrate).
+
+Not-building: new barcode DB product; paywall on barcode/Snap; Simple Fuel tab; new log modes.
+
+Line repro: Local OFF lookup leftover/barcode → no silent 0/0 eaten; “Log this anyway” enabled without renaming; clear empty/error until they finish honestly.
+
+---
+Not building: new barcode database; paywalls; Simple Fuel tab; Family price; encyclopedia cuts; new tabs; tour content deletion; training program redesign; Shop week merge; favorites auto-log / Fuel leftover unify / plain Fuel jargon (already in prior YES paste — do not re-scope here).
+
+Free vs add-on: free (core).
+
+Why / how it helps:
+- D: Land in Tonight ready to cook — tired parent didn’t ask for a quiz.
+- E: Honest Body age so Body Sync trust holds before dinner.
+- F: Protect the log — empty macros never look like a finished eaten log.
+
+Preview check:
+1. Fresh guest open → Plan/Tonight usable, no auto 21-step tour; tips only if asked.
+2. Set age 14 → UI shows 14 (or 16 + plain why).
+3. Failed barcode/leftover lookup → clear empty/error; Log this anyway without renaming; no silent 0g/0 kcal as done.
+4. Simple mode still has no Fuel tab and no forced log path.
+```
