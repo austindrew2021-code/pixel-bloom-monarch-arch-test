@@ -2,6 +2,7 @@ import { Beef, Check, ChevronLeft, ChevronRight, Clock, Heart, Refrigerator, Sho
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ChefPlateLine } from "@/components/chef-plate-line";
+import { WeekRecapCard } from "@/components/week-recap";
 import { MealPhoto } from "@/components/meal-photo";
 import { Plate } from "@/components/plate";
 import { RecipePicker } from "@/components/recipe-picker";
@@ -650,6 +651,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         </Button>
       </div>
       <ChefPlateLine onOpenStore={onOpenStore} className="mt-3" />
+      <WeekRecapCard className="mt-3" />
       {undoMeals ? (
         <button
           type="button"

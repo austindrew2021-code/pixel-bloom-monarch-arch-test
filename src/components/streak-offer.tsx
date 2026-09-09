@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Flame } from "lucide-react";
 import { toast } from "sonner";
+import { KitchenShort } from "@/components/kitchen-short";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { formatPrice } from "@/lib/format";
 import { ADDONS } from "@/lib/recipes";
@@ -28,7 +29,10 @@ export function StreakOfferCard() {
   const unlock = useSpoonful((s) => s.unlock);
   const hasAddon = useSpoonful((s) => s.hasAddon);
   const focusLock = useSpoonful((s) => s.focusLock);
+  const earnWatchSave = useSpoonful((s) => s.earnWatchSave);
+  const watchSavedDates = useSpoonful((s) => s.watchSavedDates);
   const [buying, setBuying] = useState(false);
+  const [watching, setWatching] = useState(false);
 
   // streakSaveBonus/Used/unlocked are read only to keep this reactive to the
   // cap changing — the value itself comes from streakSaveRemaining() below.
@@ -41,6 +45,7 @@ export function StreakOfferCard() {
 
   const remaining = streakSaveRemaining();
   const table = hasAddon("kitchen-table");
+  const canWatch = !watchSavedDates.includes(info.brokenDate);
 
   function save() {
     if (!info) return;
@@ -71,10 +76,14 @@ export function StreakOfferCard() {
           <div className="mt-4 flex gap-2">
             <button
               type="button"
-              onClick={() => (remaining > 0 ? save() : setBuying(true))}
+              onClick={() => (remaining > 0 ? save() : canWatch ? setWatching(true) : setBuying(true))}
               className="flex-1 rounded-full bg-spark px-4 py-2.5 text-sm font-semibold text-spark-foreground"
             >
-              {remaining > 0 ? "Save my streak — free" : `Save for ${formatPrice(STREAK_SAVE_ADDON.price)}`}
+              {remaining > 0
+                ? "Save my streak — free"
+                : canWatch
+                  ? "Watch a short — save it free"
+                  : `Save for ${formatPrice(STREAK_SAVE_ADDON.price)}`}
             </button>
             <button
               type="button"
@@ -84,6 +93,17 @@ export function StreakOfferCard() {
               Let it go
             </button>
           </div>
+          {/* The paid way stays visible next to the free one — a cook in a
+              hurry should never have to sit through a short to find it. */}
+          {remaining === 0 && canWatch ? (
+            <button
+              type="button"
+              onClick={() => setBuying(true)}
+              className="mt-2 w-full rounded-full px-4 py-2 text-sm font-medium text-muted-foreground"
+            >
+              Or save it now for {formatPrice(STREAK_SAVE_ADDON.price)}
+            </button>
+          ) : null}
           {!table ? (
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
               Kitchen Table members get {STREAK_SAVE_FREE_MONTH} free saves every month.
@@ -91,6 +111,19 @@ export function StreakOfferCard() {
           ) : null}
         </div>
       </div>
+
+      {watching ? (
+        <KitchenShort
+          reward="this streak back"
+          headline="Keep the run going"
+          onClose={() => setWatching(false)}
+          onCollect={() => {
+            setWatching(false);
+            if (earnWatchSave(info.brokenDate)) save();
+            else toast("That night has already been saved");
+          }}
+        />
+      ) : null}
 
       <Sheet open={buying} onOpenChange={setBuying}>
         <SheetContent title="Confirm">

@@ -1620,6 +1620,24 @@ export const ADDONS: Addon[] = [
     period: "once",
   },
   {
+    id: "skins-world",
+    name: "World skins",
+    tagline: "Egypt, Greece, Rome, the West, anime",
+    description:
+      "Six more kitchens to cook in — Pharaoh, Sparta, Athens, Rome, Wild West, Anime. Skins are paint, never a lock: the library, the log, Snap, and tonight's dinner work the same in every one. $3.99 once, yours for good.",
+    price: 3.99,
+    period: "once",
+  },
+  {
+    id: "skins-season",
+    name: "Season skins",
+    tagline: "Petals, fireflies, falling leaves, snow",
+    description:
+      "Spring, Summer, Autumn, Winter — each with its own weather drifting behind the kitchen. $3.99 once, yours for good. Nothing you can cook with is behind this.",
+    price: 3.99,
+    period: "once",
+  },
+  {
     id: "tip-flour",
     name: "A bag of flour",
     tagline: "Buy the kitchen a staple",

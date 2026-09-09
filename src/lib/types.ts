@@ -50,6 +50,8 @@ export type AddonId =
   | "table-year"
   | "plates-15"
   | "plates-40"
+  | "skins-world"
+  | "skins-season"
   | "body-sync"
   | "streak-save"
   | "founder"

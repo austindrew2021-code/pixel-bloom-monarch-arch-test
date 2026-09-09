@@ -1,4 +1,7 @@
-import { Sparkles } from "lucide-react";
+import { Play, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { KitchenShort } from "@/components/kitchen-short";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
 import { CHEF_FREE_WEEK } from "@/lib/ranks";
@@ -22,6 +25,9 @@ export function ChefPlateLine({ onOpenStore, className }: { onOpenStore: () => v
   // Reading the count subscribes to it; chefRemaining rolls the week over first.
   useSpoonful((s) => s.chefCount);
   const chefRemaining = useSpoonful((s) => s.chefRemaining);
+  const earnWatchPlate = useSpoonful((s) => s.earnWatchPlate);
+  const lastWatchDate = useSpoonful((s) => s.lastWatchDate);
+  const [watching, setWatching] = useState(false);
 
   // Nothing to say to a cook who has not spent a free plate yet, or to one who
   // already pays for a bigger cap.
@@ -30,6 +36,7 @@ export function ChefPlateLine({ onOpenStore, className }: { onOpenStore: () => v
   if (left >= CHEF_FREE_WEEK) return null;
 
   const packs = ADDONS.filter((a) => (PACK_IDS as readonly string[]).includes(a.id));
+  const watchedToday = lastWatchDate === new Date().toISOString().slice(0, 10);
 
   return (
     <div
@@ -44,6 +51,13 @@ export function ChefPlateLine({ onOpenStore, className }: { onOpenStore: () => v
         {left === 0 ? "You have used all three." : `${left} left. Resets Monday.`} The library, Snap, barcode, and
         tonight's dinner stay free.
       </p>
+      {/* A cook out of plates gets a free way back before a paid one. */}
+      {left === 0 && !watchedToday ? (
+        <Button variant="spark" className="mt-3 w-full" onClick={() => setWatching(true)}>
+          <Play />
+          Watch a short — one more plate
+        </Button>
+      ) : null}
       <div className="mt-3 flex flex-wrap gap-2">
         {packs.map((pack) => (
           <Button key={pack.id} variant="secondary" className="flex-1" onClick={onOpenStore}>
@@ -51,6 +65,17 @@ export function ChefPlateLine({ onOpenStore, className }: { onOpenStore: () => v
           </Button>
         ))}
       </div>
+      {watching ? (
+        <KitchenShort
+          reward="one more Chef plate this week"
+          onClose={() => setWatching(false)}
+          onCollect={() => {
+            const ok = earnWatchPlate();
+            setWatching(false);
+            toast(ok ? "Chef plate is on this week" : "Already collected today");
+          }}
+        />
+      ) : null}
     </div>
   );
 }

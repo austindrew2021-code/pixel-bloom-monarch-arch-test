@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as ApiGroceryCartRouteImport } from './routes/api/grocery-cart'
 import { Route as ApiGrocerySearchRouteImport } from './routes/api/grocery-search'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe-webhook'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const ApiGrocerySearchRoute = ApiGrocerySearchRouteImport.update({
   path: '/api/grocery-search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe-webhook',
+  path: '/api/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/watch': typeof WatchRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/watch': typeof WatchRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/watch': typeof WatchRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/watch'
     | '/api/grocery-cart'
     | '/api/grocery-search'
+    | '/api/stripe-webhook'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/watch'
     | '/api/grocery-cart'
     | '/api/grocery-search'
+    | '/api/stripe-webhook'
     | '/api/auth/$'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/watch'
     | '/api/grocery-cart'
     | '/api/grocery-search'
+    | '/api/stripe-webhook'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   WatchRoute: typeof WatchRoute
   ApiGroceryCartRoute: typeof ApiGroceryCartRoute
   ApiGrocerySearchRoute: typeof ApiGrocerySearchRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGrocerySearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stripe-webhook': {
+      id: '/api/stripe-webhook'
+      path: '/api/stripe-webhook'
+      fullPath: '/api/stripe-webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   WatchRoute: WatchRoute,
   ApiGroceryCartRoute: ApiGroceryCartRoute,
   ApiGrocerySearchRoute: ApiGrocerySearchRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

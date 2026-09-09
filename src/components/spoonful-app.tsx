@@ -15,6 +15,7 @@ import { StoreView } from "@/components/store-view";
 import { StreakOfferCard } from "@/components/streak-offer";
 import { TesterGate } from "@/components/tester-gate";
 import { ThemeOrnament } from "@/components/theme-ornament";
+import { KitchenShort } from "@/components/kitchen-short";
 import { ThemePicker } from "@/components/theme-picker";
 import { SkyView } from "@/components/sky-view";
 import { GlyphFrame } from "@/components/theme-glyphs";
@@ -39,7 +40,7 @@ import { rankForXp } from "@/lib/ranks";
 import { loadKitchenState, saveKitchenState } from "@/lib/kitchen-cloud";
 import { resolveMeal, useSpoonful, type TabId } from "@/lib/spoonful-store";
 import { isTesterUnlocked } from "@/lib/tester";
-import { normalizeTheme, themeById } from "@/lib/themes";
+import { normalizeTheme, themeById, type SkinPackId } from "@/lib/themes";
 import { isPreviewChrome } from "@/lib/preview-chrome";
 import { cn } from "@/lib/utils";
 
@@ -78,6 +79,8 @@ export function SpoonfulApp() {
   const [extras, setExtras] = useState(false);
   const [skyOpen, setSkyOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+  const [skinShort, setSkinShort] = useState<SkinPackId | null>(null);
+  const startSkinTrial = useSpoonful((s) => s.startSkinTrial);
   const [editPins, setEditPins] = useState(false);
   const [unread, setUnread] = useState(0);
   const [allowed, setAllowed] = useState(false);
@@ -451,9 +454,32 @@ export function SpoonfulApp() {
               setThemeOpen(false);
               setSkyOpen(true);
             }}
+            onWatchForSkins={(pack) => {
+              // The sheet has to go first: it and the short both sit at the top
+              // of the stack, and a short playing behind a sheet is a dead tap.
+              setThemeOpen(false);
+              setSkinShort(pack);
+            }}
+            onOpenStore={() => {
+              setThemeOpen(false);
+              setExtras(true);
+            }}
           />
         </SheetContent>
       </Sheet>
+
+      {skinShort ? (
+        <KitchenShort
+          reward="a week of those skins"
+          headline="Try the look"
+          onClose={() => setSkinShort(null)}
+          onCollect={() => {
+            const ok = startSkinTrial(skinShort);
+            setSkinShort(null);
+            toast(ok ? "A week of those skins is on" : "That trial has already been used");
+          }}
+        />
+      ) : null}
 
       {walkthroughOpen ? <Walkthrough onExtras={setExtras} /> : null}
 

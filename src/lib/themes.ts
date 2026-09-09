@@ -34,7 +34,15 @@ export type Theme = {
   swatch: [string, string, string];
   dark: boolean;
   art?: string;
+  /**
+   * The cosmetic pack this skin belongs to, if any. A skin with no `pack` is
+   * free forever — the seven kitchen looks are the app, not an upsell.
+   */
+  pack?: SkinPackId;
 };
+
+/** The two cosmetic packs. Nothing functional is ever behind them. */
+export type SkinPackId = "skins-world" | "skins-season";
 
 export const THEMES: Theme[] = [
   {
@@ -103,6 +111,7 @@ export const THEMES: Theme[] = [
     swatch: ["#1a140c", "#2a2114", "#e0b24a"],
     dark: true,
     art: "/themes/pharaoh.jpg",
+    pack: "skins-world",
   },
   {
     id: "sparta",
@@ -112,6 +121,7 @@ export const THEMES: Theme[] = [
     swatch: ["#1a100c", "#2a1610", "#c43c28"],
     dark: true,
     art: "/themes/sparta.jpg",
+    pack: "skins-world",
   },
   {
     id: "athens",
@@ -121,6 +131,7 @@ export const THEMES: Theme[] = [
     swatch: ["#f0e2c8", "#f7ecda", "#c45c2a"],
     dark: false,
     art: "/themes/athens.jpg",
+    pack: "skins-world",
   },
   {
     id: "rome",
@@ -130,6 +141,7 @@ export const THEMES: Theme[] = [
     swatch: ["#2a2420", "#3a322c", "#c9a227"],
     dark: true,
     art: "/themes/rome.jpg",
+    pack: "skins-world",
   },
   {
     id: "west",
@@ -139,6 +151,7 @@ export const THEMES: Theme[] = [
     swatch: ["#1c120c", "#2a1a12", "#e07a3d"],
     dark: true,
     art: "/themes/west.jpg",
+    pack: "skins-world",
   },
   {
     id: "anime",
@@ -148,6 +161,7 @@ export const THEMES: Theme[] = [
     swatch: ["#0e1428", "#182040", "#ff8a6b"],
     dark: true,
     art: "/themes/anime.jpg",
+    pack: "skins-world",
   },
   {
     id: "spring",
@@ -157,6 +171,7 @@ export const THEMES: Theme[] = [
     swatch: ["#f4efe6", "#fffaf4", "#6fbf73"],
     dark: false,
     art: "/themes/spring.jpg",
+    pack: "skins-season",
   },
   {
     id: "summer",
@@ -166,6 +181,7 @@ export const THEMES: Theme[] = [
     swatch: ["#fff6d8", "#fffceb", "#e8a020"],
     dark: false,
     art: "/themes/summer.jpg",
+    pack: "skins-season",
   },
   {
     id: "autumn",
@@ -175,6 +191,7 @@ export const THEMES: Theme[] = [
     swatch: ["#2a160c", "#3a2014", "#c44b1a"],
     dark: true,
     art: "/themes/autumn.jpg",
+    pack: "skins-season",
   },
   {
     id: "winter",
@@ -184,6 +201,7 @@ export const THEMES: Theme[] = [
     swatch: ["#0e1a24", "#162430", "#d7e8f5"],
     dark: true,
     art: "/themes/winter.jpg",
+    pack: "skins-season",
   },
 ];
 
@@ -209,6 +227,27 @@ export function themeById(id: ThemeId): Theme {
 
 export function themesIn(group: ThemeGroup): Theme[] {
   return THEMES.filter((t) => t.group === group);
+}
+
+/**
+ * Skins in a pack, for the picker and the store card.
+ *
+ * The split is deliberate: every everyday look — Paper through Terminal, the
+ * Nebula and Aether skies included — stays free, because a skin is the first
+ * thing a cook shows someone else and a locked one never gets shown. What the
+ * packs sell is the extra wardrobe, not the kitchen.
+ */
+export function skinsInPack(pack: SkinPackId): Theme[] {
+  return THEMES.filter((t) => t.pack === pack);
+}
+
+export function packOf(id: ThemeId): SkinPackId | undefined {
+  return themeById(id).pack;
+}
+
+/** Free skins: the ones a kitchen has without ever paying. */
+export function freeSkins(): Theme[] {
+  return THEMES.filter((t) => !t.pack);
 }
 
 /** Themes that paint light-on-dark, for the few spots that need to know. */

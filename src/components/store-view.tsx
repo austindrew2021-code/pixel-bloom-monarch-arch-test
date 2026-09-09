@@ -1,4 +1,4 @@
-import { Check, Copy, Download, Play, Share, Smartphone } from "lucide-react";
+import { Check, Copy, CreditCard, Download, Play, Share, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { DeviceSyncCard } from "@/components/device-sync-card";
+import { KitchenShort } from "@/components/kitchen-short";
+import { billingStatus, startCheckout } from "@/lib/billing/checkout";
 import { formatPrice } from "@/lib/format";
 import { isoDate } from "@/lib/fuel";
 import { interacMemo } from "@/lib/gift";
@@ -51,7 +53,6 @@ export function StoreView() {
   const table = hasAddon("kitchen-table");
   const [buying, setBuying] = useState<Addon | null>(null);
   const [watching, setWatching] = useState(false);
-  const [secs, setSecs] = useState(12);
   const lastWatchDate = useSpoonful((s) => s.lastWatchDate);
   const earnWatchPlate = useSpoonful((s) => s.earnWatchPlate);
   const inviteClaimed = useSpoonful((s) => s.inviteClaimed);
@@ -73,20 +74,6 @@ export function StoreView() {
   });
   const yearTable = ADDONS.find((a) => a.id === "table-year")!;
 
-  useEffect(() => {
-    if (!watching) return;
-    setSecs(12);
-    const t = window.setInterval(() => {
-      setSecs((n) => {
-        if (n <= 1) {
-          window.clearInterval(t);
-          return 0;
-        }
-        return n - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(t);
-  }, [watching]);
 
   return (
     <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
@@ -649,38 +636,15 @@ export function StoreView() {
       </Sheet>
 
       {watching ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/70 p-4 sm:items-center">
-          <div className="w-full max-w-sm rounded-3xl bg-card p-5 shadow-[var(--shadow-lift)]">
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-spark">Kitchen short</p>
-            <h2 className="mt-1 font-display text-2xl">Tonight still happens</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              A quiet 12 seconds. No pop-ups in cook or shop — ever. Collect at the end for one chef plate this week.
-            </p>
-            <div className="relative mt-4 overflow-hidden rounded-2xl bg-foreground px-4 py-10 text-center text-background">
-              <p className="font-display text-4xl tabular-nums">{secs}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.16em] opacity-70">
-                {secs > 0 ? "Stay with the kitchen" : "Ready"}
-              </p>
-            </div>
-            {secs > 0 ? (
-              <Button variant="ghost" className="mt-4 w-full" onClick={() => setWatching(false)}>
-                Skip — no plate
-              </Button>
-            ) : (
-              <Button
-                variant="spark"
-                className="mt-4 w-full"
-                onClick={() => {
-                  const ok = earnWatchPlate();
-                  setWatching(false);
-                  toast(ok ? "Chef plate is on this week" : "Already collected today");
-                }}
-              >
-                Collect chef plate
-              </Button>
-            )}
-          </div>
-        </div>
+        <KitchenShort
+          reward="one chef plate this week"
+          onClose={() => setWatching(false)}
+          onCollect={() => {
+            const ok = earnWatchPlate();
+            setWatching(false);
+            toast(ok ? "Chef plate is on this week" : "Already collected today");
+          }}
+        />
       ) : null}
     </div>
   );
@@ -709,6 +673,41 @@ function Checkout({
   const country = useSpoonful((s) => s.country);
   const memo = interacMemo(addon.name, TESTER_KEY);
   const interac = country === "CA";
+  // Cards are off until the kitchen has Stripe keys. Until then this sheet is
+  // exactly what it was: an Interac memo and a local unlock.
+  const [card, setCard] = useState(false);
+  const [opening, setOpening] = useState(false);
+  useEffect(() => {
+    let live = true;
+    void billingStatus()
+      .then((res) => {
+        if (live) setCard(Boolean(res?.card));
+      })
+      .catch(() => {
+        /* offline, or billing not wired: stay on the Interac path */
+      });
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  async function payByCard() {
+    setOpening(true);
+    try {
+      const res = await startCheckout({
+        data: { addonId: addon.id, returnTo: "/" },
+      });
+      if (!res.ok) {
+        toast(res.error);
+        return;
+      }
+      window.location.href = res.url;
+    } catch {
+      toast("The till did not open. Try again in a moment.");
+    } finally {
+      setOpening(false);
+    }
+  }
   return (
     <div>
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
@@ -755,7 +754,13 @@ function Checkout({
               : "Monthly when billing is live. Cancel any time. Nothing is charged in this test kitchen."}
       </p>
       <div className="mt-6 flex flex-col gap-2">
-        <Button className="w-full" onClick={onConfirm}>
+        {card ? (
+          <Button className="w-full" variant="spark" disabled={opening} onClick={() => void payByCard()}>
+            <CreditCard />
+            {opening ? "Opening the till…" : `Pay ${formatPrice(addon.price)} by card`}
+          </Button>
+        ) : null}
+        <Button className="w-full" variant={card ? "secondary" : "default"} onClick={onConfirm}>
           {interac ? "I've sent it" : "Start"}
         </Button>
         <Button variant="ghost" className="w-full" onClick={onCancel}>

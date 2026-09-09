@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Play, Square } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { resolveMeal, useSpoonful } from "@/lib/spoonful-store";
 import { isoDate } from "@/lib/fuel";
 import { THEMES, themeById, type ThemeId } from "@/lib/themes";
@@ -8,8 +8,24 @@ import { cn } from "@/lib/utils";
 export function SkyView({ onClose }: { onClose: () => void }) {
   const theme = useSpoonful((s) => s.theme);
   const setTheme = useSpoonful((s) => s.setTheme);
+  const skinAllowed = useSpoonful((s) => s.skinAllowed);
+  const unlocked = useSpoonful((s) => s.unlocked);
+  const skinTrials = useSpoonful((s) => s.skinTrials);
   const meals = useSpoonful((s) => s.meals);
   const look = themeById(theme);
+  /*
+   * The tour only walks skins this kitchen actually has.
+   *
+   * `setTheme` refuses a skin in an unowned pack, so a tour that stepped onto
+   * one would sit there — the next step is computed from the current theme, and
+   * the current theme never changed. Filtering the list is what keeps the
+   * carousel moving instead of freezing on the first locked look.
+   */
+  const looks = useMemo(
+    () => THEMES.filter((t) => skinAllowed(t.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recompute when ownership changes
+    [skinAllowed, unlocked, skinTrials],
+  );
   const [tour, setTour] = useState(false);
   const [now, setNow] = useState(() => new Date());
 
@@ -25,23 +41,23 @@ export function SkyView({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (!tour) return;
     const id = window.setInterval(() => {
-      const i = THEMES.findIndex((t) => t.id === useSpoonful.getState().theme);
-      const next = THEMES[(i + 1) % THEMES.length];
+      const i = looks.findIndex((t) => t.id === useSpoonful.getState().theme);
+      const next = looks[(i + 1) % looks.length];
       if (next) useSpoonful.getState().setTheme(next.id);
     }, 9000);
     return () => window.clearInterval(id);
-  }, [tour]);
+  }, [tour, looks]);
 
   const tonight = meals.find((m) => m.date === isoDate() && m.slot === "dinner" && !m.skip);
   const dinner = tonight ? resolveMeal(tonight).title : "Nothing plated yet";
   const hh = now.getHours() % 12 || 12;
   const mm = String(now.getMinutes()).padStart(2, "0");
   const time = `${hh}:${mm}`;
-  const idx = Math.max(0, THEMES.findIndex((t) => t.id === theme));
+  const idx = Math.max(0, looks.findIndex((t) => t.id === theme));
 
   function step(dir: number) {
     setTour(false);
-    const next = THEMES[(idx + dir + THEMES.length) % THEMES.length];
+    const next = looks[(idx + dir + looks.length) % looks.length];
     if (next) setTheme(next.id);
   }
 
@@ -80,7 +96,8 @@ export function SkyView({ onClose }: { onClose: () => void }) {
           </button>
         </div>
         <div className="sky-view__dots" role="tablist" aria-label="Looks">
-          {THEMES.map((t) => (
+          {/* A dot for a look this kitchen cannot wear would be a dead tap. */}
+          {looks.map((t) => (
             <button
               key={t.id}
               type="button"

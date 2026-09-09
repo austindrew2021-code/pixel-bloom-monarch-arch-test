@@ -31,7 +31,7 @@ import {
 } from "./ranks.ts";
 import type { ProgressPhotoMeta } from "./progress-photos";
 import { brokenStreakInfo, type BrokenStreak } from "./streak.ts";
-import { isThemeId, type ThemeId } from "./themes.ts";
+import { isThemeId, packOf, type SkinPackId, type ThemeId } from "./themes.ts";
 import { DEFAULT_NOTIFY, pushNote, type NotifyPrefs } from "./notify.ts";
 import { coachSay, DEFAULT_COACH, normalizeCoach, type CoachEvent, type CoachPrefs } from "./coach.ts";
 import { plateChangeKind, plateChangeWhy, type KitchenUpdate } from "./kitchen-log.ts";
@@ -174,6 +174,14 @@ type SpoonfulState = {
   handsFreeCook: boolean;
   alwaysHave: string[];
   lastWatchDate: string;
+  /** Pack id -> ISO date the watch-to-try week runs out. */
+  skinTrials: Record<string, string>;
+  /** Broken nights already bought back with a watched short. */
+  watchSavedDates: string[];
+  /** The week whose recap has already been shown, so it appears once. */
+  lastRecapWeek: string;
+  /** Set once the one-time grandfather pass has run for this kitchen. */
+  skinsGrandfathered: boolean;
   inviteClaimed: boolean;
   giftTableUntil: string;
   lastGiftCode: string;
@@ -219,6 +227,11 @@ type SpoonfulState = {
   setHandsFreeCook: (on: boolean) => void;
   toggleAlwaysHave: (name: string) => void;
   earnWatchPlate: () => boolean;
+  earnWatchSave: (brokenDate: string) => boolean;
+  seeRecap: (weekStart: string) => void;
+  skinAllowed: (id: ThemeId) => boolean;
+  startSkinTrial: (pack: SkinPackId) => boolean;
+  skinTrialDaysLeft: (pack: SkinPackId) => number;
   claimInvitePlate: () => boolean;
   claimGiftCode: (code: string) => boolean;
   seatCap: () => number;
@@ -547,6 +560,10 @@ export const useSpoonful = create<SpoonfulState>()(
       handsFreeCook: false,
       alwaysHave: [],
       lastWatchDate: "",
+      skinTrials: {},
+      watchSavedDates: [],
+      lastRecapWeek: "",
+      skinsGrandfathered: false,
       inviteClaimed: false,
       giftTableUntil: "",
       lastGiftCode: "",
@@ -585,7 +602,12 @@ export const useSpoonful = create<SpoonfulState>()(
         set((s) => ({
           allergies: s.allergies.includes(id) ? s.allergies.filter((a) => a !== id) : [...s.allergies, id],
         })),
-      setTheme: (theme) => set({ theme }),
+      // A locked skin cannot be worn by writing state directly — the picker
+      // offers the pack instead.
+      setTheme: (theme) => {
+        if (!get().skinAllowed(theme)) return;
+        set({ theme });
+      },
       setNextGen: (nextGen) => {
         set((s) => ({
           nextGen,
@@ -971,6 +993,54 @@ export const useSpoonful = create<SpoonfulState>()(
             ? prev.pantry
             : [...prev.pantry, { id: uid(), name: key }],
         }));
+      },
+      /**
+       * Can this kitchen wear this skin?
+       *
+       * Free skins always. A pack skin needs the pack bought, or a trial week
+       * still running. Never anything a cook can actually cook with — this
+       * gates paint only.
+       */
+      /**
+       * A short buys back one broken streak.
+       *
+       * Capped per broken night, not per day: the offer only exists in the
+       * moment a streak actually lapsed, so there is nothing to farm. It sits
+       * beside the free saves and the $1.99 one — three ways out, and the cook
+       * picks.
+       */
+      seeRecap: (weekStart) => set({ lastRecapWeek: weekStart }),
+      earnWatchSave: (brokenDate) => {
+        const s = get();
+        if (s.watchSavedDates.includes(brokenDate)) return false;
+        set({
+          streakSaveBonus: s.streakSaveBonus + 1,
+          watchSavedDates: [...s.watchSavedDates, brokenDate],
+        });
+        return true;
+      },
+      skinAllowed: (id) => {
+        const pack = packOf(id);
+        if (!pack) return true;
+        const s = get();
+        if (isUnlocked(s.unlocked, pack, { giftUntil: s.giftTableUntil })) return true;
+        const until = s.skinTrials[pack];
+        return Boolean(until && until >= isoDate());
+      },
+      /** A watched short buys a week of a pack. One trial per pack, ever. */
+      startSkinTrial: (pack) => {
+        const s = get();
+        if (s.skinTrials[pack]) return false;
+        const until = new Date();
+        until.setDate(until.getDate() + 7);
+        set({ skinTrials: { ...s.skinTrials, [pack]: until.toISOString().slice(0, 10) } });
+        return true;
+      },
+      skinTrialDaysLeft: (pack) => {
+        const until = get().skinTrials[pack];
+        if (!until) return 0;
+        const ms = new Date(`${until}T23:59:59`).getTime() - Date.now();
+        return Math.max(0, Math.ceil(ms / 86400000));
       },
       earnWatchPlate: () => {
         const today = isoDate();
@@ -2063,6 +2133,10 @@ export const useSpoonful = create<SpoonfulState>()(
         handsFreeCook: s.handsFreeCook,
         alwaysHave: s.alwaysHave,
         lastWatchDate: s.lastWatchDate,
+        skinTrials: s.skinTrials,
+        watchSavedDates: s.watchSavedDates,
+        lastRecapWeek: s.lastRecapWeek,
+        skinsGrandfathered: s.skinsGrandfathered,
         inviteClaimed: s.inviteClaimed,
         giftTableUntil: s.giftTableUntil,
         lastGiftCode: s.lastGiftCode,
@@ -2073,12 +2147,31 @@ export const useSpoonful = create<SpoonfulState>()(
   ),
 );
 
+/**
+ * Skins became two paid packs. Nobody who was already wearing one loses it.
+ *
+ * Taking a skin off a cook who chose it is the kind of small betrayal people
+ * remember, so on the first run after the change the pack they are standing in
+ * is granted outright. Runs once, then records that it did — a cook who later
+ * switches to a free skin does not quietly lose the grant.
+ */
+function grandfatherSkins(): void {
+  const s = useSpoonful.getState();
+  if (s.skinsGrandfathered) return;
+  const pack = packOf(s.theme);
+  useSpoonful.setState({
+    skinsGrandfathered: true,
+    ...(pack && !s.unlocked.includes(pack) ? { unlocked: [...s.unlocked, pack] } : {}),
+  });
+}
+
 if (typeof window !== "undefined") {
   // Rehydrate BEFORE any set(). The store persists on every write, so a set()
   // made while the store still holds its defaults writes those defaults over
   // the saved kitchen — and the rehydrate that follows then reads the wipe. It
   // cost a reloading cook their week, their log, and their spent Chef plates.
   void useSpoonful.persist.rehydrate();
+  grandfatherSkins();
   try {
     const raw = window.localStorage.getItem("spoonful-v1");
     if (raw) {
