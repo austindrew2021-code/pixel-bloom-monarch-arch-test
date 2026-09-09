@@ -119,7 +119,7 @@ export function isVegetarian(recipe: Recipe): boolean {
   if (["chicken", "beef", "lamb", "pork", "fish", "seafood", "turkey"].includes(recipe.protein)) return false;
   if (!["veg", "eggs"].includes(recipe.protein)) return false;
   const text = withoutLookalikes(blob(recipe));
-  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatin|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth))\b/i.test(
+  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov(y|ies)|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatin|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth))\b/i.test(
     text,
   );
 }
