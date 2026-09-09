@@ -2191,3 +2191,13 @@
 [data-theme="paper"] .nav-snap-icon {
   border-radius: 999px;
 }
+
+/*
+ * A small text button — "Hide pantry items", "See all recipes · 1539" — reads
+ * right at 12px but is only 16px tall, well under the 44px a thumb needs. This
+ * grows the hit area above and below without moving anything on the page, so
+ * the layout keeps its tight spacing and the tap still lands.
+ */
+.tap {
+  padding-block: 0.625rem;
+}

@@ -395,14 +395,14 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
         <button
           type="button"
           onClick={() => setHidePantry((v) => !v)}
-          className="text-xs text-muted-foreground"
+          className="tap text-xs text-muted-foreground"
         >
           {hidePantry ? "Show items already in the pantry" : "Hide pantry items"}
         </button>
         <button
           type="button"
           onClick={() => setHideChecked((v) => !v)}
-          className="text-xs text-muted-foreground"
+          className="tap text-xs text-muted-foreground"
         >
           {hideChecked ? "Show checked" : "Hide what you already grabbed"}
         </button>

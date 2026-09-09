@@ -15,8 +15,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
+      {/*
+        * Toasts sit above the bottom nav, not over the header. At the top they
+        * covered the header's controls for the four seconds they were up — and
+        * on the training HUD they landed squarely on its only close button, so
+        * "log a plate, then leave" was a dead tap. Down here they clear both the
+        * nav (z-40, ~70px plus the safe area) and everything a cook taps.
+        */}
       <Toaster
-        position="top-center"
+        position="bottom-center"
+        offset="calc(5.25rem + env(safe-area-inset-bottom))"
+        // Below 600px wide sonner uses mobileOffset instead, and this app is
+        // phone-first — without it every toast lands back on top of the nav.
+        mobileOffset="calc(5.25rem + env(safe-area-inset-bottom))"
         toastOptions={{
           classNames: {
             toast:

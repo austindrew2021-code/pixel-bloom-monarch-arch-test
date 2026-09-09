@@ -293,7 +293,14 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
   }
 
   return (
-    <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
+    <>
+    {/*
+      * Cook mode covers this screen completely. Without `inert` the shelf
+      * behind it stays in the tab order, so a cook working by keyboard tabs
+      * out of the recipe they are cooking and into the list of ones they are
+      * not. The overlay is a sibling, so it stays reachable itself.
+      */}
+    <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4" inert={Boolean(cooking)}>
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">{t(locale, "kitchen")}</p>
       <h1 className="mt-1 font-display text-4xl">{t(locale, "recipes")}</h1>
       <p className="mt-2 text-sm text-foreground/80">
@@ -325,7 +332,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
       </div>
       <button
         type="button"
-        className="mt-2 text-xs text-muted-foreground"
+        className="tap text-xs text-muted-foreground"
         onClick={() => setClipOpen((v) => !v)}
       >
         {clipOpen ? "Hide paste" : "Paste a recipe from the web"}
@@ -460,7 +467,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
       {allergies.length > 0 ? (
         <button
           type="button"
-          className="mt-2 text-xs text-muted-foreground"
+          className="tap text-xs text-muted-foreground"
           onClick={() => setShowBlocked((v) => !v)}
         >
           {showBlocked ? "Hide allergy dishes" : "Show dishes your allergies hid"}
@@ -472,7 +479,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
           <section>
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">{t(locale, "tonightPicks")}</p>
-              <button type="button" className="text-xs text-spark" onClick={() => setShelf("all")}>
+              <button type="button" className="tap text-xs text-spark" onClick={() => setShelf("all")}>
                 {t(locale, "allCatalog")} · {RECIPES.length}
               </button>
             </div>
@@ -642,8 +649,9 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
           ) : null}
         </SheetContent>
       </Sheet>
-      {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
     </div>
+    {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
+    </>
   );
 }
 

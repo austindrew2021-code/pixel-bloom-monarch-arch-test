@@ -1,0 +1,966 @@
+file,dish,plate
+public/food/ip-chicken-rice.jpg,Instant Pot chicken and rice,bowl
+public/food/ip-butter-chicken.jpg,Instant Pot butter chicken,curry
+public/food/ip-pulled-pork.jpg,Instant Pot pulled pork,bowl
+public/food/ip-beef-stew.jpg,Instant Pot beef stew,soup
+public/food/ip-mac-cheese.jpg,Instant Pot mac and cheese,pasta
+public/food/ip-chili.jpg,Instant Pot beef chili,bowl
+public/food/ip-dal.jpg,Instant Pot tadka dal,curry
+public/food/ip-risotto.jpg,Instant Pot mushroom risotto,bowl
+public/food/ip-salsa-chicken.jpg,Instant Pot salsa chicken,bowl
+public/food/ip-pot-roast.jpg,Instant Pot pot roast,roast
+public/food/ip-ribs.jpg,Instant Pot baby back ribs,roast
+public/food/ip-lentil-soup.jpg,Instant Pot lentil soup,soup
+public/food/ip-corn-chowder.jpg,Instant Pot corn chowder,soup
+public/food/ip-cheesecake.jpg,Instant Pot New York cheesecake,dessert
+public/food/ip-carnitas.jpg,Instant Pot carnitas,taco
+public/food/ip-pho.jpg,Instant Pot pho broth,soup
+public/food/jp-miso-soup.jpg,Miso soup with tofu,soup
+public/food/jp-onigiri.jpg,Onigiri rice balls,bowl
+public/food/jp-teriyaki-chicken.jpg,Chicken teriyaki donburi,bowl
+public/food/jp-salmon-miso.jpg,Miso-glazed salmon,fish
+public/food/jp-katsu-curry.jpg,Chicken katsu curry,bowl
+public/food/jp-oyakodon.jpg,Oyakodon,bowl
+public/food/jp-gyudon.jpg,Gyudon beef bowl,bowl
+public/food/jp-tamagoyaki.jpg,Tamagoyaki,skillet
+public/food/jp-hiyayakko.jpg,Hiyayakko chilled tofu,bowl
+public/food/jp-sunomono.jpg,Cucumber sunomono,green
+public/food/jp-yakitori.jpg,Yakitori chicken skewers,skillet
+public/food/jp-chawanmushi.jpg,Chawanmushi,bowl
+public/food/jp-nikujaga.jpg,Nikujaga,bowl
+public/food/jp-tonkatsu.jpg,Tonkatsu,skillet
+public/food/jp-nabeyaki-udon.jpg,Nabeyaki udon,soup
+public/food/jp-matcha-pudding.jpg,Matcha pudding,dessert
+public/food/wg-venison-stew.jpg,Venison stew,soup
+public/food/wg-elk-chili.jpg,Elk chili,bowl
+public/food/wg-duck-orange.jpg,Duck with orange,roast
+public/food/wg-pheasant-pot.jpg,Pheasant pot pie filling,bowl
+public/food/wg-rabbit-mustard.jpg,Rabbit in mustard,skillet
+public/food/wg-venison-medallions.jpg,Venison medallions,skillet
+public/food/wg-wild-boar-ragu.jpg,Wild boar ragu,pasta
+public/food/wg-quail-grilled.jpg,Grilled quail,skillet
+public/food/wg-smoked-trout.jpg,Pan-smoked trout,fish
+public/food/wg-duck-hash.jpg,Duck confit hash,skillet
+public/food/wg-bison-meatloaf.jpg,Bison meatloaf,roast
+public/food/wg-venison-chili-mac.jpg,Venison chili mac,pasta
+public/food/cc-new-york.jpg,New York cheesecake,dessert
+public/food/cc-strawberry.jpg,Strawberry swirl cheesecake,dessert
+public/food/cc-chocolate.jpg,Chocolate cheesecake,dessert
+public/food/cc-pumpkin.jpg,Pumpkin cheesecake,dessert
+public/food/cc-key-lime.jpg,Key lime cheesecake,dessert
+public/food/cc-no-bake.jpg,No-bake cheesecake cups,dessert
+public/food/cc-basque.jpg,Basque burnt cheesecake,dessert
+public/food/cc-mini.jpg,Mini cheesecakes,dessert
+public/food/cc-ricotta.jpg,Italian ricotta cheesecake,dessert
+public/food/cc-cookies-cream.jpg,Cookies and cream cheesecake,dessert
+public/food/hd-prime-rib.jpg,Holiday prime rib,roast
+public/food/hd-glazed-ham.jpg,Brown sugar glazed ham,roast
+public/food/hd-roast-goose.jpg,Roast goose with apples,roast
+public/food/hd-sausage-stuffing.jpg,Sausage and sage stuffing,bowl
+public/food/hd-cranberry-sauce.jpg,Whole cranberry sauce,bowl
+public/food/hd-eggnog-custard.jpg,Baked eggnog custard,dessert
+public/food/hd-gingerbread.jpg,Gingerbread people,dessert
+public/food/hd-yule-log.jpg,Yule log cake,dessert
+public/food/hd-sugar-cookies.jpg,Holiday sugar cookies,dessert
+public/food/hd-hot-cocoa.jpg,Holiday hot cocoa,bowl
+public/food/hd-pecan-tassies.jpg,Pecan tassies,dessert
+public/food/hd-wassail.jpg,Spiced wassail,bowl
+public/food/hd-party-mix.jpg,Holiday party mix,bowl
+public/food/hd-baked-alaska.jpg,Baked Alaska,dessert
+public/food/bk-cinnamon-rolls.jpg,Cinnamon rolls,dessert
+public/food/bk-banana-bread.jpg,Banana bread,dessert
+public/food/bk-blueberry-muffins.jpg,Bakery blueberry muffins,dessert
+public/food/bk-sourdough.jpg,Country sourdough loaf,toast
+public/food/bk-peach-cobbler.jpg,Peach cobbler,dessert
+public/food/bk-lemon-bars.jpg,Lemon bars,dessert
+public/food/bk-snickerdoodles.jpg,Snickerdoodles,dessert
+public/food/bk-fudge-brownies.jpg,Fudge brownies,dessert
+public/food/bk-angel-biscuits.jpg,Angel biscuits,toast
+public/food/bk-corn-muffins.jpg,Honey corn muffins,toast
+public/food/bk-apple-pie.jpg,Double-crust apple pie,dessert
+public/food/bk-thumbprints.jpg,Jam thumbprint cookies,dessert
+public/food/sl-cobb.jpg,Cobb salad,green
+public/food/sl-caesar.jpg,Chicken Caesar salad,green
+public/food/sl-wedge.jpg,Iceberg wedge,green
+public/food/sl-potato.jpg,Picnic potato salad,bowl
+public/food/sl-macaroni.jpg,Classic macaroni salad,bowl
+public/food/sl-waldorf.jpg,Waldorf salad,green
+public/food/sl-three-bean.jpg,Three-bean salad,bowl
+public/food/sl-broccoli.jpg,Broccoli bacon salad,bowl
+public/food/sl-caprese.jpg,Caprese salad,green
+public/food/sl-quinoa.jpg,Lemon quinoa salad,green
+public/food/sl-nicoise.jpg,Salade niçoise,green
+public/food/sl-taco-salad.jpg,Taco salad,green
+public/food/gr-baby-back.jpg,Grilled baby back ribs,roast
+public/food/gr-pulled-chicken.jpg,BBQ pulled chicken,bowl
+public/food/gr-elote.jpg,Elote grilled corn,skillet
+public/food/gr-bbq-salmon.jpg,Cedar-plank salmon,fish
+public/food/gr-beer-can-chicken.jpg,Beer-can chicken,roast
+public/food/gr-skirt-steak.jpg,Grilled skirt steak,skillet
+public/food/gr-bbq-tofu.jpg,Barbecue grilled tofu,skillet
+public/food/gr-carolina-pork.jpg,Carolina chopped pork,bowl
+public/food/gr-veggie-skewers.jpg,Grilled vegetable skewers,skillet
+public/food/gr-grilled-peach.jpg,Grilled peaches,dessert
+public/food/gr-smoked-turkey.jpg,Smoked turkey breast,roast
+public/food/gr-pulled-jackfruit.jpg,Barbecue jackfruit sliders,taco
+public/food/pk-soup.jpg,Roasted pumpkin soup,soup
+public/food/pk-bread.jpg,Pumpkin bread,dessert
+public/food/pk-pancakes.jpg,Pumpkin pancakes,toast
+public/food/pk-risotto.jpg,Pumpkin risotto,bowl
+public/food/pk-curry.jpg,Pumpkin chickpea curry,curry
+public/food/pk-seeds.jpg,Roasted pumpkin seeds,bowl
+public/food/pk-ravioli.jpg,Pumpkin ravioli with brown butter,pasta
+public/food/pk-oats.jpg,Pumpkin overnight oats,bowl
+public/food/ap-butter.jpg,Slow apple butter,bowl
+public/food/ap-pork-chops.jpg,Apple cider pork chops,skillet
+public/food/ap-slaw.jpg,Apple cabbage slaw,green
+public/food/ap-baked.jpg,Cinnamon baked apples,dessert
+public/food/ap-cider-braise.jpg,Cider-braised chicken,skillet
+public/food/ap-pancake.jpg,German apple pancake,skillet
+public/food/ap-turnovers.jpg,Apple turnovers,dessert
+public/food/ap-salad-kale.jpg,Kale apple salad,green
+public/food/vg-lentil-bolognese.jpg,Lentil bolognese,pasta
+public/food/vg-chickpea-tikka.jpg,Chickpea tikka masala,curry
+public/food/vg-mushroom-stroganoff.jpg,Mushroom stroganoff,pasta
+public/food/vg-tofu-scramble.jpg,Tofu scramble,skillet
+public/food/vg-jackfruit-tacos.jpg,Jackfruit tacos,taco
+public/food/vg-buddha-bowl.jpg,Roasted vegetable bowl,bowl
+public/food/vg-cashew-alfredo.jpg,Cashew alfredo,pasta
+public/food/vg-black-bean-chili.jpg,Smoky black bean chili,bowl
+public/food/vg-tempeh-reuben.jpg,Tempeh Reuben,toast
+public/food/vg-oat-pancakes.jpg,Oat milk pancakes,toast
+public/food/vg-berry-crumble.jpg,Berry oat crumble,dessert
+public/food/vg-stuffed-peppers.jpg,Quinoa stuffed peppers,roast
+public/food/vg-hummus-bowl.jpg,Hummus vegetable bowl,bowl
+public/food/vg-coconut-curry.jpg,Vegetable coconut curry,curry
+public/food/vg-lentil-shepherd.jpg,Lentil shepherd's pie,roast
+public/food/gf-almond-cake.jpg,Almond flour orange cake,dessert
+public/food/gf-rice-noodle-pad.jpg,Weeknight rice-noodle stir-fry,skillet
+public/food/gf-almond-chicken.jpg,Almond-crusted chicken,skillet
+public/food/gf-polenta-shrimp.jpg,Shrimp over creamy polenta,bowl
+public/food/gf-cauli-pizza.jpg,Cauliflower-crust pizza,skillet
+public/food/gf-buckwheat-crepes.jpg,Buckwheat crepes,skillet
+public/food/gf-flourless-chocolate.jpg,Flourless chocolate cake,dessert
+public/food/gf-zucchini-noodles.jpg,Zucchini noodles with pesto,pasta
+public/food/gf-lettuce-wraps.jpg,Chicken lettuce wraps,bowl
+public/food/gf-coconut-shrimp.jpg,Coconut shrimp,skillet
+public/food/sf-berry-parfait.jpg,Sugar-free berry parfait,bowl
+public/food/sf-herb-chicken.jpg,Herb roasted chicken thighs,roast
+public/food/sf-zucchini-fritters.jpg,Zucchini fritters,skillet
+public/food/sf-egg-muffins.jpg,Veggie egg muffins,bowl
+public/food/sf-steak-chimichurri.jpg,Steak with chimichurri,skillet
+public/food/sf-cauli-sausage.jpg,Sausage and cauliflower mash,bowl
+public/food/sf-salmon-dill.jpg,Dill baked salmon,fish
+public/food/sf-cucumber-yogurt.jpg,Cucumber yogurt bowl,bowl
+public/food/sf-chicken-veg-soup.jpg,Chicken vegetable soup,soup
+public/food/sf-turkey-lettuce.jpg,Turkey lettuce tacos,taco
+public/food/sf-cinnamon-apples.jpg,Skillet cinnamon apples,dessert
+public/food/sf-steak-eggs.jpg,Steak and eggs,skillet
+public/food/in-beef-bourguignon.jpg,Beef bourguignon,soup
+public/food/in-pad-see-ew.jpg,Pad see ew,skillet
+public/food/in-laksa.jpg,Chicken laksa,soup
+public/food/in-lamb-tagine.jpg,Lamb and apricot tagine,curry
+public/food/in-empanadas.jpg,Beef empanadas,skillet
+public/food/in-arepas.jpg,Cheese arepas,skillet
+public/food/in-borscht.jpg,Beet borscht,soup
+public/food/in-khao-soi.jpg,Khao soi,soup
+public/food/in-curry-goat.jpg,Jamaican curry goat,curry
+public/food/in-bobotie.jpg,Bobotie,roast
+public/food/in-hungarian-goulash.jpg,Hungarian goulash,soup
+public/food/in-banh-mi.jpg,Pork banh mi,toast
+public/food/in-xiaolongbao.jpg,Pork soup dumplings,bowl
+public/food/in-shakshuka-feta.jpg,Shakshuka with feta,skillet
+public/food/in-bibimbap-bowl.jpg,Weeknight bibimbap,bowl
+public/food/in-chicken-tagine.jpg,Chicken preserved-lemon tagine,curry
+public/food/hm-tuna-hotdish.jpg,Tuna noodle hotdish,bowl
+public/food/hm-church-chicken.jpg,Church-supper fried chicken,skillet
+public/food/hm-jello-salad.jpg,Pretzel strawberry salad,dessert
+public/food/hm-funeral-potatoes.jpg,Funeral potatoes,bowl
+public/food/hm-seven-layer.jpg,Seven-layer salad,green
+public/food/hm-ham-loaf.jpg,Ham loaf with brown-sugar glaze,roast
+public/food/hm-pimento-cheese.jpg,Pimento cheese,bowl
+public/food/hm-dump-cake.jpg,Cherry pineapple dump cake,dessert
+public/food/hm-victory-soup.jpg,Victory garden soup,soup
+public/food/hm-sheet-supper.jpg,Sheet-pan sausage supper,roast
+public/food/hm-spam-fried-rice.jpg,Spam fried rice,skillet
+public/food/hm-ambrosia-cups.jpg,Ambrosia cups,dessert
+public/food/hm-baked-ziti.jpg,Potluck baked ziti,pasta
+public/food/ip-yogurt.jpg,Instant Pot yogurt,bowl
+public/food/ip-hard-eggs.jpg,Instant Pot hard-boiled eggs,bowl
+public/food/ip-steel-cut.jpg,Instant Pot steel-cut oats,bowl
+public/food/ip-chicken-noodle.jpg,Instant Pot chicken noodle soup,soup
+public/food/ip-broccoli-cheddar.jpg,Instant Pot broccoli cheddar soup,soup
+public/food/ip-potato-soup.jpg,Instant Pot loaded potato soup,soup
+public/food/ip-minestrone.jpg,Instant Pot minestrone,soup
+public/food/ip-tomato-soup.jpg,Instant Pot tomato soup,soup
+public/food/ip-clam-chowder.jpg,Instant Pot clam chowder,soup
+public/food/ip-zuppa.jpg,Instant Pot zuppa toscana,soup
+public/food/ip-french-onion.jpg,Instant Pot French onion soup,soup
+public/food/ip-bone-broth.jpg,Instant Pot bone broth,soup
+public/food/ip-whole-chicken.jpg,Instant Pot whole chicken,roast
+public/food/ip-short-ribs.jpg,Instant Pot short ribs,roast
+public/food/ip-lamb-stew.jpg,Instant Pot lamb stew,soup
+public/food/ip-thai-curry.jpg,Instant Pot Thai chicken curry,curry
+public/food/ip-tikka.jpg,Instant Pot chicken tikka,curry
+public/food/ip-adobo.jpg,Instant Pot chicken adobo,bowl
+public/food/ip-kalua.jpg,Instant Pot kalua pork,bowl
+public/food/ip-chili-verde.jpg,Instant Pot chile verde,bowl
+public/food/ip-black-beans.jpg,Instant Pot black beans,bowl
+public/food/ip-refried.jpg,Instant Pot refried beans,bowl
+public/food/ip-chana.jpg,Instant Pot chana masala,curry
+public/food/ip-rajma.jpg,Instant Pot rajma,curry
+public/food/ip-saag.jpg,Instant Pot saag paneer,curry
+public/food/ip-egg-curry.jpg,Instant Pot egg curry,curry
+public/food/ip-congee.jpg,Instant Pot congee,soup
+public/food/ip-orange-chicken.jpg,Instant Pot orange chicken,bowl
+public/food/ip-honey-garlic.jpg,Instant Pot honey garlic chicken,bowl
+public/food/ip-beef-broccoli.jpg,Instant Pot beef and broccoli,bowl
+public/food/ip-spaghetti.jpg,Instant Pot spaghetti,pasta
+public/food/ip-lasagna.jpg,Instant Pot lasagna,pasta
+public/food/ip-meatballs.jpg,Instant Pot meatballs,bowl
+public/food/ip-cabbage-rolls.jpg,Instant Pot cabbage rolls,bowl
+public/food/ip-stuffed-peppers.jpg,Instant Pot stuffed peppers,roast
+public/food/ip-mashed.jpg,Instant Pot mashed potatoes,bowl
+public/food/ip-artichokes.jpg,Instant Pot artichokes,bowl
+public/food/ip-beets.jpg,Instant Pot beets,bowl
+public/food/ip-rice-pudding.jpg,Instant Pot rice pudding,dessert
+public/food/ip-bbq-beef.jpg,Instant Pot barbecue beef,bowl
+public/food/ip-chicken-taco.jpg,Instant Pot taco chicken,taco
+public/food/ip-shrimp-boil.jpg,Instant Pot shrimp boil,bowl
+public/food/ip-mussels.jpg,Instant Pot mussels,bowl
+public/food/ip-pulao.jpg,Instant Pot vegetable pulao,bowl
+public/food/ip-quinoa.jpg,Instant Pot quinoa bowl,bowl
+public/food/sc-pot-roast.jpg,Slow-cooker pot roast,roast
+public/food/sc-pulled-pork.jpg,Slow-cooker pulled pork,bowl
+public/food/sc-chicken-tacos.jpg,Slow-cooker salsa chicken,taco
+public/food/sc-beef-stew.jpg,Slow-cooker beef stew,soup
+public/food/sc-chili.jpg,Slow-cooker chili,bowl
+public/food/sc-chicken-curry.jpg,Slow-cooker coconut curry,curry
+public/food/sc-ribs.jpg,Slow-cooker ribs,roast
+public/food/sc-lentil.jpg,Slow-cooker lentil soup,soup
+public/food/sc-brisket.jpg,Slow-cooker brisket,roast
+public/food/sc-chicken-and-rice.jpg,Slow-cooker chicken and rice,bowl
+public/food/sc-applesauce.jpg,Slow-cooker applesauce,bowl
+public/food/sc-bolognese.jpg,Slow-cooker bolognese,pasta
+public/food/sc-corn-chowder.jpg,Slow-cooker corn chowder,soup
+public/food/sc-carnitas.jpg,Slow-cooker carnitas,taco
+public/food/sc-thai-beef.jpg,Slow-cooker Thai beef,curry
+public/food/sc-white-chicken-chili.jpg,Slow-cooker white chicken chili,bowl
+public/food/sc-meatballs.jpg,Slow-cooker party meatballs,bowl
+public/food/sc-mulled-wine.jpg,Slow-cooker mulled wine,bowl
+public/food/sc-baked-potatoes.jpg,Slow-cooker baked potatoes,bowl
+public/food/sc-chicken-tinga.jpg,Slow-cooker chicken tinga,taco
+public/food/sc-oatmeal.jpg,Slow-cooker overnight oats,bowl
+public/food/sc-pork-chops.jpg,Slow-cooker ranch pork chops,skillet
+public/food/sp-lemon-chicken.jpg,Sheet-pan lemon chicken,roast
+public/food/sp-sausage-peppers.jpg,Sheet-pan sausage and peppers,roast
+public/food/sp-salmon-broccoli.jpg,Sheet-pan salmon and broccoli,fish
+public/food/sp-gnochhi.jpg,Sheet-pan gnocchi,pasta
+public/food/sp-tofu-broccoli.jpg,Sheet-pan sesame tofu,bowl
+public/food/sp-fajitas.jpg,Sheet-pan chicken fajitas,taco
+public/food/sp-cod-asparagus.jpg,Sheet-pan cod and asparagus,fish
+public/food/sp-greek-chicken.jpg,Sheet-pan Greek chicken,roast
+public/food/sp-pork-apples.jpg,Sheet-pan pork chops and apples,roast
+public/food/sp-shrimp-zucchini.jpg,Sheet-pan shrimp and zucchini,skillet
+public/food/sp-mustard-salmon.jpg,Sheet-pan mustard salmon,fish
+public/food/sp-bbq-chicken.jpg,Sheet-pan barbecue chicken,roast
+public/food/sp-ratatouille.jpg,Sheet-pan ratatouille,roast
+public/food/sp-steak-fries.jpg,Sheet-pan steak and fries,skillet
+public/food/sp-miso-eggplant.jpg,Sheet-pan miso eggplant,roast
+public/food/sp-breakfast.jpg,Sheet-pan breakfast,skillet
+public/food/sp-cauli-chickpea.jpg,Sheet-pan cauliflower and chickpeas,bowl
+public/food/sp-lamb-meatballs.jpg,Sheet-pan lamb meatballs,roast
+public/food/af-chicken-thighs.jpg,Air-fryer chicken thighs,skillet
+public/food/af-salmon.jpg,Air-fryer salmon,fish
+public/food/af-tofu.jpg,Air-fryer crispy tofu,bowl
+public/food/af-wings.jpg,Air-fryer chicken wings,skillet
+public/food/af-brussels.jpg,Air-fryer Brussels sprouts,bowl
+public/food/af-shrimp.jpg,Air-fryer shrimp,skillet
+public/food/af-potatoes.jpg,Air-fryer breakfast potatoes,bowl
+public/food/af-fish.jpg,Air-fryer fish sticks,fish
+public/food/af-chickpeas.jpg,Air-fryer crunchy chickpeas,bowl
+public/food/af-churros.jpg,Air-fryer churros,dessert
+public/food/af-halloumi.jpg,Air-fryer halloumi,skillet
+public/food/af-sweet-potato.jpg,Air-fryer sweet potato fries,bowl
+public/food/af-garlic-bread.jpg,Air-fryer garlic bread,toast
+public/food/af-corn.jpg,Air-fryer corn on the cob,bowl
+public/food/op-chicken-orzo.jpg,One-pot lemon chicken orzo,bowl
+public/food/op-sausage-rice.jpg,One-pot sausage and rice,bowl
+public/food/op-veg-soup.jpg,One-pot vegetable soup,soup
+public/food/op-paella.jpg,One-pot weeknight paella,skillet
+public/food/op-chili-mac.jpg,One-pot chili mac,pasta
+public/food/op-mushroom-barley.jpg,One-pot mushroom barley,bowl
+public/food/op-kimchi-stew.jpg,One-pot kimchi jjigae,soup
+public/food/op-shakshuka-green.jpg,Green shakshuka,skillet
+public/food/op-tomato-rice.jpg,One-pot tomato rice,bowl
+public/food/op-beef-goulash.jpg,One-pot American goulash,pasta
+public/food/op-coconut-rice.jpg,One-pot coconut rice and beans,bowl
+public/food/op-pho-quick.jpg,Weeknight pho pot,soup
+public/food/gf-quinoa-tabbouleh.jpg,Quinoa tabbouleh,green
+public/food/gf-corn-tacos.jpg,Corn-tortilla fish tacos,taco
+public/food/gf-risotto-spring.jpg,Spring vegetable risotto,bowl
+public/food/gf-stuffed-sweet-potato.jpg,Stuffed sweet potatoes,bowl
+public/food/gf-turkey-meatballs.jpg,Turkey zucchini meatballs,bowl
+public/food/gf-socca.jpg,Chickpea socca,skillet
+public/food/gf-poke.jpg,Ahi poke bowl,bowl
+public/food/gf-lamb-chops.jpg,Herb lamb chops,skillet
+public/food/gf-coconut-curry-shrimp.jpg,Coconut shrimp curry,curry
+public/food/gf-polenta-mushrooms.jpg,Mushroom polenta,bowl
+public/food/gf-beef-stir.jpg,Tamari beef stir-fry,skillet
+public/food/gf-chicken-soup.jpg,Rice chicken soup,soup
+public/food/gf-banana-pancakes.jpg,Three-ingredient banana pancakes,toast
+public/food/gf-roast-veg.jpg,Herb roasted vegetables,roast
+public/food/gf-tuna-avocado.jpg,Tuna avocado boats,bowl
+public/food/gf-steak-salad.jpg,Steak salad,green
+public/food/gf-chia-jam.jpg,Chia strawberry spoon,bowl
+public/food/vg-peanut-stew.jpg,West African peanut stew,bowl
+public/food/vg-mapo-tofu.jpg,Vegan mapo tofu,bowl
+public/food/vg-ramen.jpg,Miso mushroom ramen,soup
+public/food/vg-tacos-al-pastor.jpg,Pineapple cauliflower tacos,taco
+public/food/vg-dal-makhani.jpg,Weeknight dal makhani,curry
+public/food/vg-falafel-bowl.jpg,Falafel grain bowl,bowl
+public/food/vg-eggplant-tomato.jpg,Braised eggplant and tomato,bowl
+public/food/vg-sweet-potato-chili.jpg,Sweet potato black bean chili,bowl
+public/food/vg-sesame-noodles.jpg,Cold sesame noodles,pasta
+public/food/vg-posole.jpg,Jackfruit posole,soup
+public/food/vg-koshari.jpg,Koshari,bowl
+public/food/vg-banh-mi.jpg,Tofu banh mi,toast
+public/food/vg-mushroom-tacos.jpg,Mushroom tacos,taco
+public/food/vg-cauliflower-steaks.jpg,Cauliflower steaks with chimichurri,skillet
+public/food/vg-red-lentil-soup.jpg,Turkish red lentil soup,soup
+public/food/vg-bbq-cauli.jpg,Barbecue cauliflower sandwiches,toast
+public/food/vg-overnight-chia.jpg,Chocolate chia pudding,bowl
+public/food/vg-potato-tacos.jpg,Crispy potato tacos,taco
+public/food/sf-greek-yogurt-bowl.jpg,Savory yogurt breakfast,bowl
+public/food/sf-pork-tenderloin.jpg,Herb pork tenderloin,roast
+public/food/sf-shrimp-garlic.jpg,Garlic shrimp skillet,skillet
+public/food/sf-turkey-chili.jpg,No-sugar turkey chili,bowl
+public/food/sf-egg-avocado.jpg,Egg and avocado plate,bowl
+public/food/sf-roast-cod.jpg,Tomato roast cod,fish
+public/food/sf-cabbage-skillet.jpg,Sausage and cabbage skillet,skillet
+public/food/sf-chicken-skewers.jpg,Lemon garlic chicken skewers,skillet
+public/food/sf-mushroom-egg.jpg,Mushroom scrambled eggs,skillet
+public/food/sf-cucumber-salad.jpg,Salt-and-vinegar cucumbers,green
+public/food/sf-roast-turkey.jpg,Dry-brine roast turkey breast,roast
+public/food/sf-beef-kebabs.jpg,Beef and pepper kebabs,skillet
+public/food/jp-okonomiyaki-home.jpg,Cabbage okonomiyaki,skillet
+public/food/jp-soba-cold.jpg,Cold soba with dipping sauce,bowl
+public/food/jp-donburi-salmon.jpg,Salmon ikura don,bowl
+public/food/jp-agedashi.jpg,Agedashi tofu,bowl
+public/food/jp-curry-udon.jpg,Curry udon,soup
+public/food/jp-gomaae.jpg,Spinach goma-ae,green
+public/food/jp-chicken-nanban.jpg,Chicken nanban,skillet
+public/food/jp-kinpira.jpg,Kinpira gobo,skillet
+public/food/jp-omurice.jpg,Omurice,skillet
+public/food/jp-saba.jpg,Miso mackerel,fish
+public/food/jp-edamame.jpg,Salted edamame,bowl
+public/food/jp-karaage.jpg,Chicken karaage,skillet
+public/food/jp-udon-stir.jpg,Yaki udon,skillet
+public/food/jp-dashimaki.jpg,Dashimaki tamago,skillet
+public/food/jp-nasu.jpg,Soy-glazed eggplant,skillet
+public/food/jp-chirashi.jpg,Weeknight chirashi,bowl
+public/food/hd-latkes.jpg,Potato latkes,skillet
+public/food/hd-brisket.jpg,Oven holiday brisket,roast
+public/food/hd-roast-carrots.jpg,Honey roast carrots,roast
+public/food/hd-green-bean.jpg,Green bean casserole,bowl
+public/food/hd-yorkshire.jpg,Yorkshire pudding,bowl
+public/food/hd-mince-pies.jpg,Mince pies,dessert
+public/food/hd-panettone-french.jpg,Panettone French toast,skillet
+public/food/hd-oyster-dressing.jpg,Oyster dressing,bowl
+public/food/hd-champagne-grapes.jpg,Sugared grapes,dessert
+public/food/hd-mulled-cider.jpg,Stovetop mulled cider,bowl
+public/food/hd-pecan-pie-bars.jpg,Pecan pie bars,dessert
+public/food/hd-roast-potatoes.jpg,Goose-fat roast potatoes,roast
+public/food/hd-bread-sauce.jpg,Bread sauce,bowl
+public/food/hd-cranberry-orange.jpg,Cranberry orange relish,bowl
+public/food/hd-rum-balls.jpg,Rum balls,dessert
+public/food/bk-chocolate-chip.jpg,Brown-butter chocolate chip cookies,dessert
+public/food/bk-oatmeal-raisin.jpg,Oatmeal raisin cookies,dessert
+public/food/bk-peanut-cookies.jpg,Peanut butter cookies,dessert
+public/food/bk-shortbread.jpg,Butter shortbread,dessert
+public/food/bk-molasses.jpg,Molasses crinkles,dessert
+public/food/bk-biscotti.jpg,Almond biscotti,dessert
+public/food/bk-rugelach.jpg,Rugelach,dessert
+public/food/bk-linzer.jpg,Linzer cookies,dessert
+public/food/bk-fudge-easy.jpg,Pantry chocolate fudge,dessert
+public/food/bk-popcorn-balls.jpg,Molasses popcorn balls,dessert
+public/food/bk-cinnamon-swirl.jpg,Cinnamon swirl loaf,toast
+public/food/bk-irish-soda.jpg,Irish soda bread,toast
+public/food/bk-dinner-rolls.jpg,Pull-apart dinner rolls,toast
+public/food/bk-coffee-cake.jpg,Cinnamon crumb cake,dessert
+public/food/bk-pound-cake.jpg,Lemon pound cake,dessert
+public/food/bk-carrot-cake.jpg,Weekday carrot cake,dessert
+public/food/bk-apple-crisp-oat.jpg,Oat apple crisp,dessert
+public/food/bk-berry-galette.jpg,Mixed berry galette,dessert
+public/food/cc-oreo.jpg,Cookies-and-cream mini cheesecakes,dessert
+public/food/cc-lemon.jpg,Lemon cheesecake,dessert
+public/food/cc-swirl-raspberry.jpg,Raspberry swirl cheesecake,dessert
+public/food/cc-savory.jpg,Herbed savory cheesecake,bowl
+public/food/cc-mango.jpg,Mango cheesecake,dessert
+public/food/cc-espresso.jpg,Espresso cheesecake,dessert
+public/food/sl-greek.jpg,Horiatiki salad,green
+public/food/sl-fattoush.jpg,Fattoush,green
+public/food/sl-panzanella.jpg,Panzanella,green
+public/food/sl-kale-caesar.jpg,Kale Caesar,green
+public/food/sl-beet-goat.jpg,Beet and goat cheese salad,green
+public/food/sl-asian-slaw.jpg,Sesame cabbage slaw,green
+public/food/sl-wheat-berry.jpg,Wheat berry salad,green
+public/food/sl-shrimp-louis.jpg,Shrimp Louie,green
+public/food/sl-farro.jpg,Farro cucumber salad,green
+public/food/sl-chopped.jpg,Italian chopped salad,green
+public/food/sl-watermelon-feta.jpg,Watermelon feta mint,green
+public/food/sl-lentil.jpg,Warm lentil salad,green
+public/food/cp-foil-packets.jpg,Campfire foil packets,roast
+public/food/cp-dutch-cobbler.jpg,Dutch-oven berry cobbler,dessert
+public/food/cp-camp-chili.jpg,Camp pot chili,bowl
+public/food/cp-sausage-skillet.jpg,Breakfast camp skillet,skillet
+public/food/cp-trail-mix.jpg,Toasted trail mix,bowl
+public/food/cp-camp-coffee.jpg,Cowboy coffee,bowl
+public/food/cp-bannock.jpg,Skillet bannock,skillet
+public/food/cp-hot-dogs.jpg,Campfire hot dogs,toast
+public/food/cp-smores.jpg,Campfire s'mores,dessert
+public/food/cp-tuna-foil.jpg,Tuna and potato foil,fish
+public/food/cp-corn-coals.jpg,Coal-roasted corn,bowl
+public/food/cp-bean-pot.jpg,Camp baked beans,bowl
+public/food/kd-grilled-cheese.jpg,Classic grilled cheese,toast
+public/food/kd-butter-noodles.jpg,Buttered egg noodles,pasta
+public/food/kd-chicken-nuggets.jpg,Baked chicken nuggets,skillet
+public/food/kd-personal-pizza.jpg,English-muffin pizzas,toast
+public/food/kd-quesadillas.jpg,Cheese quesadillas,taco
+public/food/kd-smoothie.jpg,Strawberry banana smoothie,bowl
+public/food/kd-tenders.jpg,Crispy chicken tenders,skillet
+public/food/kd-mac-hidden.jpg,Hidden-veg mac and cheese,pasta
+public/food/kd-sloppy.jpg,Weeknight sloppy joes,toast
+public/food/kd-ants.jpg,Ants on a log,bowl
+public/food/kd-pancake-dippers.jpg,Pancake dippers,toast
+public/food/kd-rice-bowl.jpg,Teriyaki chicken rice,bowl
+public/food/in-kimchi-fried-rice.jpg,Kimchi fried rice,skillet
+public/food/in-japchae.jpg,Japchae,bowl
+public/food/in-tteokbokki.jpg,Tteokbokki,bowl
+public/food/in-injera-wat.jpg,Red lentil wat,curry
+public/food/in-doro.jpg,Doro wat-style chicken,curry
+public/food/in-feijoada.jpg,Weeknight feijoada,bowl
+public/food/in-moqueca.jpg,Moqueca fish stew,soup
+public/food/in-pierogi-skillet.jpg,Pierogi skillet,skillet
+public/food/in-spaetzle.jpg,Cheese spaetzle,bowl
+public/food/in-schnitzel-pork.jpg,Pork schnitzel,skillet
+public/food/in-sauerbraten-ish.jpg,Quick sauerbraten-style pot roast,roast
+public/food/in-arepas-reina.jpg,Reina pepiada arepas,skillet
+public/food/in-ceviche.jpg,Lime shrimp ceviche,bowl
+public/food/in-poutine-home.jpg,Weeknight poutine,bowl
+public/food/in-butter-chicken-home.jpg,Stovetop butter chicken,curry
+public/food/in-chana-fast.jpg,Stovetop chana masala,curry
+public/food/in-shoyu-ramen.jpg,Shoyu ramen bowl,soup
+public/food/br-shakshuka-fast.jpg,Weekday shakshuka,skillet
+public/food/br-migas.jpg,Tex-Mex migas,skillet
+public/food/br-congee-breakfast.jpg,Ginger chicken congee,soup
+public/food/br-granola.jpg,Olive-oil granola,bowl
+public/food/br-breakfast-salad.jpg,Breakfast salad,green
+public/food/br-ricotta-toast.jpg,Honey ricotta toast,toast
+public/food/br-smoked-trout.jpg,Smoked trout plate,bowl
+public/food/br-frittata.jpg,Zucchini frittata,skillet
+public/food/br-hash-veg.jpg,Sweet potato hash,skillet
+public/food/br-overnight-bircher.jpg,Bircher muesli,bowl
+public/food/br-cornmeal-porridge.jpg,Cornmeal breakfast porridge,bowl
+public/food/br-cottage-bowl.jpg,Cottage cheese bowl,bowl
+public/food/fs-fish-tacos-baja.jpg,Baja fish tacos,taco
+public/food/fs-sole-meuniere.jpg,Sole meunière,fish
+public/food/fs-tuna-poke-fast.jpg,Weeknight tuna rice,bowl
+public/food/fs-mussels-fries.jpg,Moules frites night,bowl
+public/food/fs-blackened-catfish.jpg,Blackened catfish,fish
+public/food/fs-teriyaki-salmon.jpg,Teriyaki salmon,fish
+public/food/fs-fish-stew.jpg,Tomato fish stew,soup
+public/food/fs-crab-cakes.jpg,Maryland-style crab cakes,skillet
+public/food/fs-clams-linguine.jpg,Linguine with clams,pasta
+public/food/fs-sardine-toast.jpg,Sardine toast,toast
+public/food/fs-trout-almondine.jpg,Trout amandine,fish
+public/food/fs-shrimp-scampi.jpg,Shrimp scampi,pasta
+public/food/mp-chicken-rice.jpg,Sunday chicken rice boxes,bowl
+public/food/mp-taco-bar.jpg,Taco-bar prep,taco
+public/food/mp-overnight-oats-jar.jpg,Five-day oat jars,bowl
+public/food/mp-lentil-boxes.jpg,Lentil grain boxes,bowl
+public/food/mp-egg-bites.jpg,Fridge egg bites,bowl
+public/food/mp-chili-batch.jpg,Sunday chili batch,bowl
+public/food/mp-tofu-boxes.jpg,Sesame tofu boxes,bowl
+public/food/mp-soup-batch.jpg,Vegetable soup batch,soup
+public/food/df-coconut-chicken.jpg,Coconut lime chicken,curry
+public/food/df-tomato-braise.jpg,Tomato-braised chicken,skillet
+public/food/df-stir-noodles.jpg,Rice-noodle veg stir-fry,skillet
+public/food/df-roast-salmon.jpg,Olive-oil roast salmon,fish
+public/food/df-chickpea-pasta.jpg,Garlic chickpea pasta,pasta
+public/food/df-beef-stew.jpg,Dairy-free beef stew,soup
+public/food/wg-venison-chili.jpg,Venison bean chili,bowl
+public/food/wg-duck-breast.jpg,Seared duck breast,skillet
+public/food/wg-trout-camp.jpg,Pan trout with cornmeal,fish
+public/food/wg-rabbit-stew.jpg,Hunter's rabbit stew,soup
+public/food/wg-elk-steaks.jpg,Elk steaks with pepper,skillet
+public/food/wg-goose-confit.jpg,Oven goose legs,roast
+public/food/pk-curry-soup.jpg,Pumpkin coconut soup,soup
+public/food/pk-sage-pasta.jpg,Pumpkin sage pasta,pasta
+public/food/pk-hummus.jpg,Pumpkin hummus,bowl
+public/food/ap-pork-roast.jpg,Apple roast pork loin,roast
+public/food/ap-kale-sausage.jpg,Sausage apple kale skillet,skillet
+public/food/ap-muffins.jpg,Apple cinnamon muffins,dessert
+public/food/hm-chicken-rice-casserole.jpg,Chicken rice casserole,bowl
+public/food/hm-ham-beans.jpg,Ham and beans,soup
+public/food/hm-cornbread.jpg,Skillet cornbread,toast
+public/food/hm-meatloaf-glaze.jpg,Tuesday meatloaf,roast
+public/food/hm-chicken-and-rice-soup.jpg,Grandmother chicken rice soup,soup
+public/food/hm-peach-jello.jpg,Peach gelatin salad,dessert
+public/food/mx-carne-asada.jpg,Carne asada,taco
+public/food/mx-chicken-tinga.jpg,Chicken tinga,taco
+public/food/mx-chiles-rellenos.jpg,Chiles rellenos,skillet
+public/food/mx-chilaquiles.jpg,Chilaquiles verdes,skillet
+public/food/mx-albondigas.jpg,Albóndigas soup,soup
+public/food/mx-caldo-pollo.jpg,Caldo de pollo,soup
+public/food/mx-aguachile.jpg,Shrimp aguachile,green
+public/food/mx-pescado-veracruz.jpg,Fish Veracruz,fish
+public/food/mx-rajas.jpg,Rajas con crema,skillet
+public/food/mx-picadillo.jpg,Picadillo,bowl
+public/food/mx-sopa-lima.jpg,Sopa de lima,soup
+public/food/mx-mexican-rice.jpg,Mexican red rice,bowl
+public/food/mx-refried-home.jpg,Stovetop refried beans,bowl
+public/food/mx-guacamole.jpg,Guacamole,bowl
+public/food/mx-pico.jpg,Pico de gallo,bowl
+public/food/mx-elote-salad.jpg,Esquites,green
+public/food/mx-flautas.jpg,Chicken flautas,taco
+public/food/mx-sopes.jpg,Sopes,taco
+public/food/mx-mole-chicken.jpg,Weeknight mole chicken,bowl
+public/food/mx-horchata.jpg,Horchata,dessert
+public/food/mx-tres-leches.jpg,Tres leches cake,dessert
+public/food/mx-nopales.jpg,Nopales salad,green
+public/food/mx-pozole-verde.jpg,Pozole verde,soup
+public/food/mx-tamale-pie.jpg,Tamale pie,roast
+public/food/mx-huevos-divorciados.jpg,Huevos divorciados,skillet
+public/food/mx-shrimp-tacos.jpg,Garlic shrimp tacos,taco
+public/food/mx-beef-birria.jpg,Stovetop birria,taco
+public/food/mx-chicken-mole-verde.jpg,Chicken in pumpkin-seed sauce,skillet
+public/food/mx-cactus-tacos.jpg,Nopales tacos,taco
+public/food/mx-mexican-wedding.jpg,Mexican wedding cookies,dessert
+public/food/it-aglio-olio.jpg,Spaghetti aglio e olio,pasta
+public/food/it-arrabbiata.jpg,Penne all'arrabbiata,pasta
+public/food/it-vodka-penne.jpg,Penne alla vodka,pasta
+public/food/it-cacciatore.jpg,Chicken cacciatore,skillet
+public/food/it-piccata.jpg,Chicken piccata,skillet
+public/food/it-marsala.jpg,Chicken marsala,skillet
+public/food/it-saltimbocca.jpg,Veal saltimbocca,skillet
+public/food/it-risotto-mushroom.jpg,Mushroom risotto,bowl
+public/food/it-osso-skip.jpg,Polenta with sausage ragu,bowl
+public/food/it-gnocchi-sorrentina.jpg,Gnocchi alla sorrentina,pasta
+public/food/it-fettuccine-alfredo.jpg,Fettuccine Alfredo,pasta
+public/food/it-shrimp-scampi-pasta.jpg,Shrimp scampi linguine,pasta
+public/food/it-caprese.jpg,Caprese salad,green
+public/food/it-panzanella-home.jpg,Panzanella,green
+public/food/it-pizza-margherita.jpg,Pizza margherita,roast
+public/food/it-calzone.jpg,Sausage calzone,roast
+public/food/it-bruschetta.jpg,Tomato bruschetta,toast
+public/food/it-focaccia.jpg,Rosemary focaccia,toast
+public/food/it-panna-cotta.jpg,Vanilla panna cotta,dessert
+public/food/it-affogato.jpg,Affogato,dessert
+public/food/it-chicken-parm.jpg,Chicken parmesan,roast
+public/food/it-pasta-ceci.jpg,Pasta e ceci,soup
+public/food/it-ribollita.jpg,Ribollita,soup
+public/food/it-pasta-fagioli.jpg,Pasta e fagioli,soup
+public/food/it-branzino.jpg,Roast branzino,fish
+public/food/it-milanese.jpg,Chicken milanese,skillet
+public/food/it-bolognese-tagliatelle.jpg,Tagliatelle bolognese,pasta
+public/food/it-pesto-trofie.jpg,Trofie al pesto,pasta
+public/food/it-tiramisu-cups.jpg,Tiramisu cups,dessert
+public/food/it-minestrone-winter.jpg,Winter minestrone,soup
+public/food/cn-wonton-soup.jpg,Wonton soup,soup
+public/food/cn-hot-sour.jpg,Hot and sour soup,soup
+public/food/cn-egg-drop.jpg,Egg drop soup,soup
+public/food/cn-char-siu.jpg,Char siu pork,roast
+public/food/cn-dan-dan.jpg,Dan dan noodles,pasta
+public/food/cn-sesame-noodles.jpg,Cold sesame noodles,pasta
+public/food/cn-mapo-home.jpg,Weeknight mapo tofu,bowl
+public/food/cn-yu-xiang-eggplant.jpg,Yu xiang eggplant,skillet
+public/food/cn-steamed-fish.jpg,Ginger scallion steamed fish,fish
+public/food/cn-scallion-pancake.jpg,Scallion pancakes,skillet
+public/food/cn-lo-mein.jpg,Chicken lo mein,pasta
+public/food/cn-beef-chow-fun.jpg,Beef chow fun,skillet
+public/food/cn-salt-pepper-shrimp.jpg,Salt and pepper shrimp,skillet
+public/food/cn-garlic-broccoli.jpg,Garlic broccoli,skillet
+public/food/cn-smashed-cucumber.jpg,Smashed cucumber salad,green
+public/food/cn-tea-eggs.jpg,Tea eggs,bowl
+public/food/cn-spring-rolls.jpg,Vegetable spring rolls,skillet
+public/food/cn-sweet-sour-pork.jpg,Sweet and sour pork,bowl
+public/food/cn-chow-mein.jpg,Vegetable chow mein,skillet
+public/food/cn-bao.jpg,Steamed pork buns,bowl
+public/food/cn-congee-pork.jpg,Pork and century-egg congee,soup
+public/food/th-pad-krapow.jpg,Pad krapow gai,skillet
+public/food/th-tom-yum.jpg,Tom yum goong,soup
+public/food/th-tom-kha.jpg,Tom kha gai,soup
+public/food/th-massaman.jpg,Massaman chicken curry,curry
+public/food/th-panang.jpg,Panang beef curry,curry
+public/food/th-som-tam.jpg,Som tam,green
+public/food/th-larb.jpg,Larb gai,green
+public/food/th-satay.jpg,Chicken satay,skillet
+public/food/th-pad-see-ew-home.jpg,Wide noodle pad see ew,skillet
+public/food/th-drunken-noodles.jpg,Drunken noodles,skillet
+public/food/th-yellow-curry.jpg,Yellow curry with potato,curry
+public/food/th-coconut-rice.jpg,Coconut rice,bowl
+public/food/th-thai-omelette.jpg,Thai omelette,skillet
+public/food/th-mango-salad.jpg,Green mango salad,green
+public/food/th-cashew-chicken.jpg,Thai cashew chicken,skillet
+public/food/kr-bulgogi.jpg,Beef bulgogi,bowl
+public/food/kr-galbi.jpg,Soy-garlic galbi,roast
+public/food/kr-kimchi-jjigae.jpg,Kimchi jjigae,soup
+public/food/kr-doenjang-jjigae.jpg,Doenjang jjigae,soup
+public/food/kr-sundubu.jpg,Sundubu jjigae,soup
+public/food/kr-kimbap.jpg,Kimbap,bowl
+public/food/kr-fried-chicken.jpg,Korean fried chicken,skillet
+public/food/kr-pajeon.jpg,Scallion pancake,skillet
+public/food/kr-bibim-cold.jpg,Cold soy-milk noodles,pasta
+public/food/kr-dakgalbi.jpg,Dakgalbi,skillet
+public/food/kr-ssam.jpg,Pork belly ssam,bowl
+public/food/kr-gyeran-jjim.jpg,Steamed egg,bowl
+public/food/kr-corn-cheese.jpg,Corn cheese,skillet
+public/food/kr-kimchi-fried.jpg,Kimchi fried rice,skillet
+public/food/md-fattoush.jpg,Fattoush,green
+public/food/md-hummus.jpg,Hummus,bowl
+public/food/md-baba.jpg,Baba ganoush,bowl
+public/food/md-shawarma-chicken.jpg,Chicken shawarma plate,bowl
+public/food/md-shish-tawook.jpg,Shish tawook,skillet
+public/food/md-halloumi.jpg,Grilled halloumi,skillet
+public/food/md-lemon-potatoes.jpg,Greek lemon potatoes,roast
+public/food/md-baked-feta.jpg,Baked feta with tomatoes,roast
+public/food/md-orzo-salad.jpg,Lemon orzo salad,green
+public/food/md-grape-leaves.jpg,Stuffed grape leaves,bowl
+public/food/md-israeli-salad.jpg,Chopped cucumber-tomato salad,green
+public/food/md-shakshuka-green.jpg,Green shakshuka,skillet
+public/food/md-salmon-herb.jpg,Herb roast salmon,fish
+public/food/md-chickpea-stew.jpg,Tomato chickpea stew,curry
+public/food/md-zaatar-chicken.jpg,Za'atar roast chicken,roast
+public/food/md-labneh.jpg,Labneh bowl,bowl
+public/food/cb-ropa-vieja.jpg,Ropa vieja,bowl
+public/food/cb-cuban-sandwich.jpg,Cuban sandwich,skillet
+public/food/cb-tostones.jpg,Tostones,skillet
+public/food/cb-mofongo.jpg,Mofongo,bowl
+public/food/cb-arroz-gandules.jpg,Arroz con gandules,bowl
+public/food/cb-oxtail.jpg,Braised oxtail,bowl
+public/food/cb-callaloo.jpg,Callaloo,bowl
+public/food/cb-saltfish-ackee.jpg,Ackee and saltfish,skillet
+public/food/cb-coconut-shrimp.jpg,Coconut shrimp,skillet
+public/food/cb-cuban-black-beans.jpg,Cuban black beans,bowl
+public/food/cb-plantain-mash.jpg,Maduros,skillet
+public/food/cb-mango-fish.jpg,Mango salsa fish,fish
+public/food/cb-rum-cake.jpg,Caribbean rum cake,dessert
+public/food/ac-jollof.jpg,Jollof rice,bowl
+public/food/ac-egusi.jpg,Egusi-style greens,bowl
+public/food/ac-doro-wat.jpg,Doro wat,curry
+public/food/ac-yassa.jpg,Chicken yassa,skillet
+public/food/ac-chakalaka.jpg,Chakalaka,skillet
+public/food/ac-bunny-chow.jpg,Durban curry bread bowls,curry
+public/food/ac-peri-chicken.jpg,Peri-peri roast chicken,roast
+public/food/ac-couscous.jpg,Vegetable couscous,bowl
+public/food/ac-zaalouk.jpg,Zaalouk,bowl
+public/food/ac-harira.jpg,Harira,soup
+public/food/ac-ful.jpg,Ful medames,bowl
+public/food/ac-shiro.jpg,Shiro wat,curry
+public/food/ml-maqluba.jpg,Maqluba,bowl
+public/food/ml-kibbeh.jpg,Baked kibbeh,roast
+public/food/ml-fesenjan.jpg,Fesenjan,curry
+public/food/ml-jeweled-rice.jpg,Jeweled rice,bowl
+public/food/ml-sabich.jpg,Sabich,taco
+public/food/ml-menemen.jpg,Menemen,skillet
+public/food/ml-lahmacun.jpg,Lahmacun,roast
+public/food/ml-red-lentil-kofte.jpg,Red lentil köfte,bowl
+public/food/ml-lentil-soup-tr.jpg,Turkish red lentil soup,soup
+public/food/ml-ghormeh.jpg,Herb and kidney-bean stew,bowl
+public/food/fr-steak-frites.jpg,Steak frites,skillet
+public/food/fr-moules.jpg,Moules marinières,bowl
+public/food/fr-nicoise.jpg,Salade niçoise,green
+public/food/fr-leek-soup.jpg,Potato leek soup,soup
+public/food/fr-lentil-salad.jpg,French lentil salad,green
+public/food/fr-dauphinois.jpg,Gratin dauphinois,roast
+public/food/fr-moutarde-chicken.jpg,Mustard roast chicken,roast
+public/food/fr-lyonnaise.jpg,Salade lyonnaise,green
+public/food/fr-socca.jpg,Socca,skillet
+public/food/fr-pissaladiere.jpg,Pissaladière,roast
+public/food/fr-clafoutis.jpg,Cherry clafoutis,dessert
+public/food/fr-tarte-tatin.jpg,Tarte Tatin,dessert
+public/food/fr-crepes.jpg,Crêpes sucrées,skillet
+public/food/fr-bouillabaisse.jpg,Weeknight fish stew,soup
+public/food/fr-cassoulet-week.jpg,Weeknight cassoulet,roast
+public/food/fr-duck-skillet.jpg,Skillet duck breast,skillet
+public/food/kt-cauli-pizza.jpg,Cauliflower pizza,roast
+public/food/kt-zucchini-lasagna.jpg,Zucchini lasagna,roast
+public/food/kt-burger-bowl.jpg,Bunless burger bowl,bowl
+public/food/kt-cream-pork.jpg,Creamy garlic pork chops,skillet
+public/food/kt-taco-lettuce.jpg,Taco lettuce cups,taco
+public/food/kt-cauli-mac.jpg,Cauliflower mac and cheese,bowl
+public/food/kt-egg-cups.jpg,Bacon egg cups,roast
+public/food/kt-tuna-boats.jpg,Tuna avocado boats,bowl
+public/food/kt-feta-chicken.jpg,Baked feta chicken,roast
+public/food/kt-zucchini-scampi.jpg,Zucchini shrimp scampi,skillet
+public/food/kt-no-bean-chili.jpg,No-bean chili,soup
+public/food/kt-sausage-skillet.jpg,Sausage egg skillet,skillet
+public/food/kt-cauli-fried-rice.jpg,Cauliflower fried rice,skillet
+public/food/kt-parmesan-chicken.jpg,Parmesan crusted chicken,skillet
+public/food/kt-mushroom-chicken.jpg,Creamed mushroom chicken,skillet
+public/food/kt-ribeye-butter.jpg,Herb-butter ribeye,skillet
+public/food/kt-brussels-bacon.jpg,Brussels with bacon,skillet
+public/food/kt-egg-salad.jpg,Dill egg salad,bowl
+public/food/kt-buffalo-skillet.jpg,Buffalo chicken skillet,skillet
+public/food/kt-salmon-butter.jpg,Butter-basted salmon,skillet
+public/food/kt-stuffed-chicken.jpg,Spinach stuffed chicken,roast
+public/food/kt-pork-belly.jpg,Crisp pork belly bites,roast
+public/food/hp-cottage-bowl.jpg,Savory cottage bowl,bowl
+public/food/hp-turkey-loaf.jpg,Turkey meatloaf,roast
+public/food/hp-shrimp-edamame.jpg,Shrimp and edamame skillet,skillet
+public/food/hp-yogurt-parfait.jpg,Protein parfait,bowl
+public/food/hp-tuna-bean.jpg,Tuna white-bean salad,green
+public/food/hp-chicken-prep.jpg,Lemon pepper chicken thighs,roast
+public/food/hp-tofu-big.jpg,High-protein tofu scramble,skillet
+public/food/hp-steak-eggs.jpg,Steak and eggs,skillet
+public/food/hp-protein-pancakes.jpg,Cottage pancakes,skillet
+public/food/hp-gyro-bowl.jpg,Chicken gyro bowl,bowl
+public/food/hp-bison-burger.jpg,Bison burgers,skillet
+public/food/hp-salmon-poke.jpg,Salmon poke bowl,bowl
+public/food/hp-lentil-pasta.jpg,Lentil pasta bolognese,pasta
+public/food/hp-tempeh-bowl.jpg,Tempeh grain bowl,bowl
+public/food/hp-chicken-caesar.jpg,Grilled chicken Caesar,green
+public/food/hp-turkey-chili.jpg,Turkey white chili,soup
+public/food/su-gazpacho.jpg,Gazpacho,soup
+public/food/su-corn-chowder.jpg,Corn chowder,soup
+public/food/su-split-pea.jpg,Split pea soup,soup
+public/food/su-navy-bean.jpg,Navy bean soup,soup
+public/food/su-wedding.jpg,Italian wedding soup,soup
+public/food/su-matzo-ball.jpg,Matzo ball soup,soup
+public/food/su-butternut.jpg,Roasted butternut soup,soup
+public/food/su-mushroom-barley.jpg,Mushroom barley soup,soup
+public/food/su-tortellini.jpg,Tortellini soup,soup
+public/food/su-coconut-curry.jpg,Coconut curry soup,soup
+public/food/su-miso-ramen.jpg,Miso ramen,soup
+public/food/su-chicken-rice.jpg,Chicken and rice soup,soup
+public/food/sw-blt.jpg,Classic BLT,toast
+public/food/sw-club.jpg,Club sandwich,toast
+public/food/sw-reuben.jpg,Reuben,skillet
+public/food/sw-italian-beef.jpg,Italian beef sandwich,bowl
+public/food/sw-meatball-sub.jpg,Meatball sub,toast
+public/food/sw-chicken-salad.jpg,Dill chicken salad sandwich,toast
+public/food/sw-egg-salad.jpg,Egg salad sandwich,toast
+public/food/sw-tuna-salad.jpg,Tuna salad sandwich,toast
+public/food/sw-french-dip.jpg,French dip,bowl
+public/food/sw-patty-melt.jpg,Patty melt,skillet
+public/food/sw-caprese-panini.jpg,Caprese panini,skillet
+public/food/sw-falafel-wrap.jpg,Falafel wrap,taco
+public/food/sw-po-boy.jpg,Shrimp po' boy,toast
+public/food/sw-breakfast-sando.jpg,Bacon egg sandwich,toast
+public/food/sw-hummus-veg.jpg,Hummus vegetable wrap,taco
+public/food/sw-muffuletta.jpg,Muffuletta,toast
+public/food/wn-quesadilla.jpg,Chicken quesadillas,skillet
+public/food/wn-tortellini-skillet.jpg,Tortellini skillet,pasta
+public/food/wn-fried-egg-rice.jpg,Kimchi-less fried rice,skillet
+public/food/wn-sausage-greens.jpg,Sausage and greens,skillet
+public/food/wn-pesto-chicken.jpg,Pesto chicken skillet,skillet
+public/food/wn-lemon-orzo.jpg,Lemon shrimp orzo,pasta
+public/food/wn-burrito-bowl.jpg,Burrito bowl night,bowl
+public/food/wn-bagel-pizza.jpg,Bagel pizzas,toast
+public/food/wn-ramen-upgrade.jpg,Upgraded ramen,soup
+public/food/wn-black-bean-ques.jpg,Black bean quesadillas,skillet
+public/food/wn-honey-salmon.jpg,Honey mustard salmon,fish
+public/food/wn-taco-salad.jpg,Taco salad night,green
+public/food/wn-white-bean-skillet.jpg,White bean skillet,skillet
+public/food/wn-miso-butter-salmon.jpg,Miso butter salmon,fish
+public/food/wn-rotisserie-tacos.jpg,Rotisserie chicken tacos,taco
+public/food/bg-rice-beans.jpg,Rice and beans,bowl
+public/food/bg-baked-potato-bar.jpg,Baked potato bar,roast
+public/food/bg-egg-fried-rice.jpg,Pantry fried rice,skillet
+public/food/bg-cabbage-sausage.jpg,Cabbage and sausage,skillet
+public/food/bg-lentil-dal.jpg,Weeknight dal,curry
+public/food/bg-tuna-noodle.jpg,Stovetop tuna noodles,pasta
+public/food/bg-frittata.jpg,Fridge frittata,skillet
+public/food/bg-tomato-pasta.jpg,Pantry tomato pasta,pasta
+public/food/bg-peanut-noodles.jpg,Peanut butter noodles,pasta
+public/food/bg-banana-pancakes.jpg,Two-ingredient banana pancakes,skillet
+public/food/vn-tofu-katsu.jpg,Tofu katsu,skillet
+public/food/vn-cashew-alfredo.jpg,Cashew Alfredo,pasta
+public/food/vn-chickpea-salad-sando.jpg,Chickpea salad sandwich,toast
+public/food/vn-mushroom-bolognese.jpg,Mushroom walnut bolognese,pasta
+public/food/vn-sweet-potato-tacos.jpg,Sweet potato black-bean tacos,taco
+public/food/vn-coconut-chickpea.jpg,Coconut chickpea stew,curry
+public/food/vn-avocado-mousse.jpg,Chocolate avocado mousse,dessert
+public/food/vn-date-brownies.jpg,Date walnut brownies,dessert
+public/food/vn-holiday-roast.jpg,Stuffed squash holiday roast,roast
+public/food/vn-nice-cream.jpg,Banana nice cream,dessert
+public/food/gn-almond-muffins.jpg,Almond flour muffins,dessert
+public/food/gn-coconut-pancakes.jpg,Coconut flour pancakes,skillet
+public/food/gn-gf-banana-bread.jpg,Almond banana bread,dessert
+public/food/sx-yogurt-bark.jpg,Berry yogurt bark,dessert
+public/food/sx-cocoa-mousse.jpg,Greek yogurt cocoa mousse,dessert
+public/food/sx-grill-fruit.jpg,Grilled peaches,dessert
+public/food/ip-barbacoa.jpg,Instant Pot barbacoa,taco
+public/food/ip-white-chili.jpg,Instant Pot white chili,soup
+public/food/ip-korean-beef.jpg,Instant Pot Korean beef,bowl
+public/food/ip-cacciatore.jpg,Instant Pot cacciatore,skillet
+public/food/ip-split-pea.jpg,Instant Pot split pea,soup
+public/food/af-pork-chops.jpg,Air-fryer pork chops,skillet
+public/food/af-falafel.jpg,Air-fryer falafel,bowl
+public/food/af-mozz-sticks.jpg,Air-fryer mozzarella sticks,skillet
+public/food/af-green-beans.jpg,Air-fryer green beans,skillet
+public/food/af-chick-tenders.jpg,Air-fryer chicken tenders,skillet
+public/food/sc-italian-beef.jpg,Slow-cooker Italian beef,bowl
+public/food/sc-salsa-chicken.jpg,Slow-cooker salsa chicken,bowl
+public/food/sc-apple-butter.jpg,Slow-cooker apple butter,dessert
+public/food/sc-dal.jpg,Slow-cooker dal,curry
+public/food/kd-hidden-veg.jpg,Hidden-veg pasta sauce,pasta
+public/food/kd-fish-sticks.jpg,Homemade fish sticks,roast
+public/food/kd-yogurt-pops.jpg,Yogurt pops,dessert
+public/food/kd-taco-cups.jpg,Taco muffin cups,roast
+public/food/cp-banana-boats.jpg,Campfire banana boats,dessert
+public/food/cp-camp-nachos.jpg,Cast-iron camp nachos,skillet
+public/food/cp-sausage-peppers.jpg,Camp sausage and peppers,skillet
+public/food/dn-scallops.jpg,Pan-seared scallops,skillet
+public/food/dn-filet.jpg,Filet with red wine shallots,skillet
+public/food/dn-chocolate-pots.jpg,Chocolate pots de crème,dessert
+public/food/ar-ff-parker-house-rolls.jpg,Parker House rolls,bowl
+public/food/ar-ff-boston-brown-bread.jpg,Boston brown bread,bowl
+public/food/ar-ff-fish-chowder.jpg,Fish chowder,soup
+public/food/ar-ff-lobster-newburg.jpg,Lobster à la Newburg,skillet
+public/food/ar-ff-white-sauce.jpg,White sauce,bowl
+public/food/ar-ff-popovers.jpg,Popovers,bowl
+public/food/ar-ff-molasses-gingerbread.jpg,Soft molasses gingerbread,dessert
+public/food/ar-ff-cream-tomato-soup.jpg,Cream of tomato soup,soup
+public/food/ar-ff-eggs-goldenrod.jpg,Eggs à la goldenrod,toast
+public/food/ar-ff-welsh-rarebit.jpg,Welsh rarebit,toast
+public/food/ar-ff-boston-baked-beans.jpg,Boston baked beans,bowl
+public/food/ar-ff-spider-corn-cake.jpg,Spider corn cake,skillet
+public/food/ar-ff-chocolate-fudge.jpg,Chocolate fudge,dessert
+public/food/ar-mf-jumberlie.jpg,Jumberlie à la Creole,bowl
+public/food/ar-mf-ochra-gumbo.jpg,Ochra gumbo,soup
+public/food/ar-mf-sweet-potato-pie.jpg,Sweet potato pie,dessert
+public/food/ar-mf-corn-bread.jpg,Mrs. Fisher's corn bread,bowl
+public/food/ar-mf-fried-chicken.jpg,Mrs. Fisher's fried chicken,skillet
+public/food/ar-mf-ginger-cookies.jpg,Mrs. Fisher's ginger cookies,dessert
+public/food/ar-mf-chow-chow.jpg,Mrs. Fisher's chow-chow,bowl
+public/food/vh-ww2-chipped-beef.jpg,Creamed chipped beef,toast
+public/food/vh-ww2-pea-soup.jpg,Split pea soup,soup
+public/food/vh-ww2-nut-loaf.jpg,Wartime nut loaf,roast
+public/food/vh-ww2-succotash.jpg,Victory succotash,skillet
+public/food/vh-ww1-oatmeal-cookies.jpg,War oatmeal cookies,dessert
+public/food/vh-ww2-cornmeal-mush.jpg,Fried cornmeal mush,skillet
+public/food/vh-ww2-potato-soup.jpg,Wartime potato soup,soup
+public/food/vh-ww1-carrot-marmalade.jpg,Carrot marmalade,bowl
+public/food/vh-ww1-wheatless-muffins.jpg,Wheatless corn muffins,bowl
+public/food/vh-ww2-cabbage-pork.jpg,Cabbage with salt pork,skillet
+public/food/vh-ww2-stuffed-potato.jpg,Baked stuffed potatoes,roast
+public/food/vh-ww2-applesauce-cake.jpg,Applesauce cake,dessert
+public/food/vh-ww2-navy-bean.jpg,Navy bean soup,soup
+public/food/vh-ww1-rice-pudding.jpg,Wartime rice pudding,dessert
+public/food/vh-ww2-liver-onions.jpg,Liver and onions,skillet
+public/food/vh-ww2-cottage-salad.jpg,Cottage cheese fruit salad,green
+public/food/vh-va-beaten-biscuits.jpg,Beaten biscuits,bowl
+public/food/vh-va-chicken-pudding.jpg,Virginia chicken pudding,roast
+public/food/vh-va-fried-catfish.jpg,Randolph fried catfish,fish
+public/food/vh-am-indian-pudding.jpg,Indian pudding,dessert
+public/food/vh-am-slapjacks.jpg,Slapjacks,skillet
+public/food/vh-va-hoe-cakes.jpg,Hoe cakes,skillet
+public/food/vh-va-apple-tansey.jpg,Apple tansey,skillet
+public/food/vh-va-brunswick.jpg,Virginia Brunswick stew,soup
+public/food/vh-wh-oyster-stew.jpg,White House oyster stew,soup
+public/food/vh-wh-beef-a-la-mode.jpg,Beef à la mode,roast
+public/food/vh-wh-saratoga.jpg,Saratoga potatoes,skillet
+public/food/vh-wh-chicken-croquettes.jpg,Chicken croquettes,skillet
+public/food/vh-wh-clam-chowder.jpg,White House clam chowder,soup
+public/food/vh-wh-floating-island.jpg,Floating island,dessert
+public/food/vh-wh-macaroni-cheese.jpg,Baked macaroni and cheese,pasta
+public/food/vh-wh-hash.jpg,White House hash,skillet
+public/food/vh-gt-brodo.jpg,Brodo,soup
+public/food/vh-gt-minestrone.jpg,Minestrone alla Milanese,soup
+public/food/vh-gt-risotto.jpg,Risotto alla Milanese,bowl
+public/food/vh-gt-cacciatora.jpg,Pollo alla cacciatora,skillet
+public/food/vh-gt-pomodoro.jpg,Salsa di pomodoro,bowl
+public/food/vh-gt-balsamella.jpg,Balsamella,bowl
+public/food/vh-gt-spaghetti-burro.jpg,Pasta al burro e formaggio,pasta
+public/food/vh-gt-gnocchi.jpg,Potato gnocchi,pasta
+public/food/vh-gt-zucchine.jpg,Zucchine fritte,skillet
+public/food/vh-gt-panata.jpg,Panata,soup
+public/food/vh-365-goulash.jpg,Hungarian goulash,bowl
+public/food/vh-365-irish-stew.jpg,Irish stew,bowl
+public/food/vh-365-swedish-balls.jpg,Swedish meatballs,skillet
+public/food/vh-365-borscht.jpg,Russian borscht,soup
+public/food/vh-365-german-potato.jpg,Warm German potato salad,green
+public/food/vh-365-curry-chicken.jpg,East Indian chicken curry,curry
+public/food/vh-365-onion-soup.jpg,French onion soup,soup
+public/food/vh-365-spanish-rice.jpg,Spanish rice,bowl
+public/food/vh-pd-pot-pie.jpg,Pennsylvania pot pie,soup
+public/food/vh-pd-schnitz.jpg,Schnitz un knepp,bowl
+public/food/vh-pd-sauerkraut.jpg,Pork and sauerkraut,roast
+public/food/vh-pd-rivvel.jpg,Rivvel soup,soup
+public/food/vh-pd-shoofly.jpg,Shoofly pie,dessert
+public/food/vh-pd-scrapple.jpg,Scrapple,skillet
+public/food/vh-pd-corn-pie.jpg,Pennsylvania corn pie,roast
+public/food/vh-pc-gumbo-file.jpg,Gumbo filé,soup
+public/food/vh-pc-red-beans.jpg,Red beans and rice,bowl
+public/food/vh-pc-grillades.jpg,Grillades and grits,skillet
+public/food/vh-pc-trout-meuniere.jpg,Trout meunière,fish
+public/food/vh-pc-calas.jpg,Calas,skillet
+public/food/vh-pc-pain-perdu.jpg,Pain perdu,skillet
+public/food/vh-pc-courtbouillon.jpg,Redfish courtbouillon,soup
+public/food/vh-pc-shrimp-creole.jpg,Shrimp Creole,bowl
+public/food/vh-kp-bannock.jpg,Camp bannock,skillet
+public/food/vh-kp-mulligan.jpg,Camp mulligan,soup
+public/food/vh-kp-trail-beans.jpg,Trail beans,bowl
+public/food/vh-kp-foil-potato.jpg,Campfire potatoes,roast
+public/food/vh-kp-kabobs.jpg,Scout kabobs,skillet
+public/food/vh-kp-camp-coffee-stew.jpg,Camp coffee beef,bowl
+public/food/vh-la-chicken-dumplings.jpg,Church chicken and dumplings,soup
+public/food/vh-la-ham-loaf.jpg,Ham loaf,roast
+public/food/vh-la-three-bean.jpg,Three-bean salad,green
+public/food/vh-la-scalloped-potato.jpg,Scalloped potatoes,roast
+public/food/vh-la-jellied-fruit.jpg,Jellied fruit salad,dessert
+public/food/vh-la-baked-macaroni.jpg,Ladies' Aid macaroni,pasta
+public/food/vh-hi-tomato-aspic.jpg,Tomato aspic,green
+public/food/vh-hi-chicken-salad.jpg,Hill's chicken salad,green
+public/food/vh-hi-cucumber-sandwich.jpg,Cucumber sandwiches,toast
+public/food/vh-hi-stuffed-eggs.jpg,Stuffed eggs,green
+public/food/vh-hi-cheese-dreams.jpg,Cheese dreams,toast
+public/food/vh-hi-egg-salad-sandwich.jpg,Egg salad sandwiches,toast
+public/food/vh-bj-miso-soup.jpg,Miso soup,soup
+public/food/vh-bj-chicken-rice.jpg,"Chicken and rice, Japanese style",bowl
+public/food/vh-bj-fried-rice.jpg,Chinese fried rice,skillet
+public/food/vh-bj-steamed-fish.jpg,Ginger steamed fish,fish
+public/food/vh-bj-sukiyaki.jpg,Sukiyaki,skillet
+public/food/vh-bj-cabbage-pork.jpg,Cabbage with pork,skillet
+public/food/vh-og-baked-stuffed-fish.jpg,Baked stuffed fish,fish
+public/food/vh-og-broiled-mackerel.jpg,Broiled mackerel,fish
+public/food/vh-og-fish-cakes.jpg,Fish cakes,skillet
+public/food/vh-og-creamed-cod.jpg,Creamed salt cod,toast
+public/food/vh-og-salmon-loaf.jpg,Salmon loaf,roast
+public/food/vh-og-boiled-salmon.jpg,Boiled salmon,fish
+public/food/vh-sf-nut-bread.jpg,Suffrage nut bread,bowl
+public/food/vh-sf-hot-slaw.jpg,Suffrage hot slaw,skillet
+public/food/vh-sf-hawaiian-sandwich.jpg,Hawaiian sandwiches,toast
+public/food/vh-sf-carrot-croquettes.jpg,Carrot croquettes,skillet
+public/food/vh-sf-tomato-toast.jpg,Tomato toast,toast
+public/food/vh-sf-escalloped-oysters.jpg,Escalloped oysters,roast
+public/food/vh-jw-matzo-ball.jpg,Chicken soup with knaidlach,soup
+public/food/vh-jw-gefilte.jpg,Gefilte fish,fish
+public/food/vh-jw-latkes.jpg,Potato latkes,skillet
+public/food/vh-jw-tzimmes.jpg,Carrot tzimmes,bowl
+public/food/vh-jw-kugel.jpg,Noodle kugel,dessert
+public/food/vh-jw-cabbage-rolls.jpg,Holishkes,roast
+public/food/vh-jw-chopped-liver.jpg,Chopped liver,bowl
+public/food/vh-jw-blintzes.jpg,Cheese blintzes,skillet
+public/food/vh-veg-nut-roast.jpg,Nut roast,roast
+public/food/vh-veg-lentil-stew.jpg,Lentil stew,soup
+public/food/vh-veg-macaroni-tomato.jpg,Macaroni with tomato,pasta
+public/food/vh-veg-beans-no-pork.jpg,Baked beans without pork,bowl
+public/food/vh-veg-spinach-eggs.jpg,Spinach with eggs,skillet
+public/food/vh-veg-hash.jpg,Vegetable hash,skillet
+public/food/vh-ds-blancmange.jpg,Blancmange,dessert
+public/food/vh-ds-cottage-pudding.jpg,Cottage pudding,dessert
+public/food/vh-ds-apple-tapioca.jpg,Apple tapioca,dessert
+public/food/vh-ds-snow-pudding.jpg,Snow pudding,dessert
+public/food/vh-ds-prune-whip.jpg,Prune whip,dessert
+public/food/vh-ds-rice-pudding.jpg,Baked rice pudding,dessert
+public/food/vh-ds-boiled-custard.jpg,Boiled custard,dessert
+public/food/vh-ds-charlotte.jpg,Charlotte russe,dessert
+public/food/vh-20-club-sandwich.jpg,Club sandwich,toast
+public/food/vh-20-deviled-eggs.jpg,Deviled eggs,green
+public/food/vh-20-cheese-straws.jpg,Cheese straws,bowl
+public/food/vh-20-tomato-cocktail.jpg,Tomato juice cocktail,bowl
+public/food/vh-20-salmon-wiggle.jpg,Salmon wiggle,toast
+public/food/vh-20-pineapple-gelatin.jpg,Pineapple gelatin salad,dessert

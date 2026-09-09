@@ -180,8 +180,16 @@ type SpoonfulState = {
   watchSavedDates: string[];
   /** The week whose recap has already been shown, so it appears once. */
   lastRecapWeek: string;
+  /**
+   * The four foods this kitchen builds a gym plate from, and how many meals the
+   * day is split into. Remembered because the whole point is eating the same
+   * handful on repeat — asking again every day would miss it entirely.
+   */
+  gymPlate: { protein: string; carb: string; veg: string; fat: string; meals: number };
   /** Set once the one-time grandfather pass has run for this kitchen. */
   skinsGrandfathered: boolean;
+  /** Set once the activity level has been rebased onto lifestyle-only meaning. */
+  activityRebased: boolean;
   inviteClaimed: boolean;
   giftTableUntil: string;
   lastGiftCode: string;
@@ -229,6 +237,7 @@ type SpoonfulState = {
   earnWatchPlate: () => boolean;
   earnWatchSave: (brokenDate: string) => boolean;
   seeRecap: (weekStart: string) => void;
+  setGymPlate: (patch: Partial<SpoonfulState["gymPlate"]>) => void;
   skinAllowed: (id: ThemeId) => boolean;
   startSkinTrial: (pack: SkinPackId) => boolean;
   skinTrialDaysLeft: (pack: SkinPackId) => number;
@@ -563,7 +572,9 @@ export const useSpoonful = create<SpoonfulState>()(
       skinTrials: {},
       watchSavedDates: [],
       lastRecapWeek: "",
+      gymPlate: { protein: "chicken-breast", carb: "white-rice", veg: "broccoli", fat: "olive-oil", meals: 3 },
       skinsGrandfathered: false,
+      activityRebased: false,
       inviteClaimed: false,
       giftTableUntil: "",
       lastGiftCode: "",
@@ -1010,6 +1021,10 @@ export const useSpoonful = create<SpoonfulState>()(
        * picks.
        */
       seeRecap: (weekStart) => set({ lastRecapWeek: weekStart }),
+      setGymPlate: (patch) =>
+        set((s) => ({
+          gymPlate: { ...s.gymPlate, ...patch, meals: Math.max(1, Math.min(8, patch.meals ?? s.gymPlate.meals)) },
+        })),
       earnWatchSave: (brokenDate) => {
         const s = get();
         if (s.watchSavedDates.includes(brokenDate)) return false;
@@ -2136,7 +2151,9 @@ export const useSpoonful = create<SpoonfulState>()(
         skinTrials: s.skinTrials,
         watchSavedDates: s.watchSavedDates,
         lastRecapWeek: s.lastRecapWeek,
+        gymPlate: s.gymPlate,
         skinsGrandfathered: s.skinsGrandfathered,
+        activityRebased: s.activityRebased,
         inviteClaimed: s.inviteClaimed,
         giftTableUntil: s.giftTableUntil,
         lastGiftCode: s.lastGiftCode,
@@ -2155,6 +2172,39 @@ export const useSpoonful = create<SpoonfulState>()(
  * is granted outright. Runs once, then records that it did — a cook who later
  * switches to a free skin does not quietly lose the grant.
  */
+/**
+ * The activity ladder used to mean "how often do you train" — "Gym 3-5 days",
+ * "Two-a-days". It now means the day job, because training is counted once,
+ * where it is logged. A cook who picked "Gym 6 days" under the old wording did
+ * not mean "physical job", and leaving their choice in place would quietly
+ * inflate their target by the training they now also log.
+ *
+ * So the old choice is rebased once, down to the lifestyle level a person who
+ * trains that often most likely lives at. Runs a single time per kitchen; a
+ * cook who has since re-picked is never touched again.
+ */
+const ACTIVITY_REBASE: Record<string, string> = {
+  // "Gym 3-5 days" and "Gym 6 days" said nothing about the other 23 hours.
+  moderate: "light",
+  very: "light",
+  // "Two-a-days" at least implies an active person outside the gym too.
+  extra: "moderate",
+};
+
+function rebaseActivity(): void {
+  const s = useSpoonful.getState();
+  if (s.activityRebased) return;
+  const next = ACTIVITY_REBASE[s.body.activity];
+  useSpoonful.setState({
+    activityRebased: true,
+    // Only an onboarded kitchen has a choice worth rebasing; a fresh one is
+    // already on the new meaning.
+    ...(next && s.onboarded
+      ? { body: { ...s.body, activity: next as BodyProfile["activity"] }, goal: macrosFromBody({ ...s.body, activity: next as BodyProfile["activity"] }) }
+      : {}),
+  });
+}
+
 function grandfatherSkins(): void {
   const s = useSpoonful.getState();
   if (s.skinsGrandfathered) return;
@@ -2172,6 +2222,7 @@ if (typeof window !== "undefined") {
   // cost a reloading cook their week, their log, and their spent Chef plates.
   void useSpoonful.persist.rehydrate();
   grandfatherSkins();
+  rebaseActivity();
   try {
     const raw = window.localStorage.getItem("spoonful-v1");
     if (raw) {

@@ -89,6 +89,16 @@ export function SpoonfulApp() {
   const rank = rankForXp(xp);
   const pins = normalizePins(navPins);
 
+  // A full-screen takeover — cook mode, the training HUD, the store, the barcode
+  // scanner — paints over the whole app but leaves everything under it in the tab
+  // order and the accessibility tree: a hundred invisible controls a keyboard or
+  // a screen reader walks straight into, and taps that land on the wrong screen.
+  // `focusLock` is the count of takeovers already open (cook view, barcode, the
+  // typed log, the recipe picker all raise it), so it is the signal we want.
+  // `inert` puts the app out of reach for exactly as long as one is up; the
+  // takeovers themselves render outside the inert subtree, so they still work.
+  const chromeCovered = extras || tab === "train" || focusLock > 0;
+
   const tabs: { id: TabId; label: string; icon: typeof CalendarDays }[] = nextGen
     ? [
         { id: "plan", label: t(locale, "plan"), icon: CalendarDays },
@@ -327,7 +337,7 @@ export function SpoonfulApp() {
         onDismiss={markPlanUpdatesRead}
       />
       <StreakOfferCard />
-      <header className="pt-[max(0.5rem,env(safe-area-inset-top))]">
+      <header className="pt-[max(0.5rem,env(safe-area-inset-top))]" inert={chromeCovered}>
         <div className="mx-auto flex max-w-2xl items-center">
           <div className="flex h-14 min-w-0 flex-1 items-center px-4">
             <Wordmark />
@@ -416,7 +426,12 @@ export function SpoonfulApp() {
       {tab === "shop" ? <ShopView onOpenStore={() => setExtras(true)} /> : null}
 
       {extras ? (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto bg-background"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t(locale, "extras")}
+        >
           <div className="sticky top-0 z-10 bg-background/90 backdrop-blur">
             <div className="mx-auto flex max-w-2xl items-center">
               <div className="flex h-14 min-w-0 flex-1 items-center justify-between px-4">
@@ -486,6 +501,7 @@ export function SpoonfulApp() {
       <nav
         className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-border bg-card/95 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-md"
         aria-label="Primary"
+        inert={chromeCovered}
       >
         <ul className="mx-auto grid max-w-lg grid-cols-5 items-end">
           {tabs.map((item) => {

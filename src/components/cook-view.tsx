@@ -274,7 +274,14 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground">
+    // A screen this size covers the whole app, but without dialog semantics a
+    // screen reader still swipes through the recipe list underneath it.
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-background text-foreground"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Cooking ${resolved.title}`}
+    >
       <header className="grid grid-cols-[2.75rem_1fr_2.75rem] items-center gap-1 px-2 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close cook mode">
           <X />

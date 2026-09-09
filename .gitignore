@@ -3,3 +3,4 @@ node_modules
 .spoonful-exercise-gifs
 android-test/app/build
 *.apk
+.tmp
