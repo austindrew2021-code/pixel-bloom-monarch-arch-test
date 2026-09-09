@@ -39,6 +39,7 @@ import {
   WORKOUTS,
   applyHealthToFuel,
   dayFuel,
+  goalBurnShare,
   healthAdvice,
   isoDate,
   pct,
@@ -403,6 +404,19 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
               {plan.floored ? " Held at the safe minimum for your size." : ""}
               {plan.weeklyKg !== 0
                 ? ` Expect about ${weeklyLabel(plan.weeklyKg, imperial)} a week ${plan.weeklyKg < 0 ? "down" : "up"}.`
+                : ""}
+              {/*
+                * Without this line the sums do not close: the explainer ends at
+                * the base target while the number at the top of the screen is
+                * today's, which has the day's logged burn added back at the
+                * goal's own rate — a cut earns 80% of what it burns, a bulk
+                * 117%. Someone checking the arithmetic finds a gap and stops
+                * believing the rest of it.
+                */}
+              {fuel.burn > 0
+                ? ` Today you have burned ${Math.round(fuel.burn)}, so this goal adds ${Math.round(
+                    fuel.burn * goalBurnShare(body.goalKind),
+                  )} of it back → ${fuel.target.cal} kcal today.`
                 : ""}
             </p>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">

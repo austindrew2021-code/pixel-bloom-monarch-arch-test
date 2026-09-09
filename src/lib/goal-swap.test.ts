@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { goalPlan, type BodyProfile, type GoalKind } from "./body.ts";
+import { dayFuel, goalBurnShare } from "./fuel.ts";
+import type { Workout } from "./types.ts";
 import { chefGoalRules, fitsGoal, goalRankBoost, isCutOffGoal, strictestGoal } from "./goal-fit.ts";
 import { RECIPES } from "./recipes.ts";
 
@@ -106,4 +108,29 @@ test("every goal keeps the day's macros self-consistent", () => {
     assert.ok(plan.cal >= 1200, `${goalKind}: ${plan.cal}`);
     assert.ok(plan.maintenanceKcal > 0);
   }
+});
+
+test("the day's target reconciles: base plus the burn this goal earns back", () => {
+  // What the Fuel screen shows at the top is the base target plus the burn
+  // already logged today, scaled by the goal. If these two numbers do not close
+  // exactly, the explainer under them is telling the cook something the
+  // headline contradicts.
+  const nothingEaten = { cal: 0, protein: 0, carbs: 0, fat: 0 };
+  const workouts: Workout[] = [{ id: "w1", date: "2026-01-05", kind: "lift", minutes: 60 }];
+  for (const goalKind of ALL) {
+    const profile = { ...body, goalKind };
+    const plan = goalPlan(profile);
+    const day = dayFuel({ goal: plan, eaten: nothingEaten, workouts, steps: 12000, body: profile });
+    assert.ok(day.burn > 0, `${goalKind} logged no burn to reconcile`);
+    assert.equal(
+      day.target.cal,
+      plan.cal + Math.round(day.burn * goalBurnShare(goalKind)),
+      goalKind,
+    );
+  }
+  // And a cut earns back less of it than a bulk, or the deficit leaks away on
+  // exactly the days a lifter trains hardest.
+  assert.ok(goalBurnShare("lose") < 1, "a cut must not be paid in full for its burn");
+  assert.ok(goalBurnShare("performance") > 1, "a bulk should eat over its burn");
+  assert.equal(goalBurnShare("maintain"), 1);
 });

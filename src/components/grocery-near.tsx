@@ -174,6 +174,12 @@ function OrderSheet({
   const [storeCartId, setStoreCartId] = useState<string | null>(null);
   const [storeCount, setStoreCount] = useState(0);
   const [payOpen, setPayOpen] = useState(false);
+  // Above the `if (!store) return null` below, and it has to stay there: read
+  // after the early return, this hook only runs on the renders where a store is
+  // picked, so choosing one changes the hook count between renders and React
+  // tears the tree down with "rendered more hooks than during the previous
+  // render".
+  const mem = useSpoonful((s) => s.bagMemory);
 
   useEffect(() => {
     setSent(new Set());
@@ -190,8 +196,6 @@ function OrderSheet({
   const apk = isSpoonfulApk();
   const leftover = cart.items.filter((item) => !sent.has(pickKey(item)));
   const next = leftover[0];
-  const done = cart.items.length > 0 && leftover.length === 0;
-  const mem = useSpoonful((s) => s.bagMemory);
   const remembered = leftover.filter((item) => mem[item.name.trim().toLowerCase()]).length;
   const chosenTotal = cart.items.reduce((sum, item) => {
     const pick = chosen[pickKey(item)];

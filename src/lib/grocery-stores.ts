@@ -330,7 +330,8 @@ export async function fetchNearbyStores(
   coords: { lat: number; lon: number },
   fetchImpl: typeof fetch = fetch,
 ): Promise<NearbyStore[]> {
-  const q = `[out:json][timeout:12];(node["shop"~"supermarket|grocery"](around:8000,${coords.lat},${coords.lon});way["shop"~"supermarket|grocery"](around:8000,${coords.lat},${coords.lon}););out center 20;`;
+  const radius = SEARCH_RADIUS_KM * 1000;
+  const q = `[out:json][timeout:12];(node["shop"~"supermarket|grocery"](around:${radius},${coords.lat},${coords.lon});way["shop"~"supermarket|grocery"](around:${radius},${coords.lat},${coords.lon}););out center 20;`;
   try {
     const res = await fetchImpl("https://overpass-api.de/api/interpreter", {
       method: "POST",
@@ -374,9 +375,27 @@ export async function fetchNearbyStores(
   }
 }
 
+/** How far out a store still counts as one you could shop at. */
+export const SEARCH_RADIUS_KM = 8;
+
+/**
+ * How far a hardcoded fallback store may be and still be offered. Wider than
+ * the live search, because the fallback is what a rural cook gets when the
+ * lookup is down and the nearest real supermarket may be a drive away.
+ */
+export const FALLBACK_RADIUS_KM = 30;
+
+/**
+ * The fallback list, measured from where the cook actually is — and cut to what
+ * is reachable. Without the cut, a cook in Toronto who lost the store lookup was
+ * offered a "nearby" supermarket 1,151 km away in New Brunswick, which reads as
+ * a broken app rather than a failed request. Nothing within range is an honest
+ * empty list; the screen already says it found nothing.
+ */
 function withDistance(stores: NearbyStore[], coords: { lat: number; lon: number }): NearbyStore[] {
   return stores
     .map((s) => ({ ...s, km: kmBetween(coords, s) }))
+    .filter((s) => s.km <= FALLBACK_RADIUS_KM)
     .sort((a, b) => a.km - b.km);
 }
 
