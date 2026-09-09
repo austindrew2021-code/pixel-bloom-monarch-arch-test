@@ -4,6 +4,12 @@
 #
 # The repository is cloned fresh into an empty container, so node_modules is not
 # there. Everything below is safe to run again on an already-warm container.
+#
+# Runs synchronously, on purpose. Async would hand the session back about 16
+# seconds sooner on a cold container and instantly on a warm one, but it opens
+# a window where the session is live and node_modules is not there yet — and
+# the first thing anyone does in this repo is run the tests. Chasing one
+# intermittent "cannot find module" costs more than the 16 seconds saves.
 set -euo pipefail
 
 # Local machines already have their own setup; this is only for the remote.
