@@ -26,7 +26,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = join(ROOT, "public/food");
 const dryRun = process.argv.includes("--dry-run");
 
-/** Matches Python's `re.sub(r'[^\w\s-]', ...)`, whose \w is Unicode-aware. */
+/**
+ * Matches Python's `re.sub(r'[^\w\s-]', ...)`, whose \w is Unicode-aware.
+ * @param {string} text
+ * @returns {string}
+ */
 export function slugify(text) {
   return text
     .toLowerCase()
@@ -35,11 +39,16 @@ export function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
-/** A CSV row reader that respects quoted cells. */
+/**
+ * A CSV row reader that respects quoted cells.
+ * @param {string} text
+ * @returns {Record<string, string>[]}
+ */
 export function readCsv(text) {
   const [head, ...lines] = text.trim().split("\n");
   const cols = head.split(",");
   return lines.map((line) => {
+    /** @type {string[]} */
     const cells = [];
     let cur = "";
     let quoted = false;
@@ -53,10 +62,35 @@ export function readCsv(text) {
   });
 }
 
+/**
+ * Map a search phrase back to the id it belongs to.
+ *
+ * A phrase shared by two rows is not a mapping, it is a coin toss: the catalog
+ * holds 37 dish names more than once (a 1935 Welsh rarebit and a modern one are
+ * different recipes), and where the first three ingredients also match, the
+ * phrases come out identical. Those are dropped rather than guessed at, and
+ * named in the output so the files can be placed by hand.
+ *
+ * @param {Record<string, string>[]} rows
+ * @returns {{ ids: Map<string, string>, ambiguous: string[] }}
+ */
+export function idsBySearchPhrase(rows) {
+  /** @type {Map<string, string>} */
+  const seen = new Map();
+  /** @type {Set<string>} */
+  const ambiguous = new Set();
+  for (const row of rows) {
+    const key = slugify(row.search);
+    if (seen.has(key)) ambiguous.add(key);
+    seen.set(key, parse(row.file).name);
+  }
+  for (const key of ambiguous) seen.delete(key);
+  return { ids: seen, ambiguous: [...ambiguous] };
+}
+
+function main() {
 const rows = readCsv(readFileSync(join(ROOT, "photos-wanted.csv"), "utf8"));
-const idBySearch = new Map(
-  rows.map((r) => [slugify(r.search), parse(r.file).name]),
-);
+const { ids: idBySearch, ambiguous } = idsBySearchPhrase(rows);
 
 let renamed = 0;
 const clashes = [];
@@ -81,3 +115,12 @@ for (const file of readdirSync(DIR)) {
 console.log(`[photos] ${dryRun ? "would rename" : "renamed"} ${renamed} files to their recipe id`);
 if (clashes.length) console.log(`[photos] ${clashes.length} skipped, a file already had that id:\n  ` + clashes.slice(0, 10).join("\n  "));
 if (unknown.length) console.log(`[photos] ${unknown.length} long names matched no search phrase:\n  ` + unknown.slice(0, 10).join("\n  "));
+if (ambiguous.length)
+  console.log(
+    `[photos] ${ambiguous.length} search phrases belong to more than one dish and were left alone; ` +
+      `place those by hand:\n  ` + ambiguous.map((a) => a.slice(0, 60) + "...").join("\n  "),
+  );
+}
+
+// Only run when invoked directly; the helpers above are imported by tests.
+if (process.argv[1] && process.argv[1].endsWith("photo-rename.mjs")) main();

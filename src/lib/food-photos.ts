@@ -67,7 +67,15 @@ export function photoOrPlate(
  * Searching the title is how a Chow Chow dog ended up illustrating Mrs.
  * Fisher's chow-chow, an iceberg the iceberg wedge, and Nicolas Maduro the
  * maduros. The cuisine and the two or three foods the dish is actually made of
- * disambiguate all three, so the search phrase carries them.
+ * disambiguate all three, so the phrase carries them.
+ *
+ * "plated finished dish" and "served" carry the second lesson. The batch after
+ * the keyword fixes failed a different way: banana bread came back as bananas
+ * and a bag of chocolate chips, Irish soda bread as a mixing bowl, pot pie as
+ * unbaked dough, tzimmes as shredded raw carrots. The ingredients in the phrase
+ * are what a search engine matches on, and left to itself it will happily
+ * return them sitting raw on a worktop. Saying which stage of the dish we want
+ * is the difference.
  */
 export function photoSearchPhrase(
   recipe: Pick<Recipe, "name" | "cuisine" | "ingredients">,
@@ -76,7 +84,13 @@ export function photoSearchPhrase(
     .slice(0, 3)
     .map((i) => i.name.toLowerCase().replace(/\b(fresh|dried|ground|chopped|large|small)\b/g, "").trim())
     .filter(Boolean);
-  return [recipe.cuisine, recipe.name, "cooked dish", ...foods, "food photograph"]
+  return [
+    recipe.cuisine,
+    recipe.name,
+    "plated finished dish served ready to eat",
+    ...(foods.length ? ["made with", ...foods] : []),
+    "food photograph",
+  ]
     .filter(Boolean)
     .join(" ");
 }

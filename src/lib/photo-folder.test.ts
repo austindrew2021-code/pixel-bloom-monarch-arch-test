@@ -63,3 +63,21 @@ test("the folder as a whole stays deployable", () => {
   const mb = total / 2 ** 20;
   assert.ok(mb < 250, `public/food is ${mb.toFixed(0)} MB; it was 1,050 MB once and could not ship`);
 });
+
+test("a search phrase maps back to exactly one dish, or to none", async () => {
+  // How a batch saved under its search phrase gets wired up. Two rows sharing a
+  // phrase is a coin toss, not a mapping, so those are dropped rather than
+  // guessed at — otherwise one dish silently takes the other's photograph.
+  const { idsBySearchPhrase, readCsv, slugify } = await import("../../scripts/photo-rename.mjs");
+  const rows = readCsv(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../photos-wanted.csv"), "utf8"));
+  const { ids, ambiguous } = idsBySearchPhrase(rows);
+  for (const key of ambiguous) assert.equal(ids.has(key), false, `${key} was kept despite being ambiguous`);
+  for (const row of rows) {
+    const key = slugify(row.search);
+    if (ambiguous.includes(key)) continue;
+    assert.equal(ids.get(key), row.file.replace("public/food/", "").replace(/\.jpg$/, ""), row.file);
+  }
+  // And the slugify has to match Python's, whose \w keeps accented letters.
+  assert.equal(slugify("Trout meunière"), "trout-meunière");
+  assert.equal(slugify("Phở bò"), "phở-bò");
+});
