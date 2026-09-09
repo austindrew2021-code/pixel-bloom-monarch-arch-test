@@ -82,7 +82,8 @@ test("a diet badge never contradicts the rows under it", () => {
         dairy.test(i.name) &&
         // A row that offers a way out ("ghee or oil") is not a dairy row.
         !/\bor\b/i.test(i.name) &&
-        !/buttermilk|butternut|peanut butter|almond butter|coconut (milk|cream)|oat milk|soy milk|plant milk|rice milk|cashew milk|nut butter|butter beans|butter lettuce|cocoa butter|nutritional yeast|vegan/i.test(
+        // cream of tartar is a grape salt, not dairy.
+        !/buttermilk|butternut|peanut butter|almond butter|coconut (milk|cream)|oat milk|soy milk|plant milk|rice milk|cashew milk|nut butter|butter beans|butter lettuce|cocoa butter|cream of tartar|nutritional yeast|vegan/i.test(
           i.name,
         ),
     );
