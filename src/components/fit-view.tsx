@@ -7,6 +7,7 @@ import { BarcodeScanCard } from "@/components/barcode-scan";
 import { LiftSheet } from "@/components/lift-sheet";
 import { MacroBar } from "@/components/macro-bar";
 import { Plate } from "@/components/plate";
+import { GymPlateCard } from "@/components/gym-plate-card";
 import { ProgressPhotos } from "@/components/progress-photos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ import {
   ageNeedsTrainingNote,
   clampAge,
   goalLabel,
+  goalPlan,
   kgFromLb,
   lbFromKg,
   macrosFromBody,
@@ -37,6 +39,7 @@ import {
   WORKOUTS,
   applyHealthToFuel,
   dayFuel,
+  goalBurnShare,
   healthAdvice,
   isoDate,
   pct,
@@ -145,6 +148,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
   const [editBody, setEditBody] = useState(false);
   const tdee = tdeeKcal(body);
   const bmr = bmrKcal(body);
+  const plan = goalPlan(body);
   const lastLift = liftSessions[liftSessions.length - 1];
   const srcLabel = FITNESS_SOURCES.find((s) => s.id === fitnessSource)?.label;
   const imperial = body.units !== "metric";
@@ -363,6 +367,8 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
         <Stat label="Weight" value={formatWeight(body)} />
       </div>
 
+      <GymPlateCard remaining={fuel.remaining} className="mt-5" />
+
       <section className="mt-5 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
@@ -377,10 +383,49 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
                 {AGE_TRAINING_NOTE}
               </p>
             ) : null}
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              BMR {bmr} kcal ({bmrMethod(body)}) × {activity?.label ?? "Active"} {activity?.factor ?? 1.55} = TDEE {tdee}.
-              Training today is added on top so it is not counted twice.
+            {/*
+              * The whole calculation, in the open.
+              *
+              * A lifter will check this against their own numbers, and an app
+              * that will not show its work does not get a second look. It also
+              * makes the plan falsifiable: if the scale disagrees with the
+              * weekly figure after a fortnight, the estimate was wrong and the
+              * cook can act on it instead of guessing.
+              */}
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground" data-testid="body-math">
+              BMR {bmr} kcal ({bmrMethod(body)}) × {activity?.label ?? "Active"} {activity?.factor ?? 1.45} ={" "}
+              {plan.maintenanceKcal} maintenance. {goalLabel(body.goalKind)}{" "}
+              {plan.targetKcal === plan.maintenanceKcal
+                ? "holds it there"
+                : `${plan.targetKcal < plan.maintenanceKcal ? "takes off" : "adds"} ${Math.abs(
+                    Math.round((plan.targetKcal / plan.maintenanceKcal - 1) * 100),
+                  )}%`}{" "}
+              → {plan.cal} kcal.
+              {plan.floored ? " Held at the safe minimum for your size." : ""}
+              {plan.weeklyKg !== 0
+                ? ` Expect about ${weeklyLabel(plan.weeklyKg, imperial)} a week ${plan.weeklyKg < 0 ? "down" : "up"}.`
+                : ""}
+              {/*
+                * Without this line the sums do not close: the explainer ends at
+                * the base target while the number at the top of the screen is
+                * today's, which has the day's logged burn added back at the
+                * goal's own rate — a cut earns 80% of what it burns, a bulk
+                * 117%. Someone checking the arithmetic finds a gap and stops
+                * believing the rest of it.
+                */}
+              {fuel.burn > 0
+                ? ` Today you have burned ${Math.round(fuel.burn)}, so this goal adds ${Math.round(
+                    fuel.burn * goalBurnShare(body.goalKind),
+                  )} of it back → ${fuel.target.cal} kcal today.`
+                : ""}
             </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Your activity level is your day job, not the gym — training and any steps past{" "}
+              {(activity?.impliedSteps ?? 3000).toLocaleString()} are counted once, when you log them.
+            </p>
+            {plan.note ? (
+              <p className="mt-1 text-xs leading-relaxed text-spark" data-testid="body-note">{plan.note}</p>
+            ) : null}
           </div>
           <Button variant="secondary" className="shrink-0" onClick={() => setEditBody((v) => !v)}>
             {editBody ? "Close" : "Edit"}
@@ -770,6 +815,12 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
       <LiftSheet open={liftOpen} onClose={() => setLiftOpen(false)} />
     </div>
   );
+}
+
+/** The weekly rate in the cook's own units. */
+function weeklyLabel(kg: number, imperial: boolean): string {
+  const size = Math.abs(imperial ? lbFromKg(kg) : kg);
+  return `${Math.round(size * 10) / 10} ${imperial ? "lb" : "kg"}`;
 }
 
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {

@@ -15,6 +15,7 @@ import { StoreView } from "@/components/store-view";
 import { StreakOfferCard } from "@/components/streak-offer";
 import { TesterGate } from "@/components/tester-gate";
 import { ThemeOrnament } from "@/components/theme-ornament";
+import { KitchenShort } from "@/components/kitchen-short";
 import { ThemePicker } from "@/components/theme-picker";
 import { SkyView } from "@/components/sky-view";
 import { GlyphFrame } from "@/components/theme-glyphs";
@@ -39,7 +40,7 @@ import { rankForXp } from "@/lib/ranks";
 import { loadKitchenState, saveKitchenState } from "@/lib/kitchen-cloud";
 import { resolveMeal, useSpoonful, type TabId } from "@/lib/spoonful-store";
 import { isTesterUnlocked } from "@/lib/tester";
-import { normalizeTheme, themeById } from "@/lib/themes";
+import { normalizeTheme, themeById, type SkinPackId } from "@/lib/themes";
 import { isPreviewChrome } from "@/lib/preview-chrome";
 import { cn } from "@/lib/utils";
 
@@ -78,6 +79,8 @@ export function SpoonfulApp() {
   const [extras, setExtras] = useState(false);
   const [skyOpen, setSkyOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+  const [skinShort, setSkinShort] = useState<SkinPackId | null>(null);
+  const startSkinTrial = useSpoonful((s) => s.startSkinTrial);
   const [editPins, setEditPins] = useState(false);
   const [unread, setUnread] = useState(0);
   const [allowed, setAllowed] = useState(false);
@@ -85,6 +88,16 @@ export function SpoonfulApp() {
   const streak = cookStreak([...cookedDates, ...streakSavedDates], isoDate());
   const rank = rankForXp(xp);
   const pins = normalizePins(navPins);
+
+  // A full-screen takeover — cook mode, the training HUD, the store, the barcode
+  // scanner — paints over the whole app but leaves everything under it in the tab
+  // order and the accessibility tree: a hundred invisible controls a keyboard or
+  // a screen reader walks straight into, and taps that land on the wrong screen.
+  // `focusLock` is the count of takeovers already open (cook view, barcode, the
+  // typed log, the recipe picker all raise it), so it is the signal we want.
+  // `inert` puts the app out of reach for exactly as long as one is up; the
+  // takeovers themselves render outside the inert subtree, so they still work.
+  const chromeCovered = extras || tab === "train" || focusLock > 0;
 
   const tabs: { id: TabId; label: string; icon: typeof CalendarDays }[] = nextGen
     ? [
@@ -324,7 +337,7 @@ export function SpoonfulApp() {
         onDismiss={markPlanUpdatesRead}
       />
       <StreakOfferCard />
-      <header className="pt-[max(0.5rem,env(safe-area-inset-top))]">
+      <header className="pt-[max(0.5rem,env(safe-area-inset-top))]" inert={chromeCovered}>
         <div className="mx-auto flex max-w-2xl items-center">
           <div className="flex h-14 min-w-0 flex-1 items-center px-4">
             <Wordmark />
@@ -413,7 +426,12 @@ export function SpoonfulApp() {
       {tab === "shop" ? <ShopView onOpenStore={() => setExtras(true)} /> : null}
 
       {extras ? (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto bg-background"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t(locale, "extras")}
+        >
           <div className="sticky top-0 z-10 bg-background/90 backdrop-blur">
             <div className="mx-auto flex max-w-2xl items-center">
               <div className="flex h-14 min-w-0 flex-1 items-center justify-between px-4">
@@ -451,15 +469,39 @@ export function SpoonfulApp() {
               setThemeOpen(false);
               setSkyOpen(true);
             }}
+            onWatchForSkins={(pack) => {
+              // The sheet has to go first: it and the short both sit at the top
+              // of the stack, and a short playing behind a sheet is a dead tap.
+              setThemeOpen(false);
+              setSkinShort(pack);
+            }}
+            onOpenStore={() => {
+              setThemeOpen(false);
+              setExtras(true);
+            }}
           />
         </SheetContent>
       </Sheet>
+
+      {skinShort ? (
+        <KitchenShort
+          reward="a week of those skins"
+          headline="Try the look"
+          onClose={() => setSkinShort(null)}
+          onCollect={() => {
+            const ok = startSkinTrial(skinShort);
+            setSkinShort(null);
+            toast(ok ? "A week of those skins is on" : "That trial has already been used");
+          }}
+        />
+      ) : null}
 
       {walkthroughOpen ? <Walkthrough onExtras={setExtras} /> : null}
 
       <nav
         className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-border bg-card/95 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-md"
         aria-label="Primary"
+        inert={chromeCovered}
       >
         <ul className="mx-auto grid max-w-lg grid-cols-5 items-end">
           {tabs.map((item) => {

@@ -1,4 +1,4 @@
-import { I, dish } from "./catalog-kit";
+import { I, dish } from "./catalog-kit.ts";
 import type { Recipe } from "./types";
 
 function x(

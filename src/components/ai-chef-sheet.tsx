@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ChefPlateLine } from "@/components/chef-plate-line";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { planWeekWithChef } from "@/lib/ai-chef";
 import { goalLabel, leanMassKg } from "@/lib/body";
+import { CHEF_FREE_WEEK } from "@/lib/ranks";
 import { dayFuel, isoDate } from "@/lib/fuel";
 import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
 import { nutritionForDate, recipeAllowed, unlockedRecipes, useSpoonful } from "@/lib/spoonful-store";
@@ -49,9 +51,11 @@ const AISLES: Aisle[] = [
 export function AiChefSheet({
   open,
   onOpenChange,
+  onOpenStore,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onOpenStore: () => void;
 }) {
   const weekStart = useSpoonful((s) => s.weekStart);
   const household = useSpoonful((s) => s.household);
@@ -97,7 +101,11 @@ export function AiChefSheet({
 
   async function run() {
     if (chefRemaining() <= 0) {
-      toast(hasPlus ? "Chef is resting this week. Extra plate packs are in Extras." : "Free kitchens get 3 chef plates a week. Kitchen Table or Kitchen+ opens the whole world, or add a plate pack in Extras.");
+      toast(
+        hasPlus
+          ? "Chef is resting this week. Extra plate packs are in Extras."
+          : `${CHEF_FREE_WEEK} free Chef plates this week. More plates are extra.`,
+      );
       return;
     }
     setBusy(true);
@@ -183,6 +191,7 @@ export function AiChefSheet({
             : "Free kitchens get 3 plates a week from the library, already filtered to your body goal. Kitchen Table or Kitchen+ lets the chef cook anything imaginable, 40 times a week."}{" "}
           {chefRemaining()} left this week.
         </p>
+        <ChefPlateLine onOpenStore={onOpenStore} className="mt-3" />
         <div className="mt-3 flex gap-1.5">
           {(["tonight", "week"] as const).map((id) => (
             <button

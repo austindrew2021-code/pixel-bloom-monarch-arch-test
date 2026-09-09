@@ -262,6 +262,106 @@ function NebulaArt() {
 }
 
 /**
+ * The moving gas.
+ *
+ * Each sheet is its own <svg>, so its fractal-noise filter rasterises once and
+ * then only ever gets transformed — see `.theme-art__gas` in styles.css for why
+ * that matters. Two sheets drifting against each other at different speeds is
+ * what makes a nebula look like gas rather than wallpaper.
+ *
+ * The filter ids are suffixed per layer: two <svg> roots on the page defining
+ * the same id would have the second one silently lose.
+ */
+function GasSheet({ id, seed, frequency, octaves, blur, tint, className }: {
+  id: string;
+  seed: number;
+  frequency: number;
+  octaves: number;
+  blur: number;
+  tint: string;
+  className?: string;
+}) {
+  return (
+    <svg
+      className={`theme-art__gas ${className ?? ""}`.trim()}
+      viewBox="0 0 400 800"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden
+    >
+      <defs>
+        <filter id={id} x="-25%" y="-25%" width="150%" height="150%">
+          <feTurbulence type="fractalNoise" baseFrequency={frequency} numOctaves={octaves} seed={seed} result="noise" />
+          <feGaussianBlur in="noise" stdDeviation={blur} result="soft" />
+          <feColorMatrix in="soft" type="matrix" values={tint} />
+        </filter>
+      </defs>
+      <rect x="-60" y="-60" width="520" height="920" filter={`url(#${id})`} />
+    </svg>
+  );
+}
+
+function NebulaGas() {
+  return (
+    <>
+      <GasSheet
+        id="neb-live-a"
+        seed={7}
+        frequency={0.011}
+        octaves={4}
+        blur={9}
+        tint="0.9 0 0.5 0 0.05
+              0.1 0.4 0.6 0 0.02
+              1.0 0.2 0.9 0 0.12
+              0   0   0  0.85 -0.16"
+      />
+      <GasSheet
+        className="theme-art__gas--b"
+        id="neb-live-b"
+        seed={21}
+        frequency={0.02}
+        octaves={3}
+        blur={14}
+        tint="0.2 0.3 0.2 0 0
+              0.7 0.8 0.3 0 0.02
+              0.6 0.5 0.4 0 0.05
+              0   0   0  0.5 -0.12"
+      />
+    </>
+  );
+}
+
+/** The same trick in the Aether palette: colder, thinner, slower. */
+function AetherGas() {
+  return (
+    <>
+      <GasSheet
+        id="aeth-live-a"
+        seed={13}
+        frequency={0.009}
+        octaves={4}
+        blur={11}
+        tint="0.1 0.5 0.6 0 0.02
+              0.2 0.9 0.8 0 0.04
+              0.4 0.7 1.0 0 0.10
+              0   0   0  0.62 -0.14"
+      />
+      <GasSheet
+        className="theme-art__gas--b"
+        id="aeth-live-b"
+        seed={31}
+        frequency={0.017}
+        octaves={3}
+        blur={16}
+        tint="0.5 0.2 0.7 0 0.02
+              0.2 0.4 0.8 0 0.02
+              0.7 0.3 0.9 0 0.06
+              0   0   0  0.4 -0.12"
+      />
+    </>
+  );
+}
+
+/**
  * Comets ride in their own layer, above the gas but painted separately.
  * Sharing a canvas with the filtered clouds would make every frame of a
  * comet's flight re-run those filters; alone, they are a handful of cheap
@@ -527,12 +627,14 @@ export function ThemeOrnament({ theme }: { theme: ThemeId }) {
       ) : null}
       {theme === "nebula" ? (
         <>
+          <NebulaGas />
           <Starfield seed={11} count={24} high />
           <NebulaComets />
         </>
       ) : null}
       {theme === "aether" ? (
         <>
+          <AetherGas />
           <Starfield seed={19} count={22} high />
           <AetherHud />
         </>

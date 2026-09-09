@@ -27,6 +27,15 @@ function named(recipe: MethodRecipe, re: RegExp, fallback = ""): string {
   return findIng(recipe, re)?.name ?? fallback;
 }
 
+/**
+ * True when the list carries the food. Written serving lines check this before
+ * naming anything: a step that says "squeeze lemon over" against a list with no
+ * lemon is the same bug as a missing leavener — Shop never bags it.
+ */
+function stocks(recipe: MethodRecipe, re: RegExp): boolean {
+  return findIng(recipe, re) !== undefined;
+}
+
 function namesMatching(recipe: MethodRecipe, re: RegExp): string[] {
   return recipe.ingredients.map((i) => i.name).filter((n) => re.test(n));
 }
@@ -148,6 +157,35 @@ function herbFinish(recipe: MethodRecipe): string {
   const lemon = named(recipe, /\b(lemon|lime)\b/i);
   const bits = [h && `Scatter ${h} over the top.`, lemon && `Squeeze ${lemon} over.`].filter(Boolean);
   return bits.join(" ");
+}
+
+/** The baking fat this list carries — a vegan crumble rubs in coconut oil, not butter. */
+function bakeFat(recipe: MethodRecipe): string {
+  return named(recipe, /\bbutter\b|coconut oil|\bshortening\b|\blard\b|\bghee\b|\boil\b/i, "");
+}
+
+/** The dry, clumping part of a topping or batter: flour, oats, ground nuts. */
+function bakeDry(recipe: MethodRecipe): string {
+  return join(namesMatching(recipe, /\bflour\b|\boats?\b|\brolled oats\b|\balmonds?\b|\bcornmeal\b|\bgraham\b|\bwalnuts?\b|\bpecans?\b/i).slice(0, 3));
+}
+
+/** How to grease a pan with the fat this list carries, never a butter it lacks. */
+function greasePan(recipe: MethodRecipe, pan = "a baking dish"): string {
+  if (stocks(recipe, /\bbutter\b/i) && !/butter(milk|nut)|peanut butter/i.test(recipe.ingredients.map((i) => i.name).join(" "))) {
+    return `Butter ${pan}.`;
+  }
+  const oil = findIng(recipe, /\boil\b|\bshortening\b|\blard\b|\bghee\b/i);
+  return oil ? `Grease ${pan} with the ${oil.name}.` : `Grease ${pan}.`;
+}
+
+/** The dressings the list actually stocks, for an "eat it warm with…" line. */
+function dressUp(recipe: MethodRecipe): string {
+  return join(namesMatching(recipe, /\boil\b|\blemons?\b|\bvinegar\b/i));
+}
+
+/** The bread or grain the list stocks to serve a mash or dip beside. */
+function sideWith(recipe: MethodRecipe): string {
+  return named(recipe, /bread|pita|naan|toast|cracker|tortilla|rice|couscous/i, "");
 }
 
 function endPlate(recipe: MethodRecipe, extra = "Serve hot."): string {
@@ -731,7 +769,9 @@ function pressureMethod(recipe: MethodRecipe): string[] {
       `Set the ${food} on the trivet.`,
       `Lock the lid. Cook at high pressure for ${cookN} ${minWord}.`,
       `Let the pressure release naturally for ${natN} minutes, then open the lid.`,
-      `Serve the ${food} warm, with oil, lemon, or vinegar if you have it.`,
+      dressUp(recipe)
+        ? `Serve the ${food} warm, with ${dressUp(recipe)}.`
+        : `Serve the ${food} warm.`,
     ];
   }
 
@@ -840,7 +880,9 @@ function sauceMethod(recipe: MethodRecipe): string[] {
   }
   return [
     `Get out ${list}. Set a small saucepan over medium-low heat.`,
-    `Melt ${fat(recipe)}. Stir in any flour or starch and cook 1 minute if the sauce needs a thickener.`,
+    stocks(recipe, /\bflour\b|starch\b|\barrowroot\b/i)
+      ? `Warm ${fat(recipe)}. Stir in the ${named(recipe, /\bflour\b|starch\b|\barrowroot\b/i, "flour")} and cook 1 minute so the sauce thickens.`
+      : `Warm ${fat(recipe)} until it loosens.`,
     `Whisk in the liquids a little at a time so it stays smooth. Simmer ${mins} minutes, stirring.`,
     `Stir in the remaining flavorings. Taste for salt, acid, and heat.`,
     `Keep warm and spoon over the food it belongs with. Do not boil it hard at the end.`,
@@ -914,7 +956,9 @@ function roastMethod(recipe: MethodRecipe): string[] {
         ? `Spread ${topping} over the dough, going almost to the edges.`
         : `Spread the topping over the dough, going almost to the edges.`,
       `Bake at ${temp}°F for ${Math.min(15, roastN)} minutes, until the edges are browned and crisp.`,
-      `Squeeze lemon over if you have it. Serve hot while the edges are still crisp.`,
+      stocks(recipe, /\blemons?\b/i)
+        ? `Squeeze the ${named(recipe, /\blemons?\b/i, "lemon")} over. Serve hot while the edges are still crisp.`
+        : `Serve hot while the edges are still crisp.`,
     ];
   }
   const meaty = recipe.protein !== "veg" && recipe.protein !== "eggs";
@@ -930,7 +974,9 @@ function roastMethod(recipe: MethodRecipe): string[] {
       ? `Rest 8–10 minutes so the juices settle. Slice across the grain.`
       : `Taste a piece: it should be tender, not dry. Toss with any pan juices.`,
     meaty
-      ? `Squeeze lemon over if you have it. Plate and serve hot.`
+      ? stocks(recipe, /\blemons?\b/i)
+        ? `Squeeze the ${named(recipe, /\blemons?\b/i, "lemon")} over. Plate and serve hot.`
+        : `Plate and serve hot.`
       : `Plate and serve hot.`,
   ];
 }
@@ -948,7 +994,7 @@ function skilletMethod(recipe: MethodRecipe): string[] {
         ? `Add ${veg} and cook 3–5 minutes, until they give up some water.`
         : `Keep the heat on medium so the eggs will set gently.`,
       `Pour in the eggs. Stir gently until they are just set, 2–4 minutes. Take off the heat while they still look a little wet.`,
-      `${endPlate(recipe, "Serve hot, with bread if you have it.")}`,
+      `${endPlate(recipe, stocks(recipe, /bread|toast|bun|roll|tortilla|pita|naan|biscuit/i) ? `Serve hot, with the ${named(recipe, /bread|toast|bun|roll|tortilla|pita|naan|biscuit/i, "bread")}.` : "Serve hot.")}`,
     ];
   }
   if (recipe.protein === "veg") {
@@ -1007,12 +1053,17 @@ function tacoMethod(recipe: MethodRecipe): string[] {
     topping
       ? `Spoon the filling into the ${wrap}. Top with ${topping}.`
       : `Spoon the filling into the ${wrap}.`,
-    `Squeeze lime over if you have it. Serve right away so the ${wrap} stay tender.`,
+    stocks(recipe, /\blimes?\b/i)
+      ? `Squeeze the ${named(recipe, /\blimes?\b/i, "lime")} over. Serve right away so the ${wrap} stay tender.`
+      : `Serve right away so the ${wrap} stay tender.`,
   ];
 }
 
 function toastMethod(recipe: MethodRecipe): string[] {
-  const bread = named(recipe, /bun|bread|toast|roll|bagel|english muffin|baguette/, "bread");
+  const bread =
+    named(recipe, /bun|bread|toast|roll|bagel|english muffin|baguette/, "") ||
+    named(recipe, /lettuce|wrap|tortilla|pita|naan|cracker|leaf|leaves/, "") ||
+    "bread";
   const meat = proteinName(recipe);
   const n = recipe.name.toLowerCase();
   const blob = hintText(recipe);
@@ -1049,7 +1100,7 @@ function toastMethod(recipe: MethodRecipe): string[] {
         : `Season with salt and pepper. Keep warm.`,
       `Toast the ${bread} 1–2 minutes, cut side down, until gold.`,
       `Spoon the filling onto the ${bread}.`,
-      `Serve hot so the bread stays crisp.`,
+      `Serve hot so the ${bread} stays crisp.`,
     ];
   }
 
@@ -1072,7 +1123,7 @@ function toastMethod(recipe: MethodRecipe): string[] {
       `Toast the ${bread} on both sides until gold, about 1–2 minutes a side.`,
       `Fry the eggs in a little butter over medium heat, 2–3 minutes, until the whites set.`,
       `Lay the eggs on the ${bread}. Spoon any cheese or sauce over the top.`,
-      `Serve right away so the bread stays crisp.`,
+      `Serve right away so the ${bread} stays crisp.`,
     ];
   }
 
@@ -1082,7 +1133,7 @@ function toastMethod(recipe: MethodRecipe): string[] {
       ? `Warm the ${meat} in a skillet 1–2 minutes a side, just until hot. Do not brown it hard or it will dry out.`
       : `Cook the ${meat}${andArom(recipe)} in a skillet over medium heat, 4–6 minutes, until cooked through.`,
     `Lay the ${meat} on the ${bread}. Spoon any sauce or cheese over the top.`,
-    `Serve right away so the bread stays crisp.`,
+    `Serve right away so the ${bread} stays crisp.`,
   ];
 }
 
@@ -1099,7 +1150,7 @@ function saladMethod(recipe: MethodRecipe): string[] {
   );
   const dressStep = dressing
     ? `Whisk ${dressing} with a pinch of salt until the dressing looks even.`
-    : `Whisk a little oil with lemon or vinegar and a pinch of salt.`;
+    : `Season the bowl with salt and toss so the pieces taste dressed, not bare.`;
 
   if (greens) {
     return [
@@ -1340,8 +1391,12 @@ function dessertMethod(recipe: MethodRecipe): string[] {
     return [
       `Heat the oven to ${temp}°F. Line a square pan with parchment, leaving an overhang to lift by.`,
       crusted
-        ? `Press the butter, flour and sugar into the pan as a crust and bake it 15 minutes, until it is pale gold and set.`
-        : `Get out ${list}. Melt the butter, then beat in the sugar, eggs and flour until the batter is smooth and glossy.`,
+        ? bakeFat(recipe) && bakeDry(recipe)
+          ? `Press the ${bakeFat(recipe)}, ${bakeDry(recipe)} and sugar into the pan as a crust and bake it 15 minutes, until it is pale gold and set.`
+          : `Press the crust mix into the pan and bake it 15 minutes, until it is pale gold and set.`
+        : stocks(recipe, /\bbutter\b/i) && stocks(recipe, /\beggs?\b/i)
+          ? `Get out ${list}. Melt the butter, then beat in the sugar, eggs and flour until the batter is smooth and glossy.`
+          : `Get out ${list}. Work them together until the mix is thick, glossy, and holds in a spoon.`,
       crusted
         ? `Whisk the filling until smooth and pour it over the hot crust.`
         : `Scrape the batter into the pan and spread it level into the corners.`,
@@ -1351,10 +1406,12 @@ function dessertMethod(recipe: MethodRecipe): string[] {
   }
   if (/\bcobbler\b|\bcrisp\b|\bcrumble\b|\bbuckle\b|\bgrunt\b|\bpandowdy\b/.test(n)) {
     return [
-      `Heat the oven to ${temp}°F. Butter a baking dish.`,
+      `Heat the oven to ${temp}°F. ${greasePan(recipe)}`,
       `Toss ${fruit} with the sugar and a pinch of salt and spread it in the dish.`,
       /crisp|crumble/.test(n)
-        ? `Rub the butter into the flour, oats and sugar until it clumps, and scatter it over the fruit in an even layer.`
+        ? bakeFat(recipe) && bakeDry(recipe)
+          ? `Rub the ${bakeFat(recipe)} into the ${bakeDry(recipe)} until it clumps, and scatter it over the fruit in an even layer.`
+          : `Rub the topping together until it clumps, and scatter it over the fruit in an even layer.`
         : `Stir the topping into a soft, sticky dough and drop it over the fruit in spoonfuls, leaving gaps for steam.`,
       `Bake at ${temp}°F for ${bakeN} minutes, until the topping is gold and the fruit bubbles thickly at the edges.`,
       `Cool 15 minutes so the juices set. Serve ${recipe.name.toLowerCase()} warm.`,
@@ -1373,7 +1430,7 @@ function dessertMethod(recipe: MethodRecipe): string[] {
   }
   if (/\bmuffins?\b/.test(n)) {
     return [
-      `Heat the oven to ${temp}°F. Line a muffin tin with papers or butter the cups.`,
+      `Heat the oven to ${temp}°F. Line a muffin tin with papers, or ${greasePan(recipe, "the cups").toLowerCase()}`,
       `Whisk the dry ingredients in one bowl and the wet in another.`,
       `Pour the wet into the dry and fold just until no dry flour shows — a lumpy batter makes tender muffins, an over-mixed one makes tough ones.`,
       `Divide the batter between the cups, filling each about three-quarters, and bake at ${temp}°F for ${Math.min(25, bakeN)} minutes, until a pick comes out clean.`,
@@ -1382,7 +1439,7 @@ function dessertMethod(recipe: MethodRecipe): string[] {
   }
 
   return [
-    `Heat the oven to ${temp}°F. Butter a baking dish.`,
+    `Heat the oven to ${temp}°F. ${greasePan(recipe)}`,
     `Get out ${list}. Mix the batter or filling until even.`,
     `Scrape into the dish and smooth the top.`,
     `Bake at ${temp}°F for ${bakeN} minutes, until set in the center. A knife in the middle should come out with just a little moisture, not wet batter.`,
@@ -1409,7 +1466,7 @@ function bowlMethod(recipe: MethodRecipe): string[] {
       `Cook ${main}${andArom(recipe)} in ${fat(recipe)} over medium heat until very soft, 15–20 minutes.`,
       `Mash or stir until the texture you want: mostly smooth, with some pieces left.`,
       `Season with salt. Stir in any remaining spices.`,
-      endPlate(recipe, "Serve with bread, rice, or as a side."),
+      endPlate(recipe, sideWith(recipe) ? `Serve with the ${sideWith(recipe)}, or as a side.` : "Serve warm, or as a side."),
     ];
   }
   const grain = named(recipe, /rice|quinoa|couscous|bulgur|farro|noodle/, "");
@@ -1502,7 +1559,9 @@ function mixJarMethod(recipe: MethodRecipe): string[] {
     return [
       `Blend ${list} until smooth, scraping the sides, 1–2 minutes.`,
       "Taste for salt and lemon.",
-      "Spoon into a bowl. Drizzle oil on top if you have it. Serve with bread or vegetables.",
+      stocks(recipe, /\boil\b/i)
+        ? `Spoon into a bowl. Drizzle the ${named(recipe, /\boil\b/i, "oil")} on top and serve.`
+        : "Spoon into a bowl and serve.",
     ];
   }
   if (/poke|tuna rice/.test(n)) {
@@ -1544,7 +1603,10 @@ function mixJarMethod(recipe: MethodRecipe): string[] {
 
 function sandwichPressMethod(recipe: MethodRecipe): string[] {
   const n = recipe.name.toLowerCase();
-  const bread = named(recipe, /bread|roll|tortilla|ciabatta|rye|bun|chip|loaf|wrap|pita/, "bread");
+  const bread =
+    named(recipe, /bread|roll|tortilla|ciabatta|rye|bun|chip|loaf|wrap|pita|english muffin|croissant|bagel/, "") ||
+    named(recipe, /lettuce|leaf|leaves|cracker|naan/, "") ||
+    "bread";
   const filling = join(
     recipe.ingredients
       .filter((i) => !/bread|roll|tortilla|ciabatta|rye|bun|butter|oil|chip|loaf|lettuce/.test(i.name))
@@ -1555,7 +1617,9 @@ function sandwichPressMethod(recipe: MethodRecipe): string[] {
     return [
       `Chop or mash ${filling} and stir until the salad holds together.`,
       "Taste for salt. Chill 10 minutes if you have time.",
-      `Pile onto the ${bread} with lettuce if you have it. Serve cold.`,
+      stocks(recipe, /lettuce|greens?|arugula|spinach/i)
+        ? `Pile onto the ${bread} with the ${named(recipe, /lettuce|greens?|arugula|spinach/i, "lettuce")}. Serve cold.`
+        : `Pile onto the ${bread}. Serve cold.`,
     ];
   }
   if (/\bwrap\b/.test(n)) {
@@ -1606,8 +1670,8 @@ function sandwichPressMethod(recipe: MethodRecipe): string[] {
   }
   return [
     `Lay out the ${bread}. Spread the condiment. Layer ${filling}.`,
-    "Brush the outside with butter or oil. Press in a skillet over medium 3–4 minutes a side, until the cheese runs and the bread is gold.",
-    "Cut into pieces and serve hot, while the bread is still crisp.",
+    `Press in a skillet over medium 3–4 minutes a side, until the cheese runs and the outside is gold.`,
+    `Cut into pieces and serve hot, while the ${bread} is still crisp.`,
   ];
 }
 

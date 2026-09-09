@@ -36,6 +36,8 @@ export function proteinDot(protein?: Protein): string {
       return "bg-food-yolk";
     case "beef":
       return "bg-food-tomato";
+    case "lamb":
+      return "bg-food-char";
     case "pork":
       return "bg-food-salmon";
     case "fish":
@@ -62,6 +64,7 @@ export function proteinLabel(protein?: Protein): string {
 const COST: Record<Protein, number> = {
   chicken: 14,
   beef: 20,
+  lamb: 24,
   pork: 13,
   fish: 18,
   seafood: 22,
@@ -80,6 +83,7 @@ export function plateCost(recipe: Recipe, household: number): number {
 const TAKEOUT_COST: Record<Protein, number> = {
   chicken: 30,
   beef: 42,
+  lamb: 50,
   pork: 28,
   fish: 38,
   seafood: 46,

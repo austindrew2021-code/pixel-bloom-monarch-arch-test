@@ -522,6 +522,29 @@
     background-image: none;
   }
 
+  /*
+   * A scrim under the loose text at the top of a photo skin.
+   *
+   * Text inside a card gets the translucent panel treatment further down; the
+   * header and the week strip sit straight on the art. Now that the art drifts
+   * far enough to see, a bright band of galaxy or a noon sky can wander under
+   * that copy, and a line the cook cannot read is a worse outcome than a
+   * slightly less visible photo. Fixed, behind everything, top only.
+   */
+  html[data-art="1"] .theme-art::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 52vh;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-background) 70%, transparent),
+      color-mix(in oklab, var(--color-background) 52%, transparent) 62%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
   html[data-ease="simple"] {
     font-size: 18px;
   }
@@ -677,14 +700,87 @@
     opacity: 1;
   }
 
+  /*
+   * The art breathes.
+   *
+   * The old drift moved 1.8% over 96 seconds, which is real but below the
+   * threshold anyone notices — the sky read as a still photo. This travels
+   * far enough to see and slowly enough to never pull the eye off the food.
+   * The layer is oversized (inset -8%, 116%) so the extra scale and the
+   * fraction of a degree of rotation never expose an edge.
+   */
   .theme-art__photo--live {
-    animation: theme-sky-drift 96s ease-in-out infinite alternate;
+    animation: theme-sky-drift 140s ease-in-out infinite alternate;
     will-change: transform;
   }
 
   @keyframes theme-sky-drift {
-    from { transform: scale(1.04) translate3d(0, 0, 0); }
-    to { transform: scale(1.1) translate3d(-1.8%, 1.2%, 0); }
+    from { transform: scale(1.06) rotate(-0.35deg) translate3d(-1.6%, -1.1%, 0); }
+    to { transform: scale(1.12) rotate(0.35deg) translate3d(2.2%, 1.8%, 0); }
+  }
+
+  /*
+   * Nebula gas.
+   *
+   * The clouds are fractal-noise filters, and re-running a filter every frame
+   * is what made an animated nebula too expensive to ship. So the filter still
+   * paints exactly once: what moves is a plain CSS transform on the wrapper,
+   * which the compositor handles on the GPU without touching the filter again.
+   *
+   * Two layers at different speeds and opposite directions is what turns a
+   * drifting picture into gas that churns — one sheet sliding across another
+   * reads as depth and turbulence, which no single moving layer ever does.
+   */
+  .theme-art__gas {
+    position: absolute;
+    inset: -30%;
+    width: 160%;
+    height: 160%;
+    will-change: transform;
+    transform-origin: 52% 42%;
+    animation: theme-gas-a 210s ease-in-out infinite alternate;
+    opacity: 0.55;
+    /*
+     * Gas is prettiest where there is no text. Fading it out down the page
+     * keeps the churn in the sky and off the body copy — the same reason the
+     * static nebula carried a settle gradient. A cloud is never worth a line
+     * of reading contrast.
+     */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 34%, transparent 78%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 34%, transparent 78%);
+  }
+
+  .theme-art__gas--b {
+    transform-origin: 38% 62%;
+    animation: theme-gas-b 320s ease-in-out infinite alternate;
+    opacity: 0.38;
+  }
+
+  @keyframes theme-gas-a {
+    from { transform: rotate(-3deg) scale(1.02) translate3d(-2%, 1%, 0); }
+    to { transform: rotate(4deg) scale(1.16) translate3d(3%, -2.5%, 0); }
+  }
+
+  @keyframes theme-gas-b {
+    from { transform: rotate(5deg) scale(1.18) translate3d(2.5%, -1.5%, 0); }
+    to { transform: rotate(-4deg) scale(1.03) translate3d(-3%, 2%, 0); }
+  }
+
+  /*
+   * A breeze for the skins with trees and fields in them. Small enough that
+   * nothing shears visibly, slow enough to read as weather rather than motion.
+   */
+  [data-theme="spring"] .theme-art__photo--live,
+  [data-theme="summer"] .theme-art__photo--live,
+  [data-theme="autumn"] .theme-art__photo--live,
+  [data-theme="west"] .theme-art__photo--live,
+  [data-theme="anime"] .theme-art__photo--live {
+    animation: theme-breeze 74s ease-in-out infinite alternate;
+  }
+
+  @keyframes theme-breeze {
+    from { transform: scale(1.08) rotate(-0.5deg) translate3d(-1.2%, 0, 0); }
+    to { transform: scale(1.12) rotate(0.5deg) translate3d(1.4%, -0.8%, 0); }
   }
 
   .theme-art__moon {
@@ -916,6 +1012,10 @@
     .theme-art__star,
     .theme-art__fly,
     .theme-art__photo--live,
+    .theme-art__gas,
+    /* The second gas sheet sets its own animation, so it needs naming here in
+       its own right rather than relying on source order to switch it off. */
+    .theme-art__gas--b,
     .theme-art__planet {
       animation: none;
     }
@@ -2090,4 +2190,14 @@
 [data-theme="paper"] .skin-shape.rounded-full,
 [data-theme="paper"] .nav-snap-icon {
   border-radius: 999px;
+}
+
+/*
+ * A small text button — "Hide pantry items", "See all recipes · 1539" — reads
+ * right at 12px but is only 16px tall, well under the 44px a thumb needs. This
+ * grows the hit area above and below without moving anything on the page, so
+ * the layout keeps its tight spacing and the tap still lands.
+ */
+.tap {
+  padding-block: 0.625rem;
 }

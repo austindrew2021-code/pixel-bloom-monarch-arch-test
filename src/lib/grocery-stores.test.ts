@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  FALLBACK_RADIUS_KM,
   FALLBACK_STORES,
+  fetchNearbyStores,
   brandFromName,
   cartForStore,
   cartFromShop,
@@ -185,4 +187,24 @@ test("Independent is a Helios banner; Sobeys and Walmart are not", () => {
   assert.match(storeCartOpenUrl(independent), /yourindependentgrocer/);
   assert.match(productSearchUrl(sobeys, "eggs"), /voila\.ca/);
   assert.match(productSearchUrl(walmart, "milk"), /walmart\.ca/);
+});
+
+test("a store on the other side of the country is not offered as nearby", async () => {
+  // The lookup is down, so the hardcoded fallback list is all there is. Measured
+  // from Toronto those stores are 1,100+ km away in New Brunswick; offering one
+  // as "nearby" reads as a broken app rather than a failed request.
+  const downtownToronto = { lat: 43.6532, lon: -79.3832 };
+  const offline = async () => {
+    throw new Error("no network");
+  };
+  const far = await fetchNearbyStores(downtownToronto, offline as unknown as typeof fetch);
+  assert.deepEqual(far, [], "nothing within range should mean an empty list");
+
+  // But a cook standing in the region the fallback covers still gets it.
+  const home = FALLBACK_STORES[0]!;
+  const near = await fetchNearbyStores({ lat: home.lat, lon: home.lon }, offline as unknown as typeof fetch);
+  assert.ok(near.length > 0, "the fallback must still work where it applies");
+  for (const store of near) assert.ok(store.km <= FALLBACK_RADIUS_KM, `${store.name} at ${store.km}km`);
+  // And it is ordered by how far away it is.
+  assert.deepEqual([...near].sort((a, b) => a.km - b.km).map((s) => s.id), near.map((s) => s.id));
 });

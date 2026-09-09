@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plate } from "@/components/plate";
-import { photoFor } from "@/lib/food-photos";
+import { photoOrPlate } from "@/lib/food-photos";
 import type { Recipe } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -14,17 +14,20 @@ export function MealPhoto({
   alt?: string;
 }) {
   const [broken, setBroken] = useState(false);
-  if (broken) {
+  const shot = photoOrPlate(recipe);
+  if (broken || shot.kind !== "photo") {
     return (
       <div className={cn("meal-photo grid place-items-center overflow-hidden bg-muted", className)}>
-        <Plate kind={recipe.plate ?? "bowl"} size="md" />
+        {/* Scaled off the container's height so the same glyph suits a 56px
+            row and a 176px hero without a size prop at seventeen call sites. */}
+        <Plate kind={recipe.plate ?? "bowl"} className="h-[58%] w-auto aspect-square" />
       </div>
     );
   }
   return (
     <div className={cn("meal-photo overflow-hidden bg-muted", className)}>
       <img
-        src={photoFor(recipe)}
+        src={shot.src}
         alt={alt ?? recipe.name}
         loading="lazy"
         decoding="async"

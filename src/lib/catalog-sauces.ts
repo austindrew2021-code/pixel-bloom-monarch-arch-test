@@ -1,4 +1,4 @@
-import { I, dish } from "./catalog-kit";
+import { I, dish } from "./catalog-kit.ts";
 import type { Recipe } from "./types";
 
 /** Sauces and dry rubs live in the main library — search them, do not silo them. */

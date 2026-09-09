@@ -1,4 +1,4 @@
-import { recipeAllergens } from "./shield";
+import { recipeAllergens } from "./shield.ts";
 import type { Recipe } from "./types";
 
 export type MoodFilter =
@@ -54,7 +54,7 @@ const HONEY_GEL = /\b(honey|gelatin)\b/i;
 
 export function isVegetarian(recipe: Recipe): boolean {
   const tags = recipe.tags ?? [];
-  if (["chicken", "beef", "pork", "fish", "seafood", "turkey"].includes(recipe.protein)) return false;
+  if (["chicken", "beef", "lamb", "pork", "fish", "seafood", "turkey"].includes(recipe.protein)) return false;
   if (tags.includes("vegan") || tags.includes("vegetarian")) return true;
   if (!["veg", "eggs"].includes(recipe.protein)) return false;
   const text = blob(recipe);

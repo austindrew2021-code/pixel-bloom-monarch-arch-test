@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { partnersConfigured, tagOutbound } from "@/lib/partner-links";
 import { formatQty } from "@/lib/format";
 import { loadStoreOptions } from "@/lib/grocery-live";
 import {
@@ -92,6 +93,17 @@ export function GroceryNearCard() {
       <p className="mt-1 text-sm text-muted-foreground">
         Open a store inside Spoonful. Fill cart packs the bag while you step away, then pings you when it’s ready to review.
       </p>
+      {/*
+       * Said plainly, once, where the links are — not buried in a policy page.
+       * It only appears when a partner id is actually configured, so a build
+       * with no partners never claims a cut it does not take.
+       */}
+      {partnersConfigured() ? (
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          Spoonful may earn a small commission when you shop through these links. Your price is the
+          store's price — it does not change what you pay.
+        </p>
+      ) : null}
       {favStore ? (
         <p className="mt-2 text-sm">
           Favorite: <span className="font-medium">{favStore.name}</span>
@@ -162,6 +174,12 @@ function OrderSheet({
   const [storeCartId, setStoreCartId] = useState<string | null>(null);
   const [storeCount, setStoreCount] = useState(0);
   const [payOpen, setPayOpen] = useState(false);
+  // Above the `if (!store) return null` below, and it has to stay there: read
+  // after the early return, this hook only runs on the renders where a store is
+  // picked, so choosing one changes the hook count between renders and React
+  // tears the tree down with "rendered more hooks than during the previous
+  // render".
+  const mem = useSpoonful((s) => s.bagMemory);
 
   useEffect(() => {
     setSent(new Set());
@@ -178,8 +196,6 @@ function OrderSheet({
   const apk = isSpoonfulApk();
   const leftover = cart.items.filter((item) => !sent.has(pickKey(item)));
   const next = leftover[0];
-  const done = cart.items.length > 0 && leftover.length === 0;
-  const mem = useSpoonful((s) => s.bagMemory);
   const remembered = leftover.filter((item) => mem[item.name.trim().toLowerCase()]).length;
   const chosenTotal = cart.items.reduce((sum, item) => {
     const pick = chosen[pickKey(item)];
@@ -223,12 +239,17 @@ function OrderSheet({
     });
   }
 
+  /**
+   * The store URL the cook is actually sent to. Every outbound hop in this
+   * screen goes through here, which is what makes the partner tag a single
+   * thing to audit rather than a sprinkle across the file.
+   */
   function tillUrl(fallback = checkoutHref) {
-    if (helios) return fallback;
+    if (helios) return tagOutbound(fallback, "fill-cart");
     const first = bagItems()[0];
-    if (first?.url && /^https:\/\//i.test(first.url)) return first.url;
-    if (first) return productSearchUrl(picked, first.query || first.name);
-    return fallback;
+    if (first?.url && /^https:\/\//i.test(first.url)) return tagOutbound(first.url, "product");
+    if (first) return tagOutbound(productSearchUrl(picked, first.query || first.name), "search");
+    return tagOutbound(fallback, "fill-cart");
   }
 
   function mark(item: GroceryPick) {
@@ -571,7 +592,7 @@ function OrderSheet({
             <Button
               className="mt-2 w-full"
               variant="secondary"
-              onClick={() => window.open(store.mapsUrl, "_blank", "noopener,noreferrer")}
+              onClick={() => window.open(tagOutbound(store.mapsUrl, "map"), "_blank", "noopener,noreferrer")}
             >
               <MapPin />
               Directions

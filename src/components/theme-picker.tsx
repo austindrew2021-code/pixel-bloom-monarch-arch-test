@@ -1,6 +1,15 @@
-import { Check, ChevronDown, Moon } from "lucide-react";
+import { Check, ChevronDown, Lock, Moon, Play } from "lucide-react";
 import { useState } from "react";
-import { THEME_GROUPS, THEMES, themesIn, type Theme, type ThemeGroup, type ThemeId } from "@/lib/themes";
+import {
+  THEME_GROUPS,
+  THEMES,
+  themesIn,
+  type SkinPackId,
+  type Theme,
+  type ThemeGroup,
+  type ThemeId,
+} from "@/lib/themes";
+import { useSpoonful } from "@/lib/spoonful-store";
 import { cn } from "@/lib/utils";
 
 function SwatchArt({ theme }: { theme: Theme }) {
@@ -57,10 +66,12 @@ function SwatchArt({ theme }: { theme: Theme }) {
 function ThemeCard({
   theme,
   active,
+  locked,
   onPick,
 }: {
   theme: Theme;
   active: boolean;
+  locked: boolean;
   onPick: (id: ThemeId) => void;
 }) {
   const [bg, card, accent] = theme.swatch;
@@ -88,8 +99,16 @@ function ThemeCard({
             <Check className="size-3" style={{ color: bg }} />
           </span>
         ) : null}
+        {locked ? (
+          <span
+            className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-foreground/70"
+            aria-label="In a skin pack"
+          >
+            <Lock className="size-3 text-background" />
+          </span>
+        ) : null}
       </span>
-      <span className="mt-2 text-sm font-medium">{theme.label}</span>
+      <span className="mt-2 flex items-center gap-1.5 text-sm font-medium">{theme.label}</span>
       <span className="mt-0.5 text-xs leading-snug text-muted-foreground">{theme.hint}</span>
     </button>
   );
@@ -98,20 +117,81 @@ function ThemeCard({
 function GroupGrid({
   group,
   theme,
+  allowed,
   onPick,
 }: {
   group: ThemeGroup;
   theme: ThemeId;
+  allowed: (id: ThemeId) => boolean;
   onPick: (id: ThemeId) => void;
 }) {
   return (
     <ul className="grid grid-cols-2 gap-2">
       {themesIn(group).map((t) => (
         <li key={t.id}>
-          <ThemeCard theme={t} active={theme === t.id} onPick={onPick} />
+          <ThemeCard theme={t} active={theme === t.id} locked={!allowed(t.id)} onPick={onPick} />
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * The offer under a locked group. Two ways in and no dark pattern: watch a
+ * short for a week of it, or buy the pack outright. The kitchen underneath is
+ * identical either way — this is paint.
+ */
+function PackOffer({
+  pack,
+  label,
+  onWatchForSkins,
+  onOpenStore,
+}: {
+  pack: SkinPackId;
+  label: string;
+  onWatchForSkins?: (pack: SkinPackId) => void;
+  onOpenStore?: () => void;
+}) {
+  const owned = useSpoonful((s) => s.hasAddon(pack));
+  const trials = useSpoonful((s) => s.skinTrials);
+  const daysLeft = useSpoonful((s) => s.skinTrialDaysLeft);
+  const left = daysLeft(pack);
+
+  if (owned) return null;
+  if (left > 0) {
+    return (
+      <p className="mt-2 text-xs text-muted-foreground">
+        {label} on trial — {left} {left === 1 ? "day" : "days"} left.{" "}
+        {onOpenStore ? (
+          <button type="button" className="font-medium text-spark underline-offset-4 hover:underline" onClick={onOpenStore}>
+            Keep them for $3.99
+          </button>
+        ) : null}
+      </p>
+    );
+  }
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      {onWatchForSkins && !trials[pack] ? (
+        <button
+          type="button"
+          className="hud-btn flex h-10 flex-1 items-center justify-center gap-1.5 px-3 text-xs font-medium"
+          onClick={() => onWatchForSkins(pack)}
+        >
+          <Play className="size-3.5" />
+          Watch a short — a week free
+        </button>
+      ) : null}
+      {onOpenStore ? (
+        <button
+          type="button"
+          className="hud-btn hud-btn-on flex h-10 flex-1 items-center justify-center px-3 text-xs font-semibold"
+          onClick={onOpenStore}
+        >
+          Unlock {label} · $3.99
+        </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -119,13 +199,22 @@ export function ThemePicker({
   theme,
   onPick,
   onWatch,
+  onWatchForSkins,
+  onOpenStore,
 }: {
   theme: ThemeId;
   onPick: (id: ThemeId) => void;
   onWatch?: () => void;
+  onWatchForSkins?: (pack: SkinPackId) => void;
+  onOpenStore?: () => void;
 }) {
   const [seasonsOpen, setSeasonsOpen] = useState(themesIn("season").some((t) => t.id === theme));
   const current = THEMES.find((t) => t.id === theme);
+  const allowed = useSpoonful((s) => s.skinAllowed);
+  // Subscribing to both keeps the grid honest the moment a pack is bought or a
+  // trial starts; `skinAllowed` itself is a stable function reference.
+  useSpoonful((s) => s.unlocked);
+  useSpoonful((s) => s.skinTrials);
 
   return (
     <div className="space-y-5 pb-2">
@@ -139,7 +228,15 @@ export function ThemePicker({
         <section key={group.id}>
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-spark">{group.label}</p>
           <p className="mt-0.5 mb-2 text-xs text-muted-foreground">{group.hint}</p>
-          <GroupGrid group={group.id} theme={theme} onPick={onPick} />
+          <GroupGrid group={group.id} theme={theme} allowed={allowed} onPick={onPick} />
+          {group.id === "world" ? (
+            <PackOffer
+              pack="skins-world"
+              label="World skins"
+              onWatchForSkins={onWatchForSkins}
+              onOpenStore={onOpenStore}
+            />
+          ) : null}
         </section>
       ))}
       <section>
@@ -157,7 +254,13 @@ export function ThemePicker({
         </button>
         {seasonsOpen ? (
           <div className="mt-2">
-            <GroupGrid group="season" theme={theme} onPick={onPick} />
+            <GroupGrid group="season" theme={theme} allowed={allowed} onPick={onPick} />
+            <PackOffer
+              pack="skins-season"
+              label="Season skins"
+              onWatchForSkins={onWatchForSkins}
+              onOpenStore={onOpenStore}
+            />
           </div>
         ) : null}
       </section>

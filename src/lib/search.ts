@@ -1,7 +1,7 @@
-import { RECIPES } from "./recipes";
+import { RECIPES } from "./recipes.ts";
 import type { Recipe } from "./types";
 import type { CountryId } from "./i18n";
-import { isBreakfast, isDessert } from "./diet";
+import { isBreakfast, isDessert } from "./diet.ts";
 
 /** Regional names, slang, abbreviations, and dish aliases that should still find a recipe. */
 const SYNONYMS: Record<string, string[]> = {

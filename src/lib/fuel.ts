@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 import type { BodyProfile, GoalKind } from "./body";
-import { DEFAULT_BODY } from "./body";
-import { recoveryLabel, type HealthDay } from "./fitness-sync";
-import { goalRankBoost } from "./goal-fit";
-import { liftKcal } from "./lift";
+import { ACTIVITY, DEFAULT_BODY, goalSpec } from "./body.ts";
+import { recoveryLabel, type HealthDay } from "./fitness-sync.ts";
+import { goalRankBoost } from "./goal-fit.ts";
+import { liftKcal } from "./lift.ts";
 import type { MacroGoal, Nutrition, Recipe, Workout, WorkoutKind } from "./types";
 
 export const DEFAULT_GOAL: MacroGoal = { cal: 2200, protein: 130, carbs: 220, fat: 70 };
@@ -109,6 +109,21 @@ export function stepsKcal(steps: number, bodyKg: number): number {
   return Math.round(0.9 * bodyKg * km);
 }
 
+/**
+ * Step calories a tracked day has EARNED, over and above the walking the
+ * activity level already assumes.
+ *
+ * A nurse who picked "On your feet" is already being paid for ~10,000 steps in
+ * her calorie target. Counting the watch's 10,000 again on top is the same
+ * double-count the activity ladder used to make with training — a few hundred
+ * phantom calories a day, every day. Only the steps above the baseline are new
+ * information, so only those are added.
+ */
+export function extraStepsKcal(steps: number, body: BodyProfile): number {
+  const implied = ACTIVITY.find((a) => a.id === body.activity)?.impliedSteps ?? 3000;
+  return stepsKcal(Math.max(0, steps - implied), body.weightKg);
+}
+
 export function burnKcal(kind: WorkoutKind, minutes: number, body: BodyProfile = DEFAULT_BODY): number {
   return Math.round(metKcal(MET[kind], body.weightKg, minutes));
 }
@@ -119,6 +134,17 @@ export function workoutProteinBump(kind: WorkoutKind, minutes: number, bodyKg: n
 
 export function workoutCarbBump(kind: WorkoutKind, minutes: number, bodyKg: number): number {
   return Math.round(CARB_PER_KG[kind] * bodyKg * (minutes / 45));
+}
+
+/**
+ * How much of a day's training burn goes back on the plate.
+ *
+ * The phase's own energy percentage, applied to the extra expenditure: a 20%
+ * cut eats back 80% of what it burned and stays a 20% cut; a bodybuilder eats
+ * back 117% and stays in surplus. Maintenance eats back exactly what it spent.
+ */
+export function goalBurnShare(kind: GoalKind | string | undefined): number {
+  return 1 + goalSpec(kind).energyPct;
 }
 
 export type DayFuel = {
@@ -136,9 +162,11 @@ export function dayFuel(input: {
   body?: BodyProfile | null;
 }): DayFuel {
   const body = input.body ?? DEFAULT_BODY;
+  // Training is always new: the activity multiplier deliberately excludes it.
+  // Steps only count above what that multiplier already assumed.
   const burn =
     input.workouts.reduce((sum, w) => sum + workoutKcal(w, body), 0) +
-    stepsKcal(input.steps, body.weightKg);
+    extraStepsKcal(input.steps, body);
   const extraP = input.workouts.reduce(
     (sum, w) => sum + workoutProteinBump(w.kind, w.minutes, body.weightKg),
     0,
@@ -147,8 +175,12 @@ export function dayFuel(input: {
     (sum, w) => sum + workoutCarbBump(w.kind, w.minutes, body.weightKg),
     0,
   );
+  // A phase applies to the WHOLE day, training included. Handing back every
+  // calorie a lift burned turns a 20% cut into a 14% one — the classic
+  // "eat back your exercise" mistake, and the reason a diligent cut stalls.
+  // A cut eats back most of the burn, a bulk eats back more than it.
   const target: MacroGoal = {
-    cal: input.goal.cal + burn,
+    cal: input.goal.cal + Math.round(burn * goalBurnShare(body.goalKind)),
     protein: input.goal.protein + extraP,
     carbs: input.goal.carbs + extraC,
     fat: input.goal.fat,
@@ -304,5 +336,5 @@ export function pct(n: number, of: number): number {
   return Math.max(0, Math.min(100, Math.round((n / of) * 100)));
 }
 
-export { portionSyncFor, type PortionSync } from "./portion-sync";
-export { cookStreak, brokenStreakInfo, type BrokenStreak } from "./streak";
+export { portionSyncFor, type PortionSync } from "./portion-sync.ts";
+export { cookStreak, brokenStreakInfo, type BrokenStreak } from "./streak.ts";

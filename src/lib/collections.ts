@@ -9,7 +9,7 @@ import {
   isSugarFree,
   isVegan,
   isVegetarian,
-} from "./diet";
+} from "./diet.ts";
 import type { Recipe } from "./types";
 
 export type Collection = {

@@ -2,21 +2,21 @@ import { toast } from "sonner";
 import { addDays, parseISO } from "date-fns";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, seatAvoidsName, type BodyProfile, type FamilySeat, type GoalKind } from "./body";
-import { isComfort, isDinnerMain, isGlutenFree, isHighProtein, isSugarFree, isVegan } from "./diet";
-import { fitsGoal, strictestGoal } from "./goal-fit";
-import { isUnlocked, seatCap } from "./access";
-import { giftUntilFrom, isGiftCode, mintGiftCode, normalizeGiftCode } from "./gift";
+import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, seatAvoidsName, type BodyProfile, type FamilySeat, type GoalKind } from "./body.ts";
+import { isComfort, isDinnerMain, isGlutenFree, isHighProtein, isSugarFree, isVegan } from "./diet.ts";
+import { fitsGoal, strictestGoal } from "./goal-fit.ts";
+import { isUnlocked, seatCap } from "./access.ts";
+import { giftUntilFrom, isGiftCode, mintGiftCode, normalizeGiftCode } from "./gift.ts";
 import type { CountryId, LocaleId } from "./i18n";
-import { DEFAULT_GOAL, addNutrition, applyHealthToFuel, dayFuel, emptyNutrition, isoDate, rankForFuel, workoutKcal } from "./fuel";
-import { mealsCountTowardFuel, snackCountsTowardFuel } from "./eaten";
-import { liveStepBump, pullFromSource, pullHealthDay, recoveryLabel, catchUpSteps, type HealthDay } from "./fitness-sync";
-import { hasNativeHealth, requestNativeHealth } from "./native-health";
-import { mealsFromPantry } from "./pantry-match";
-import { isAlwaysHave, isBasicStaple } from "./grocery-always";
-import { scaleQty } from "./cuisine";
-import { portionSyncFor } from "./portion-sync";
-import { ADDONS, RECIPES, recipeById } from "./recipes";
+import { DEFAULT_GOAL, addNutrition, applyHealthToFuel, dayFuel, emptyNutrition, isoDate, rankForFuel, workoutKcal } from "./fuel.ts";
+import { mealsCountTowardFuel, snackCountsTowardFuel } from "./eaten.ts";
+import { liveStepBump, pullFromSource, pullHealthDay, recoveryLabel, catchUpSteps, type HealthDay } from "./fitness-sync.ts";
+import { hasNativeHealth, requestNativeHealth } from "./native-health.ts";
+import { mealsFromPantry } from "./pantry-match.ts";
+import { isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
+import { scaleQty } from "./cuisine.ts";
+import { portionSyncFor } from "./portion-sync.ts";
+import { ADDONS, RECIPES, recipeById } from "./recipes.ts";
 import {
   CHEF_FREE_WEEK,
   CHEF_PACK_15,
@@ -28,21 +28,21 @@ import {
   milestonesFor,
   rankForXp,
   type Celebrate,
-} from "./ranks";
+} from "./ranks.ts";
 import type { ProgressPhotoMeta } from "./progress-photos";
-import { brokenStreakInfo, type BrokenStreak } from "./streak";
-import { isThemeId, type ThemeId } from "./themes";
-import { DEFAULT_NOTIFY, pushNote, type NotifyPrefs } from "./notify";
-import { coachSay, DEFAULT_COACH, normalizeCoach, type CoachEvent, type CoachPrefs } from "./coach";
-import { plateChangeKind, plateChangeWhy, type KitchenUpdate } from "./kitchen-log";
+import { brokenStreakInfo, type BrokenStreak } from "./streak.ts";
+import { isThemeId, packOf, type SkinPackId, type ThemeId } from "./themes.ts";
+import { DEFAULT_NOTIFY, pushNote, type NotifyPrefs } from "./notify.ts";
+import { coachSay, DEFAULT_COACH, normalizeCoach, type CoachEvent, type CoachPrefs } from "./coach.ts";
+import { plateChangeKind, plateChangeWhy, type KitchenUpdate } from "./kitchen-log.ts";
 import type { NearbyStore } from "./grocery-stores";
 import type { FitnessSourceId, SyncAccess } from "./devices";
-import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav";
-import { mealSavings, plateCost, recipeSafe } from "./shield";
-import { postKitchenEvent } from "./family";
-import { shareAchievement, syncMyStats } from "./community";
+import { DEFAULT_NAV_PINS, normalizePins, type NavPinId } from "./nav.ts";
+import { mealSavings, plateCost, recipeSafe } from "./shield.ts";
+import { postKitchenEvent } from "./family.ts";
+import { shareAchievement, syncMyStats } from "./community.ts";
 import type { LiftSession } from "./lift";
-import { liftKcal, moveById, sessionPRs, sessionRomM, sessionVolumeKg } from "./lift";
+import { liftKcal, moveById, sessionPRs, sessionRomM, sessionVolumeKg } from "./lift.ts";
 import {
   expectedWorkoutsForDate,
   isProgramWeek,
@@ -55,7 +55,7 @@ import {
   swapMove,
   type ProgramWeek,
   type SessionStatus,
-} from "./program";
+} from "./program.ts";
 import type {
   AddonId,
   Aisle,
@@ -74,7 +74,7 @@ import type {
   Workout,
   WorkoutKind,
 } from "./types";
-import { mondayOf, shiftWeek, weekDates } from "./week";
+import { mondayOf, shiftWeek, weekDates } from "./week.ts";
 
 function rollAiWeek(
   get: () => SpoonfulState,
@@ -101,7 +101,7 @@ export type GroceryLine = {
   dishes: string[];
 };
 
-export { BASIC_STAPLES, DEFAULT_ALWAYS_HAVE, isAlwaysHave, isBasicStaple } from "./grocery-always";
+export { BASIC_STAPLES, DEFAULT_ALWAYS_HAVE, isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
 
 type SpoonfulState = {
   onboarded: boolean;
@@ -174,6 +174,22 @@ type SpoonfulState = {
   handsFreeCook: boolean;
   alwaysHave: string[];
   lastWatchDate: string;
+  /** Pack id -> ISO date the watch-to-try week runs out. */
+  skinTrials: Record<string, string>;
+  /** Broken nights already bought back with a watched short. */
+  watchSavedDates: string[];
+  /** The week whose recap has already been shown, so it appears once. */
+  lastRecapWeek: string;
+  /**
+   * The four foods this kitchen builds a gym plate from, and how many meals the
+   * day is split into. Remembered because the whole point is eating the same
+   * handful on repeat — asking again every day would miss it entirely.
+   */
+  gymPlate: { protein: string; carb: string; veg: string; fat: string; meals: number };
+  /** Set once the one-time grandfather pass has run for this kitchen. */
+  skinsGrandfathered: boolean;
+  /** Set once the activity level has been rebased onto lifestyle-only meaning. */
+  activityRebased: boolean;
   inviteClaimed: boolean;
   giftTableUntil: string;
   lastGiftCode: string;
@@ -219,6 +235,12 @@ type SpoonfulState = {
   setHandsFreeCook: (on: boolean) => void;
   toggleAlwaysHave: (name: string) => void;
   earnWatchPlate: () => boolean;
+  earnWatchSave: (brokenDate: string) => boolean;
+  seeRecap: (weekStart: string) => void;
+  setGymPlate: (patch: Partial<SpoonfulState["gymPlate"]>) => void;
+  skinAllowed: (id: ThemeId) => boolean;
+  startSkinTrial: (pack: SkinPackId) => boolean;
+  skinTrialDaysLeft: (pack: SkinPackId) => number;
   claimInvitePlate: () => boolean;
   claimGiftCode: (code: string) => boolean;
   seatCap: () => number;
@@ -547,6 +569,12 @@ export const useSpoonful = create<SpoonfulState>()(
       handsFreeCook: false,
       alwaysHave: [],
       lastWatchDate: "",
+      skinTrials: {},
+      watchSavedDates: [],
+      lastRecapWeek: "",
+      gymPlate: { protein: "chicken-breast", carb: "white-rice", veg: "broccoli", fat: "olive-oil", meals: 3 },
+      skinsGrandfathered: false,
+      activityRebased: false,
       inviteClaimed: false,
       giftTableUntil: "",
       lastGiftCode: "",
@@ -585,7 +613,12 @@ export const useSpoonful = create<SpoonfulState>()(
         set((s) => ({
           allergies: s.allergies.includes(id) ? s.allergies.filter((a) => a !== id) : [...s.allergies, id],
         })),
-      setTheme: (theme) => set({ theme }),
+      // A locked skin cannot be worn by writing state directly — the picker
+      // offers the pack instead.
+      setTheme: (theme) => {
+        if (!get().skinAllowed(theme)) return;
+        set({ theme });
+      },
       setNextGen: (nextGen) => {
         set((s) => ({
           nextGen,
@@ -971,6 +1004,58 @@ export const useSpoonful = create<SpoonfulState>()(
             ? prev.pantry
             : [...prev.pantry, { id: uid(), name: key }],
         }));
+      },
+      /**
+       * Can this kitchen wear this skin?
+       *
+       * Free skins always. A pack skin needs the pack bought, or a trial week
+       * still running. Never anything a cook can actually cook with — this
+       * gates paint only.
+       */
+      /**
+       * A short buys back one broken streak.
+       *
+       * Capped per broken night, not per day: the offer only exists in the
+       * moment a streak actually lapsed, so there is nothing to farm. It sits
+       * beside the free saves and the $1.99 one — three ways out, and the cook
+       * picks.
+       */
+      seeRecap: (weekStart) => set({ lastRecapWeek: weekStart }),
+      setGymPlate: (patch) =>
+        set((s) => ({
+          gymPlate: { ...s.gymPlate, ...patch, meals: Math.max(1, Math.min(8, patch.meals ?? s.gymPlate.meals)) },
+        })),
+      earnWatchSave: (brokenDate) => {
+        const s = get();
+        if (s.watchSavedDates.includes(brokenDate)) return false;
+        set({
+          streakSaveBonus: s.streakSaveBonus + 1,
+          watchSavedDates: [...s.watchSavedDates, brokenDate],
+        });
+        return true;
+      },
+      skinAllowed: (id) => {
+        const pack = packOf(id);
+        if (!pack) return true;
+        const s = get();
+        if (isUnlocked(s.unlocked, pack, { giftUntil: s.giftTableUntil })) return true;
+        const until = s.skinTrials[pack];
+        return Boolean(until && until >= isoDate());
+      },
+      /** A watched short buys a week of a pack. One trial per pack, ever. */
+      startSkinTrial: (pack) => {
+        const s = get();
+        if (s.skinTrials[pack]) return false;
+        const until = new Date();
+        until.setDate(until.getDate() + 7);
+        set({ skinTrials: { ...s.skinTrials, [pack]: until.toISOString().slice(0, 10) } });
+        return true;
+      },
+      skinTrialDaysLeft: (pack) => {
+        const until = get().skinTrials[pack];
+        if (!until) return 0;
+        const ms = new Date(`${until}T23:59:59`).getTime() - Date.now();
+        return Math.max(0, Math.ceil(ms / 86400000));
       },
       earnWatchPlate: () => {
         const today = isoDate();
@@ -2063,6 +2148,12 @@ export const useSpoonful = create<SpoonfulState>()(
         handsFreeCook: s.handsFreeCook,
         alwaysHave: s.alwaysHave,
         lastWatchDate: s.lastWatchDate,
+        skinTrials: s.skinTrials,
+        watchSavedDates: s.watchSavedDates,
+        lastRecapWeek: s.lastRecapWeek,
+        gymPlate: s.gymPlate,
+        skinsGrandfathered: s.skinsGrandfathered,
+        activityRebased: s.activityRebased,
         inviteClaimed: s.inviteClaimed,
         giftTableUntil: s.giftTableUntil,
         lastGiftCode: s.lastGiftCode,
@@ -2073,7 +2164,65 @@ export const useSpoonful = create<SpoonfulState>()(
   ),
 );
 
+/**
+ * Skins became two paid packs. Nobody who was already wearing one loses it.
+ *
+ * Taking a skin off a cook who chose it is the kind of small betrayal people
+ * remember, so on the first run after the change the pack they are standing in
+ * is granted outright. Runs once, then records that it did — a cook who later
+ * switches to a free skin does not quietly lose the grant.
+ */
+/**
+ * The activity ladder used to mean "how often do you train" — "Gym 3-5 days",
+ * "Two-a-days". It now means the day job, because training is counted once,
+ * where it is logged. A cook who picked "Gym 6 days" under the old wording did
+ * not mean "physical job", and leaving their choice in place would quietly
+ * inflate their target by the training they now also log.
+ *
+ * So the old choice is rebased once, down to the lifestyle level a person who
+ * trains that often most likely lives at. Runs a single time per kitchen; a
+ * cook who has since re-picked is never touched again.
+ */
+const ACTIVITY_REBASE: Record<string, string> = {
+  // "Gym 3-5 days" and "Gym 6 days" said nothing about the other 23 hours.
+  moderate: "light",
+  very: "light",
+  // "Two-a-days" at least implies an active person outside the gym too.
+  extra: "moderate",
+};
+
+function rebaseActivity(): void {
+  const s = useSpoonful.getState();
+  if (s.activityRebased) return;
+  const next = ACTIVITY_REBASE[s.body.activity];
+  useSpoonful.setState({
+    activityRebased: true,
+    // Only an onboarded kitchen has a choice worth rebasing; a fresh one is
+    // already on the new meaning.
+    ...(next && s.onboarded
+      ? { body: { ...s.body, activity: next as BodyProfile["activity"] }, goal: macrosFromBody({ ...s.body, activity: next as BodyProfile["activity"] }) }
+      : {}),
+  });
+}
+
+function grandfatherSkins(): void {
+  const s = useSpoonful.getState();
+  if (s.skinsGrandfathered) return;
+  const pack = packOf(s.theme);
+  useSpoonful.setState({
+    skinsGrandfathered: true,
+    ...(pack && !s.unlocked.includes(pack) ? { unlocked: [...s.unlocked, pack] } : {}),
+  });
+}
+
 if (typeof window !== "undefined") {
+  // Rehydrate BEFORE any set(). The store persists on every write, so a set()
+  // made while the store still holds its defaults writes those defaults over
+  // the saved kitchen — and the rehydrate that follows then reads the wipe. It
+  // cost a reloading cook their week, their log, and their spent Chef plates.
+  void useSpoonful.persist.rehydrate();
+  grandfatherSkins();
+  rebaseActivity();
   try {
     const raw = window.localStorage.getItem("spoonful-v1");
     if (raw) {
@@ -2088,7 +2237,6 @@ if (typeof window !== "undefined") {
   } catch {
     /* private mode */
   }
-  void useSpoonful.persist.rehydrate();
 }
 
 export function plannedForWeek(meals: PlannedMeal[], weekStart: string): PlannedMeal[] {

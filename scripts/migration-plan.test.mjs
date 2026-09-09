@@ -58,8 +58,42 @@ test("non-.sql entries are dropped (readdir also yields the auth/ directory)", (
 
 test("the auth schema ships outside the globbed directory", () => {
   const migrationsDir = join(projectRoot(), "migrations");
-  assert.deepEqual(pendingMigrations(readdirSync(migrationsDir), []), []);
-  assert.ok(readdirSync(join(migrationsDir, "auth")).includes("0001_auth.sql"));
+  // The app's own schema lives in the globbed directory and is expected to be
+  // pending on a fresh database. What must NOT be there is the auth schema:
+  // it stays under migrations/auth/ until an app deliberately turns sign-in on,
+  // and neither applier descends into that folder.
+  const pending = pendingMigrations(readdirSync(migrationsDir), []).map((m) => m.name);
+  assert.equal(
+    pending.includes(AUTH_MIGRATION),
+    existsSync(join(migrationsDir, AUTH_MIGRATION)),
+    "0001_auth.sql is only ever pending once it has been copied up on purpose",
+  );
+  assert.ok(readdirSync(join(migrationsDir, "auth")).includes(AUTH_MIGRATION));
+});
+
+test("the app schema applies once and creates what the server queries", () => {
+  const sql = readFileSync(join(projectRoot(), "migrations/0002_app.sql"), "utf8");
+  // Every table src/lib/community.ts and the billing rail read from.
+  for (const table of [
+    "profiles",
+    "follows",
+    "notification_prefs",
+    "community_recipes",
+    "notifications",
+    "conversations",
+    "conversation_members",
+    "messages",
+    "checkout_sessions",
+    "entitlements",
+    "plate_ledger",
+    "billing_events",
+  ]) {
+    assert.match(sql, new RegExp(`create table if not exists ${table}\\b`), table);
+  }
+  // Re-running a migration must be harmless: the applier records it by name,
+  // but a hand re-run during a recovery should not blow up either.
+  assert.equal(/create table (?!if not exists)/i.test(sql), false, "every table needs IF NOT EXISTS");
+  assert.equal(/create index (?!if not exists)/i.test(sql), false, "every index needs IF NOT EXISTS");
 });
 
 test("this workspace's auth schema copy is byte-identical to its source", () => {

@@ -56,6 +56,9 @@ export function ExerciseLibrary({
     <div
       data-testid="exercise-library"
       className="fixed inset-0 z-50 flex flex-col bg-background pt-[max(0.75rem,env(safe-area-inset-top))]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Exercise library"
     >
       <div className="flex items-stretch">
         <div className="flex min-w-0 flex-1 items-center justify-between px-4">

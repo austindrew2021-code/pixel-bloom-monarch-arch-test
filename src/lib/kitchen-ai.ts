@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { localSubs } from "./substitutions";
+import { localSubs } from "./substitutions.ts";
 
 async function grokJson(system: string, user: unknown, maxTokens = 700) {
   const { kitchenJson } = await import("./kitchen-llm.server");

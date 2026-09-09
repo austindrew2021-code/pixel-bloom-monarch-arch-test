@@ -1,4 +1,4 @@
-import { cookStreak, isoDate } from "./fuel";
+import { cookStreak, isoDate } from "./fuel.ts";
 
 export type Rank = {
   id: string;

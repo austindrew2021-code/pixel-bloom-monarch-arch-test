@@ -39,7 +39,14 @@ export function SaucesView() {
   }, [menu, query, hidden, allergies]);
 
   return (
-    <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
+    <>
+    {/*
+      * Cook mode covers this screen completely. Without `inert` the shelf
+      * behind it stays in the tab order, so a cook working by keyboard tabs
+      * out of the recipe they are cooking and into the list of ones they are
+      * not. The overlay is a sibling, so it stays reachable itself.
+      */}
+    <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4" inert={Boolean(cooking)}>
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Kitchen</p>
       <h1 className="mt-1 font-display text-4xl">Sauces</h1>
       <p className="mt-2 text-sm leading-relaxed text-foreground/80">
@@ -160,7 +167,8 @@ export function SaucesView() {
           ) : null}
         </SheetContent>
       </Sheet>
-      {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
     </div>
+    {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
+    </>
   );
 }

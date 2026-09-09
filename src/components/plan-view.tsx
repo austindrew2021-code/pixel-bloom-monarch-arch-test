@@ -1,6 +1,8 @@
 import { Beef, Check, ChevronLeft, ChevronRight, Clock, Heart, Refrigerator, ShoppingBasket, Sparkles, UtensilsCrossed, WandSparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { ChefPlateLine } from "@/components/chef-plate-line";
+import { WeekRecapCard } from "@/components/week-recap";
 import { MealPhoto } from "@/components/meal-photo";
 import { Plate } from "@/components/plate";
 import { RecipePicker } from "@/components/recipe-picker";
@@ -16,7 +18,7 @@ import { mealsFromPantry } from "@/lib/pantry-match";
 import { portionSyncFor } from "@/lib/portion-sync";
 import { expectedWorkoutsForDate, resolveStatus } from "@/lib/program";
 import { recipeById } from "@/lib/recipes";
-import { rankForXp } from "@/lib/ranks";
+import { CHEF_FREE_WEEK, rankForXp } from "@/lib/ranks";
 import { proteinDot, skipTitle } from "@/lib/shield";
 import {
   nutritionForDate,
@@ -166,7 +168,14 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
   }
 
   return (
-    <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4">
+    <>
+    {/*
+      * Cook mode covers this screen completely. Without `inert` the shelf
+      * behind it stays in the tab order, so a cook working by keyboard tabs
+      * out of the recipe they are cooking and into the list of ones they are
+      * not. The overlay is a sibling, so it stays reachable itself.
+      */}
+    <div className="mx-auto max-w-2xl overflow-x-clip px-4 pb-36 pt-4" inert={Boolean(cooking)}>
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">This week</p>
@@ -632,7 +641,7 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
               toast(
                 hasPlus
                   ? "Chef is spent this week"
-                  : "Free kitchens get 3 chef plates a week. Kitchen+ raises the cap.",
+                  : `${CHEF_FREE_WEEK} free Chef plates this week. More plates are extra.`,
               );
               return;
             }
@@ -648,6 +657,8 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
           AI Chef
         </Button>
       </div>
+      <ChefPlateLine onOpenStore={onOpenStore} className="mt-3" />
+      <WeekRecapCard className="mt-3" />
       {undoMeals ? (
         <button
           type="button"
@@ -850,9 +861,17 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         nextGen={nextGen}
       />
 
-      <AiChefSheet open={chefOpen} onOpenChange={setChefOpen} />
-      {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
+      <AiChefSheet
+        open={chefOpen}
+        onOpenChange={setChefOpen}
+        onOpenStore={() => {
+          setChefOpen(false);
+          onOpenStore();
+        }}
+      />
     </div>
+    {cooking ? <CookView meal={cooking} onClose={() => setCooking(null)} /> : null}
+    </>
   );
 }
 

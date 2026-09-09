@@ -71,6 +71,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       I("custard powder", 2, "tbsp", "Pantry"),
       I("icing sugar", 2, "cups", "Pantry"),
       I("dark chocolate", 4, "oz", "Pantry"),
+      I("egg", 1, "", "Dairy & Eggs"),
     ],
     steps: [
       "Melt butter with cocoa and a beaten egg over low heat. Stir in crumbs and coconut. Press into a pan.",
@@ -169,6 +170,8 @@ export const DESSERT_RECIPES: Recipe[] = [
       I("flour", 2.25, "cups", "Pantry"),
       I("chocolate chips", 2, "cups", "Pantry"),
       I("flaky salt", 1, "tsp", "Herbs & Spices"),
+      I("vanilla", 2, "tsp", "Pantry"),
+      I("baking soda", 1, "tsp", "Pantry"),
     ],
     steps: [
       "Brown the butter. Cool. Beat with sugars, then eggs and vanilla.",

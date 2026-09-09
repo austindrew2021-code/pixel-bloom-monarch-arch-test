@@ -2,6 +2,7 @@ import type { Recipe } from "./types";
 import { knownDishMethod, writeDishMethod, hasSpecialistMethod } from "./write-method.ts";
 import { scaleQty } from "./cuisine.ts";
 import { prettyFrac } from "./format.ts";
+import { alignListToCook } from "./list-align.ts";
 
 type RecipeLike = Pick<Recipe, "name" | "minutes" | "protein" | "plate" | "tags" | "ingredients" | "steps"> & {
   id?: string;
@@ -151,6 +152,7 @@ function proteinNoun(recipe: RecipeLike): string {
       return /tofu|tempeh|bean|lentil|chickpea|mushroom|eggplant|cauliflower|squash/.test(n);
     }
     if (recipe.protein === "chicken" || recipe.protein === "turkey") return /chicken|turkey|thigh|breast|duck|goose|rabbit/.test(n);
+    if (recipe.protein === "lamb") return /lamb|mutton|shank|merguez/.test(n);
     if (recipe.protein === "beef") return /beef|steak|chuck|lamb|filet|mignon|sirloin|bison|venison|elk/.test(n);
     if (recipe.protein === "pork") return /pork|ham|bacon|sausage/.test(n);
     if (recipe.protein === "fish" || recipe.protein === "seafood") return /fish|salmon|shrimp|cod|tuna|clam/.test(n);
@@ -855,7 +857,7 @@ function serveLine(recipe: RecipeLike): string {
     return "Serve cold, straight from the fridge.";
   }
   if (recipe.plate === "dessert") return "Cool until just set, then slice or spoon and serve.";
-  if (recipe.plate === "toast") return "Serve right away so the bread stays crisp.";
+  if (recipe.plate === "toast") return "Serve right away, while it is still crisp.";
   if (recipe.plate === "soup") return "Taste for salt. Ladle into warm bowls.";
   return "Rest 2 minutes, then plate and serve hot.";
 }
@@ -1384,7 +1386,7 @@ function hasAmountNear(step: string, token: string): boolean {
     return true;
   }
   return new RegExp(
-    `\\b(?:cups?|tablespoons?|teaspoons?|tbsp|tsp|ounces?|pounds?|oz|lb|pinch(?:es)?|cloves?)\\s+(?:of\\s+)?(?:the\\s+)?${esc}`,
+    `\\b(?:cups?|tablespoons?|teaspoons?|tbsp|tsp|ounces?|pounds?|oz|lb|pinch(?:es)?|cloves?|spoons?|spoonfuls?|splash(?:es)?|knobs?|dashes|dash|handfuls?|drizzles?|grating)\\s+(?:of\\s+)?(?:the\\s+)?${esc}`,
     "i",
   ).test(step);
 }
@@ -1550,7 +1552,13 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
           // “the pasta water” is the starchy cooking liquid, not 12 oz of pasta.
           if (/^\s*water\b/i.test(after)) return m;
           // “each slice of bread” already counts the bread — don't restate it.
-          if (/\b(slices?|pieces?|cans?|cups?|cloves?|stalks?|sprigs?|spoonfuls?)\s+of\s+$/i.test(before)) return m;
+          if (
+            /\b(slices?|pieces?|cans?|cups?|cloves?|stalks?|sprigs?|spoons?|spoonfuls?|splash(?:es)?|knobs?|dash(?:es)?|handfuls?|pinch(?:es)?|drizzles?)\s+of\s+$/i.test(
+              before,
+            )
+          ) {
+            return m;
+          }
           if (/(?:^|[.!?]\s+)$/.test(before) && !adj && /^(butter|oil|salt|pepper|milk|flour|sugar|cream|toast|warm)\b/i.test(m)) {
             return m;
           }
@@ -1893,13 +1901,16 @@ export function scaleMethodSteps(
       );
     }
 
+    // The NULs are ours: parts of the sentence were parked under a sentinel a
+    // few lines up so the rewrite could not touch them, and this puts them back.
+    // eslint-disable-next-line no-control-regex -- the sentinel is deliberate
     s = s.replace(/\u0000(\d+)\u0000/g, (_m, i: string) => held[Number(i)] ?? "");
     return tidyThe(s);
   });
 }
 
 function makeFollowable(step: string, recipe: RecipeLike, siblings: string[]): string {
-  let s = finishSentence(step.replace(/\s+/g, " ").trim());
+  const s = finishSentence(step.replace(/\s+/g, " ").trim());
   const lower = s.toLowerCase().replace(/[.]+$/, "");
   const blob = siblings.join(" ");
 
@@ -2039,11 +2050,13 @@ export function polishRecipe(recipe: Recipe): Recipe | null {
   const ingredients = recipe.ingredients.filter((i) => i.name && !JUNK_NAME.test(i.name.trim()));
   if (ingredients.length < 1) return null;
   const next = { ...recipe, name, ingredients };
-  return {
+  // The list is aligned after the method is final so it also covers foods the
+  // polisher itself names.
+  return alignListToCook({
     ...next,
     description: cleanDescription(next, name),
     steps: polishSteps(next),
-  };
+  });
 }
 
 export function polishCatalog(list: Recipe[]): Recipe[] {

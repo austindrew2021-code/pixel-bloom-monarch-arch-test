@@ -12,7 +12,11 @@ import { cn } from "@/lib/utils";
 
 /**
  * Week-1 log: type leftover pasta, stay on this screen, Done is a checkmark.
- * Streak/celebrate overlays are held back while this form is open.
+ *
+ * One Done finishes the log — the editor dismisses, the meal stays logged, and
+ * the confirmation reads on the card instead of sitting under a Cancel/Done pair
+ * the cook has to tap again. Streak and celebrate overlays are held back while
+ * the form is open and for a beat after it closes, so nothing steals the tap.
  */
 export function EasyLogCard({ className }: { className?: string }) {
   const meals = useSpoonful((s) => s.meals);
@@ -32,13 +36,21 @@ export function EasyLogCard({ className }: { className?: string }) {
   const [name, setName] = useState("");
   const [lines, setLines] = useState("");
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
+  const [holding, setHolding] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open && !holding) return;
     lockKitchen();
     return () => unlockKitchen();
-  }, [open, lockKitchen, unlockKitchen]);
+  }, [open, holding, lockKitchen, unlockKitchen]);
+
+  // Long enough for the "logged" toast to live out its 4 seconds. A milestone
+  // that lands on top of the confirmation is a celebration stealing the log.
+  useEffect(() => {
+    if (!holding) return;
+    const id = window.setTimeout(() => setHolding(false), 4500);
+    return () => window.clearTimeout(id);
+  }, [holding]);
 
   const recents = useMemo(() => {
     const seen = new Set<string>();
@@ -64,7 +76,6 @@ export function EasyLogCard({ className }: { className?: string }) {
 
   function fill(chip: { label: string; meal?: CustomMeal; recipeId?: string }) {
     setOpen(true);
-    setDone(false);
     if (chip.meal) {
       setName(chip.meal.name);
       setLines(ingredientLines(chip.meal.ingredients));
@@ -83,7 +94,6 @@ export function EasyLogCard({ className }: { className?: string }) {
   function cancel() {
     setOpen(false);
     setBusy(false);
-    setDone(false);
   }
 
   function save() {
@@ -100,8 +110,13 @@ export function EasyLogCard({ className }: { className?: string }) {
       } else {
         logTonight({ name: trimmed, ingredients: ings, cooked: true });
       }
-      setDone(true);
+      // One Done closes the editor. The meal is already in the log, so the
+      // confirmation belongs on the card, not under a live Cancel/Done pair.
+      setHolding(true);
+      setOpen(false);
+      toast(`${trimmed} logged`);
     } catch {
+      // Never wipe a mid-log: the draft stays on screen to try again.
       toast("Couldn't save that meal — draft is still here");
     } finally {
       setBusy(false);
@@ -158,10 +173,7 @@ export function EasyLogCard({ className }: { className?: string }) {
             <Input
               className="mt-1.5"
               value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setDone(false);
-              }}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Leftover pasta"
               required
             />
@@ -178,12 +190,6 @@ export function EasyLogCard({ className }: { className?: string }) {
             <span className="mt-1 block text-xs text-muted-foreground">One ingredient per line. The shop list uses these.</span>
           </label>
           {busy ? <p className="text-sm text-spark">Saving…</p> : null}
-          {done ? (
-            <p className="flex items-center gap-2 text-sm font-medium" data-testid="easy-log-saved">
-              <Check className="size-4 text-primary" />
-              {name.trim() || resolved?.title} logged
-            </p>
-          ) : null}
           <div className="flex gap-2">
             <Button type="button" variant="secondary" className="flex-1" onClick={cancel} disabled={busy}>
               <X />
@@ -199,10 +205,7 @@ export function EasyLogCard({ className }: { className?: string }) {
         <Button
           className="mt-4 w-full"
           variant="spark"
-          onClick={() => {
-            setOpen(true);
-            setDone(false);
-          }}
+          onClick={() => setOpen(true)}
         >
           Log tonight
         </Button>
