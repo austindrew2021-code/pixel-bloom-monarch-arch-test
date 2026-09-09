@@ -9,8 +9,10 @@ export const ALLERGIES: { id: AllergyId; label: string; hint: string }[] = [
 ];
 
 const PATTERNS: Record<AllergyId, RegExp> = {
+  // pastry, bulgur, biscuit and semolina were missing, which is how a tourtière
+  // and a baked kibbeh came to sit behind a gluten-free filter.
   gluten:
-    /flour|pasta|spaghetti|penne|macaroni|lasagna|noodle|ramen|udon|bread|breadcrumb|panko|tortilla|wheat|bun|bagel|naan|pita|dumpling|couscous|orzo|soy sauce|pie crust|dough|cracker|seitan|barley|rye|farro|wraps?|crouton/i,
+    /flour|pasta|spaghetti|penne|macaroni|lasagna|noodle|ramen|udon|bread|breadcrumb|panko|tortilla|wheat|bun|bagel|naan|pita|dumpling|couscous|orzo|soy sauce|pie crust|pastry|puff pastry|phyllo|filo|dough|cracker|seitan|barley|bulgur|semolina|rye|farro|spelt|wraps?|crouton|biscuit|cake flour|pretzel/i,
   dairy:
     /milk|butter|cream|cheese|parmesan|mozzarella|cheddar|yogurt|yoghurt|ricotta|feta|halloumi|paneer|sour cream|mascarpone|whey|ghee|brie|ice cream/i,
   nuts: /peanut|almond|walnut|pecan|cashew|pistachio|hazelnut|macadamia|pine nut/i,
@@ -20,7 +22,10 @@ const PATTERNS: Record<AllergyId, RegExp> = {
 };
 
 export function recipeAllergens(recipe: Recipe): AllergyId[] {
-  const blob = `${recipe.name} ${recipe.tags.join(" ")} ${recipe.ingredients.map((i) => i.name).join(" ")}`;
+  // Pipe-joined so a pattern cannot span two rows: "grated coconut" next to
+  // "butter" is not coconut butter, and "short-grain rice" next to "milk" is
+  // not rice milk.
+  const blob = [recipe.name, ...recipe.tags, ...recipe.ingredients.map((i) => i.name)].join(" | ");
   return ALLERGIES.map((a) => a.id).filter((id) => PATTERNS[id].test(blob));
 }
 

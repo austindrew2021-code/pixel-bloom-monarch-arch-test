@@ -1,4 +1,4 @@
-import { ChevronLeft, Copy, Dices, Heart, Mic, Minus, Plus, Search, ShoppingBag } from "lucide-react";
+import { ChevronLeft, Clock3, Copy, Dices, Heart, Mic, Minus, Plus, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CookView } from "@/components/cook-view";
@@ -11,12 +11,13 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { isUnlocked } from "@/lib/access";
 import { COLLECTION_GROUPS, COLLECTIONS, collectionById, recipesInCollection } from "@/lib/collections";
 import { goalLabel } from "@/lib/body";
-import { dietFlags, isHealthy, isComfort, isBreakfast, isDessert, isSauceLike, isHighProtein, matchesDiet, type DietFlag } from "@/lib/diet";
+import { dietFlags, isHealthy, isComfort, isBreakfast, isDessert, isSauceLike, isHighProtein, isVegetarian, matchesDiet, type DietFlag } from "@/lib/diet";
 import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
 import { t, voiceFor } from "@/lib/i18n";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { scaleMethodSteps } from "@/lib/cook-steps";
+import { startAheadLabel } from "@/lib/ahead";
 import { formatMinutes, formatQty } from "@/lib/format";
 
 import { lookupDish } from "@/lib/kitchen-ai";
@@ -197,6 +198,14 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
       if (timeMax !== null && r.minutes > timeMax) return false;
       if (protein === "fish") {
         if (r.protein !== "fish" && r.protein !== "seafood") return false;
+      } else if (protein === "veg") {
+        // The Veg chip asks a dietary question, so answer it from the
+        // ingredients. `r.protein` is the dish's headline protein, and 48
+        // recipes carry "veg" while holding beef gravy, bacon or lard —
+        // poutine, French onion soup, a bacon broccoli salad. Biscuits made
+        // with lard are still biscuits, so relabelling them as pork would be
+        // wrong; they just are not vegetarian.
+        if (!isVegetarian(r)) return false;
       } else if (protein && r.protein !== protein) return false;
       if (diet === "healthy") return isHealthy(r);
       if (diet === "quick") return r.minutes <= 30;
@@ -724,6 +733,19 @@ function RecipeDetail({
           {formatMinutes(recipe.minutes)}
           {recipe.cuisine ? ` · ${recipe.cuisine}` : ""}
         </p>
+        {/*
+          * The stated time is hands-on, which is right for the 15/30/45 filters
+          * but wrong for "can I eat this tonight". 66 dishes wait far longer
+          * than they cook — salt cod soaks twelve hours against a stated forty
+          * minutes — so the wait is said out loud rather than hidden in the one
+          * number.
+          */}
+        {startAheadLabel(recipe) ? (
+          <p className="mt-1 flex items-center gap-1.5 text-sm font-medium text-spark" data-testid="start-ahead">
+            <Clock3 className="size-3.5 shrink-0" />
+            {startAheadLabel(recipe)}
+          </p>
+        ) : null}
         <div className="mt-2 flex flex-wrap gap-1.5">
           <Badge>{packLabel(recipe.pack)}</Badge>
           {diets.map((f) => (
