@@ -1,0 +1,207 @@
+203 photographs removed: the file was named for the dish, but the picture was of
+something else. Reviewed by eye, every one of the 904 dishes that had a photo.
+Recover any of them from commit 01fa129 if a call was wrong.
+
+ac-egusi	a street market scene, not the dish
+ac-peri-chicken	injera plate, no roast chicken
+ac-shiro	injera and salad, not shiro wat
+af-pork-chops	sliced deli turkey
+ap-butter	a glazed ham with oranges
+ap-salad-kale	raw kale growing, not a salad
+ar-ff-cream-tomato-soup	a tomato tart, not soup
+ar-ff-molasses-gingerbread	a potato and egg salad
+ar-mf-chow-chow	a photograph of a Chow Chow dog
+bg-tomato-pasta	stewed peppers, no pasta
+bk-blueberry-muffins	packaged chocolate and pecan muffins
+bk-fudge-brownies	rocky road fudge, not brownies
+bk-linzer	a whole linzer torte, not cookies
+bk-shortbread	burger buns
+bk-thumbprints	sliced filled pastry rolls
+br-cornmeal-porridge	wedges of scone dough
+br-granola	a red graphic reading BIN, not a photo of food
+br-overnight-bircher	dry raw oats, not the soaked dish
+br-shakshuka-fast	a breakfast table with fried eggs
+buffalo-sauce	a bowl of buffalo soup
+cb-arroz-gandules	white rice pudding with cinnamon
+cb-plantain-mash	a photograph of Nicolas Maduro
+cc-basque	fried chicken in a tin
+cc-espresso	a coffee drink
+cc-mini	a sticky toffee pudding
+cc-oreo	plain Oreo cookies, not cheesecake
+cc-savory	a sweet berry cheesecake, recipe is savoury
+cc-swirl-raspberry	pink mousse in glasses
+cn-char-siu	a noodle stir-fry, not roast pork
+cn-dan-dan	kebab skewers
+cn-hot-sour	a spiral apple tart
+cn-salt-pepper-shrimp	an egg foo young omelette
+cn-wonton-soup	steamed dumplings, not soup
+cn-yu-xiang-eggplant	a pan of cornbread
+cp-camp-coffee	a cafe pour-over rig
+cp-foil-packets	children at a campsite, no food
+cp-hot-dogs	a bonfire, no hot dogs
+cp-trail-mix	stuffed zucchini boats
+df-roast-salmon	a bottle of olive oil
+df-stir-noodles	rice pilaf, not rice noodles
+dn-scallops	a live scallop in the shell
+fr-dauphinois	chicken and peas, not potato gratin
+fr-lyonnaise	a restaurant interior
+fr-socca	a football match
+fs-sardine-toast	sardines on salad, no toast
+gf-buckwheat-crepes	mushroom barley soup
+gf-chia-jam	two glasses of drink
+gf-corn-tacos	tacos of dark meat, not fish
+gf-flourless-chocolate	savoury fried balls
+gf-rice-noodle-pad	a pile of dry vermicelli
+gf-risotto-spring	empanadas
+gr-bbq-salmon	a Beat Bobby Flay TV logo
+hd-bread-sauce	a sliced loaf, not the sauce
+hd-champagne-grapes	a sliced pear
+hd-glazed-ham	a dark braised meat
+hd-oyster-dressing	a pie with dark filling
+hd-panettone-french	a decorated dining table
+hd-party-mix	an aerial display over a monument
+hd-prime-rib	a Tudor house
+hd-roast-goose	sausages and sauerkraut
+hd-roast-potatoes	a plate of sliced roast meat
+hd-rum-balls	grilled chicken wings
+hd-wassail	a tomato tart
+hm-baked-ziti	cans of tomatoes on a shelf
+hm-chicken-and-rice-soup	Hainanese chicken rice, not soup
+hm-church-chicken	a cornbread casserole
+hm-jello-salad	ice cream scoops
+hm-pimento-cheese	fried onions and salad
+hm-sheet-supper	a broken pastry
+hm-victory-soup	people gardening
+hp-tofu-big	scrambled eggs, the dish is tofu
+hp-yogurt-parfait	a seared meat medallion in sauce
+in-khao-soi	a chopped salad, not the noodle curry
+in-pierogi-skillet	samosas
+ip-artichokes	an artichoke plant growing
+ip-beets	raw beets with leaves
+ip-bone-broth	potato salad
+ip-butter-chicken	an illustrated herb jar, not a photo
+ip-chili-verde	empanadas
+ip-dal	piles of raw dried lentils
+ip-kalua	men at a pig roast pit, no dish
+ip-korean-beef	a candlelit crowd
+ip-mac-cheese	a bacon cheeseburger
+ip-mashed	pulled meat with rice
+ip-mussels	a pile of raw mussels
+ip-orange-chicken	a slice of cake
+ip-pot-roast	a collage of coffee beans and grinders
+ip-potato-soup	a Chicken Salad Chick storefront
+ip-pulled-pork	an antique engraving of hats and boots
+ip-ribs	a garden with a mission building
+ip-risotto	a collage of pizza and churros
+ip-steel-cut	raw steel-cut oats
+ip-zuppa	a chunky vegetable stew, not zuppa toscana
+it-focaccia	red cabbage slaw
+it-panna-cotta	biscuits
+it-pesto-trofie	plain uncooked pasta, no pesto
+it-tiramisu-cups	packet ladyfinger biscuits
+jp-chawanmushi	a panna cotta with raspberries
+jp-edamame	a caramel cheesecake slice
+jp-matcha-pudding	matcha powder on a spoon
+jp-nasu	hamburg steak with mash
+jp-nikujaga	a heraldic lion coat of arms
+jp-saba	raw whole mackerel
+jp-soba-cold	bundles of dry soba
+kd-butter-noodles	poached eggs
+kd-mac-hidden	a Vegan Society logo, not a photo
+kd-personal-pizza	a large whole pizza
+kr-bibim-cold	a hot noodle soup
+kt-brussels-bacon	bacon and tomato on rice cakes
+kt-buffalo-skillet	country-fried steak with okra
+kt-burger-bowl	people at a sports event with a trophy
+kt-cauli-fried-rice	roasted cauliflower, no rice
+kt-mushroom-chicken	cheesy chicken noodle casserole
+kt-ribeye-butter	a fried pastry roll
+md-israeli-salad	bread with a pale spread
+md-labneh	a campfire
+md-zaatar-chicken	pine nuts on flatbread, no roast chicken
+mp-overnight-oats-jar	a woman speaking at a conference
+mx-sopa-lima	a stack of waffles with honey
+sc-baked-potatoes	a parabolic solar cooker in a field
+sc-beef-stew	raw beef shank and bone
+sc-corn-chowder	whole shrimp in broth
+sc-dal	a crumbly semolina dish, not dal
+sc-mulled-wine	ravioli with meat sauce
+sc-pork-chops	a butcher's beef cuts diagram
+sf-berry-parfait	people walking on a street
+sf-cucumber-salad	an algae-covered surface
+sf-egg-muffins	a pot of soup on a stove
+sf-turkey-chili	a dish of chili oil
+sl-chopped	a creamy macaroni salad
+sl-farro	chopped cucumber salad, no farro
+sl-kale-caesar	a True Food Kitchen storefront
+sl-potato	a green salad with feta
+sl-watermelon-feta	a Moroccan tea set
+sl-wedge	an iceberg in the sea
+sl-wheat-berry	brioche rolls
+so-tom-and-jerry	a Tom and Jerry cartoon mug
+sp-breakfast	a diner plate of waffles and fruit
+sp-cauli-chickpea	a field of wheat
+sp-fajitas	a taco bar tray
+sp-greek-chicken	a KFC Popcorn Chicken box
+sp-lemon-chicken	sweet-and-sour battered chicken
+sp-shrimp-zucchini	a zucchini growing on the plant
+sp-tofu-broccoli	a plain block of raw tofu
+su-tortellini	a squid and seafood soup
+su-wedding	greens and meat on a plate, not soup
+sw-muffuletta	a collage of packaged bread and jars
+th-pad-see-ew-home	a rice dish with eggs and pickles
+th-som-tam	pickled cabbage, not green papaya salad
+vg-black-bean-chili	chicken skewers
+vg-cauliflower-steaks	a collage of sauces and pita
+vg-jackfruit-tacos	birria tacos with consomme, not jackfruit
+vg-tacos-al-pastor	a collage of Mexican food photos
+vg-tempeh-reuben	a pastrami Reuben, the dish is tempeh
+vh-365-spanish-rice	a chicken and olive bake
+vh-bj-fried-rice	orange chicken on rice, not fried rice
+vh-ds-charlotte	a chocolate-covered cake
+vh-ds-prune-whip	a raspberry whip
+vh-ds-snow-pudding	shrimp and snow peas
+vh-gt-brodo	a man holding a book about lichens
+vh-gt-minestrone	a lake with trees
+vh-gt-panata	a satellite image of a sandbar
+vh-gt-risotto	salmon and asparagus on rice
+vh-gt-zucchine	a raw zucchini
+vh-jw-kugel	a Vietnamese noodle salad
+vh-kp-camp-coffee-stew	coffee grounds
+vh-kp-foil-potato	raclette cheese and pickles
+vh-kp-kabobs	a world map graphic
+vh-kp-mulligan	a man at a film festival
+vh-kp-trail-beans	a road and trees
+vh-la-chicken-dumplings	fried chicken strips
+vh-la-jellied-fruit	a spread of raw vegetables and meat
+vh-og-broiled-mackerel	live mackerel swimming
+vh-og-creamed-cod	dried salt cod hanging in a shop
+vh-pc-gumbo-file	a hot sauce bottle and jar
+vh-pd-rivvel	a pink pudding
+vh-sf-escalloped-oysters	a portrait of a woman
+vh-sf-hawaiian-sandwich	a satellite image of Hawaii
+vh-sf-hot-slaw	the Wisconsin state flag
+vh-sf-nut-bread	a suffrage parade photograph
+vh-va-chicken-pudding	a pie with baseball bats and apples
+vh-va-fried-catfish	a live catfish in water
+vh-wh-floating-island	a forest lake with an island
+vh-ww1-rice-pudding	savoury congee with pork floss
+vh-ww2-chipped-beef	a rose made of sliced meat
+vh-ww2-cornmeal-mush	crab cakes
+vh-ww2-liver-onions	two dishes of pate
+vh-ww2-nut-loaf	a vintage Electrolux mixer
+vh-ww2-potato-soup	a green soup with shrimp
+vh-ww2-succotash	the American flag
+wg-bison-meatloaf	sausages with mashed potato
+wg-elk-chili	a man holding a competitive-eating belt
+wg-elk-steaks	a butcher's beef cuts diagram
+wg-pheasant-pot	meat skewers
+wg-rabbit-stew	a Bugs Bunny cartoon title card
+wg-smoked-trout	a smokehouse with hanging meat
+wg-venison-chili-mac	a hamburger with beer and fries
+wg-wild-boar-ragu	breaded fried balls
+wn-burrito-bowl	a musician on stage
+wn-fried-egg-rice	a Korean banchan spread
+wn-miso-butter-salmon	a udon hot pot
+wn-rotisserie-tacos	chickens on a rotisserie spit
+wn-tortellini-skillet	someone holding a foil tray

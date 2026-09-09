@@ -61,11 +61,45 @@ export function photoOrPlate(
   return hasOwnPhoto(recipe) ? { kind: "photo", src: photoFor(recipe) } : { kind: "plate" };
 }
 
-/** The photo files a dish still needs, for whoever is sourcing them. */
-export function dishesWithoutPhotos<T extends Pick<Recipe, "id" | "name" | "plate"> & { photo?: string }>(
-  recipes: readonly T[],
-): { id: string; name: string; plate: string; wants: string }[] {
+/**
+ * A dish name alone is not enough to find a picture of it.
+ *
+ * Searching the title is how a Chow Chow dog ended up illustrating Mrs.
+ * Fisher's chow-chow, an iceberg the iceberg wedge, and Nicolas Maduro the
+ * maduros. The cuisine and the two or three foods the dish is actually made of
+ * disambiguate all three, so the search phrase carries them.
+ */
+export function photoSearchPhrase(
+  recipe: Pick<Recipe, "name" | "cuisine" | "ingredients">,
+): string {
+  const foods = recipe.ingredients
+    .slice(0, 3)
+    .map((i) => i.name.toLowerCase().replace(/\b(fresh|dried|ground|chopped|large|small)\b/g, "").trim())
+    .filter(Boolean);
+  return [recipe.cuisine, recipe.name, "cooked dish", ...foods, "food photograph"]
+    .filter(Boolean)
+    .join(" ");
+}
+
+/** The photo files a dish still needs, and enough about it to find the right one. */
+export function dishesWithoutPhotos<
+  T extends Pick<Recipe, "id" | "name" | "plate" | "description" | "cuisine" | "ingredients"> & { photo?: string },
+>(recipes: readonly T[]): {
+  id: string;
+  name: string;
+  plate: string;
+  wants: string;
+  search: string;
+  description: string;
+}[] {
   return recipes
     .filter((r) => !hasOwnPhoto(r))
-    .map((r) => ({ id: r.id, name: r.name, plate: r.plate, wants: `public/food/${r.id}.jpg` }));
+    .map((r) => ({
+      id: r.id,
+      name: r.name,
+      plate: r.plate,
+      wants: `public/food/${r.id}.jpg`,
+      search: photoSearchPhrase(r),
+      description: r.description,
+    }));
 }
