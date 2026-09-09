@@ -20,7 +20,8 @@
     "photos": "node scripts/food-photo-manifest.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "photos:wanted": "node --experimental-strip-types scripts/photo-wanted.mjs"
+    "photos:wanted": "node --experimental-strip-types scripts/photo-wanted.mjs",
+    "photos:rename": "node scripts/photo-rename.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",

@@ -205,3 +205,182 @@ wn-fried-egg-rice	a Korean banchan spread
 wn-miso-butter-salmon	a udon hot pot
 wn-rotisserie-tacos	chickens on a rotisserie spit
 wn-tortellini-skillet	someone holding a foil tray
+
+
+=== second batch (photos added at 97c788a), reviewed 2026-09-09 ===
+174 removed. Recover from 97c788a if a call was wrong.
+
+ac-peri-chicken	grilled prawns with rice, not chicken
+af-chickpeas	chickpeas in liquid, not crunchy roasted
+af-churros	a commercial churro extruder machine
+af-fish	shrimp frying in oil
+af-garlic-bread	a spinach-stuffed loaf
+af-pork-chops	braised pieces with scallions, not chops
+af-shrimp	a shrimp noodle dish
+ap-cider-braise	tandoori chicken in a clay pot
+ap-pork-chops	whole apples on the ground in an orchard
+ar-ff-chocolate-fudge	a chocolate bar, not fudge
+ar-ff-eggs-goldenrod	raw flour, milk, butter and an egg
+ar-ff-white-sauce	raw butter, flour, lemon and egg
+ar-mf-jumberlie	rice and a patty, not jambalaya
+ar-mf-sweet-potato-pie	fried dough sticks
+bg-tuna-noodle	plain noodles, no tuna
+bk-apple-crisp-oat	oat cookies with apple slices
+bk-banana-bread	raw bananas, flour and chocolate chips
+bk-fudge-easy	chopped chocolate shards
+bk-irish-soda	a mixing bowl of raw ingredients
+bk-lemon-bars	raw flour, butter, egg and lemon
+bk-pound-cake	raw flour, egg and butter
+blueberry-grunt	raw blueberries and lemon
+br-congee-breakfast	a mushroom noodle soup
+br-frittata	a couscous salad with eggs
+br-hash-veg	whole roasted vegetables, not a hash
+br-ricotta-toast	a savoury meat toast
+buffalo-sauce	buffalo wings and fries, the dish is the sauce
+cc-mango	syrniki cheese pancakes
+cc-mini	syrniki cheese pancakes
+cc-ricotta	raw ricotta curds and an egg yolk
+cc-strawberry	berry compote with no cheesecake
+cn-congee-pork	a pork and greens soup, not congee
+corned-beef-hash	a platter of sliced beef, not a hash
+df-chickpea-pasta	hummus and dips, no pasta
+dn-chocolate-pots	bread with ice cream
+figgy-duff	savoury herb muffins
+fr-duck-skillet	fish fillets in a pan
+fr-socca	a flat-lay of a kitchen table
+fs-mussels-fries	a supermarket packet of mussels
+fs-sardine-toast	grilled sardines, no toast
+fs-teriyaki-salmon	raw salmon sashimi
+fs-tuna-poke-fast	a chopped tomato salad
+gf-socca	hummus with pita
+gn-coconut-pancakes	hands whisking batter
+gr-bbq-tofu	bacon and potatoes
+gr-pulled-chicken	sliced brisket with salsa
+gr-skirt-steak	a thin carpaccio platter
+halifax-donair	raw sliced meat and onions
+hd-bread-sauce	whole garlic and onion bulbs
+hd-green-bean	green beans and raw mushrooms in a pan
+hd-party-mix	branded snack packaging
+hd-pecan-tassies	raw graham crackers, butter and flour
+hd-roast-carrots	raw carrots with oil being poured
+hm-dump-cake	a retail display with a phone
+hm-jello-salad	a green salad with pretzels
+hm-peach-jello	sliced peaches, no gelatin
+hp-lentil-pasta	raw dry pasta and raw lentils
+hp-salmon-poke	a cooked stir-fry bowl, not poke
+hp-turkey-chili	an unclear dark bowl, not a white chili
+in-beef-bourguignon	mashed potato and mushrooms
+in-spaetzle	fried crispy pieces
+in-xiaolongbao	raw ginger, greens and minced pork
+ip-artichokes	raw artichokes and lemons
+ip-beets	a raw beet with a mortar and spices
+ip-black-beans	a flat-lay of salad bowls and raw pasta
+ip-chili-verde	tomatillos in a molcajete
+ip-french-onion	an unclear plate, not onion soup
+ip-kalua	raw chopped pork
+ip-lasagna	raw sheets being assembled
+ip-mashed	a baked gratin, not mashed
+ip-ribs	raw ribs in a pot
+ip-split-pea	whole peas and diced veg, not split pea soup
+ip-zuppa	a breakfast spread of sausages and potatoes
+it-cacciatore	a creamy chicken and potato dish
+it-caprese	whole tomatoes and mozzarella, unassembled
+it-marsala	grilled chicken and vegetables
+it-milanese	dredging chicken in flour, a process shot
+it-pasta-fagioli	spaghetti with peppers, not the bean soup
+it-tiramisu-cups	ladyfingers and cream, unassembled
+jp-donburi-salmon	a salmon fillet, not a rice bowl
+jp-gomaae	a ramen noodle bowl
+jp-nikujaga	gyudon with pickled ginger
+jp-okonomiyaki-home	fried karaage pieces
+jp-salmon-miso	a plain broth bowl, no salmon
+jp-teriyaki-chicken	dark mushrooms with dips, not a donburi
+kd-butter-noodles	raw noodle nests with eggs and flour
+kd-personal-pizza	a spread of sandwiches and hash browns
+kd-quesadillas	a salmon-topped flatbread
+kd-rice-bowl	chicken wings in sauce, no rice bowl
+kd-yogurt-pops	yogurt in a bowl, not pops
+kr-pajeon	a plate of century eggs
+kt-brussels-bacon	raw brussels sprouts in a pan
+kt-burger-bowl	a burger on a bun
+kt-egg-cups	a fry-up plate, not egg cups
+kt-egg-salad	a creamy potato salad
+md-orzo-salad	cubed cheese with lemon, no orzo
+md-salmon-herb	raw salmon steaks on ice
+md-shakshuka-green	a red shakshuka, the dish is green
+md-shawarma-chicken	a yellow curry, not shawarma
+ml-ghormeh	meatballs in tomato sauce
+ml-kibbeh	a tray of raw kibbeh mixture
+ml-lahmacun	a baker at an oven, not the dish
+mp-egg-bites	a quiche, not egg bites
+mp-lentil-boxes	spoons of raw lentils and grains
+mx-albondigas	a collage, no meatball soup
+mx-cactus-tacos	sliced steak on a board
+mx-picadillo	a cutlet with fries
+mx-shrimp-tacos	shrimp salad with toast, not tacos
+mx-sopa-lima	tamales with a bouillon cube packet
+nanaimo-bars	an unclear dark flat-lay
+op-chili-mac	plain macaroni, no chili
+op-sausage-rice	a chopped pepper mix
+op-shakshuka-green	a red shakshuka, the dish is green
+pa-cheesesteak	sliced steak, not a cheesesteak sandwich
+pk-bread	raw pumpkins, flour and a rolling pin
+pk-curry	a whole pumpkin with raw chickpeas
+pk-oats	raw ingredients in bowls
+pk-ravioli	raw uncooked ravioli on flour
+sc-pork-chops	raw pork chops on a board
+sf-egg-muffins	eggs benedict
+sf-greek-yogurt-bowl	shakshuka-style eggs
+sl-taco-salad	tacos on a plate, not a taco salad
+sl-wedge	sauce and greens, not a lettuce wedge
+so-tom-and-jerry	raw eggs, sugar and nutmeg
+sp-gnochhi	corn and beans, no gnocchi
+su-corn-chowder	a shrimp and corn salad
+su-wedding	mushrooms and meat, not wedding soup
+sw-french-dip	a small burger with fries, no jus
+sw-muffuletta	a pizza with eggs and olives
+sx-yogurt-bark	berries in a bowl, not bark
+th-cashew-chicken	a ratatouille-style vegetable dish
+th-coconut-rice	a curry soup, the dish is the rice
+th-satay	a curry with rice cakes, not skewers
+toutons	naan flatbread with herbs
+turkey-meatballs	raw minced meat with egg and breadcrumbs
+veggie-fried-rice	a tray of vegetables with dip, no rice
+vg-falafel-bowl	falafel and eggs on a plain background
+vg-tofu-scramble	a curry with rice, no scramble
+vh-20-cheese-straws	fried chicken tenders with cheese sauce
+vh-20-deviled-eggs	mashed egg and bacon, not deviled eggs
+vh-am-slapjacks	cracking an egg into flour
+vh-ds-prune-whip	a caramel flan
+vh-ds-rice-pudding	someone eating a bowl of soup
+vh-gt-brodo	raw beef shank with packaging
+vh-gt-minestrone	a bowl of risotto
+vh-gt-zucchine	zucchini on a flatbread with oil
+vh-hi-chicken-salad	an endive salad, no chicken
+vh-hi-stuffed-eggs	egg and bacon on greens
+vh-jw-latkes	a Hanukkah table with empty plates
+vh-jw-tzimmes	shredded raw carrots
+vh-la-ham-loaf	a ham sandwich with fries
+vh-la-jellied-fruit	a diced ham salad
+vh-og-baked-stuffed-fish	an unclear beige surface
+vh-og-boiled-salmon	raw salmon slices
+vh-og-salmon-loaf	crackers and pate
+vh-pc-calas	a hand over flour and an egg
+vh-pc-gumbo-file	file powder being spooned
+vh-pd-corn-pie	a chef holding a tray of corn kernels
+vh-pd-pot-pie	raw eggs, dough and a pie dish
+vh-sf-escalloped-oysters	raw oysters on a board
+vh-va-apple-tansey	raw eggs, butter, apples and a pan
+vh-va-fried-catfish	raw fish steaks
+vh-va-hoe-cakes	corn cobs in a pot
+vh-wh-clam-chowder	a fine-dining salmon plate
+vh-ww1-carrot-marmalade	carrots and bread, not marmalade
+vh-ww2-pea-soup	whole fava beans in broth
+vh-ww2-succotash	scallops with corn relish
+vn-chickpea-salad-sando	a plate of chickpeas, no sandwich
+vn-holiday-roast	a whole roast turkey, the dish is vegan
+vn-mushroom-bolognese	a margherita pizza
+vn-nice-cream	sliced banana on toast
+wg-bison-meatloaf	sliced meat and onions, not a loaf
+wn-quesadilla	plain tortillas with dips, no filling
+wn-white-bean-skillet	raw avocado and broccoli
