@@ -18,6 +18,9 @@ import { dishesWithoutPhotos } from "../src/lib/food-photos.ts";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cell = (v) => (/[",\n]/.test(v) ? `"${v.replaceAll('"', '""')}"` : v);
 const rows = dishesWithoutPhotos(RECIPES);
-const csv = ["file,dish,plate", ...rows.map((r) => [r.wants, r.name, r.plate].map(cell).join(","))].join("\n");
+const csv = [
+  "file,dish,search,description",
+  ...rows.map((r) => [r.wants, r.name, r.search, r.description].map(cell).join(",")),
+].join("\n");
 writeFileSync(join(ROOT, "photos-wanted.csv"), csv + "\n");
 console.log(`[photos] ${rows.length} of ${RECIPES.length} dishes still want a photograph -> photos-wanted.csv`);
