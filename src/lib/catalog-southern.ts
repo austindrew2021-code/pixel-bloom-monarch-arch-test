@@ -28,7 +28,11 @@ function so(
     ingredients,
     steps,
     nutrition,
-    photo: extra?.photo ?? `/food/${id}.jpg`,
+    // No default photo. Asserting `/food/<id>.jpg` here claims a file exists
+    // whether or not one does, and outranks the generated manifest, which is
+    // the only thing that actually knows. A dish without a photograph should
+    // fall through to its drawn plate, not to a broken image.
+    ...(extra?.photo ? { photo: extra.photo } : {}),
     ...(extra?.servings ? { servings: extra.servings } : {}),
   });
 }

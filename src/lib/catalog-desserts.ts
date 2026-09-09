@@ -34,7 +34,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Stewed wild blueberries with dumplings steamed on top. South Shore dessert that is also breakfast.",
     minutes: 40,
     cuisine: "Nova Scotia",
-    photo: "/food/blueberry.jpg",
     tags: ["dessert", "fruit", "atlantic", "nova-scotia", "vegetarian", "breakfast"],
     aliases: ["blueberry cobbler", "grunt", "blueberry slump", "bleuet"],
     ingredients: [
@@ -60,7 +59,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "No-bake Canadian classic: coconut crumb, custard buttercream, chocolate cap.",
     minutes: 30,
     cuisine: "Homestyle",
-    photo: "/food/nanaimo.jpg",
     tags: ["dessert", "baking", "canadian", "vegetarian"],
     aliases: ["nanaimo", "canadian bar"],
     ingredients: [
@@ -86,7 +84,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Runny brown-sugar filling in flaky shells. Raisins optional, fight about it later.",
     minutes: 45,
     cuisine: "Homestyle",
-    photo: "/food/tarts.jpg",
     tags: ["dessert", "baking", "canadian", "vegetarian"],
     aliases: ["butter tart", "tarte au sucre"],
     ingredients: [
@@ -110,7 +107,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Tart apples under an oat lid. The weeknight pie.",
     minutes: 50,
     cuisine: "American",
-    photo: "/food/crisp.jpg",
     tags: ["dessert", "fruit", "baking", "vegetarian"],
     aliases: ["apple crumble", "crisp"],
     ingredients: [
@@ -134,7 +130,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Warm cakes with a liquid centre. Fifteen minutes, if the oven is hot.",
     minutes: 20,
     cuisine: "French",
-    photo: "/food/lava.jpg",
     tags: ["dessert", "baking", "vegetarian"],
     aliases: ["lava cake", "moelleux", "fondant au chocolat"],
     ingredients: [
@@ -159,7 +154,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Brown-butter dough, puddles of chocolate, a flake of salt.",
     minutes: 35,
     cuisine: "American",
-    photo: "/food/cookies.jpg",
     tags: ["dessert", "baking", "vegetarian"],
     aliases: ["choc chip", "cookies"],
     ingredients: [
@@ -187,7 +181,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Thick yogurt, ripe berries, pistachios. Dessert that still loves Fuel.",
     minutes: 8,
     cuisine: "Homestyle",
-    photo: "/food/yogurt.jpg",
     tags: ["dessert", "healthy", "chilled", "vegetarian", "quick", "breakfast"],
     aliases: ["parfait", "yogurt bowl", "healthy dessert"],
     servings: 2,
@@ -210,7 +203,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Make it before bed. Cocoa or mango in the morning.",
     minutes: 10,
     cuisine: "Homestyle",
-    photo: "/food/chia.jpg",
     tags: ["dessert", "healthy", "chilled", "vegetarian", "quick", "breakfast"],
     aliases: ["chia", "overnight pudding"],
     servings: 4,
@@ -233,7 +225,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Espresso-soaked biscuits, mascarpone, cocoa. No oven.",
     minutes: 35,
     cuisine: "Italian",
-    photo: "/food/tiramisu.jpg",
     tags: ["dessert", "chilled", "world", "vegetarian"],
     aliases: ["tiramisù"],
     ingredients: [
@@ -258,7 +249,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Warm coconut rice, ripe mango, a pinch of salt that makes it sing.",
     minutes: 45,
     cuisine: "East Asian",
-    photo: "/food/mango.jpg",
     tags: ["dessert", "world", "fruit", "vegetarian"],
     aliases: ["khao niao mamuang", "thai mango rice"],
     servings: 4,
@@ -282,7 +272,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Shatter pastry, walnuts, lemon-honey syrup.",
     minutes: 70,
     cuisine: "Middle Eastern",
-    photo: "/food/baklava.jpg",
     tags: ["dessert", "baking", "world", "vegetarian"],
     aliases: ["baqlawa"],
     ingredients: [
@@ -306,7 +295,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Ridged dough fried and rolled in cinnamon sugar. Thick chocolate to dip.",
     minutes: 40,
     cuisine: "Spanish",
-    photo: "/food/churros.jpg",
     tags: ["dessert", "world", "vegetarian"],
     aliases: ["churro"],
     servings: 4,
@@ -332,7 +320,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Burnt-sugar lid, silk custard. The fridge does the work.",
     minutes: 70,
     cuisine: "Mexican",
-    photo: "/food/flan.jpg",
     tags: ["dessert", "chilled", "world", "vegetarian"],
     aliases: ["crème caramel", "caramel custard"],
     servings: 8,
@@ -357,7 +344,6 @@ export const DESSERT_RECIPES: Recipe[] = [
     description: "Newfoundland boiled pudding with raisins, steamed beside Jiggs.",
     minutes: 90,
     cuisine: "Newfoundland",
-    photo: "/food/figgy.jpg",
     tags: ["dessert", "baking", "atlantic", "newfoundland", "vegetarian"],
     aliases: ["figgy", "duff", "boiled pudding"],
     ingredients: [

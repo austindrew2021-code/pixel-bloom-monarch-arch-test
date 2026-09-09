@@ -33,10 +33,14 @@ test("every photo the app can serve is really there", () => {
 });
 
 test("a dish with its own photograph gets it, not a stock plate", () => {
-  const pancakes = RECIPES.find((r) => r.id === "blueberry-pancakes");
-  assert.ok(pancakes);
-  assert.equal(hasOwnPhoto(pancakes), true);
-  assert.equal(photoFor(pancakes), "/food/blueberry-pancakes.jpg");
+  // Any dish the manifest knows will do; pick the first so this keeps working
+  // as photographs come and go.
+  const id = Object.keys(FOOD_PHOTO_FILES).find((key) => RECIPES.some((r) => r.id === key));
+  assert.ok(id, "no dish in the catalog has a photo of its own");
+  const dish = RECIPES.find((r) => r.id === id)!;
+  assert.equal(hasOwnPhoto(dish), true);
+  assert.equal(photoFor(dish), `/food/${FOOD_PHOTO_FILES[id]}`);
+  assert.equal(existsSync(join(ROOT, "public", photoFor(dish))), true);
 });
 
 test("a dish with no photograph falls back to its plate, never to nothing", () => {

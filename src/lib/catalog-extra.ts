@@ -32,7 +32,6 @@ export const EXTRA_RECIPES: Recipe[] = [
     plate: "roast",
     cuisine: "Newfoundland",
     tags: ["old-school", "newfoundland", "sunday", "atlantic", "comfort"],
-    photo: "/food/jiggs.jpg",
     aliases: [
       "boiled dinner",
       "salt beef dinner",
@@ -68,7 +67,6 @@ export const EXTRA_RECIPES: Recipe[] = [
     protein: "veg",
     plate: "toast",
     cuisine: "Newfoundland",
-    photo: "/food/toast.jpg",
     tags: ["newfoundland", "breakfast", "vegetarian", "atlantic"],
     aliases: ["touton", "touts", "fried dough", "nl breakfast"],
     ingredients: [
