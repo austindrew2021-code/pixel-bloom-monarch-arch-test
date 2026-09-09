@@ -1901,13 +1901,16 @@ export function scaleMethodSteps(
       );
     }
 
+    // The NULs are ours: parts of the sentence were parked under a sentinel a
+    // few lines up so the rewrite could not touch them, and this puts them back.
+    // eslint-disable-next-line no-control-regex -- the sentinel is deliberate
     s = s.replace(/\u0000(\d+)\u0000/g, (_m, i: string) => held[Number(i)] ?? "");
     return tidyThe(s);
   });
 }
 
 function makeFollowable(step: string, recipe: RecipeLike, siblings: string[]): string {
-  let s = finishSentence(step.replace(/\s+/g, " ").trim());
+  const s = finishSentence(step.replace(/\s+/g, " ").trim());
   const lower = s.toLowerCase().replace(/[.]+$/, "");
   const blob = siblings.join(" ");
 
