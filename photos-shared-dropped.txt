@@ -1,199 +1,112 @@
-645 files removed: one image was standing in for 196 sets of unrelated dishes.
-Recover any of them from commit 01fa129 if a photo turns out to be right for one dish.
+249 files removed because one image was standing in for several dishes.
+A file that survived the review at 11212ed keeps its image; new claims on it do not.
 
-31 dishes on one image: ac-yassa.jpg cn-lo-mein.jpg gf-lettuce-wraps.jpg hm-chicken-rice-casserole.jpg hp-gyro-bowl.jpg in-chicken-tagine.jpg in-laksa.jpg ip-adobo.jpg ip-chicken-noodle.jpg ip-tikka.jpg it-cacciatore.jpg it-chicken-parm.jpg it-marsala.jpg it-milanese.jpg it-piccata.jpg jp-chicken-nanban.jpg jp-karaage.jpg jp-katsu-curry.jpg jp-teriyaki-chicken.jpg md-shawarma-chicken.jpg mx-chicken-mole-verde.jpg mx-chicken-tinga.jpg mx-flautas.jpg sf-chicken-veg-soup.jpg sl-caesar.jpg su-chicken-rice.jpg th-satay.jpg vh-bj-chicken-rice.jpg vh-jw-matzo-ball.jpg vh-wh-chicken-croquettes.jpg wn-quesadilla.jpg
-12 dishes on one image: bg-baked-potato-bar.jpg hd-baked-alaska.jpg hd-eggnog-custard.jpg kd-chicken-nuggets.jpg kt-feta-chicken.jpg md-baked-feta.jpg ml-kibbeh.jpg vh-ds-rice-pudding.jpg vh-og-baked-stuffed-fish.jpg vh-veg-beans-no-pork.jpg vh-wh-macaroni-cheese.jpg vh-ww2-stuffed-potato.jpg
-10 dishes on one image: cc-pumpkin.jpg pk-bread.jpg pk-curry-soup.jpg pk-curry.jpg pk-hummus.jpg pk-oats.jpg pk-pancakes.jpg pk-ravioli.jpg pk-risotto.jpg pk-sage-pasta.jpg
-10 dishes on one image: op-beef-goulash.jpg op-chicken-orzo.jpg op-chili-mac.jpg op-coconut-rice.jpg op-kimchi-stew.jpg op-mushroom-barley.jpg op-paella.jpg op-sausage-rice.jpg op-tomato-rice.jpg op-veg-soup.jpg
-9 dishes on one image: br-frittata.jpg cp-bannock.jpg fr-duck-skillet.jpg gf-zucchini-noodles.jpg hm-cornbread.jpg kt-zucchini-lasagna.jpg kt-zucchini-scampi.jpg sf-cinnamon-apples.jpg sf-zucchini-fritters.jpg
-9 dishes on one image: cb-coconut-shrimp.jpg df-coconut-chicken.jpg gf-coconut-curry-shrimp.jpg gf-coconut-shrimp.jpg gn-coconut-pancakes.jpg su-coconut-curry.jpg th-coconut-rice.jpg vh-veg-nut-roast.jpg vn-coconut-chickpea.jpg
-9 dishes on one image: fs-fish-stew.jpg ip-tomato-soup.jpg it-bruschetta.jpg kt-cream-pork.jpg md-chickpea-stew.jpg sf-roast-cod.jpg vh-20-tomato-cocktail.jpg vh-hi-tomato-aspic.jpg vh-sf-tomato-toast.jpg
-9 dishes on one image: fs-shrimp-scampi.jpg gf-polenta-shrimp.jpg hp-shrimp-edamame.jpg ip-shrimp-boil.jpg it-shrimp-scampi-pasta.jpg mx-aguachile.jpg sl-shrimp-louis.jpg sw-po-boy.jpg vh-pc-shrimp-creole.jpg
-8 dishes on one image: af-falafel.jpg af-garlic-bread.jpg af-green-beans.jpg af-potatoes.jpg af-salmon.jpg af-shrimp.jpg af-sweet-potato.jpg af-tofu.jpg
-8 dishes on one image: bk-lemon-bars.jpg bk-pound-cake.jpg cc-lemon.jpg hp-chicken-prep.jpg md-orzo-salad.jpg sf-chicken-skewers.jpg sl-quinoa.jpg wn-lemon-orzo.jpg
-8 dishes on one image: cn-beef-chow-fun.jpg in-beef-bourguignon.jpg in-empanadas.jpg ip-beef-broccoli.jpg kr-bulgogi.jpg op-pho-quick.jpg sf-beef-kebabs.jpg vh-wh-beef-a-la-mode.jpg
-8 dishes on one image: gr-baby-back.jpg gr-grilled-peach.jpg gr-skirt-steak.jpg gr-veggie-skewers.jpg hp-chicken-caesar.jpg md-halloumi.jpg sx-grill-fruit.jpg wg-quail-grilled.jpg
-7 dishes on one image: ac-couscous.jpg cn-chow-mein.jpg cn-spring-rolls.jpg ip-pulao.jpg mp-soup-batch.jpg vg-coconut-curry.jpg vh-veg-hash.jpg
-7 dishes on one image: ap-kale-sausage.jpg hd-sausage-stuffing.jpg it-calzone.jpg kt-sausage-skillet.jpg sf-cabbage-skillet.jpg sf-cauli-sausage.jpg wn-sausage-greens.jpg
-7 dishes on one image: ap-muffins.jpg ap-pork-chops.jpg ap-pork-roast.jpg ap-slaw.jpg ap-turnovers.jpg vh-ds-apple-tapioca.jpg vh-va-apple-tansey.jpg
-7 dishes on one image: cn-congee-pork.jpg in-banh-mi.jpg in-schnitzel-pork.jpg in-xiaolongbao.jpg jp-tonkatsu.jpg kr-ssam.jpg vh-pd-sauerkraut.jpg
-7 dishes on one image: cp-tuna-foil.jpg fs-tuna-poke-fast.jpg gf-tuna-avocado.jpg hm-tuna-hotdish.jpg hp-tuna-bean.jpg kt-tuna-boats.jpg sw-tuna-salad.jpg
-7 dishes on one image: gf-polenta-mushrooms.jpg it-risotto-mushroom.jpg sf-mushroom-egg.jpg su-mushroom-barley.jpg vg-mushroom-stroganoff.jpg vg-mushroom-tacos.jpg vn-mushroom-bolognese.jpg
-7 dishes on one image: ip-beef-stew.jpg ip-chicken-rice.jpg ip-chili.jpg ip-corn-chowder.jpg ip-lentil-soup.jpg ip-pho.jpg jp-miso-soup.jpg
-6 dishes on one image: ar-ff-white-sauce.jpg ip-white-chili.jpg vh-wh-clam-chowder.jpg vh-wh-hash.jpg vh-wh-oyster-stew.jpg wn-white-bean-skillet.jpg
-6 dishes on one image: ar-mf-sweet-potato-pie.jpg br-hash-veg.jpg cn-sweet-sour-pork.jpg fs-fish-tacos-baja.jpg vg-sweet-potato-chili.jpg vn-sweet-potato-tacos.jpg
-6 dishes on one image: bg-tuna-noodle.jpg hd-mulled-cider.jpg in-butter-chicken-home.jpg in-chana-fast.jpg mx-beef-birria.jpg mx-refried-home.jpg
-6 dishes on one image: cn-tea-eggs.jpg fr-steak-frites.jpg gf-steak-salad.jpg hp-steak-eggs.jpg sf-steak-chimichurri.jpg sf-steak-eggs.jpg
-6 dishes on one image: gf-lamb-chops.jpg gf-roast-veg.jpg md-salmon-herb.jpg ml-ghormeh.jpg sf-herb-chicken.jpg sf-pork-tenderloin.jpg
-6 dishes on one image: gf-poke.jpg hp-lentil-pasta.jpg mp-lentil-boxes.jpg vg-lentil-bolognese.jpg vg-lentil-shepherd.jpg vh-veg-lentil-stew.jpg
-6 dishes on one image: in-arepas.jpg in-spaetzle.jpg kd-quesadillas.jpg vh-20-cheese-straws.jpg vh-hi-cheese-dreams.jpg vh-jw-blintzes.jpg
-5 dishes on one image: ar-ff-chocolate-fudge.jpg cc-chocolate.jpg dn-chocolate-pots.jpg vg-overnight-chia.jpg vn-avocado-mousse.jpg
-5 dishes on one image: ar-ff-fish-chowder.jpg fr-bouillabaisse.jpg kd-fish-sticks.jpg mx-pescado-veracruz.jpg vh-og-fish-cakes.jpg
-5 dishes on one image: bg-cabbage-sausage.jpg ip-cabbage-rolls.jpg jp-okonomiyaki-home.jpg vh-bj-cabbage-pork.jpg vh-ww2-cabbage-pork.jpg
-5 dishes on one image: bk-corn-muffins.jpg br-ricotta-toast.jpg hd-roast-carrots.jpg ip-honey-garlic.jpg wn-honey-salmon.jpg
-5 dishes on one image: cn-egg-drop.jpg ip-egg-curry.jpg sf-egg-avocado.jpg sw-egg-salad.jpg vh-hi-egg-salad-sandwich.jpg
-5 dishes on one image: gf-quinoa-tabbouleh.jpg ip-quinoa.jpg md-lemon-potatoes.jpg sx-cocoa-mousse.jpg vg-stuffed-peppers.jpg
-5 dishes on one image: gf-stuffed-sweet-potato.jpg ip-stuffed-peppers.jpg md-grape-leaves.jpg vh-hi-stuffed-eggs.jpg vn-holiday-roast.jpg
-5 dishes on one image: hd-green-bean.jpg jp-curry-udon.jpg md-shakshuka-green.jpg op-shakshuka-green.jpg th-mango-salad.jpg
-5 dishes on one image: in-pad-see-ew.jpg ip-thai-curry.jpg th-cashew-chicken.jpg th-pad-krapow.jpg th-thai-omelette.jpg
-5 dishes on one image: ip-chicken-taco.jpg kd-taco-cups.jpg kt-taco-lettuce.jpg sl-taco-salad.jpg wn-taco-salad.jpg
-5 dishes on one image: jp-sunomono.jpg mp-tofu-boxes.jpg sf-cucumber-yogurt.jpg sl-asian-slaw.jpg vh-hi-cucumber-sandwich.jpg
-4 dishes on one image: ap-baked.jpg bk-cinnamon-rolls.jpg bk-cinnamon-swirl.jpg bk-coffee-cake.jpg
-4 dishes on one image: bk-biscotti.jpg gf-almond-cake.jpg gn-almond-muffins.jpg gn-gf-banana-bread.jpg
-4 dishes on one image: br-congee-breakfast.jpg cn-steamed-fish.jpg hd-gingerbread.jpg vh-bj-steamed-fish.jpg
-4 dishes on one image: br-cottage-bowl.jpg hp-protein-pancakes.jpg vh-ds-cottage-pudding.jpg vh-ww2-cottage-salad.jpg
-4 dishes on one image: cn-garlic-broccoli.jpg df-chickpea-pasta.jpg mx-shrimp-tacos.jpg sf-shrimp-garlic.jpg
-4 dishes on one image: fr-leek-soup.jpg hd-latkes.jpg vh-gt-gnocchi.jpg vh-jw-latkes.jpg
-4 dishes on one image: fr-lentil-salad.jpg ip-french-onion.jpg sw-french-dip.jpg vh-365-onion-soup.jpg
-4 dishes on one image: fr-moutarde-chicken.jpg hm-ham-beans.jpg hm-ham-loaf.jpg vh-la-ham-loaf.jpg
-4 dishes on one image: gf-turkey-meatballs.jpg hp-turkey-chili.jpg hp-turkey-loaf.jpg sf-turkey-lettuce.jpg
-4 dishes on one image: gr-bbq-tofu.jpg gr-pulled-jackfruit.jpg ip-bbq-beef.jpg vg-bbq-cauli.jpg
-4 dishes on one image: hp-salmon-poke.jpg jp-donburi-salmon.jpg vh-20-salmon-wiggle.jpg vh-og-salmon-loaf.jpg
-4 dishes on one image: ip-black-beans.jpg sx-yogurt-bark.jpg vg-berry-crumble.jpg wn-black-bean-ques.jpg
-4 dishes on one image: kt-egg-salad.jpg mx-picadillo.jpg sf-salmon-dill.jpg sw-chicken-salad.jpg
-4 dishes on one image: pk-seeds.jpg pk-soup.jpg su-butternut.jpg vg-buddha-bowl.jpg
-3 dishes on one image: af-wings.jpg sc-chicken-tacos.jpg sc-salsa-chicken.jpg
-3 dishes on one image: bg-rice-beans.jpg gf-chicken-soup.jpg ip-rice-pudding.jpg
-3 dishes on one image: bk-apple-crisp-oat.jpg bk-oatmeal-raisin.jpg vg-oat-pancakes.jpg
-3 dishes on one image: cc-cookies-cream.jpg cc-no-bake.jpg cc-ricotta.jpg
-3 dishes on one image: gf-socca.jpg vg-chickpea-tikka.jpg vn-chickpea-salad-sando.jpg
-3 dishes on one image: hm-spam-fried-rice.jpg in-kimchi-fried-rice.jpg kr-kimchi-fried.jpg
-3 dishes on one image: in-hungarian-goulash.jpg vh-365-goulash.jpg wg-venison-chili.jpg
-3 dishes on one image: in-injera-wat.jpg ml-red-lentil-kofte.jpg vh-pc-red-beans.jpg
-3 dishes on one image: ip-salsa-chicken.jpg vh-gt-cacciatora.jpg vh-gt-pomodoro.jpg
-3 dishes on one image: ip-split-pea.jpg su-split-pea.jpg vh-ww2-pea-soup.jpg
-3 dishes on one image: it-branzino.jpg mp-chicken-rice.jpg mp-chili-batch.jpg
-3 dishes on one image: it-pasta-ceci.jpg it-pasta-fagioli.jpg vh-gt-spaghetti-burro.jpg
-3 dishes on one image: jp-gomaae.jpg kt-stuffed-chicken.jpg vh-veg-spinach-eggs.jpg
-3 dishes on one image: kd-grilled-cheese.jpg sl-macaroni.jpg sw-blt.jpg
-3 dishes on one image: kd-tenders.jpg kt-pork-belly.jpg vg-potato-tacos.jpg
-3 dishes on one image: kt-no-bean-chili.jpg sc-chili.jpg sc-white-chicken-chili.jpg
-3 dishes on one image: md-hummus.jpg sw-hummus-veg.jpg vg-hummus-bowl.jpg
-3 dishes on one image: ml-lahmacun.jpg ml-lentil-soup-tr.jpg vg-red-lentil-soup.jpg
-3 dishes on one image: mx-albondigas.jpg sp-lamb-meatballs.jpg vh-365-swedish-balls.jpg
-3 dishes on one image: sl-lentil.jpg vh-365-german-potato.jpg vh-ww1-oatmeal-cookies.jpg
-3 dishes on one image: vg-banh-mi.jpg vg-tofu-scramble.jpg vn-tofu-katsu.jpg
-3 dishes on one image: vh-jw-tzimmes.jpg vh-sf-carrot-croquettes.jpg vh-ww1-carrot-marmalade.jpg
-2 dishes on one image: af-chick-tenders.jpg ar-mf-fried-chicken.jpg
-2 dishes on one image: af-chicken-thighs.jpg ip-whole-chicken.jpg
-2 dishes on one image: af-churros.jpg af-fish.jpg
-2 dishes on one image: apple-crisp.jpg crisp.jpg
-2 dishes on one image: ar-ff-eggs-goldenrod.jpg vh-20-deviled-eggs.jpg
-2 dishes on one image: ar-ff-spider-corn-cake.jpg vh-va-hoe-cakes.jpg
-2 dishes on one image: ar-ff-welsh-rarebit.jpg wg-rabbit-mustard.jpg
-2 dishes on one image: avocado-toast-egg.jpg avocado.jpg
-2 dishes on one image: bagel.jpg salmon-bagel.jpg
-2 dishes on one image: beef-chili.jpg chili.jpg
+2 dishes on one image: ac-shiro.jpg chickpea-curry.jpg
+3 dishes on one image: af-chick-tenders.jpg kd-chicken-nuggets.jpg kd-fish-sticks.jpg
+2 dishes on one image: af-chicken-thighs.jpg sf-herb-chicken.jpg
+2 dishes on one image: af-green-beans.jpg md-lemon-potatoes.jpg
+2 dishes on one image: af-halloumi.jpg md-halloumi.jpg
+2 dishes on one image: af-potatoes.jpg af-sweet-potato.jpg
+2 dishes on one image: ap-baked.jpg sc-apple-butter.jpg
+2 dishes on one image: ap-butter.jpg sf-cinnamon-apples.jpg
+2 dishes on one image: apple-crisp.jpg vh-ds-apple-tapioca.jpg
+2 dishes on one image: ar-ff-fish-chowder.jpg miso-butter-cod.jpg
+2 dishes on one image: ar-ff-molasses-gingerbread.jpg hd-gingerbread.jpg
+2 dishes on one image: ar-mf-chow-chow.jpg md-israeli-salad.jpg
+8 dishes on one image: beef-chili.jpg cp-camp-chili.jpg ip-chili.jpg kt-no-bean-chili.jpg mp-chili-batch.jpg sc-chili.jpg wg-elk-chili.jpg wg-venison-chili.jpg
 2 dishes on one image: bg-banana-pancakes.jpg gf-banana-pancakes.jpg
-2 dishes on one image: bg-lentil-dal.jpg vg-dal-makhani.jpg
-2 dishes on one image: bg-peanut-noodles.jpg bk-peanut-cookies.jpg
-2 dishes on one image: bk-banana-bread.jpg vn-nice-cream.jpg
-2 dishes on one image: bk-irish-soda.jpg vh-365-irish-stew.jpg
-2 dishes on one image: bk-molasses.jpg bk-popcorn-balls.jpg
-2 dishes on one image: bk-peach-cobbler.jpg hm-peach-jello.jpg
-2 dishes on one image: black-bean-tacos.jpg taco.jpg
-2 dishes on one image: blueberry-grunt.jpg blueberry.jpg
-2 dishes on one image: blueberry-pancakes.jpg pancakes.jpg
-2 dishes on one image: br-breakfast-salad.jpg cp-sausage-skillet.jpg
-2 dishes on one image: br-smoked-trout.jpg gr-smoked-turkey.jpg
-2 dishes on one image: breakfast-burrito.jpg burrito.jpg
-2 dishes on one image: butter-tarts.jpg tarts.jpg
-2 dishes on one image: buttermilk-fried-chicken.jpg friedchicken.jpg
-2 dishes on one image: cb-cuban-black-beans.jpg cb-cuban-sandwich.jpg
-2 dishes on one image: cb-mango-fish.jpg cc-mango.jpg
-2 dishes on one image: cb-oxtail.jpg vg-eggplant-tomato.jpg
-2 dishes on one image: cb-rum-cake.jpg gf-beef-stir.jpg
-2 dishes on one image: cc-key-lime.jpg in-ceviche.jpg
-2 dishes on one image: cc-new-york.jpg ip-cheesecake.jpg
-2 dishes on one image: cc-strawberry.jpg kd-smoothie.jpg
-2 dishes on one image: chia-pudding.jpg chia.jpg
-2 dishes on one image: chicken-stir-fry.jpg stirfry.jpg
-2 dishes on one image: chickpea-curry.jpg curry.jpg
-2 dishes on one image: chip-cookies.jpg cookies.jpg
-2 dishes on one image: classic-beef-stew.jpg stew.jpg
-2 dishes on one image: cn-bao.jpg kr-gyeran-jjim.jpg
-2 dishes on one image: cn-sesame-noodles.jpg vg-sesame-noodles.jpg
-2 dishes on one image: corned-beef-hash.jpg hash.jpg
-2 dishes on one image: cottagepie.jpg shepherds-pie.jpg
-2 dishes on one image: cp-camp-chili.jpg kr-kimchi-jjigae.jpg
-2 dishes on one image: cp-corn-coals.jpg gr-elote.jpg
-2 dishes on one image: df-beef-stew.jpg vh-365-borscht.jpg
-2 dishes on one image: donair.jpg halifax-donair.jpg
-2 dishes on one image: dumplings.jpg potstickers.jpg
-2 dishes on one image: figgy-duff.jpg figgy.jpg
-2 dishes on one image: fishcakes.jpg nl-fish-cakes.jpg
-2 dishes on one image: fr-nicoise.jpg sl-nicoise.jpg
-2 dishes on one image: french-onion.jpg onion.jpg
-2 dishes on one image: friedrice.jpg veggie-fried-rice.jpg
-2 dishes on one image: fs-blackened-catfish.jpg kt-salmon-butter.jpg
-2 dishes on one image: fs-teriyaki-salmon.jpg kd-rice-bowl.jpg
+2 dishes on one image: bg-cabbage-sausage.jpg sf-cabbage-skillet.jpg
+3 dishes on one image: bg-lentil-dal.jpg ip-dal.jpg sc-dal.jpg
+2 dishes on one image: bg-tomato-pasta.jpg tomato-basil-pasta.jpg
+2 dishes on one image: bk-cinnamon-rolls.jpg bk-cinnamon-swirl.jpg
+3 dishes on one image: bk-corn-muffins.jpg vh-am-indian-pudding.jpg vh-ww1-wheatless-muffins.jpg
+2 dishes on one image: bk-oatmeal-raisin.jpg vh-ww1-oatmeal-cookies.jpg
+2 dishes on one image: black-bean-tacos.jpg vn-sweet-potato-tacos.jpg
+3 dishes on one image: br-cottage-bowl.jpg hp-cottage-bowl.jpg sl-farro.jpg
+3 dishes on one image: cb-arroz-gandules.jpg ip-chicken-rice.jpg sc-chicken-and-rice.jpg
+2 dishes on one image: cc-cookies-cream.jpg cc-oreo.jpg
+4 dishes on one image: cc-new-york.jpg cc-pumpkin.jpg cc-swirl-raspberry.jpg ip-cheesecake.jpg
+4 dishes on one image: classic-beef-stew.jpg sc-beef-stew.jpg sc-italian-beef.jpg shepherds-pie.jpg
+2 dishes on one image: cn-garlic-broccoli.jpg honey-garlic-shrimp.jpg
+2 dishes on one image: cp-tuna-foil.jpg fr-nicoise.jpg
+2 dishes on one image: df-coconut-chicken.jpg ip-thai-curry.jpg
+3 dishes on one image: fr-lentil-salad.jpg sl-lentil.jpg vg-lentil-bolognese.jpg
+2 dishes on one image: fr-moutarde-chicken.jpg md-zaatar-chicken.jpg
+2 dishes on one image: french-onion.jpg vh-365-onion-soup.jpg
+3 dishes on one image: fs-shrimp-scampi.jpg gf-polenta-shrimp.jpg it-shrimp-scampi-pasta.jpg
 2 dishes on one image: fs-trout-almondine.jpg vh-pc-trout-meuniere.jpg
-2 dishes on one image: gf-cauli-pizza.jpg kt-cauli-pizza.jpg
-2 dishes on one image: gr-pulled-chicken.jpg kd-sloppy.jpg
-2 dishes on one image: greek-bowls.jpg greek.jpg
-2 dishes on one image: hd-brisket.jpg wg-goose-confit.jpg
-2 dishes on one image: hd-pecan-pie-bars.jpg hd-pecan-tassies.jpg
-2 dishes on one image: honey-garlic-shrimp.jpg shrimp.jpg
-2 dishes on one image: hp-cottage-bowl.jpg sf-greek-yogurt-bowl.jpg
-2 dishes on one image: in-borscht.jpg sl-beet-goat.jpg
-2 dishes on one image: in-lamb-tagine.jpg ip-lamb-stew.jpg
-2 dishes on one image: in-shoyu-ramen.jpg su-miso-ramen.jpg
-2 dishes on one image: ip-barbacoa.jpg sc-chicken-tinga.jpg
-2 dishes on one image: ip-broccoli-cheddar.jpg sl-broccoli.jpg
-2 dishes on one image: ip-lasagna.jpg vg-mapo-tofu.jpg
-2 dishes on one image: ip-meatballs.jpg sw-meatball-sub.jpg
-2 dishes on one image: ip-short-ribs.jpg sc-ribs.jpg
-2 dishes on one image: ip-spaghetti.jpg it-aglio-olio.jpg
-2 dishes on one image: ip-yogurt.jpg kd-yogurt-pops.jpg
+2 dishes on one image: gf-almond-cake.jpg gf-almond-chicken.jpg
+3 dishes on one image: gf-chicken-soup.jpg hm-chicken-and-rice-soup.jpg su-chicken-rice.jpg
+2 dishes on one image: gf-coconut-curry-shrimp.jpg in-laksa.jpg
+2 dishes on one image: gr-grilled-peach.jpg sx-grill-fruit.jpg
+2 dishes on one image: gr-pulled-jackfruit.jpg vg-bbq-cauli.jpg
+2 dishes on one image: greek-bowls.jpg hp-gyro-bowl.jpg
+2 dishes on one image: hd-brisket.jpg sc-brisket.jpg
+2 dishes on one image: hd-eggnog-custard.jpg vh-ds-snow-pudding.jpg
+2 dishes on one image: hd-glazed-ham.jpg hm-ham-loaf.jpg
+2 dishes on one image: hd-mulled-cider.jpg sc-applesauce.jpg
+2 dishes on one image: hd-oyster-dressing.jpg vh-wh-oyster-stew.jpg
+2 dishes on one image: hd-roast-potatoes.jpg sc-baked-potatoes.jpg
+2 dishes on one image: hd-sausage-stuffing.jpg wn-sausage-greens.jpg
+2 dishes on one image: hm-ham-beans.jpg vh-veg-beans-no-pork.jpg
+2 dishes on one image: hm-pimento-cheese.jpg vh-sf-hawaiian-sandwich.jpg
+2 dishes on one image: hm-sheet-supper.jpg sp-breakfast.jpg
+2 dishes on one image: hm-tuna-hotdish.jpg kt-mushroom-chicken.jpg
+2 dishes on one image: hp-chicken-caesar.jpg sl-caesar.jpg
+2 dishes on one image: hp-tuna-bean.jpg sl-three-bean.jpg
+2 dishes on one image: hp-yogurt-parfait.jpg mp-overnight-oats-jar.jpg
+2 dishes on one image: in-borscht.jpg vh-365-borscht.jpg
+2 dishes on one image: in-butter-chicken-home.jpg ip-butter-chicken.jpg
+2 dishes on one image: in-hungarian-goulash.jpg vh-365-goulash.jpg
+3 dishes on one image: in-injera-wat.jpg lentil-soup.jpg ml-lentil-soup-tr.jpg
+3 dishes on one image: in-kimchi-fried-rice.jpg kr-kimchi-fried.jpg wn-fried-egg-rice.jpg
+2 dishes on one image: in-pad-see-ew.jpg th-pad-see-ew-home.jpg
+5 dishes on one image: ip-bbq-beef.jpg ip-pot-roast.jpg sc-pot-roast.jpg sunday-pot-roast.jpg vh-wh-hash.jpg
+3 dishes on one image: ip-beef-stew.jpg ip-potato-soup.jpg vh-kp-mulligan.jpg
+3 dishes on one image: ip-chicken-taco.jpg ip-salsa-chicken.jpg sc-salsa-chicken.jpg
+2 dishes on one image: ip-corn-chowder.jpg sc-corn-chowder.jpg
+2 dishes on one image: ip-korean-beef.jpg kr-bulgogi.jpg
+2 dishes on one image: ip-lamb-stew.jpg vh-365-irish-stew.jpg
+2 dishes on one image: ip-lentil-soup.jpg sc-lentil.jpg
+3 dishes on one image: ip-mac-cheese.jpg kd-mac-hidden.jpg stovetop-mac.jpg
+3 dishes on one image: ip-pulled-pork.jpg pulled-pork.jpg sc-pulled-pork.jpg
+2 dishes on one image: ip-quinoa.jpg vg-buddha-bowl.jpg
+2 dishes on one image: ip-rice-pudding.jpg vh-ww1-rice-pudding.jpg
+2 dishes on one image: ip-spaghetti.jpg sc-meatballs.jpg
+2 dishes on one image: ip-white-chili.jpg sc-white-chicken-chili.jpg
+2 dishes on one image: ip-whole-chicken.jpg lemon-garlic-chicken.jpg
 2 dishes on one image: it-arrabbiata.jpg it-vodka-penne.jpg
-2 dishes on one image: it-caprese.jpg sl-caprese.jpg
-2 dishes on one image: it-gnocchi-sorrentina.jpg sp-gnochhi.jpg
-2 dishes on one image: it-osso-skip.jpg sw-caprese-panini.jpg
-2 dishes on one image: it-panzanella-home.jpg sl-panzanella.jpg
-2 dishes on one image: jiggs-dinner.jpg jiggs.jpg
-2 dishes on one image: jp-dashimaki.jpg jp-tamagoyaki.jpg
-2 dishes on one image: kd-pancake-dippers.jpg wg-trout-camp.jpg
-2 dishes on one image: kr-corn-cheese.jpg su-corn-chowder.jpg
-2 dishes on one image: kt-egg-cups.jpg sw-breakfast-sando.jpg
-2 dishes on one image: lasagna-bolognese.jpg lasagna.jpg
-2 dishes on one image: lava.jpg molten-chocolate.jpg
-2 dishes on one image: lemon-garlic-chicken.jpg roast.jpg
-2 dishes on one image: lentil-soup.jpg soup.jpg
-2 dishes on one image: lobster.jpg ns-lobster-roll.jpg
-2 dishes on one image: mac.jpg stovetop-mac.jpg
-2 dishes on one image: mango-sticky-rice.jpg mango.jpg
+2 dishes on one image: it-risotto-mushroom.jpg mushroom-risotto.jpg
+2 dishes on one image: jp-chicken-nanban.jpg vh-la-chicken-dumplings.jpg
+3 dishes on one image: jp-dashimaki.jpg jp-karaage.jpg vh-bj-chicken-rice.jpg
+2 dishes on one image: jp-katsu-curry.jpg vn-tofu-katsu.jpg
+2 dishes on one image: kd-grilled-cheese.jpg vh-hi-cheese-dreams.jpg
+2 dishes on one image: kd-pancake-dippers.jpg vh-jw-blintzes.jpg
+3 dishes on one image: kd-taco-cups.jpg vg-jackfruit-tacos.jpg vg-mushroom-tacos.jpg
+2 dishes on one image: kr-bibim-cold.jpg vg-sesame-noodles.jpg
+2 dishes on one image: kr-kimchi-jjigae.jpg op-kimchi-stew.jpg
+2 dishes on one image: kt-feta-chicken.jpg md-baked-feta.jpg
+2 dishes on one image: kt-salmon-butter.jpg vh-20-salmon-wiggle.jpg
+4 dishes on one image: kt-taco-lettuce.jpg sf-turkey-lettuce.jpg vg-tacos-al-pastor.jpg wn-taco-salad.jpg
+2 dishes on one image: kt-zucchini-scampi.jpg sp-shrimp-zucchini.jpg
 2 dishes on one image: md-fattoush.jpg sl-fattoush.jpg
-2 dishes on one image: meatballs.jpg turkey-meatballs.jpg
-2 dishes on one image: miso-butter-cod.jpg whitefish.jpg
-2 dishes on one image: mushroom-risotto.jpg risotto.jpg
-2 dishes on one image: mx-cactus-tacos.jpg mx-nopales.jpg
-2 dishes on one image: nanaimo-bars.jpg nanaimo.jpg
-2 dishes on one image: noodles.jpg peanut-noodles.jpg
-2 dishes on one image: oats.jpg overnight-oats.jpg
-2 dishes on one image: omelette.jpg veggie-omelette.jpg
-2 dishes on one image: pa-cheesesteak.jpg sandwich.jpg
-2 dishes on one image: pad-thai.jpg padthai.jpg
-2 dishes on one image: pasta.jpg tomato-basil-pasta.jpg
-2 dishes on one image: pho-bo.jpg pho.jpg
-2 dishes on one image: potroast.jpg sunday-pot-roast.jpg
-2 dishes on one image: pulled-pork.jpg pulledpork.jpg
-2 dishes on one image: salmon-asparagus.jpg salmon.jpg
-2 dishes on one image: sausage-peppers.jpg sausage.jpg
-2 dishes on one image: sc-apple-butter.jpg sc-applesauce.jpg
-2 dishes on one image: sc-brisket.jpg sc-pot-roast.jpg
-2 dishes on one image: sc-carnitas.jpg sc-pulled-pork.jpg
-2 dishes on one image: sc-chicken-and-rice.jpg sp-bbq-chicken.jpg
-2 dishes on one image: sc-italian-beef.jpg sc-thai-beef.jpg
-2 dishes on one image: sp-miso-eggplant.jpg vg-ramen.jpg
-2 dishes on one image: steak-chimichurri.jpg steak.jpg
-2 dishes on one image: su-navy-bean.jpg vh-ww2-navy-bean.jpg
+2 dishes on one image: mp-tofu-boxes.jpg sp-tofu-broccoli.jpg
+2 dishes on one image: mx-beef-birria.jpg vg-posole.jpg
+2 dishes on one image: mx-chicken-tinga.jpg sc-chicken-tinga.jpg
+2 dishes on one image: mx-refried-home.jpg vh-ww2-navy-bean.jpg
+2 dishes on one image: nl-fish-cakes.jpg vh-og-fish-cakes.jpg
+2 dishes on one image: op-coconut-rice.jpg sf-turkey-chili.jpg
+2 dishes on one image: pk-hummus.jpg pk-seeds.jpg
+2 dishes on one image: sf-mushroom-egg.jpg vh-gt-panata.jpg
+2 dishes on one image: steak-chimichurri.jpg vh-kp-kabobs.jpg
+2 dishes on one image: su-coconut-curry.jpg vg-coconut-curry.jpg
+2 dishes on one image: su-split-pea.jpg vg-lentil-shepherd.jpg
 2 dishes on one image: sw-club.jpg vh-20-club-sandwich.jpg
-2 dishes on one image: sw-falafel-wrap.jpg vg-falafel-bowl.jpg
-2 dishes on one image: th-tom-kha.jpg th-tom-yum.jpg
-2 dishes on one image: toast.jpg toutons.jpg
-2 dishes on one image: tofu-power-bowls.jpg tofu.jpg
-2 dishes on one image: vg-cashew-alfredo.jpg vn-cashew-alfredo.jpg
-2 dishes on one image: vh-ds-boiled-custard.jpg vh-og-boiled-salmon.jpg
-2 dishes on one image: vh-pd-corn-pie.jpg vh-pd-pot-pie.jpg
-2 dishes on one image: wg-duck-hash.jpg wg-duck-orange.jpg
-2 dishes on one image: yogurt-berries.jpg yogurt.jpg
+2 dishes on one image: sw-egg-salad.jpg vh-hi-egg-salad-sandwich.jpg
+2 dishes on one image: sw-reuben.jpg vg-tempeh-reuben.jpg
+2 dishes on one image: vh-bj-cabbage-pork.jpg vh-ww2-cabbage-pork.jpg
+2 dishes on one image: vh-ds-cottage-pudding.jpg vh-wh-floating-island.jpg
+2 dishes on one image: vh-jw-matzo-ball.jpg vh-pd-rivvel.jpg
+2 dishes on one image: vh-kp-foil-potato.jpg vh-ww2-stuffed-potato.jpg
+2 dishes on one image: vh-kp-trail-beans.jpg vh-pc-red-beans.jpg
+2 dishes on one image: wg-smoked-trout.jpg wg-trout-camp.jpg
