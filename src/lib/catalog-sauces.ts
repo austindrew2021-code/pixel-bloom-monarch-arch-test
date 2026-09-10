@@ -456,7 +456,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon", 0.5, "", "Produce"),
       I("fresh dill", 1, "tbsp", "Produce"),
     ],
-    steps: ["Chop pickle and capers. Stir into mayo with lemon and dill. Chill."],
+    steps: [
+      "Chop the 2 dill pickles and the 1 tablespoon of capers fine — a processor turns them to slurry and the sauce needs the pieces.",
+      "Chop the 1 tablespoon of fresh dill.",
+      "Fold them through the ¾ cup of mayonnaise with the juice of the ½ lemon and the 1 teaspoon of salt.",
+      "Taste for salt and sharpness; it should be sharper than you expect, because it is going on fried food.",
+      "Chill 20 minutes. Serve cold — this is never heated.",
+    ],
   }),
   dish({
     id: "alfredo-sauce",
@@ -477,7 +483,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("garlic", 1, "clove", "Produce"),
       I("black pepper", 0.5, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Melt butter with garlic. Add cream. Off heat, melt in parmesan. Toss with pasta water."],
+    steps: [
+      "Melt the 4 tablespoons of butter over low heat with the 1 crushed clove of garlic. Let it infuse 2 minutes, then lift the garlic out.",
+      "Pour in the 1 cup of heavy cream and warm it until it just steams. Do not let it boil.",
+      "Take the pan off the heat before the cheese goes in. Add the 1½ cups of grated parmesan in handfuls, swirling, until it melts into a smooth sauce — held over heat it turns stringy and weeps butter.",
+      "Season with the 1 teaspoon of salt and the ½ teaspoon of black pepper.",
+      "Toss with hot pasta straight away, loosening with pasta water. It sets as it cools and does not reheat well.",
+    ],
   }),
   dish({
     id: "peanut-sauce",
@@ -526,7 +538,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("red pepper flakes", 2, "tsp", "Herbs & Spices"),
       I("cornstarch", 1, "tbsp", "Pantry"),
     ],
-    steps: ["Simmer vinegar, sugar, water, garlic, chili. Thicken with cornstarch slurry. Cool."],
+    steps: [
+      "Put the ½ cup of rice vinegar, the ½ cup of sugar, the ¼ cup of water, the 3 minced cloves of garlic, the 2 teaspoons of red pepper flakes, and the 1 teaspoon of salt in a small pan.",
+      "Bring to a simmer and cook 5–6 minutes, until the sugar has fully dissolved and it smells sweet rather than sharp.",
+      "Stir the 1 tablespoon of cornstarch into 2 tablespoons of cold water until smooth. Cornstarch dropped in dry, or bloomed in hot oil, goes lumpy.",
+      "Pour the slurry in while whisking and simmer 1 minute, until it turns clear and glossy and coats a spoon.",
+      "Cool completely — it thickens a lot as it cools. Keep in a jar in the fridge.",
+    ],
   }),
   dish({
     id: "ranch-dressing",
@@ -574,7 +592,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("garlic", 1, "clove", "Produce"),
       I("cornstarch", 1, "tsp", "Pantry"),
     ],
-    steps: ["Simmer soy, mirin, sugar, ginger, garlic. Thicken with a splash of cornstarch. Brush and broil."],
+    steps: [
+      "Put the ½ cup of soy sauce, the ¼ cup of mirin, the 3 tablespoons of brown sugar, the 1 tablespoon of grated ginger, and the 1 minced clove of garlic in a small pan.",
+      "Simmer 5 minutes, until the sugar dissolves and the raw edge of the soy has cooked off.",
+      "Stir the 1 teaspoon of cornstarch into a tablespoon of cold water and whisk it in.",
+      "Simmer 1 minute more, until it turns glossy and thick enough to coat the back of a spoon.",
+      "Take it off the heat. Brush onto salmon, chicken or broccoli in the last minutes of cooking — the sugar burns if it goes on early.",
+    ],
   }),
   dish({
     id: "basil-pesto",
@@ -595,7 +619,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("parmesan", 0.5, "cup", "Dairy & Eggs"),
       I("olive oil", 0.5, "cup", "Pantry"),
     ],
-    steps: ["Blitz basil, nuts, garlic, cheese. Stream oil. Salt. Toss with hot pasta or smear on toast."],
+    steps: [
+      "Toast the ⅓ cup of pine nuts in a dry pan 2–3 minutes, shaking, until they smell nutty and colour lightly. Cool them.",
+      "Pound or pulse the 2 bunches of fresh basil leaves with the 2 cloves of garlic, the pine nuts, and the 1 teaspoon of salt to a coarse green paste. Pulse in bursts — a running blade heats the basil and turns it black.",
+      "Work in the ½ cup of olive oil in a slow stream.",
+      "Stir the ½ cup of grated parmesan through by hand at the end so it stays creamy.",
+      "Taste for salt. Keep under a film of oil in the fridge, or freeze it in ice-cube trays.",
+    ],
   }),
   dish({
     id: "salsa-verde",
@@ -616,7 +646,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("onion", 0.5, "", "Produce"),
       I("lime", 1, "", "Produce"),
     ],
-    steps: ["Roast tomatillos and jalapeño until blistered. Blend with cilantro, onion, lime, salt."],
+    steps: [
+      "Husk the 1 pound of tomatillos and rinse the stickiness off. Put them on a tray with the 2 jalapeños and the ½ onion in thick wedges.",
+      "Broil 8–10 minutes, turning once, until blackened in patches and collapsing. Roasting is what takes the raw squeak out — a raw tomatillo salsa is a different sauce.",
+      "Tip everything, juices included, into a blender with the 1 bunch of cilantro and the 1 teaspoon of salt.",
+      "Pulse to a loose, textured sauce — not a smooth purée.",
+      "Squeeze the lime in and taste. Serve warm or cold on eggs, pork or tacos.",
+    ],
   }),
   dish({
     id: "weeknight-mole",
@@ -638,7 +674,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("chicken broth", 1.5, "cups", "Pantry"),
       I("cinnamon", 0.25, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Soak chiles, blend with cocoa, peanut butter, tomato, broth, cinnamon. Simmer 10 minutes. Salt."],
+    steps: [
+      "Stem and seed the 3 ancho chiles, tear them up, and toast them in a dry pan 30 seconds a side, until they smell sweet. Burn them and the whole sauce turns bitter.",
+      "Cover with hot water and soak 20 minutes, until soft.",
+      "Warm the 2 tablespoons of oil and fry the 1 tablespoon of tomato paste 1 minute, then add the ¼ teaspoon of cinnamon.",
+      "Blend the drained chiles with the tomato paste, the 1 tablespoon of cocoa powder, the 2 tablespoons of peanut butter, and the 1½ cups of chicken broth until smooth.",
+      "Return to the pan and simmer 15 minutes, stirring, until it coats a spoon. Season with the 1 teaspoon of salt and spoon over chicken.",
+    ],
   }),
   dish({
     id: "peri-peri-sauce",
@@ -660,7 +702,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("olive oil", 3, "tbsp", "Pantry"),
       I("red wine vinegar", 2, "tbsp", "Pantry"),
     ],
-    steps: ["Blend everything until smooth. Taste for salt and lemon. Brush on chicken and grill."],
+    steps: [
+      "Stem the 8 red chiles. Leave the seeds in for the heat the sauce is known for, or take them out for something gentler.",
+      "Blend them with the 4 cloves of garlic, the juice and zest of the lemon, the 1 teaspoon of smoked paprika, the 2 tablespoons of red wine vinegar, and the 1 teaspoon of salt.",
+      "With the blender running, pour in the 3 tablespoons of olive oil so it emulsifies into a loose sauce.",
+      "Warm it gently in a pan 3–4 minutes if you want the raw garlic softened — but do not boil it, or the fresh chile flavour cooks away.",
+      "Rest at least an hour before using. Marinate chicken in half and keep half for the table.",
+    ],
   }),
   dish({
     id: "harissa",
@@ -682,7 +730,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cumin", 1, "tsp", "Herbs & Spices"),
       I("olive oil", 3, "tbsp", "Pantry"),
     ],
-    steps: ["Soak chiles. Blend with pepper, garlic, spices, oil. Salt. Keep under a film of oil."],
+    steps: [
+      "Stem and seed the 8 dried chiles and soak them in boiling water 20 minutes, until soft and pliable.",
+      "Toast the 1 teaspoon of caraway and the 1 teaspoon of cumin in a dry pan until they smell warm, 30 seconds, then grind them.",
+      "Blend the drained chiles with the roasted red pepper, the 4 cloves of garlic, the ground spice, and the 1 teaspoon of salt to a thick paste.",
+      "Work in the 3 tablespoons of olive oil.",
+      "Pack into a jar and cover the surface with a film of oil — that seal is what keeps it for a month in the fridge.",
+    ],
   }),
   dish({
     id: "nuoc-cham",
@@ -704,7 +758,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("bird chile", 1, "", "Produce"),
       I("water", 0.33, "cup", "Other"),
     ],
-    steps: ["Dissolve sugar in warm water. Add fish sauce, lime, minced garlic and chile."],
+    steps: [
+      "Dissolve the 2 tablespoons of sugar in the ⅓ cup of warm water — warm, not hot, and only to get the sugar to go.",
+      "Stir in the 3 tablespoons of fish sauce and the juice of the 2 limes.",
+      "Add the 2 finely minced cloves of garlic and the sliced bird chile. Cut the garlic fine enough to float rather than sink.",
+      "Taste and balance: it should read salty, sour and sweet in that order, with the heat arriving last. Adjust with water if it is too strong.",
+      "Serve at room temperature. It is never cooked and it does not keep much past a day.",
+    ],
   }),
   dish({
     id: "yum-yum-sauce",
@@ -726,7 +786,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("sugar", 1, "tsp", "Pantry"),
       I("rice vinegar", 1, "tsp", "Pantry"),
     ],
-    steps: ["Whisk. Chill. It tastes more like the restaurant after an hour."],
+    steps: [
+      "Whisk the 1 cup of mayonnaise with the 2 tablespoons of ketchup until the colour is even and pale coral.",
+      "Whisk in the 1 teaspoon of garlic powder, the 1 teaspoon of paprika, the 1 teaspoon of sugar, the 1 teaspoon of rice vinegar, and the 1 teaspoon of salt.",
+      "Thin with a tablespoon or two of water until it drizzles rather than sits.",
+      "Do not heat it. It is a mayonnaise sauce and warming it breaks it into oil and curds.",
+      "Chill at least an hour — it tastes flat straight after mixing and comes together cold.",
+    ],
   }),
   dish({
     id: "cocktail-sauce",
@@ -746,7 +812,12 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon", 0.5, "", "Produce"),
       I("worcestershire", 1, "tsp", "Pantry"),
     ],
-    steps: ["Stir. More horseradish if it does not make your eyes water a little."],
+    steps: [
+      "Stir the 1 cup of ketchup with the 3 tablespoons of prepared horseradish.",
+      "Add the juice of the ½ lemon and the 1 teaspoon of worcestershire.",
+      "Taste. It should make your nose sting a little; horseradish fades fast in the fridge, so go heavier than feels right.",
+      "Chill 30 minutes. Serve cold with shrimp or oysters.",
+    ],
   }),
   dish({
     id: "marinara",
@@ -767,7 +838,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("fresh basil", 8, "leaves", "Produce"),
       I("kosher salt", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Warm oil and garlic. Add tomatoes and salt. Simmer 15 minutes. Basil at the end."],
+    steps: [
+      "Warm the 3 tablespoons of olive oil in a wide pan over medium-low heat with the 4 sliced cloves of garlic. Cook 2 minutes, until it turns pale gold and smells sweet — browned garlic goes bitter and there is no fixing it.",
+      "Add the 28 ounces of crushed tomatoes and the 1 teaspoon of kosher salt. Stand back; it spits.",
+      "Simmer 20 minutes, uncovered, stirring now and then, until it darkens and a spoon dragged across the pan leaves a trail.",
+      "Take it off the heat and tear the 8 leaves of fresh basil in. The heat left in the pan is enough; boiled basil turns black and tastes of nothing.",
+      "Taste for salt. Use straight away or keep a week in the fridge.",
+    ],
   }),
   dish({
     id: "garlic-aioli",
@@ -787,7 +864,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon", 0.5, "", "Produce"),
       I("olive oil", 1, "tbsp", "Pantry"),
     ],
-    steps: ["Mash garlic with salt. Whisk into mayo with lemon and oil."],
+    steps: [
+      "Crush the 3 cloves of garlic to a smooth paste with the 1 teaspoon of salt — a paste, not chopped, or you get hot bites of raw garlic.",
+      "Stir the paste into the ¾ cup of mayonnaise.",
+      "Add the juice of the ½ lemon and the 1 tablespoon of olive oil and stir by hand until glossy. Whisked hard or blended, it thins out.",
+      "Rest 20 minutes so the garlic mellows into the mayonnaise.",
+      "Serve cold with fries, fish or in a sandwich.",
+    ],
   }),
   dish({
     id: "bearnaise",
@@ -808,7 +891,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("tarragon", 2, "tbsp", "Produce"),
       I("white wine vinegar", 2, "tbsp", "Pantry"),
     ],
-    steps: ["Reduce vinegar with shallot and tarragon. Whisk yolks over low heat. Stream warm butter. Strain if you want it fancy."],
+    steps: [
+      "Simmer the 2 tablespoons of white wine vinegar with the finely chopped shallot and half the 2 tablespoons of tarragon until only a spoonful of liquid is left. This reduction is what separates béarnaise from hollandaise.",
+      "Melt the ½ cup of butter and keep it warm.",
+      "Whisk the 3 egg yolks into the cooled reduction in a bowl set over — not in — barely simmering water. Whisk 3–4 minutes, until thick enough to ribbon.",
+      "Off the heat, dribble the warm butter in a thread, whisking hard, until it emulsifies into a glossy sauce. If it breaks, whisk a spoon of warm water in and it usually comes back.",
+      "Stir in the rest of the tarragon and the 1 teaspoon of salt. Keep barely warm — hot, it splits; cold, it sets.",
+    ],
   }),
   dish({
     id: "poutine-gravy",
@@ -851,7 +940,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("garlic", 2, "cloves", "Produce"),
       I("rice vinegar", 1, "tsp", "Pantry"),
     ],
-    steps: ["Stir until smooth. Brush on in the last minutes of heat so the honey does not scorch."],
+    steps: [
+      "Whisk the 3 tablespoons of gochujang with the 2 tablespoons of soy sauce, the 2 tablespoons of honey, the 2 minced cloves of garlic, and the 1 teaspoon of rice vinegar until smooth.",
+      "Warm it in a small pan over low heat 3–4 minutes, just until it loosens and the garlic loses its raw edge.",
+      "Take it off the heat before stirring in the 1 teaspoon of sesame oil — heated hard, sesame oil turns acrid and loses its point.",
+      "Season with the 1 teaspoon of salt if it needs it; gochujang is already salty, so taste first.",
+      "Brush onto wings, tofu or broccoli in the last few minutes of cooking. The honey will burn if it goes on any earlier.",
+    ],
   }),
   dish({
     id: "zhug",
@@ -874,7 +969,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cardamom", 0.25, "tsp", "Herbs & Spices"),
       I("olive oil", 0.25, "cup", "Pantry"),
     ],
-    steps: ["Pulse herbs, chile, garlic, spices. Loosen with oil. Salt. Keep it coarse."],
+    steps: [
+      "Toast the 1 teaspoon of cumin and the ¼ teaspoon of cardamom in a dry pan 30 seconds, until fragrant, then grind them.",
+      "Put the 1 bunch of cilantro, the ½ bunch of parsley (stalks and all), the 3 green chiles, and the 3 cloves of garlic in a processor with the ground spice and the 1 teaspoon of salt.",
+      "Pulse to a coarse, bright green paste. Do not let it run — heat from the blade dulls the colour and the flavour.",
+      "Work in the ¼ cup of olive oil by hand.",
+      "It is never cooked. Serve at room temperature with falafel, eggs or grilled meat; it keeps a week under a film of oil.",
+    ],
   }),
   dish({
     id: "toum",
@@ -894,7 +995,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon", 1, "", "Produce"),
       I("ice water", 3, "tbsp", "Other"),
     ],
-    steps: ["Blitz peeled garlic with salt. Stream oil and lemon slowly, like mayonnaise, with a splash of ice water when it threatens to break."],
+    steps: [
+      "Peel the head of garlic and take the green germ out of any clove that has one — that is what makes toum bitter. Blitz the cloves with the 1 teaspoon of salt to a fine paste, scraping down twice.",
+      "With the processor running, add the 1½ cups of neutral oil a few drops at a time to begin with. Rushing this is the only way to fail: the emulsion breaks and you get garlic soup.",
+      "Once it starts to thicken and turn white, alternate a thin stream of oil with a little of the lemon juice and the 3 tablespoons of ice water.",
+      "Keep going until it is stiff, matte and white like a whipped frosting. It should hold a peak.",
+      "It is never heated. Chill it, and put it alongside shawarma or roast chicken; it keeps a month.",
+    ],
   }),
   dish({
     id: "ponzu",
@@ -915,7 +1022,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("orange", 0.5, "", "Produce"),
       I("mirin", 1, "tbsp", "Pantry"),
     ],
-    steps: ["Stir soy, vinegar, citrus, mirin. Rest 10 minutes. Better the next day."],
+    steps: [
+      "Squeeze the lemon and the ½ orange and strain out the pips and pulp.",
+      "Stir the juice into the ½ cup of soy sauce with the 2 tablespoons of rice vinegar and the 1 tablespoon of mirin.",
+      "If you have a piece of kombu or a pinch of bonito, drop it in — that is what gives a bottled ponzu its depth.",
+      "Rest it in the fridge overnight so the citrus and the soy stop tasting like two separate things.",
+      "Strain and serve cold with dumplings, sashimi or cold tofu. Never heated.",
+    ],
   }),
   dish({
     id: "muhammara",
@@ -937,7 +1050,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cumin", 0.5, "tsp", "Herbs & Spices"),
       I("olive oil", 3, "tbsp", "Pantry"),
     ],
-    steps: ["Pulse peppers, walnuts, molasses, garlic, cumin. Stream oil. Salt. It should be thick, not a puree."],
+    steps: [
+      "Toast the ¾ cup of walnuts in a dry pan 3–4 minutes, until they smell rich, and cool them. Raw, they taste chalky and the dip falls flat.",
+      "Pulse them with the 2 roasted red peppers, the 1 clove of garlic, the ½ teaspoon of cumin, and the 1 teaspoon of salt to a coarse paste with texture left in it.",
+      "Add the 2 tablespoons of pomegranate molasses and pulse once more.",
+      "Work in the 3 tablespoons of olive oil by hand.",
+      "Rest an hour before serving so the molasses comes forward. Serve at room temperature.",
+    ],
   }),
   dish({
     id: "mojo",
@@ -959,7 +1078,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cumin", 1, "tsp", "Herbs & Spices"),
       I("olive oil", 0.25, "cup", "Pantry"),
     ],
-    steps: ["Mash garlic with salt. Whisk in citrus, oregano, cumin, oil. Pour over pork or use as a table sauce."],
+    steps: [
+      "Crush the 8 cloves of garlic with the 1 teaspoon of salt to a paste.",
+      "Toast the 1 teaspoon of cumin and the 1 teaspoon of oregano in a dry pan a few seconds, until they smell warm.",
+      "Warm the ¼ cup of olive oil until it just shimmers and pour it over the garlic and spice. It will hiss — that bloom is the whole flavour.",
+      "Let it cool, then stir in the juice of the 2 oranges and the 2 limes. Sour orange if you can get it; this pair is the stand-in.",
+      "Rest an hour. Use as a marinade for pork, or spoon it over after cooking.",
+    ],
   }),
   dish({
     id: "come-back-sauce",
@@ -981,7 +1106,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("worcestershire", 1, "tsp", "Pantry"),
       I("garlic powder", 0.5, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Grate onion. Whisk everything. Chill. Put it on shrimp, fries, and sandwiches."],
+    steps: [
+      "Grate the 2 tablespoons of onion fine, or the sauce will have raw chunks in it.",
+      "Whisk it into the 1 cup of mayonnaise with the ¼ cup of chili sauce.",
+      "Add the juice of the lemon, the 1 teaspoon of worcestershire, the ½ teaspoon of garlic powder, and the 1 teaspoon of salt.",
+      "Do not heat it. Mayonnaise splits on the stove, and this sauce is served cold.",
+      "Chill at least 2 hours — overnight is better. It is called come-back sauce because it improves sitting.",
+    ],
   }),
   dish({
     id: "honey-mustard",
@@ -1001,7 +1132,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("mayonnaise", 2, "tbsp", "Pantry"),
       I("apple cider vinegar", 1, "tsp", "Pantry"),
     ],
-    steps: ["Stir until glossy. Salt. It should be sharp and sweet, not candy."],
+    steps: [
+      "Whisk the ⅓ cup of dijon mustard with the ¼ cup of honey until the colour is even.",
+      "Whisk in the 2 tablespoons of mayonnaise, which is what keeps it clinging instead of running off.",
+      "Add the 1 teaspoon of apple cider vinegar and the 1 teaspoon of salt.",
+      "Taste and push it whichever way you want it — more honey for tenders, more mustard for a salad.",
+      "Serve cold. It needs no cooking and keeps two weeks in the fridge.",
+    ],
   }),
   dish({
     id: "sweet-sour-sauce",
