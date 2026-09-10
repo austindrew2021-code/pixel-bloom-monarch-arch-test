@@ -247,8 +247,17 @@ function cookedText(recipe: Recipe): string {
   return joined.replace(new RegExp(escapeRe(title), "gi"), " the dish ");
 }
 
+/**
+ * "There is no flour in this batter" is a promise the recipe makes, not a row
+ * to buy. It put half a cup of flour into the three-ingredient flourless
+ * pancakes. Two words after the negator is enough to swallow the food itself
+ * without eating the rest of the sentence.
+ */
+const NEGATED = /\b(?:no|without)\s+[\w-]+(?:\s+[\w-]+)?/gi;
+
 function namesFood(steps: string, fix: ListFix): boolean {
-  const blob = fix.notNamed ? steps.replace(new RegExp(fix.notNamed.source, "gi"), " ") : steps;
+  const said = steps.replace(NEGATED, " ");
+  const blob = fix.notNamed ? said.replace(new RegExp(fix.notNamed.source, "gi"), " ") : said;
   return fix.named.test(blob);
 }
 
