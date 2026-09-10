@@ -278,9 +278,11 @@ const FIGURES = /\bas (?:big|large|thick|small|round|thin) as an? [\w-]+|\bthe (
  * Naming a food to say you are NOT using it is the negation case; naming one
  * to say what you are using instead is this one. The Southern Cook Book makes
  * chicken hash with "a white sauce, using the chicken broth in place of milk",
- * and the milk it rules out is the whole point of the sentence.
+ * and the milk it rules out is the whole point of the sentence. The same goes
+ * for an alternative offered the other way round — fritters fried in deep fat,
+ * "or butter in its place".
  */
-const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+/gi;
+const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+|\bor\s+[\w-]+\s+(?:in its place|instead)\b/gi;
 
 /**
  * Strip the places a food is named without being used: denied, likened to,
