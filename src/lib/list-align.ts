@@ -253,7 +253,7 @@ function cookedText(recipe: Recipe): string {
  * pancakes. Two words after the negator is enough to swallow the food itself
  * without eating the rest of the sentence.
  */
-const NEGATED = /\b(?:no|without)\s+[\w-]+(?:\s+[\w-]+)?/gi;
+const NEGATED = /\b(?:no|without|never)\s+[\w-]+(?:\s+[\w-]+)?|\bnot\s+(?:add|use|put|include|contain)\s+[\w-]+/gi;
 
 function namesFood(steps: string, fix: ListFix): boolean {
   const said = steps.replace(NEGATED, " ");
