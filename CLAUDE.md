@@ -43,11 +43,21 @@ Chromium at `/opt/pw-browsers/chromium`; never run `playwright install`.
   cook mode renders inside them and inerts itself.
 - **Tap targets** grow with real `padding-block`, never an `::after` overlay; the
   overlay swallowed a neighbouring wrapped button.
+- **A recipe must be makeable from its own steps.** `method-truth.test.ts` is
+  the guard: a dish named baked/grilled/steamed/braised has to use one, nothing
+  structural (wrappers, pie shell, loaves, a whole bird) may be "stirred in",
+  nothing is added after the dish is served, and a method that cooks for hours
+  cannot claim twenty minutes. The older step/list invariant passes on all of
+  these, because it only checks that ingredients are *mentioned*. Mentioning is
+  not using: a generator once satisfied it by appending "Stir in the ..." to
+  whatever step came last.
 
 ## Connectors available (verified 2026-09-10)
 
-**Web search / extraction — five, all connected and enabled:**
-Tavily · Nimble · Firecrawl · Parallel Search · Exa.
+**Web search / extraction — five, all connected, enabled, and proven working
+here:** Tavily · Nimble · Firecrawl · Parallel Search · Exa. They are what found
+the broken-method defect: verifying dishes against published recipes is the only
+check that catches a method the local invariants think is fine.
 Use them for anything that has to match the outside world: verifying a recipe
 against published versions, nutrition figures, fitness standards, retailer URLs.
 Parallel Search takes several queries per call and returns answer-ready
