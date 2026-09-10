@@ -68,7 +68,7 @@ export const WORLD_RECIPES: Recipe[] = [
       I("chicken broth", 6, "cups", "Pantry"),
     ],
     steps: [
-      "Simmer chicken with onion, carrot, and celery in broth until tender. Shred the meat.",
+      "Simmer the bone-in thighs with onion, carrot, and celery in the broth 35 minutes, until the meat pulls off the bone and reads 175°F. Lift them out and shred the meat, discarding skin and bones.",
       "Mix flour, baking powder, salt, and milk into a thick batter.",
       "Drop spoonfuls on the simmering stew. Cover 15 minutes — do not peek.",
     ],
@@ -830,7 +830,7 @@ export const WORLD_RECIPES: Recipe[] = [
       I("chicken broth", 8, "cups", "Pantry"),
     ],
     steps: [
-      "Simmer the 1½ pounds of chicken thighs in the 8 cups of chicken broth with the 2 tablespoons of oil for 30 minutes, skimming, until the meat pulls apart. Lift the chicken out, shred it, and return it.",
+      "Simmer the 1½ pounds of chicken thighs in the 8 cups of chicken broth with the 2 tablespoons of oil for 30 minutes, skimming, until the meat pulls apart and reads 175°F. Lift the chicken out, shred it, and return it.",
       "Add the ½ cup of rice and cook 15 minutes, until tender. Then take the pot off the heat and let it stop bubbling.",
       "Beat the 2 eggs with the juice of the 2 lemons until frothy.",
       "Ladle a cup of the hot broth into the eggs in a thin stream, whisking hard the whole time. Do this twice more. Pouring eggs straight into a hot pot gives you lemon soup with scrambled egg in it.",
@@ -1074,7 +1074,7 @@ export const WORLD_RECIPES: Recipe[] = [
       "Spoon the thick cream from the top of the 1 can of coconut milk into a hot pot with the 2 tablespoons of oil and let it split and sizzle, 3 minutes.",
       "Fry the 3 tablespoons of green curry paste in that fat 2 minutes, until it darkens and smells fragrant. Frying the paste, not just warming it, is where the flavour comes from.",
       "Add the 1½ pounds of sliced chicken thighs and turn them in the paste, then pour in the rest of the coconut milk and bring to a simmer.",
-      "Add the 2 Thai eggplant or zucchini in chunks and simmer 15 minutes, until the chicken is cooked through and the vegetables are tender. Season with the 2 tablespoons of fish sauce, the 1 teaspoon of palm or brown sugar, and the 1 teaspoon of salt.",
+      "Add the 2 Thai eggplant or zucchini in chunks and simmer 15 minutes, until the chicken reads 175°F and the vegetables are tender. Season with the 2 tablespoons of fish sauce, the 1 teaspoon of palm or brown sugar, and the 1 teaspoon of salt.",
       "Take off the heat and stir in the 1 bunch of Thai basil so it wilts but stays green. Serve with the 1½ cups of rice.",
     ],
   }),
@@ -1100,7 +1100,7 @@ export const WORLD_RECIPES: Recipe[] = [
     steps: [
       "Dice the 1½ pounds of chicken thighs into ¾-inch cubes and toss with the 1 teaspoon of salt and a spoon of the soy sauce.",
       "Get a wok very hot with the 2 tablespoons of oil. Fry the 8 dried red chiles a few seconds, until they darken but do not blacken — burnt, they turn acrid and the whole dish with them.",
-      "Add the chicken in one layer and leave it to sear, then stir-fry 4–5 minutes total, until browned and no longer pink inside.",
+      "Add the chicken in one layer and leave it to sear, then stir-fry 4–5 minutes total, until browned and no longer pink inside — 165°F at the centre of a cube.",
       "Add the 4 cloves of garlic and the white parts of the 4 scallions for 30 seconds, then the rest of the 3 tablespoons of soy sauce and the 1 tablespoon of Chinkiang vinegar. Toss until it glazes.",
       "Off the heat, stir in the ½ cup of roasted peanuts and the scallion greens so the nuts stay crunchy.",
     ],
@@ -1286,7 +1286,7 @@ export const WORLD_RECIPES: Recipe[] = [
       "Steep the pinch of saffron in a little warm water. Pat the 1 pound of chicken thighs dry, season with the 1 teaspoon of salt, and brown them in the 2 tablespoons of oil in a wide shallow pan. Lift out.",
       "Soften the chopped onion in the fat, then add the 2 grated tomatoes and cook down 5 minutes to a thick sofrito.",
       "Stir in the 1½ cups of short-grain rice until every grain is coated, then pour in the 4 cups of chicken broth and the saffron water. Return the chicken.",
-      "Simmer 15 minutes without stirring — stirring makes it risotto, and the crust on the bottom is the point. Scatter the ¾ pound of shrimp and the 1 cup of frozen peas over the top and cook 5–8 minutes more, until the rice is tender and the shrimp are pink.",
+      "Simmer 15 minutes without stirring — stirring makes it risotto, and the crust on the bottom is the point. Scatter the ¾ pound of shrimp and the 1 cup of frozen peas over the top and cook 5–8 minutes more, until the rice is tender, the shrimp are pink, and the chicken reads 175°F.",
       "Turn the heat up for the last minute to catch the base, then rest off the heat 5 minutes under a cloth before serving from the pan.",
     ],
   }),
@@ -1421,7 +1421,7 @@ export const WORLD_RECIPES: Recipe[] = [
       "Pour the rest of the oil into the pot and whisk in the ¾ cup of flour. Cook over medium heat, stirring without stopping, 20–25 minutes, until the roux is the colour of milk chocolate. Do not walk away — a burnt roux is bitter and there is no saving it.",
       "Tip in the diced onion, the 2 stalks of celery, and the chopped bell pepper. They will hiss and stop the roux cooking. Stir 8 minutes, until soft.",
       "Whisk in the 8 cups of chicken broth a ladle at a time so it stays smooth. Return the chicken and sausage and simmer, uncovered, 45 minutes.",
-      "Add the 2 cups of okra and simmer 15 minutes more, until it is tender and the gumbo has thickened. Shred the chicken back in, season, and ladle over rice.",
+      "Add the 2 cups of okra and simmer 15 minutes more, until it is tender and the gumbo has thickened. Lift the chicken out — it pulls apart easily once it has passed 175°F — shred it back in, season, and ladle over rice.",
     ],
   }),
   dish({
@@ -1450,7 +1450,7 @@ export const WORLD_RECIPES: Recipe[] = [
       "Soften the chopped onion, the 2 stalks of celery, and the chopped bell pepper in the fat, 8 minutes. Stir in the 1 tablespoon of Cajun seasoning and cook 30 seconds.",
       "Add the 1 can of crushed tomatoes and cook 3 minutes, then stir in the 1½ cups of rice until coated.",
       "Pour in the 3 cups of chicken broth, return the chicken and sausage, and bring to a boil. Cover and cook on the lowest heat 25 minutes without stirring — stir it and the rice goes gluey.",
-      "Rest off the heat 10 minutes, still covered, then fork it up and serve.",
+      "Rest off the heat 10 minutes, still covered. Check a thigh reads 175°F, then fork it up and serve.",
     ],
   }),
   dish({

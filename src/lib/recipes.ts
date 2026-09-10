@@ -190,7 +190,7 @@ const CORE_RECIPES: Recipe[] = [
 		],
 		steps: [
       "Start the 1½ cups of rice. Slice the 1½ pounds of chicken thighs thin across the grain and toss with a spoon of the 3 tablespoons of soy sauce.",
-      "Sear the chicken in a hot skillet in one layer, 3–4 minutes, turning once, until browned outside and no longer pink inside. Set aside.",
+      "Sear the chicken in a hot skillet in one layer, 3–4 minutes, turning once, until browned outside and no longer pink inside — 165°F at the centre of a slice. Set aside.",
       "Stir-fry the 12 ounces of snap peas and the sliced bell pepper 2–3 minutes, until bright and blistered but still snapping.",
       "Add the 1 tablespoon of ginger, the 3 cloves of garlic, the remaining soy sauce, and the chicken with any juices.",
       "Toss 1 minute to glaze. Finish with the 1 teaspoon of sesame oil and serve over the rice.",
@@ -260,7 +260,7 @@ const CORE_RECIPES: Recipe[] = [
 		steps: [
 			"Mix turkey, breadcrumbs, egg, chopped parsley, salt, and grated parmesan.",
 			"Roll into balls. Brown in a skillet, then pour in crushed tomatoes and garlic.",
-			"Simmer covered 20 minutes until cooked through."
+			"Simmer covered 20 minutes, until a thermometer pushed into the middle of a meatball reads 165°F."
 		]
 	},
 	{
@@ -753,7 +753,7 @@ const CORE_RECIPES: Recipe[] = [
 		],
 		steps: [
       "Set a wide skillet over medium-high heat with a film of the 2 tablespoons of oil. Add the 1½ pounds of ground turkey and the 2 tablespoons of taco seasoning.",
-      "Cook 6–8 minutes, breaking the meat up with a spoon, until no pink remains. Drain extra fat.",
+      "Cook 6–8 minutes, breaking the meat up with a spoon, until no pink remains and it reads 165°F. Drain extra fat.",
       "Add the 1 can of drained black beans and the 1 cup of frozen corn and cook 3–4 minutes, until hot through. Season with the 1 teaspoon of salt and pepper. Taste.",
       "Take the pan off the heat and scatter the 3 ounces of cheddar over so it melts in the residual heat.",
       "Shred the 1 head of lettuce and put it on the table cold, for people to pile on top. Do not cook it.",
@@ -1070,7 +1070,7 @@ const CORE_RECIPES: Recipe[] = [
 		],
 		steps: [
       "Warm the 2 tablespoons of oil in a heavy pot over medium heat and soften the chopped onion, 5–6 minutes.",
-      "Add the 2 pounds of ground turkey and cook 8 minutes, breaking it up, until no pink remains and some of it has browned. Browning is where the flavour comes from — boiling it does not get you there.",
+      "Add the 2 pounds of ground turkey and cook 8 minutes, breaking it up, until no pink remains, some of it has browned, and it reads 165°F. Browning is where the flavour comes from — boiling it does not get you there.",
       "Stir in the 2 tablespoons of chili powder and cook 30 seconds, until it smells toasted.",
       "Add the 1 can of crushed tomatoes, the 2 cans of drained black beans, the 1 teaspoon of salt, and a cup of water. Simmer 25 minutes, uncovered, until it thickens.",
       "Ladle into warm bowls and pass the ½ cup of Greek yogurt at the table.",
@@ -1136,7 +1136,7 @@ const CORE_RECIPES: Recipe[] = [
 		],
 		steps: [
 			"Heat the oven to 400°F. Toss the 2½ pounds of chicken thighs with the ¼ cup of soy sauce, the 2 tablespoons of fresh ginger, and the 4 cloves of garlic.",
-			"Bake 30 minutes, until the chicken is cooked through and the edges are browned.",
+			"Bake 30 minutes, until the edges are browned and a thermometer in the thickest thigh reads 175°F.",
 			"Cook the 2 cups of rice in salted water until tender. Steam the 2 heads of broccoli until just tender, 4–5 minutes.",
 			"Slice the chicken. Divide rice, chicken, and broccoli among six boxes. Scatter the 4 green onions over.",
 		],
