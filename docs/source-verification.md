@@ -119,6 +119,19 @@ The rule: follow the book on technique, add a thermometer where the book is
 silent, and never swap a method out on safety grounds when a temperature
 check would settle it instead.
 
+### The exception: an ingredient that is simply unsafe
+
+A thermometer cannot settle everything. **Almond chicken soup** calls for six
+bitter almonds "for a more pronounced flavor". Bitter almonds carry amygdalin,
+which releases hydrogen cyanide; the reported range is that six to ten can
+cause severe poisoning and around fifty can kill an adult, and they are not
+sold for eating in the United States. That ingredient is omitted, and the step
+says so and says why, rather than dropping it quietly.
+
+This is the only kind of departure that overrides fidelity: not a technique a
+modern kitchen would do differently, but an ingredient that is a poison at the
+dose the recipe gives.
+
 ## One more way the scan lies
 
 The OCR does not only lose glyphs, it reorders text around illustrations.
@@ -153,5 +166,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 62 |
+| The Southern Cook Book (Lustig 1935) | 317 | 65 |
 | The other 20 books | 139 | 0 |
