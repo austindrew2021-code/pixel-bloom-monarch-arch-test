@@ -35,10 +35,15 @@ export function startAheadHours(recipe: Pick<Recipe, "steps" | "minutes">): numb
   for (const step of recipe.steps) {
     if (!UNATTENDED.test(step)) continue;
     for (const [pattern, unitHours] of WAITS) {
-      const match = pattern.exec(step);
-      if (!match) continue;
-      const hours = match[1] ? Number(match[1]) * unitHours : unitHours;
-      if (Number.isFinite(hours)) longest = Math.max(longest, hours);
+      // Every match in the step, not the first. "Leave the door ajar 1 hour,
+      // then chill at least 4 hours" was being read as a one-hour wait, which
+      // is under the stated time, so the cheesecake warned about nothing.
+      const all = [...step.matchAll(new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`))];
+      if (all.length === 0) continue;
+      for (const match of all) {
+        const hours = match[1] ? Number(match[1]) * unitHours : unitHours;
+        if (Number.isFinite(hours)) longest = Math.max(longest, hours);
+      }
       break;
     }
   }

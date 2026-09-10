@@ -193,8 +193,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("potato chips or crumbs", 1, "cup", "Pantry"),
     ],
     steps: [
-      "Boil noodles. Mix with tuna, soup, peas, and cheese.",
-      "Top with crushed chips. Bake 20 minutes at 375°F.",
+      "Heat the oven to 375°F. Boil the 12 ounces of egg noodles 2 minutes shy of the packet time, then drain — they finish cooking in the oven.",
+      "Warm the 2 tablespoons of oil in a wide pan and stir in the 1 can of cream of mushroom soup with ½ cup of water until smooth.",
+      "Fold through the 2 cans of drained tuna, the 1 cup of frozen peas, half the 1 cup of cheddar, the noodles, and the 1 teaspoon of salt.",
+      "Scrape into a baking dish, scatter the rest of the cheddar over, then the 1 cup of crushed potato chips.",
+      "Bake 25 minutes, until it bubbles at the edges and the top is crisp and gold.",
     ],
   }),
   dish({

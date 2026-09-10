@@ -65,3 +65,11 @@ test("nothing quick and unattended gets a needless warning", () => {
   assert.ok(quick.length > 50, `only ${quick.length} quick dishes to check`);
   for (const recipe of quick) assert.equal(startAheadLabel(recipe), null, `${recipe.id} warned for nothing`);
 });
+
+test("the longest wait in a step wins, not the first", () => {
+  // "Leave the door ajar 1 hour, then chill at least 4 hours" was read as a
+  // one-hour wait — under the stated time — so the cheesecake said nothing.
+  const cake = fake(["Bake 50 minutes.", "Leave the door ajar 1 hour, then chill at least 4 hours before slicing."], 70);
+  assert.equal(startAheadHours(cake), 4);
+  assert.equal(startAheadLabel(cake), "Start 4h ahead");
+});

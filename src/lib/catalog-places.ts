@@ -130,7 +130,7 @@ export const ATLANTIC_RECIPES: Recipe[] = [
     ["atlantic", "new-brunswick", "acadian"],
     "pork",
     "bowl",
-    120,
+    165,
     "Grated-potato dumplings stuffed with salted pork. Acadian, filling, not Quebec poutine.",
     [
       I("russet potatoes", 6, "", "Produce"),
@@ -138,7 +138,7 @@ export const ATLANTIC_RECIPES: Recipe[] = [
       I("onion", 1, "", "Produce"),
       I("kosher salt", 2, "tsp", "Herbs & Spices"),
     ],
-    ["Soak the ½ pound of salt pork in cold water for several hours to draw the salt out, then cut it into small cubes.", "Grate 3 of the 6 russet potatoes and squeeze them bone dry in a cloth. Boil and mash the other 3. Mix grated and mashed together with the 2 teaspoons of kosher salt and the grated onion.", "With wet hands, wrap a ball of potato around each cube of pork, sealing it right in so nothing leaks.", "Lower the dumplings into a big pot of boiling salted water and keep it at a steady simmer for 2 to 2½ hours. They are done when a skewer meets no raw grate in the middle — anything less and the centre is still raw potato.", "Lift out, drain, and serve hot with the 2 tablespoons of butter and plenty of pepper."],
+    ["Soak the ½ pound of salt pork in cold water overnight to draw the salt out, then cut it into small cubes.", "Grate 3 of the 6 russet potatoes and squeeze them bone dry in a cloth. Boil and mash the other 3. Mix grated and mashed together with the 2 teaspoons of kosher salt and the grated onion.", "With wet hands, wrap a ball of potato around each cube of pork, sealing it right in so nothing leaks.", "Lower the dumplings into a big pot of boiling salted water and keep it at a steady simmer for 2 to 2½ hours. They are done when a skewer meets no raw grate in the middle — anything less and the centre is still raw potato.", "Lift out, drain, and serve hot with the 2 tablespoons of butter and plenty of pepper."],
     ["poutine rapee", "acadian potato dumpling"],
     { cal: 510, protein: 18, carbs: 52, fat: 26 },
   ),

@@ -915,7 +915,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("Dijon mustard", 1, "tbsp", "Pantry"),
 			I("lemon", 1, "", "Produce")
 		],
-		steps: ["Roast salmon at 400°F for 12 minutes. Cook quinoa with salt.", "Fold dill into quinoa. Stir yogurt with mustard and lemon for a sauce."]
+		steps: [
+      "Heat the oven to 425°F. Cook the 1½ cups of quinoa in salted water until the grains uncoil, 12–15 minutes, then drain and keep warm.",
+      "Pat the 4 salmon fillets dry, season with the 1 teaspoon of salt, and set them on an oiled sheet pan. Brush with the 2 tablespoons of oil and the 1 tablespoon of Dijon mustard.",
+      "Roast 10–12 minutes, until the flesh flakes at the thickest part and the centre is just opaque.",
+      "Fork the ¼ cup of chopped dill through the quinoa and squeeze half the lemon over.",
+      "Spoon the quinoa into bowls, lay the salmon on top, and put the ½ cup of Greek yogurt and the rest of the lemon on the table.",
+    ]
 	},
 	{
 		id: "beef-zucchini-skillet",
@@ -1119,7 +1125,7 @@ const CORE_RECIPES: Recipe[] = [
 		id: "pulled-pork",
 		name: "Slow oven pulled pork",
 		description: "Rub, roast, shred. Tacos, bowls, sandwiches.",
-		minutes: 240,
+		minutes: 260,
 		servings: 10,
 		protein: "pork",
 		plate: "roast",
@@ -1139,7 +1145,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("onion", 1, "", "Produce"),
 			I("apple cider vinegar", .25, "cup", "Pantry")
 		],
-		steps: ["Rub pork with sugar and spices. Set on onion in a Dutch oven with vinegar.", "Cover and roast at 300°F for 4 hours. Shred. Keep the juices."]
+		steps: [
+      "Heat the oven to 300°F. Pat the 4 pounds of pork shoulder dry and rub it all over with the 1 teaspoon of salt, the 2 tablespoons of paprika, the 2 tablespoons of brown sugar, and the 1 teaspoon of cumin.",
+      "Set it on a bed of the sliced onion in a deep roasting pan, pour the ¼ cup of apple cider vinegar and the 2 tablespoons of oil around it, and cover tightly with foil.",
+      "Roast 3½ hours covered, then uncover and give it 30 minutes more to darken the bark.",
+      "Rest 20 minutes. It is ready when a fork twists in the shoulder with no resistance — if it does not, it needs longer, not more heat.",
+      "Pull the meat apart with two forks, discarding the fat, and toss it through the onions and the pan juices.",
+    ]
 	},
 	{
 		id: "baked-oatmeal",
