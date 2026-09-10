@@ -165,4 +165,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-okra-tomatoes",
   "so-fried-okra",
   "so-string-beans-bacon",
+  "so-baked-beans",
+  "so-salsify",
+  "so-lima-beans",
+  "so-boiled-okra",
 ]);
