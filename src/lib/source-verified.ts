@@ -183,4 +183,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-stuffed-squash",
   "so-creamed-peas",
   "so-tomato-bacon-rice",
+  "so-chess-pie",
+  "so-kentucky-pie",
+  "so-lemon-pie",
+  "so-jelly-pie",
+  "so-coconut-pie",
 ]);
