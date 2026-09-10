@@ -682,7 +682,7 @@ export const WORLD_RECIPES: Recipe[] = [
       "Heat the oven to 425°F. Put the 3 tablespoons of oil in a roasting tin with the 8 pork sausages and roast 15 minutes, until the sausages are browned and the fat is smoking hot.",
       "Pour the batter around the sausages in one go. It should hiss the moment it lands — if it does not, the fat was not hot enough and it will not puff.",
       "Bake 25–30 minutes without opening the door, until the batter is risen, deep gold, and crisp at the edges.",
-      "Serve at once with onion gravy, before it sinks.",
+      "Serve at once, before it sinks.",
     ],
   }),
   dish({
@@ -1255,8 +1255,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("flour", 2, "tbsp", "Pantry"),
     ],
     steps: [
-      "Make a quick béchamel. Assemble ham and cheese sandwiches, sauce on top.",
-      "Broil until blistered.",
+      "Melt the 3 tablespoons of butter, stir in the 2 tablespoons of flour, and cook 1 minute. Whisk in the 1 cup of milk a little at a time and simmer to a thick béchamel. Season.",
+      "Heat the broiler. Lay the 8 slices of pain de mie or white bread out and spread a thin layer of béchamel on four of them.",
+      "Add the 8 slices of ham and half the 6 ounces of grated Gruyère, then close each sandwich.",
+      "Spread the rest of the béchamel over the tops and scatter the remaining Gruyère across.",
+      "Broil 3–4 minutes, until the top is blistered and gold and the cheese has run down the sides. Eat hot.",
     ],
   }),
   dish({
@@ -1280,8 +1283,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("frozen peas", 1, "cup", "Frozen"),
     ],
     steps: [
-      "Brown chicken. Sofrito of onion and tomato. Add rice and saffron broth. Do not stir.",
-      "Nestle shrimp and peas for the last 8 minutes. Rest 5.",
+      "Steep the pinch of saffron in a little warm water. Pat the 1 pound of chicken thighs dry, season with the 1 teaspoon of salt, and brown them in the 2 tablespoons of oil in a wide shallow pan. Lift out.",
+      "Soften the chopped onion in the fat, then add the 2 grated tomatoes and cook down 5 minutes to a thick sofrito.",
+      "Stir in the 1½ cups of short-grain rice until every grain is coated, then pour in the 4 cups of chicken broth and the saffron water. Return the chicken.",
+      "Simmer 15 minutes without stirring — stirring makes it risotto, and the crust on the bottom is the point. Scatter the ¾ pound of shrimp and the 1 cup of frozen peas over the top and cook 5–8 minutes more, until the rice is tender and the shrimp are pink.",
+      "Turn the heat up for the last minute to catch the base, then rest off the heat 5 minutes under a cloth before serving from the pan.",
     ],
   }),
   dish({
@@ -1301,8 +1307,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("olive oil", 0.75, "cup", "Pantry"),
     ],
     steps: [
-      "Slow-cook potato and onion in olive oil until tender. Drain, mix with beaten eggs.",
-      "Set in a pan, flip once. Cool slightly before slicing.",
+      "Slice the 2 pounds of potato thin and the onion thinly too. Warm the ¾ cup of olive oil in a skillet and cook them gently 20–25 minutes, until soft but not coloured. This is poaching, not frying.",
+      "Drain them in a sieve over a bowl, keeping the oil, and season well.",
+      "Beat the 6 eggs in a large bowl, fold the hot potato through, and leave 10 minutes so the potato drinks the egg.",
+      "Return 2 tablespoons of the oil to the pan, pour the mixture in, and cook on low 8–10 minutes, easing the edges in, until the sides are set and the middle still wobbles.",
+      "Slide it onto a plate, invert the pan over it, flip, and cook 3–4 minutes more. Rest 10 minutes and serve warm or at room temperature, never hot.",
     ],
   }),
   dish({
@@ -1324,8 +1333,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("oil for frying", 1, "cup", "Pantry"),
     ],
     steps: [
-      "Pound cutlets thin. Flour, egg, breadcrumb.",
-      "Fry in 350°F oil until gold. Lemon.",
+      "Pound the 4 pork cutlets between sheets of plastic to ¼ inch. Pat dry and season with the 1 teaspoon of salt.",
+      "Set out three dishes: the ½ cup of flour, the 2 beaten eggs, and the 1½ cups of breadcrumbs. Dredge each cutlet in flour, then egg, then crumbs — press lightly, do not pack them on, or the coating will not puff away from the meat.",
+      "Heat the 1 cup of oil in a wide pan to about ⅓ inch deep and 340°F, hot enough that a crumb sizzles at once.",
+      "Fry 2–3 minutes a side, swirling the pan so the oil washes over the top, until deep gold. Drain on a rack, never on paper, and never cover it.",
+      "Serve immediately with the lemon cut into wedges. No sauce goes over a schnitzel.",
     ],
   }),
   dish({
@@ -1348,8 +1360,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("sour cream", 1, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Make a dough. Fill with mashed potato and cheese.",
-      "Boil until they float, then fry in butter with onion. Sour cream.",
+      "Boil the 2 pounds of potato until soft, drain, and mash. Soften the chopped onion in half the 4 tablespoons of butter and stir it in with the 1 cup of cheddar or farmer cheese and the 1 teaspoon of salt. Cool completely.",
+      "Make the dough: mix the 3 cups of flour with the egg, a pinch of salt, and about ¾ cup of warm water to a soft dough. Knead 5 minutes, then rest it 30 minutes under a bowl — unrested dough springs back and will not seal.",
+      "Roll thin and cut 3-inch rounds. Put a spoon of filling on each, fold, and pinch the edge firmly closed with dry fingers.",
+      "Boil them in batches in well-salted water. They are done about 2 minutes after they float.",
+      "Fry the drained pierogi in the rest of the butter until blistered and gold. Serve with the 1 cup of sour cream.",
     ],
   }),
   dish({
@@ -1371,8 +1386,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("Scotch bonnet", 1, "", "Produce"),
     ],
     steps: [
-      "Simmer beans with coconut milk, thyme, scallion, and a whole Scotch bonnet.",
-      "Add rice and cook until the liquid is gone. Do not burst the pepper unless you mean it.",
+      "Put the 1 can of kidney beans with their liquid in a pot with the 1 can of coconut milk, the 4 sprigs of thyme, the 3 crushed scallions, and the 1 teaspoon of salt. Bring to a simmer.",
+      "Sit the whole Scotch bonnet on top. Leave it whole and do not pierce it — it perfumes the pot; burst, it makes the whole thing inedible.",
+      "Rinse the 2 cups of rice and stir it in with the 2 tablespoons of oil, adding water so the liquid sits about an inch above the rice.",
+      "Bring back to a boil, then cover and cook on the lowest heat 25 minutes without lifting the lid.",
+      "Lift out the chile and the thyme stalks, fork the rice up, and serve.",
     ],
   }),
   dish({
@@ -1395,6 +1413,8 @@ export const WORLD_RECIPES: Recipe[] = [
       I("bell pepper", 1, "", "Produce"),
       I("okra", 2, "cups", "Produce"),
       I("chicken broth", 8, "cups", "Pantry"),
+      I("salt", 1, "tsp", "Herbs & Spices"),
+      I("rice", 1.5, "cups", "Pantry"),
     ],
     steps: [
       "Season the 1½ pounds of chicken thighs with the 1 teaspoon of salt. Brown them in a heavy pot in a little of the ¾ cup of oil, then the 12 ounces of sliced andouille sausage. Lift both out.",
@@ -1426,8 +1446,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("Cajun seasoning", 1, "tbsp", "Herbs & Spices"),
     ],
     steps: [
-      "Brown chicken and sausage. Sauté trinity. Add rice, tomato, broth, seasoning.",
-      "Cover until the rice is done. Rest 5 minutes.",
+      "Brown slices of the 12 ounces of andouille sausage in the 2 tablespoons of oil in a heavy pot and lift out. Season the 1 pound of chicken thighs with the 1 teaspoon of salt, brown them, and lift out too.",
+      "Soften the chopped onion, the 2 stalks of celery, and the chopped bell pepper in the fat, 8 minutes. Stir in the 1 tablespoon of Cajun seasoning and cook 30 seconds.",
+      "Add the 1 can of crushed tomatoes and cook 3 minutes, then stir in the 1½ cups of rice until coated.",
+      "Pour in the 3 cups of chicken broth, return the chicken and sausage, and bring to a boil. Cover and cook on the lowest heat 25 minutes without stirring — stir it and the rice goes gluey.",
+      "Rest off the heat 10 minutes, still covered, then fork it up and serve.",
     ],
   }),
   dish({
@@ -1449,8 +1472,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("oil for frying", 4, "cups", "Pantry"),
     ],
     steps: [
-      "Soak chicken in salted buttermilk (overnight if you can).",
-      "Dredge in seasoned flour. Fry at 325°F until 175°F inside.",
+      "Soak the 3 pounds of chicken pieces in the 2 cups of buttermilk with the 1 teaspoon of salt overnight in the fridge, or at least 4 hours.",
+      "Mix the 2 cups of flour with the 1 tablespoon of paprika, the 1 teaspoon of garlic powder, and plenty of salt and pepper. Lift each piece straight from the buttermilk and press it through the flour, hard, so it clings in ridges.",
+      "Heat the 4 cups of oil in a deep heavy pot to 325°F — measure it, because too hot burns the crust before the bone is done and too cool makes it greasy.",
+      "Fry in batches, never crowding, 12–15 minutes, turning once, until deep mahogany. The thickest piece must read 165°F at the bone; the crust colours long before that.",
+      "Drain on a rack, not paper, and season again while hot. Rest 10 minutes before eating.",
     ],
   }),
   dish({
@@ -1472,8 +1498,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("egg noodles", 12, "oz", "Pantry"),
     ],
     steps: [
-      "Brown chicken. Sweat onion, add paprika off heat so it does not burn.",
-      "Add broth, simmer until tender. Stir sour cream in off heat. Noodles.",
+      "Pat the 2 pounds of chicken thighs dry and season with the 1 teaspoon of salt. Brown them skin-side down in the 2 tablespoons of oil, 6–7 minutes, and lift out.",
+      "Soften the 2 sliced onions in the fat, 10 minutes, until sweet. Take the pan off the heat before stirring in the 3 tablespoons of sweet paprika — paprika scorches in seconds and turns bitter.",
+      "Return the chicken with the 1½ cups of chicken broth, cover, and simmer 30 minutes, until the meat pulls easily from the bone.",
+      "Lift the chicken out. Temper the 1 cup of sour cream with a ladle of the hot sauce, then stir it back in off the heat so it cannot split. Return the chicken to warm through.",
+      "Cook the 12 ounces of egg noodles and serve the paprikash over them.",
     ],
   }),
 ];

@@ -74,7 +74,9 @@ const LIST_FIXES: readonly ListFix[] = [
   },
   {
     named: /\bmilk\b/i,
-    notNamed: /\b(coconut|almond|oat|soy|evaporated|condensed|butter)milk\b|\bcoconut milk\b|\balmond milk\b|\boat milk\b|\bsoy milk\b|\bevaporated milk\b|\bcondensed milk\b/i,
+    // "the colour of milk chocolate" is a description of a roux, not a dairy
+    // row. It was putting a cup of milk into the gumbo.
+    notNamed: /\b(coconut|almond|oat|soy|evaporated|condensed|butter)milk\b|\bcoconut milk\b|\balmond milk\b|\boat milk\b|\bsoy milk\b|\bevaporated milk\b|\bcondensed milk\b|\bmilk chocolate\b|\bmilk bread\b/i,
     covered: /\bmilk\b|\bcream\b|\bhalf.and.half\b/i,
     add: { name: "milk", qty: 1, unit: "cup", aisle: "Dairy & Eggs" },
     breaks: VEGAN,

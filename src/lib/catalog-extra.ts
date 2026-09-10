@@ -75,7 +75,7 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("molasses", 0.25, "cup", "Pantry"),
     ],
     steps: [
-      "Pull the 1 pound of risen bread dough into pieces the size of an egg and flatten each into a disc about ½ inch thick.",
+      "Pull the 1 pound of risen bread dough into pieces about 3 inches across and flatten each into a disc ½ inch thick.",
       "Melt the 3 tablespoons of pork fat or oil in a wide skillet over medium heat — medium, not high, or the outside colours before the middle cooks.",
       "Fry the discs 3–4 minutes a side, until deep gold and cooked all the way through.",
       "Drain briefly and pour the ¼ cup of molasses over while they are still hot.",
@@ -409,10 +409,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("spaghetti or tonnarelli", 12, "oz", "Pantry"),
       I("pecorino romano", 1.5, "cups", "Dairy & Eggs"),
       I("black pepper", 2, "tsp", "Herbs & Spices"),
+      I("salt", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Boil the 12 ounces of spaghetti or tonnarelli in well-salted water. Use less water than usual so it ends up starchy — that starch is the sauce.",
-      "Toast the 2 teaspoons of coarsely cracked black pepper in a dry wide pan over medium heat, 30 seconds, until it smells sharp. No oil goes into this dish.",
+      "Boil the 12 ounces of spaghetti or tonnarelli in well-salted water. Use less water than usual so it ends up cloudy and thick; that cloudiness is what makes the sauce.",
+      "Toast the 2 teaspoons of coarsely cracked black pepper in a dry wide pan over medium heat, 30 seconds, until it smells sharp. The pan stays dry — no fat belongs in this dish.",
       "Ladle in a splash of pasta water and swirl. Drain the pasta 2 minutes early and tip it into the pan with a little more of its water.",
       "Take the pan off the heat and let it stop sizzling. Add the 1½ cups of grated pecorino romano in handfuls, tossing hard — heat above a simmer makes the cheese seize into strings.",
       "Loosen with more pasta water until it turns to a glossy cream that clings to the strands. Serve at once.",

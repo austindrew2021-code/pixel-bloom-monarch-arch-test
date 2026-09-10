@@ -48,9 +48,10 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("white vinegar", 2, "tbsp", "Pantry"),
     ],
     steps: [
-      "Whisk both milks with sugar and garlic powder until smooth and glossy.",
-      "Add vinegar last. It should stand up on a spoon, not run.",
-      "Cold overnight is better. This is the sauce for a late-night donair pizza.",
+      "Whisk the 1 can of evaporated milk with the ¼ cup of condensed milk, the ½ cup of white sugar, the 1 tablespoon of garlic powder, and the 1 teaspoon of salt until the sugar has dissolved.",
+      "Stream in the 2 tablespoons of white vinegar a little at a time, whisking. It thickens as the acid hits the milk — pour it in all at once and it seizes into curds instead.",
+      "Do not heat it. This sauce is never cooked; warming it splits it.",
+      "Chill 20 minutes to firm up. It should be thick enough to coat a spoon and cling to a pita.",
     ],
   }),
   dish({
@@ -80,9 +81,10 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon juice", 1, "tsp", "Produce"),
     ],
     steps: [
-      "Whisk milk, sugar, garlic salt, and garlic powder.",
-      "Add vinegar and lemon. It should taste brighter than mom-and-pop sauce.",
-      "Chill. Pour over donair pizza, garlic fingers, or a pita.",
+      "Whisk the 1 can of evaporated milk with the ½ cup of white sugar, the 1½ teaspoons of garlic salt, and the 1 teaspoon of garlic powder until the sugar dissolves.",
+      "Stream in the 4 tablespoons of white vinegar and the 1 teaspoon of lemon juice, whisking, until it thickens.",
+      "Taste — this one should read brighter and sharper than a mom-and-pop sauce.",
+      "Chill, then pour over donair pizza, garlic fingers, or a pita.",
     ],
   }),
   dish({
@@ -107,9 +109,10 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cayenne", 0.5, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Mix everything. Store in a jar.",
-      "Pat meat dry. Rub until it looks like red sand.",
-      "Rest 30 minutes or overnight before smoke or oven.",
+      "Mix the ¼ cup of paprika, the 3 tablespoons of brown sugar, the 1 tablespoon of kosher salt, the 1 tablespoon of black pepper, the 1 tablespoon of chili powder, the 2 teaspoons of garlic powder, and the ½ teaspoon of cayenne in a bowl until the colour is even with no clumps.",
+      "Store what you do not use in a sealed jar; it keeps 6 months.",
+      "Pat the meat dry and rub the mix on hard, until the surface looks like red sand.",
+      "Rest 30 minutes on the counter, or overnight in the fridge, before it goes near smoke or oven.",
     ],
   }),
   dish({
@@ -129,7 +132,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("kosher salt", 3, "tbsp", "Herbs & Spices"),
       I("garlic powder", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Stir. Coat a brisket or a cheap chuck roast. Smoke or slow-roast until it surrenders."],
+    steps: [
+      "Mix the ¼ cup of coarse black pepper, the 3 tablespoons of kosher salt, the 1 teaspoon of garlic powder, and the ¼ cup of sugar in a bowl until even.",
+      "Keep the pepper coarse. Finely ground, it turns dusty and bitter over a long cook.",
+      "Pat the brisket dry and rub the mix over every surface, including the fat cap.",
+      "Rest 30 minutes on the counter, or overnight in the fridge, so the salt draws in.",
+      "This is a seasoning, not a dinner. Smoke or roast the meat however you like after it rests.",
+    ],
   }),
   dish({
     id: "montreal-steak-spice",
@@ -152,7 +161,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("red pepper flakes", 1, "tsp", "Herbs & Spices"),
       I("paprika", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Crush the seeds roughly. Mix. Press onto steak or roasted potatoes."],
+    steps: [
+      "Crack the 1 tablespoon of coriander seed and the 1 teaspoon of dill seed coarsely in a mortar or under a pan — whole, they will not release anything.",
+      "Mix them with the 2 tablespoons of coarse black pepper, the 2 tablespoons of kosher salt, the 1 tablespoon of garlic powder, the 1 teaspoon of red pepper flakes, the 1 teaspoon of paprika, and the ¼ cup of sugar until even.",
+      "Pat the steak dry and press the mix onto both sides.",
+      "Rest 30 minutes on the counter, or overnight in the fridge.",
+      "This is a seasoning, not a dinner. Grill or sear the steak however you like after it rests.",
+    ],
   }),
   dish({
     id: "jerk-dry-rub",
@@ -176,7 +191,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cinnamon", 0.5, "tsp", "Herbs & Spices"),
       I("kosher salt", 2, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Mix. Rub on chicken, pork, or cauliflower. Rest. Grill or roast hot."],
+    steps: [
+      "Mix the 2 tablespoons of allspice, the 1 tablespoon of dried thyme, the 1 tablespoon of garlic powder, the 1 tablespoon of onion powder, the 1 tablespoon of brown sugar, the 2 teaspoons of cayenne, the ½ teaspoon of cinnamon, and the 2 teaspoons of kosher salt in a bowl until even.",
+      "Pat the meat dry and rub the mix on all sides.",
+      "Rest 30 minutes on the counter, or overnight in the fridge.",
+      "This is the pantry version. Wet jerk is a paste with scotch bonnet, scallion and lime blended into it.",
+      "Cook the food however you like after it rests — grill, oven, or drum.",
+    ],
   }),
   dish({
     id: "cajun-blackening-rub",
@@ -200,7 +221,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("black pepper", 1, "tsp", "Herbs & Spices"),
       I("kosher salt", 2, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Mix. Dip buttered fish or chicken in the rub. Sear in a nearly smoking skillet."],
+    steps: [
+      "Mix the 3 tablespoons of paprika, the 1 tablespoon of garlic powder, the 1 tablespoon of onion powder, the 1 teaspoon of dried thyme, the 1 teaspoon of dried oregano, the 2 teaspoons of cayenne, the 1 teaspoon of black pepper, the 2 teaspoons of kosher salt, and the ¼ cup of sugar in a bowl until even.",
+      "Pat the fish or chicken dry and press the mix on thickly, on both sides.",
+      "Blackening needs a screaming-hot cast-iron pan and a lot of smoke — open a window and turn the extractor on before you start.",
+      "Cook 2–3 minutes a side in butter or oil, until the crust is dark, then check the fish flakes or the chicken reads 165°F.",
+      "The dark crust is toasted spice, not burnt food. If it tastes acrid, the pan was too hot for too long.",
+    ],
   }),
   dish({
     id: "kc-bbq-sauce",
@@ -249,7 +276,12 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("kosher salt", 1, "tsp", "Herbs & Spices"),
       I("brown sugar", 1, "tbsp", "Pantry"),
     ],
-    steps: ["Shake in a jar. Pour over chopped pork while it is still hot."],
+    steps: [
+      "Put the 1½ cups of apple cider vinegar in a jar with the 2 teaspoons of red pepper flakes, the 1 teaspoon of black pepper, the 1 teaspoon of kosher salt, and the 1 tablespoon of brown sugar.",
+      "Shake until the sugar and salt dissolve. It is not cooked, not thickened, and not a barbecue sauce in the bottled sense — it is a thin, hot, sour mop.",
+      "Leave it at least an hour, overnight if you can, so the pepper bleeds into the vinegar.",
+      "Toss it through pulled pork by the ladleful just before serving, and put more on the table. It is for shoulder, not ribs.",
+    ],
   }),
   dish({
     id: "alabama-white-sauce",
@@ -270,7 +302,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon juice", 1, "tbsp", "Produce"),
       I("prepared horseradish", 1, "tsp", "Pantry"),
     ],
-    steps: ["Whisk. Dunk grilled chicken or drizzle on smoked turkey."],
+    steps: [
+      "Whisk the 1 cup of mayonnaise with the ¼ cup of apple cider vinegar until smooth and pourable.",
+      "Whisk in the 1 tablespoon of black pepper, the 1 tablespoon of lemon juice, the 1 teaspoon of prepared horseradish, and the 1 teaspoon of salt.",
+      "Do not put it on heat. It is a mayonnaise sauce and it will split; the recipe is cold from start to finish.",
+      "Chill at least an hour so the pepper comes forward.",
+      "Dunk hot smoked chicken straight into it, or brush it on in the last minute off the fire.",
+    ],
   }),
   dish({
     id: "chimichurri",
@@ -313,8 +351,11 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("cayenne", 1, "pinch", "Herbs & Spices"),
     ],
     steps: [
-      "Whisk yolks and lemon over barely simmering water until thick.",
-      "Stream in warm melted butter. Season with salt and cayenne. Do not scramble.",
+      "Melt the ½ cup of butter gently and keep it warm. Squeeze the lemon.",
+      "Whisk the 3 egg yolks with a tablespoon of water and a squeeze of the lemon in a bowl set over — not in — barely simmering water.",
+      "Whisk constantly 3–4 minutes, until the yolks thicken to ribbons and you can see the bottom of the bowl as you whisk. If the bowl gets too hot to touch, lift it off; this is where it scrambles.",
+      "Off the heat, dribble the warm butter in a thread, whisking hard, until it thickens into a glossy sauce. Too fast and the emulsion breaks — a splash of warm water whisked in will usually bring it back.",
+      "Season with the 1 teaspoon of salt, the rest of the lemon, and the pinch of cayenne. Keep it barely warm; it splits if it gets hot and sets if it gets cold.",
     ],
   }),
   dish({
@@ -337,7 +378,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("lemon", 0.5, "", "Produce"),
       I("olive oil", 1, "tbsp", "Pantry"),
     ],
-    steps: ["Grate and salt cucumber. Squeeze dry. Stir into yogurt with garlic, dill, lemon, oil."],
+    steps: [
+      "Coarsely grate the cucumber, toss it with a good pinch of the 1 teaspoon of salt, and leave it in a sieve 15 minutes. Then squeeze it dry in a cloth, hard — skipping this is what makes watery tzatziki.",
+      "Crush the 2 cloves of garlic to a paste with the rest of the salt.",
+      "Stir the cucumber and garlic through the 2 cups of greek yogurt with the 2 tablespoons of chopped fresh dill.",
+      "Add the juice of the ½ lemon and the 1 tablespoon of olive oil and stir just to combine. Do not blend it — this is a chunky sauce, not a smooth one.",
+      "Chill 30 minutes before serving, cold, alongside grilled meat or in a pita.",
+    ],
   }),
   dish({
     id: "romesco",
