@@ -1159,8 +1159,15 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("brown sugar", 3, "tbsp", "Pantry"),
       I("soy sauce", 1, "tbsp", "Pantry"),
       I("cornstarch", 1, "tbsp", "Pantry"),
+      I("salt", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Simmer juice, vinegar, ketchup, sugar, soy. Thicken with cornstarch slurry."],
+    steps: [
+      "Put the ½ cup of pineapple juice, the ¼ cup of rice vinegar, the 3 tablespoons of ketchup, the 3 tablespoons of brown sugar, and the 1 tablespoon of soy sauce in a small pan.",
+      "Bring to a simmer and cook 5 minutes, until the sugar has dissolved and the vinegar has lost its raw bite.",
+      "Stir the 1 tablespoon of cornstarch into 2 tablespoons of cold water until smooth, then whisk it in.",
+      "Simmer 1 minute more, until it turns clear and glossy and coats a spoon.",
+      "Season with the 1 teaspoon of salt and cool. It thickens further as it cools.",
+    ],
   }),
   dish({
     id: "zaatar-rub",
@@ -1180,7 +1187,12 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("sumac", 1, "tbsp", "Herbs & Spices"),
       I("kosher salt", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Toast sesame. Mix with thyme, sumac, salt. Store dry. Oil the food, then the rub."],
+    steps: [
+      "Toast the 2 tablespoons of sesame seeds in a dry pan over medium heat 2–3 minutes, shaking, until they colour and pop. Cool them completely.",
+      "Rub the 2 tablespoons of dried thyme between your palms to break it down, then mix it with the sesame, the 1 tablespoon of sumac, and the 1 teaspoon of kosher salt.",
+      "Keep it in a sealed jar away from light. Sumac fades within a couple of months and takes the sourness with it.",
+      "Use it on oiled chicken, on a tray of pita before it goes in the oven, or stirred into olive oil as a dip.",
+    ],
   }),
   dish({
     id: "coffee-cocoa-rub",
@@ -1202,7 +1214,13 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("kosher salt", 1, "tbsp", "Herbs & Spices"),
       I("black pepper", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Mix. Pat meat dry. Rub on. Rest 30 minutes or overnight."],
+    steps: [
+      "Mix the 2 tablespoons of finely ground coffee, the 1 tablespoon of cocoa powder, the 1 tablespoon of brown sugar, the 1 tablespoon of smoked paprika, the 1 tablespoon of kosher salt, and the 1 teaspoon of black pepper in a bowl until the colour is even.",
+      "Use unsweetened cocoa, not drinking chocolate, and grind the coffee fine — coarse grounds stay gritty on the crust.",
+      "Pat the meat dry and press the rub over every surface.",
+      "Rest 30 minutes on the counter, or overnight in the fridge.",
+      "This is a seasoning, not a dinner. It suits brisket, ribs and a thick steak; the sugar means it wants a low fire or it will scorch.",
+    ],
   }),
   dish({
     id: "lemon-pepper-rub",
@@ -1222,6 +1240,12 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("garlic powder", 1, "tsp", "Herbs & Spices"),
       I("kosher salt", 2, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Zest lemons and dry the zest in a low oven 8 minutes. Mix with pepper, garlic, salt."],
+    steps: [
+      "Zest the 2 lemons with a fine grater, taking the yellow and none of the white pith underneath, which is bitter.",
+      "Spread the zest on a plate and leave it somewhere warm 2–3 hours, or 20 minutes in a 200°F oven, until it is dry and crumbly. Damp zest clumps the rub and it will not keep.",
+      "Crush the 2 tablespoons of black pepper coarsely and mix with the dried zest, the 1 teaspoon of garlic powder, and the 2 teaspoons of kosher salt.",
+      "Pat the wings, fish or potatoes dry, oil them lightly, and rub the mix on all sides.",
+      "It keeps a month in a jar. Cook the food however you like.",
+    ],
   }),
 ];
