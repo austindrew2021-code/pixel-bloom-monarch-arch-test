@@ -187,6 +187,27 @@ the book is the recipe: ingredients, quantities, method, and the notes that
 bear on cooking it. The credit line names the book so the provenance is not
 hidden, and the app does not repeat its language.
 
+## Picking this up in a fresh session
+
+The pass runs across many sessions. Everything needed to resume is in the
+repo; nothing depends on a scratch directory surviving.
+
+1. **Fetch the book.** Canonical URL only:
+   `https://archive.org/download/<archiveId>/<archiveId>_djvu.txt`, then
+   `perl -pe 's/[ \t]+/ /g' raw.txt > book.txt`. Gutenberg text needs no
+   normalising. The `archiveId` for every book is on the recipe's `source`.
+2. **Find what is left.** The verified ids are `VERIFIED_AGAINST_SOURCE` in
+   `src/lib/source-verified.ts`; everything with a `source` field and not on
+   that list is outstanding.
+3. **Read them.** `node --experimental-strip-types scripts/source-check.mjs
+   book.txt <id>...` prints ours and the book's passage together.
+4. **Fix, then add the id to the list.** A verified recipe's stored steps must
+   be the finished text with the quantities written into the sentences by
+   hand — `polishRecipe` will not touch it again.
+5. **Check.** `npm run typecheck && npm test`. `source-verified.test.ts`
+   asserts that every listed recipe reaches the app exactly as stored, so a
+   drift shows up as a failure rather than as a surprise in the kitchen.
+
 ## Progress
 
 | Book | Recipes | Verified |
