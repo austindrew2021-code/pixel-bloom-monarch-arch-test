@@ -174,10 +174,19 @@ The consequence for anyone adding to the list: a verified recipe's stored
 steps must be the finished text, quantities written into the sentences by
 hand, because nothing downstream will fill them in any more.
 
+## What is not carried across from the source
+
+The 1935 text carries dialect verse and racial language between the recipes,
+and the hush puppy in particular is introduced by a long anecdote written in
+the idiom of its period. None of that is reproduced. What is verified against
+the book is the recipe: ingredients, quantities, method, and the notes that
+bear on cooking it. The credit line names the book so the provenance is not
+hidden, and the app does not repeat its language.
+
 ## Progress
 
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 116 |
+| The Southern Cook Book (Lustig 1935) | 317 | 120 |
 | The other 20 books | 139 | 0 |
