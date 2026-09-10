@@ -122,4 +122,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-tea-scones",
   "so-sally-lunn",
   "so-spoon-bread",
+  "so-good-morning-biscuits",
+  "so-corn-sticks",
+  "so-raisin-biscuits",
+  "so-buttermilk-muffins",
+  "so-cheese-biscuits",
 ]);

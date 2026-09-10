@@ -107,6 +107,11 @@ glyph looks like.
 | `so-brunswick-stew` | bread crumbs | `% cup` | 0.25 cup | left as-is |
 | `so-brunswick-stew` | okra | `% cup` | 0.5 cup | left as-is |
 | `so-brunswick-stew` | first simmer | `% hour` | 30 min | ½ is the likely reading |
+| `so-good-morning-biscuits` | bake time | `% of an hour` | 30 min | ½ is the likely reading |
+| `so-good-morning-biscuits` | butter, sugar, lard, milk, egg | leading digits lost | 1 of each | the OCR dropped the numbers off five ingredient lines |
+| `so-raisin-biscuits` | butter | `Vs cup` | 0.33 cup | left as-is |
+| `so-raisin-biscuits` | milk | `% cup` | 0.75 cup | left as-is |
+| `so-corn-sticks` | salt | `% teaspoon` | 0.5 tsp | left as-is |
 
 ## Where the book and modern safety pull apart
 
@@ -174,5 +179,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 91 |
+| The Southern Cook Book (Lustig 1935) | 317 | 96 |
 | The other 20 books | 139 | 0 |
