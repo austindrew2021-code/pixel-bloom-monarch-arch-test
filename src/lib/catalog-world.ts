@@ -1040,8 +1040,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("soy sauce", 3, "tbsp", "Pantry"),
     ],
     steps: [
-      "Mix pork with squeezed cabbage, scallion, ginger, soy. Fill wrappers.",
-      "Fry in oil until bottoms brown, add water, cover to steam, uncover to recrisp.",
+      "Mix the 1 pound of ground pork with the 2 cups of finely chopped napa cabbage, the 4 sliced scallions, the 1 tablespoon of grated ginger, and 1 tablespoon of the soy sauce. Squeeze the cabbage dry first or the filling will weep.",
+      "Put a teaspoon of filling on each of the 40 dumpling wrappers, wet the rim, fold into a half-moon and pleat one side closed.",
+      "Set a wide lidded skillet over medium-high heat with the 2 tablespoons of oil. Sit the dumplings flat-side down in one layer and fry 2–3 minutes, until the bottoms are golden.",
+      "Pour in ⅓ cup of water and clamp the lid on straight away. Steam 6–7 minutes, until the water is gone and the wrappers are translucent.",
+      "Uncover and fry 1 minute more to crisp the bases. Lift out with a thin spatula and serve with the remaining soy sauce.",
     ],
   }),
   dish({
