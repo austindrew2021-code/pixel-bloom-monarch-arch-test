@@ -140,4 +140,11 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-curds-cream",
   "so-welsh-rarebit-south",
   "so-creole-omelet",
+  "so-louisiana-waffles",
+  "so-virginia-waffles",
+  "so-rice-waffles",
+  "so-georgia-flapjacks",
+  "so-sour-milk-cakes",
+  "so-flannel-cakes",
+  "so-griddle-cakes",
 ]);
