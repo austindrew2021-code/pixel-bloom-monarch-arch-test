@@ -88,6 +88,28 @@ glyph looks like.
 | `so-chicken-pot-pie` | chicken weight | `1% pounds` | "a young chicken" | left unstated |
 | `so-roast-chicken` | basting water | `% cup` | 0.5 cup | left as-is |
 | `so-chicken-hash` | flour | `iVa tablespoons` | 1.5 tbsp | 1½ is the likely reading |
+| `so-mock-terrapin` | butter | `J/4 pound` | 4 oz | ¼ lb is the likely reading |
+| `so-rice-chicken-casserole` | butter | `\\V<2 tablespoons` | 1.5 tbsp | 1½ is the likely reading |
+| `so-squab-pilau` | celery | `% cup` | 0.5 cup | left as-is |
+
+## Where the book and modern safety pull apart
+
+Two recipes in the poultry run do something a modern kitchen would not, and
+both are the book's instruction rather than an OCR slip:
+
+- **Roast partridge** pours slightly sour cream into the hot pan and says to
+  let it bubble up for a minute. Everywhere else in this catalog cream is
+  kept off the boil. Here the source is explicit, so the step follows it and
+  says out loud that the bubbling is deliberate, so it does not read as a
+  mistake to be corrected.
+- **Squab pilau** beats raw egg through the hot rice and bakes it inside the
+  bird. Ours had quietly hard-boiled the eggs instead, which is not the
+  recipe. The book's method is restored, with a 165°F target on the stuffing
+  — that verifies the egg without changing what the dish is.
+
+The rule: follow the book on technique, add a thermometer where the book is
+silent, and never swap a method out on safety grounds when a temperature
+check would settle it instead.
 
 ## One more way the scan lies
 
@@ -123,5 +145,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 46 |
+| The Southern Cook Book (Lustig 1935) | 317 | 51 |
 | The other 20 books | 139 | 0 |
