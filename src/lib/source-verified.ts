@@ -169,4 +169,10 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-salsify",
   "so-lima-beans",
   "so-boiled-okra",
+  "so-creole-rice-cakes",
+  "so-rice-croquettes",
+  "so-curried-rice",
+  "so-wild-rice-mushrooms",
+  "so-rice-pineapple",
+  "so-baked-grits",
 ]);
