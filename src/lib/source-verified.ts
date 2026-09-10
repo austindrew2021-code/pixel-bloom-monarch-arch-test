@@ -90,4 +90,7 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-eggs-new-orleans",
   "so-eggs-ponce",
   "so-chicken-liver-ramekins",
+  "so-chicken-gumbo",
+  "so-southern-gumbo",
+  "so-shrimp-gumbo",
 ]);
