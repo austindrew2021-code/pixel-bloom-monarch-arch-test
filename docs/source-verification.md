@@ -99,6 +99,9 @@ glyph looks like.
 | `so-bread-stuffing` | poultry seasoning | `1A teaspoon` | 0.25 tsp | ¼ is the likely reading |
 | `so-southern-gumbo` | celery seed | `% teaspoon` | 0.25 tsp | left as-is |
 | `so-shrimp-gumbo` | vinegar | `% cup` | 0.25 cup | left as-is |
+| `so-oyster-bisque` | celery | `% cup` | 0.5 cup | left as-is |
+| `so-jugged-soup` | rice | `% cup` | 0.5 cup | left as-is |
+| `so-jugged-soup` | pepper | `% teaspoon` | unstated | left as "pepper" |
 
 ## Where the book and modern safety pull apart
 
@@ -166,5 +169,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 76 |
+| The Southern Cook Book (Lustig 1935) | 317 | 80 |
 | The other 20 books | 139 | 0 |
