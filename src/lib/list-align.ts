@@ -175,7 +175,7 @@ const LIST_FIXES: readonly ListFix[] = [
   },
   {
     named: /\btomatoe?s?\b/i,
-    notNamed: /\btomato (?:paste|sauce|juice|puree|purée)\b|\bsun.?dried tomatoe?s?\b|\btomatillos?\b/i,
+    notNamed: /\btomato (?:paste|sauce|juice|puree|purée|salad|soup|salsa)\b|\bsun.?dried tomatoe?s?\b|\btomatillos?\b/i,
     covered: /\btomatoe?s?\b|\bpassata\b|\bmarinara\b|\bsalsa\b|\bketchup\b/i,
     add: { name: "tomato", qty: 2, unit: "", aisle: "Produce" },
   },
