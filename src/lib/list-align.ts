@@ -255,8 +255,18 @@ function cookedText(recipe: Recipe): string {
  */
 const NEGATED = /\b(?:no|without|never)\s+[\w-]+(?:\s+[\w-]+)?|\bnot\s+(?:add|use|put|include|contain)\s+[\w-]+/gi;
 
+/**
+ * A food can be named as a measure, a simile, or a piece of furniture and still
+ * not be an ingredient. Gentile's balsamella asks for "a piece of butter as big
+ * as an egg" and her gnocchi are rolled out on a "bread board" — which bought
+ * this catalog one egg and four slices of bread. Strip the figure of speech
+ * before asking whether the food was named, the same way NEGATED strips a
+ * denial.
+ */
+const FIGURES = /\bas (?:big|large|thick|small|round) as an? [\w-]+|\bthe size of an? [\w-]+|\b(?:bread|pastry|cutting|chopping|carving) board\b|\begg(?:-| )sized\b|\bpea(?:-| )sized\b/gi;
+
 function namesFood(steps: string, fix: ListFix): boolean {
-  const said = steps.replace(NEGATED, " ");
+  const said = steps.replace(NEGATED, " ").replace(FIGURES, " ");
   const blob = fix.notNamed ? said.replace(new RegExp(fix.notNamed.source, "gi"), " ") : said;
   return fix.named.test(blob);
 }
