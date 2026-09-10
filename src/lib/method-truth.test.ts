@@ -133,9 +133,11 @@ test("a dish that takes hours says so in its stated time", () => {
   const short: string[] = [];
   for (const r of RECIPES) {
     for (const step of r.steps) {
-      // only cooking waits, not chilling ones: those are startAheadHours' job
+      // only cooking waits, not chilling or cooling ones: an apple pie that
+      // needs two hours to set before cutting is resting, not cooking, and
+      // startAheadHours is what surfaces that to the cook
       if (!/\b(simmer|cook|braise|bake|roast|reduce)\b/i.test(step)) continue;
-      if (/\b(chill|refrigerate|freeze|marinate|soak|rest|rise|prove|proof)\b/i.test(step)) continue;
+      if (/\b(chill|refrigerate|freeze|marinate|soak|rest|rise|prove|proof|cool)\b/i.test(step)) continue;
       const m = hours.exec(step);
       if (m && Number(m[1]) * 60 > r.minutes) short.push(`${r.id} cooks ${m[0]} but claims ${r.minutes} minutes`);
     }
