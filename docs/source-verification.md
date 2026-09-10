@@ -83,6 +83,10 @@ glyph looks like.
 | `so-veal-paprika` | veal thickness | `% inch` | "thick slices" | left vague on purpose |
 | `so-veal-paprika` | sour cream | `MJ cup` | 0.75 cup | left as-is |
 | `so-veal-paprika` | cooking time | `Ms hour` | "about half an hour" | ½ is the likely reading, not a confirmed one |
+| `so-chicken-tartare` | butter | `1A pound` | 4 oz | ¼ lb is the likely reading |
+| `so-chicken-tartare` | mushrooms | `% pound` | 4 oz | left as-is |
+| `so-chicken-pot-pie` | chicken weight | `1% pounds` | "a young chicken" | left unstated |
+| `so-roast-chicken` | basting water | `% cup` | 0.5 cup | left as-is |
 
 ## One more way the scan lies
 
@@ -118,5 +122,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 37 |
+| The Southern Cook Book (Lustig 1935) | 317 | 43 |
 | The other 20 books | 139 | 0 |
