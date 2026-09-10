@@ -91,6 +91,12 @@ glyph looks like.
 | `so-mock-terrapin` | butter | `J/4 pound` | 4 oz | ¼ lb is the likely reading |
 | `so-rice-chicken-casserole` | butter | `\\V<2 tablespoons` | 1.5 tbsp | 1½ is the likely reading |
 | `so-squab-pilau` | celery | `% cup` | 0.5 cup | left as-is |
+| `so-oyster-stuffing` | butter | `% cup` | 0.75 cup | left as-is |
+| `so-oyster-stuffing` | celery | `P/£ cups` | 1.5 cups | 1½ is the likely reading |
+| `so-chestnut-stuffing` | butter | `% cup` | 0.25 cup | left as-is |
+| `so-chestnut-stuffing` | onions | `Vi! cup` | 0.5 cup | left as-is |
+| `so-bread-stuffing` | black pepper | `% teaspoon` | unstated | left as "black pepper" |
+| `so-bread-stuffing` | poultry seasoning | `1A teaspoon` | 0.25 tsp | ¼ is the likely reading |
 
 ## Where the book and modern safety pull apart
 
@@ -145,5 +151,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 51 |
+| The Southern Cook Book (Lustig 1935) | 317 | 56 |
 | The other 20 books | 139 | 0 |
