@@ -879,15 +879,31 @@ function isFromABook(recipe: RecipeLike): boolean {
   return /^(so-|vh-|ar-|wg-)/.test(id);
 }
 
+/**
+ * A method is not disqualified by its sign-off. "Serve hot." is ten characters
+ * and fails every solidity test below, and every one of these checks is an
+ * `every`, so one short closing line condemned the whole method: four
+ * hand-written steps thrown away and regenerated from the template. That is
+ * how the air-fryer tofu lost its double-coat instructions. Judge the body.
+ */
+function withoutSignOff(steps: string[]): string[] {
+  if (steps.length < 4) return steps;
+  const last = steps[steps.length - 1] ?? "";
+  return last.length < 40 && /^(serve|eat|enjoy|plate|dust|scatter|garnish|store|bag|keep|wrap|refrigerate|freeze|chill|cool)\b/i.test(last)
+    ? steps.slice(0, -1)
+    : steps;
+}
+
 function isKeepableMethod(steps: string[], recipe: RecipeLike): boolean {
   if (isJunkMethod(steps)) return false;
   if (isClearMethod(steps, recipe)) return true;
+  const body = withoutSignOff(steps);
   const solid = (s: string) => s.length >= 40 && VERB.test(s) && mentionsFood(s, recipe);
-  if (steps.length >= 3 && steps.every(solid)) return true;
-  if (steps.length >= 3 && steps.every((s) => isUsableCookStep(s))) return true;
-  if (steps.length >= 3 && steps.filter(isUsableCookStep).length >= 3 && steps.every((s) => s.length >= 20)) return true;
-  if (isFromABook(recipe) && steps.length >= 3 && steps.every((s) => s.length >= 24 && VERB.test(s))) return true;
-  if (steps.length >= 3 && steps.every((s) => s.length >= 24 && VERB.test(s)) && !isJunkMethod(steps)) return true;
+  if (body.length >= 3 && body.every(solid)) return true;
+  if (body.length >= 3 && body.every((s) => isUsableCookStep(s))) return true;
+  if (body.length >= 3 && body.filter(isUsableCookStep).length >= 3 && body.every((s) => s.length >= 20)) return true;
+  if (isFromABook(recipe) && body.length >= 3 && body.every((s) => s.length >= 24 && VERB.test(s))) return true;
+  if (body.length >= 3 && body.every((s) => s.length >= 24 && VERB.test(s)) && !isJunkMethod(steps)) return true;
   return false;
 }
 
@@ -905,6 +921,13 @@ function isDoughRest(recipe: RecipeLike): boolean {
 function lengthenShortCard(s: string, recipe: RecipeLike): string {
   const raw = finishSentence(s.replace(/\s+/g, " ").trim());
   if (raw.length >= 40) return raw;
+  // A line that already names a duration or an oven temperature is a finished
+  // instruction, however short. Without this guard "Add the carrot and cook 2
+  // minutes more." picked up "and cook, stirring, until everything is hot and
+  // combined" — a second cooking clause on a step that had already given one.
+  // The guard belongs here rather than at one call site: this runs from both
+  // foldShortSteps and alignCookToList.
+  if (hasTime(raw) || /\d{2,3}\s*°F/.test(raw)) return raw;
   const t = raw.replace(/[.]+$/, "").trim();
   const lower = t.toLowerCase();
   const meat = proteinNoun(recipe);
@@ -1178,6 +1201,12 @@ function foldShortSteps(steps: string[], recipe?: RecipeLike): string[] {
     if (/^Serve over the /i.test(s) && s.length < 40) {
       return s.replace(/^Serve over /i, "Spoon over ").replace(/\.?$/, " and serve hot.");
     }
+    // A step that already names a duration or an oven temperature is a finished
+    // instruction, however short. "Add the carrot and cook 2 minutes more." is
+    // 38 characters, so the length test alone sent it to the generic enricher,
+    // which appended "and cook, stirring, until everything is hot and combined"
+    // to a step that had already said how long to cook for.
+    if ((hasTime(s) || /\d{3}\s*°F/.test(s)) && s.length >= 24) return s;
     if (s.length >= 40 && !(HEAT_VERB.test(s) && !hasTime(s) && s.length < 72)) return s;
     const next = expandFragment(s, recipe);
     const long = next.length >= 40 ? next : genericEnrich(next, recipe);
