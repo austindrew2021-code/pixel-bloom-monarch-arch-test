@@ -1,4 +1,5 @@
 import type { Recipe } from "./types";
+import { VERIFIED_AGAINST_SOURCE } from "./source-verified.ts";
 import { knownDishMethod, writeDishMethod, hasSpecialistMethod } from "./write-method.ts";
 import { scaleQty } from "./cuisine.ts";
 import { prettyFrac } from "./format.ts";
@@ -2079,6 +2080,12 @@ export function polishRecipe(recipe: Recipe): Recipe | null {
   const ingredients = recipe.ingredients.filter((i) => i.name && !JUNK_NAME.test(i.name.trim()));
   if (ingredients.length < 1) return null;
   const next = { ...recipe, name, ingredients };
+  // A recipe read against its source book ships exactly as it was read. Every
+  // pass below rewrites wording, and on verified text that is corruption
+  // rather than polish: it turned "three minutes in deep hot lard" into
+  // "in deep hot the 4 cups of lard", folded checked steps together, and
+  // appended cooking clauses to methods that were already complete.
+  if (VERIFIED_AGAINST_SOURCE.has(recipe.id)) return next;
   // The list is aligned after the method is final so it also covers foods the
   // polisher itself names.
   return alignListToCook({

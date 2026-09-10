@@ -93,6 +93,23 @@ Page images are at `https://archive.org/details/<archiveId>`. Image bytes
 cannot be fetched in this environment — the egress proxy rejects image
 hosts — so these rows can only be closed by a person looking at the page.
 
+## Verified text is frozen text
+
+`src/lib/source-verified.ts` lists every recipe that has been read against its
+book. `polishRecipe` returns those untouched — no step rewriting, no
+enrichment, no list alignment — and `source-verified.test.ts` asserts that what
+the catalog stores is what `RECIPES` renders, so the promise cannot rot.
+
+This was not precautionary. The polish layer had already altered checked text
+five times: it turned "three minutes in deep hot lard" into "in deep hot the
+4 cups of lard", folded verified steps into one another, appended a second
+cooking clause to a method that was already complete, and bought an egg off
+the back of "a piece of butter as big as an egg".
+
+The consequence for anyone adding to the list: a verified recipe's stored
+steps must be the finished text, quantities written into the sentences by
+hand, because nothing downstream will fill them in any more.
+
 ## Progress
 
 | Book | Recipes | Verified |
