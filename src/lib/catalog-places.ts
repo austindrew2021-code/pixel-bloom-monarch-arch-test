@@ -138,11 +138,7 @@ export const ATLANTIC_RECIPES: Recipe[] = [
       I("onion", 1, "", "Produce"),
       I("kosher salt", 2, "tsp", "Herbs & Spices"),
     ],
-    [
-      "Grate 3 of the russet potatoes and squeeze them dry in a towel. Boil and mash the other 3. Mix the grated and mashed potato with the 2 teaspoons of kosher salt.",
-      "Cut the ½ pound of salt pork into small cubes. With wet hands, wrap a ball of potato around each cube.",
-      "Simmer the dumplings in salted water until they float and the centers are hot, 30–40 minutes. Serve with butter and pepper.",
-    ],
+    ["Soak the ½ pound of salt pork in cold water for several hours to draw the salt out, then cut it into small cubes.", "Grate 3 of the 6 russet potatoes and squeeze them bone dry in a cloth. Boil and mash the other 3. Mix grated and mashed together with the 2 teaspoons of kosher salt and the grated onion.", "With wet hands, wrap a ball of potato around each cube of pork, sealing it right in so nothing leaks.", "Lower the dumplings into a big pot of boiling salted water and keep it at a steady simmer for 2 to 2½ hours. They are done when a skewer meets no raw grate in the middle — anything less and the centre is still raw potato.", "Lift out, drain, and serve hot with the 2 tablespoons of butter and plenty of pepper."],
     ["poutine rapee", "acadian potato dumpling"],
     { cal: 510, protein: 18, carbs: 52, fat: 26 },
   ),

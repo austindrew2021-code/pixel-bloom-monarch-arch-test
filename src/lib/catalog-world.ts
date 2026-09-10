@@ -1304,8 +1304,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("chicken broth", 8, "cups", "Pantry"),
     ],
     steps: [
-      "Cook a dark roux. Add trinity. Add stock, chicken, sausage, okra.",
-      "Simmer an hour. Rice in the bowl, gumbo over.",
+      "Season the 1½ pounds of chicken thighs with the 1 teaspoon of salt. Brown them in a heavy pot in a little of the ¾ cup of oil, then the 12 ounces of sliced andouille sausage. Lift both out.",
+      "Pour the rest of the oil into the pot and whisk in the ¾ cup of flour. Cook over medium heat, stirring without stopping, 20–25 minutes, until the roux is the colour of milk chocolate. Do not walk away — a burnt roux is bitter and there is no saving it.",
+      "Tip in the diced onion, the 2 stalks of celery, and the chopped bell pepper. They will hiss and stop the roux cooking. Stir 8 minutes, until soft.",
+      "Whisk in the 8 cups of chicken broth a ladle at a time so it stays smooth. Return the chicken and sausage and simmer, uncovered, 45 minutes.",
+      "Add the 2 cups of okra and simmer 15 minutes more, until it is tender and the gumbo has thickened. Shred the chicken back in, season, and ladle over rice.",
     ],
   }),
   dish({

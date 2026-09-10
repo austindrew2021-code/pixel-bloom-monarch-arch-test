@@ -223,7 +223,12 @@ export const SAUCE_RECIPES: Recipe[] = [
       I("smoked paprika", 1, "tsp", "Herbs & Spices"),
       I("garlic powder", 1, "tsp", "Herbs & Spices"),
     ],
-    steps: ["Simmer everything 15 minutes until glossy. Brush on in the last 10 minutes of cooking."],
+    steps: [
+      "Set a small saucepan over medium-low heat with the 2 tablespoons of oil and warm the 1 teaspoon of garlic powder and the 1 teaspoon of smoked paprika in it for 30 seconds, until they smell toasted.",
+      "Whisk in the 1½ cups of ketchup, the ¼ cup of molasses, the ¼ cup of brown sugar, the ¼ cup of apple cider vinegar, and the 2 tablespoons of worcestershire.",
+      "Simmer 20 minutes, stirring, until it is thick enough to coat a spoon. Season with the 1 teaspoon of salt.",
+      "Cool and keep in a jar. Brush it on in the last minutes of cooking — the sugar burns if it goes on early.",
+    ],
   }),
   dish({
     id: "carolina-vinegar-sauce",

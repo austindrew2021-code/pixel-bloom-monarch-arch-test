@@ -731,7 +731,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("cheddar", 3, "oz", "Dairy & Eggs"),
 			I("lettuce", 1, "head", "Produce")
 		],
-		steps: ["Brown the 1½ lb of ground turkey. Stir in the 2 tablespoons of taco seasoning, the black beans, and the 1 cup of frozen corn with 2 tablespoons of water.", "Simmer 8 minutes. Top with the cheddar and shredded lettuce."]
+		steps: [
+      "Set a wide skillet over medium-high heat with a film of the 2 tablespoons of oil. Add the 1½ pounds of ground turkey and the 2 tablespoons of taco seasoning.",
+      "Cook 6–8 minutes, breaking the meat up with a spoon, until no pink remains. Drain extra fat.",
+      "Add the 1 can of drained black beans and the 1 cup of frozen corn and cook 3–4 minutes, until hot through. Season with the 1 teaspoon of salt and pepper. Taste.",
+      "Take the pan off the heat and scatter the 3 ounces of cheddar over so it melts in the residual heat.",
+      "Shred the 1 head of lettuce and put it on the table cold, for people to pile on top. Do not cook it.",
+    ]
 	},
 	{
 		id: "sesame-soba",
