@@ -80,6 +80,9 @@ glyph looks like.
 | `so-creole-goulash` | cheese | `V\ pound` | 0.25 lb | left as-is |
 | `so-frogs-legs` | lemon juice | `% cup` | 0.5 cup | for the scalding water |
 | `so-baked-ham` | brown sugar | `% cup` | 0.5 cup | left as-is |
+| `so-veal-paprika` | veal thickness | `% inch` | "thick slices" | left vague on purpose |
+| `so-veal-paprika` | sour cream | `MJ cup` | 0.75 cup | left as-is |
+| `so-veal-paprika` | cooking time | `Ms hour` | "about half an hour" | ½ is the likely reading, not a confirmed one |
 
 ## One more way the scan lies
 
@@ -115,5 +118,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 32 |
+| The Southern Cook Book (Lustig 1935) | 317 | 37 |
 | The other 20 books | 139 | 0 |
