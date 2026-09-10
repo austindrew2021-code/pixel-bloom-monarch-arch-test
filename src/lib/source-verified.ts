@@ -127,4 +127,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-raisin-biscuits",
   "so-buttermilk-muffins",
   "so-cheese-biscuits",
+  "so-belgian-hare",
+  "so-sweetbreads",
+  "so-liver-begue",
+  "so-opossum",
+  "so-barbecued-lamb",
 ]);
