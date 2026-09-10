@@ -92,8 +92,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("cheddar", 1, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Brown beef with onion. Stir in soup and vegetables. Spread in a baking dish.",
-      "Top with tots and cheddar. Bake 40 minutes at 400°F until the tots are crisp.",
+      "Heat the oven to 375°F. Brown the 1 pound of ground beef with the chopped onion in the 2 tablespoons of oil, 6–8 minutes, until no pink remains. Drain the fat.",
+      "Stir in the 1 can of cream of mushroom soup, half a can of water, and the 2 cups of frozen mixed vegetables. Season.",
+      "Scrape into a baking dish and level it.",
+      "Stand the 1 bag of frozen tater tots over the top in tight rows — laid flat and packed, they crisp instead of steaming.",
+      "Bake 35–40 minutes, until the tots are gold, then scatter the 1 cup of cheddar over and give it 5 minutes more.",
     ],
   }),
   dish({
@@ -139,8 +142,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("heavy cream", 0.5, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Mix meats with onion, breadcrumbs, and allspice. Roll small balls and brown.",
-      "Make gravy with pan drippings, broth, and cream. Simmer meatballs in it.",
+      "Mix the 1 pound of ground beef and the ½ pound of ground pork with the ½ cup of breadcrumbs, the finely grated onion, the ½ teaspoon of allspice, and salt. Work it just until it holds.",
+      "Roll into small balls, about an inch across, with wet hands.",
+      "Brown them in the 2 tablespoons of oil in a wide skillet, turning, 6–8 minutes, until coloured all over. Lift them out.",
+      "Stir a spoon of flour into the fat, then whisk in the 2 cups of beef broth and simmer to a gravy. Stir in the ½ cup of heavy cream.",
+      "Return the meatballs and simmer gently 10 minutes, until cooked through and the gravy clings. Serve with mash or lingonberry.",
     ],
   }),
   dish({
@@ -162,8 +168,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("paprika", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Brown beef with onion and garlic. Add tomatoes, paprika, and water.",
-      "Stir in dry pasta and simmer until tender, 12–15 minutes.",
+      "Brown the 1 pound of ground beef in the 2 tablespoons of oil in a wide pot, breaking it up, until no pink remains. Drain the fat.",
+      "Add the chopped onion and the 3 cloves of garlic and cook 4 minutes, until soft. Stir in the 1 teaspoon of paprika and cook 30 seconds.",
+      "Add the 1 can of crushed tomatoes, the 1 teaspoon of salt, and 2 cups of water. Simmer 10 minutes.",
+      "Tip in the 12 ounces of dry elbow macaroni and cook 10–12 minutes, stirring often so it does not catch, until tender and the sauce has thickened around it.",
+      "Rest 5 minutes off the heat — it tightens as it sits — and serve.",
     ],
   }),
   dish({
@@ -186,8 +195,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("cheddar", 1, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Layer sliced potatoes, ham, and onion in a buttered dish.",
-      "Pour a milk-flour-butter sauce over. Bake 70 minutes at 350°F, cheddar on top at the end.",
+      "Heat the oven to 350°F. Melt the 3 tablespoons of butter, stir in the 3 tablespoons of flour, and cook 1 minute. Whisk in the 2 cups of milk a little at a time and simmer to a smooth sauce. Season well.",
+      "Slice the 3 pounds of potato thin — a couple of millimetres, or they will not cook through — and slice the onion.",
+      "Layer the potato, the 2 cups of chopped cooked ham, and the onion in a buttered dish, pouring some sauce over each layer.",
+      "Cover with foil and bake 55 minutes, until a knife slides through the middle without resistance.",
+      "Uncover, scatter the 1 cup of cheddar over, and bake 15 minutes more, until browned and bubbling.",
     ],
   }),
   dish({
@@ -209,8 +221,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("cheddar", 1, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Hollow peppers. Mix beef, rice, onion, and some tomato.",
-      "Fill, stand in a dish with remaining tomato, bake 45 minutes at 375°F. Cheese last 10.",
+      "Heat the oven to 375°F. Cut the tops off the 4 bell peppers and pull out the seeds and ribs.",
+      "Brown the 1 pound of ground beef with the chopped onion in the 2 tablespoons of oil until no pink remains. Drain the fat and stir in the 1½ cups of cooked rice, half the 1 can of crushed tomatoes, and the 1 teaspoon of salt.",
+      "Pack the filling into the peppers and stand them in a baking dish. Spoon the rest of the tomatoes around them and add a splash of water.",
+      "Cover with foil and bake 40 minutes, until the peppers give when pressed.",
+      "Uncover, scatter the 1 cup of cheddar over the tops, and bake 10 minutes more, until melted and browned.",
     ],
   }),
   dish({
@@ -283,10 +298,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("butter", 2, "tbsp", "Dairy & Eggs"),
     ],
     steps: [
-      "Pat the 4 pork chops dry and salt both sides. Set a wide skillet over medium-high heat.",
-      "Sear the chops until browned and just cooked through, 4–5 minutes per side. Move to a plate and rest.",
-      "In the same pan, melt the 2 tablespoons of butter. Add the 3 apples (sliced) and the chopped onion with the ½ teaspoon of cinnamon.",
-      "Cook until the apples slump into a sauce, 6–8 minutes. Spoon over the chops and serve.",
+      "Pat the 4 pork chops dry and salt both sides with the 1 teaspoon of salt. Set a wide skillet over medium-high heat.",
+      "Sear the chops 4–5 minutes a side, until browned and a thermometer in the thickest part reads 145°F. Move to a plate and rest 5 minutes — they carry on cooking.",
+      "Melt the 2 tablespoons of butter in the same pan. Add the 3 sliced apples and the chopped onion with the ½ teaspoon of cinnamon.",
+      "Cook 6–8 minutes, scraping up the browned bits, until the apples slump into a rough sauce.",
+      "Spoon the apples over the chops with any juices from the plate and serve.",
     ],
   }),
   dish({
@@ -356,8 +372,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("water", 1, "cup", "Other"),
     ],
     steps: [
-      "Mix beef, rice, and onion. Roll balls.",
-      "Simmer covered in tomato soup and water 40 minutes until rice pokes out.",
+      "Mix the 1 pound of ground beef with the ½ cup of uncooked rice, the finely chopped onion, and the 1 teaspoon of salt. The rice goes in raw — that is what makes the quills.",
+      "Roll into 16 balls with wet hands.",
+      "Brown them in the 2 tablespoons of oil in a wide lidded skillet, turning, until coloured all over.",
+      "Stir the 1 can of tomato soup with the 1 cup of water and pour it around the meatballs, not over them.",
+      "Cover and simmer very gently 40 minutes, until the rice has swelled and softened and the meatballs are cooked through. Add a splash of water if the sauce tightens too far.",
     ],
   }),
   dish({
@@ -428,8 +447,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("tomato paste", 1, "tbsp", "Pantry"),
     ],
     steps: [
-      "Brown the roast hard. Add onion, paste, and broth. Cover and roast 2.5 hours at 325°F.",
-      "Add potato and carrot for the last 50 minutes. Rest, slice, spoon gravy.",
+      "Heat the oven to 325°F. Pat the 3 pound chuck roast dry and season with the 1 teaspoon of salt. Brown it hard on all sides in the 2 tablespoons of oil in a heavy pot.",
+      "Lift the roast out and soften the 2 sliced onions in the fat. Stir in the 1 tablespoon of tomato paste and cook a minute.",
+      "Return the roast, pour in the 2 cups of beef broth, cover, and cook 2½ hours.",
+      "Add the 6 potatoes and the 6 carrots in big chunks and cook 45 minutes more, until a fork twists in the beef with no resistance.",
+      "Rest 15 minutes. Pull the beef into pieces rather than carving it — a pot roast this soft will not slice — and spoon the gravy over.",
     ],
   }),
   dish({
@@ -452,8 +474,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("fresh basil", 1, "bunch", "Produce"),
     ],
     steps: [
-      "Mix beef with breadcrumbs, parmesan, and garlic. Brown meatballs.",
-      "Simmer in tomatoes 40 minutes. Boil spaghetti. Toss together with basil.",
+      "Mix the 1 pound of ground beef with the ½ cup of breadcrumbs, 2 of the minced garlic cloves, the 1 teaspoon of salt, and a splash of water. Roll into 16 balls.",
+      "Brown them in the 2 tablespoons of oil in a wide pot, turning, until coloured all over. They finish in the sauce.",
+      "Add the remaining 3 cloves of garlic for a minute, then the 2 cans of crushed tomatoes. Simmer gently 40 minutes, until the sauce is thick and the meatballs are cooked through.",
+      "Boil the 1 pound of spaghetti until just shy of al dente, saving a cup of the water, and toss it through some of the sauce with a splash of that water.",
+      "Plate the pasta with the meatballs and the rest of the sauce. Tear the 1 bunch of fresh basil over and shower with the 2 ounces of parmesan.",
     ],
   }),
   dish({
@@ -475,8 +500,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("flour", 0.5, "cup", "Pantry"),
     ],
     steps: [
-      "Soak salt cod, then simmer and flake. Mash with potato, onion, and savory.",
-      "Shape cakes, dust with flour, fry in butter until both sides are crusted.",
+      "Soak the 1 pound of salt cod overnight, changing the water twice. Drain, cover with fresh water, and simmer 10–15 minutes, until it flakes. Drain and flake it, checking for bones.",
+      "Boil the 4 potatoes until a fork slides through, then drain and mash them dry.",
+      "Mix the fish, potato, the finely chopped onion, and the 1 teaspoon of savory. Taste before salting — the cod brings its own.",
+      "Shape into cakes and dust both sides with the ½ cup of flour. Chill 15 minutes if they feel soft.",
+      "Fry in the 3 tablespoons of butter over medium heat, 4–5 minutes a side, until both sides are crusted and gold.",
     ],
   }),
   dish({
@@ -497,8 +525,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("savory", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Pat fish dry, season, dust with flour.",
-      "Fry in butter 3–4 minutes a side. Finish with lemon and savory.",
+      "Pat the 1½ pounds of cod fillets dry and season with the 1 teaspoon of salt and the 1 teaspoon of savory.",
+      "Dredge them in the ½ cup of flour and shake off everything loose — a thick coat steams instead of crisping.",
+      "Get a skillet hot over medium-high with the 3 tablespoons of butter. Lay the fillets in and leave them alone 3–4 minutes, until the edges turn opaque and the underside is gold.",
+      "Flip once and cook 2–4 minutes more, until the flesh flakes and the centre is just opaque. Spoon the foaming butter over as it finishes.",
+      "Squeeze the lemon over and serve straight away.",
     ],
   }),
   dish({
@@ -520,8 +551,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("beef broth", 4, "cups", "Pantry"),
     ],
     steps: [
-      "Brown the meat well. Add onion and broth. Simmer 2 hours.",
-      "Add roots and cook until soft. Season hard with salt and pepper.",
+      "Pat the 2 pounds of moose stew meat or beef chuck dry and season with the 1 teaspoon of salt. Brown it hard in the 2 tablespoons of oil in a heavy pot, in batches, and lift out.",
+      "Soften the 2 chopped onions in the fat, scraping the pot clean.",
+      "Return the meat with the 4 cups of beef broth, bring to a bare simmer, and cook covered 2 hours, until the meat starts to give.",
+      "Add the 4 potatoes, the 4 carrots, and the turnip in big chunks and cook 40 minutes more, until everything is tender and the gravy has thickened.",
+      "Skim the fat, taste for salt and pepper, and ladle into warm bowls.",
     ],
   }),
   dish({

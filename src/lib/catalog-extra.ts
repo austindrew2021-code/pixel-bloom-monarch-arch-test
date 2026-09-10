@@ -773,8 +773,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("peanuts", 0.33, "cup", "Pantry"),
     ],
     steps: [
-      "Soak noodles. Stir-fry shrimp, scramble egg.",
-      "Add noodles and sauce. Toss with sprouts and peanuts.",
+      "Soak the 8 ounces of rice noodles in hot tap water 20 minutes, until bendy but still firm. They finish in the pan; boiled, they turn to paste.",
+      "Stir the 2 tablespoons of tamarind paste with the 2 tablespoons of fish sauce, the 1 teaspoon of salt, and a spoon of sugar to make the sauce.",
+      "Get a wok or wide skillet very hot with the 2 tablespoons of oil. Sear the 12 ounces of shrimp 1 minute a side, until just pink, and push them to the side.",
+      "Crack the 2 eggs into the space, scramble them roughly, then add the drained noodles and the sauce. Toss hard 2–3 minutes, until the noodles soften and take the colour.",
+      "Throw in the 2 cups of bean sprouts and toss 30 seconds — they should stay raw and squeaky. Turn out and scatter the ⅓ cup of crushed peanuts over.",
     ],
   }),
   dish({
@@ -795,10 +798,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("Gruyère", 4, "oz", "Dairy & Eggs"),
     ],
     steps: [
-      "Heat the oven to 375°F. Blind-bake the pie crust 12 minutes, until the bottom looks dry.",
-      "Scatter the 6 slices of bacon and the 4 ounces of Gruyère in the crust.",
-      "Beat the 4 eggs with the 1½ cups of cream and a pinch of salt. Pour over the filling.",
-      "Bake 30–35 minutes, until the center is just set. Rest 10 minutes, then slice.",
+      "Heat the oven to 375°F. Blind-bake the pie crust 12 minutes, until the bottom looks dry and sandy.",
+      "Cook the 6 slices of bacon until crisp, drain them, and chop. Raw bacon in the custard renders into a greasy layer and never crisps.",
+      "Scatter the bacon and the 4 ounces of grated Gruyère over the base of the crust.",
+      "Beat the 4 eggs with the 1½ cups of cream and the 1 teaspoon of salt and pour it over the filling.",
+      "Bake 30–35 minutes, until the centre is just set and still has a faint wobble. Rest 10 minutes, then slice.",
     ],
   }),
   dish({
@@ -820,10 +824,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("rice", 2, "cups", "Pantry"),
     ],
     steps: [
-      "Soak the 1 pound of dried red kidney beans in plenty of cold water overnight, or at least 8 hours. Drain.",
-      "Set a heavy pot over medium heat. Brown slices of the 12 ounces of andouille sausage. Add the chopped onion, the 2 stalks of celery, and the bell pepper. Cook 5 minutes, until soft.",
-      "Add the beans and cover with fresh water by an inch. Simmer until the beans are creamy, about 90 minutes, stirring now and then. Mash a few against the pot.",
-      "Cook the 2 cups of rice in salted water until tender. Spoon the beans over the rice and serve hot.",
+      "Soak the 1 pound of dried red kidney beans in plenty of cold water overnight, or at least 8 hours. Drain and rinse.",
+      "Cover the beans with fresh water and boil them hard for a full 10 minutes before doing anything else. Raw and undercooked red kidney beans contain a toxin that only a rolling boil destroys — a low simmer will not do it.",
+      "Brown slices of the 12 ounces of andouille sausage in a heavy pot. Add the chopped onion, the 2 stalks of celery, and the chopped bell pepper and cook 5 minutes, until soft.",
+      "Add the beans with their water and simmer 90 minutes, stirring now and then, until creamy. Mash a few against the side of the pot to thicken it. Season with the 1 teaspoon of salt.",
+      "Cook the 2 cups of rice until tender. Spoon the beans over and serve hot.",
     ],
   }),
   dish({
@@ -845,8 +850,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("kefalotyri or parmesan", 4, "oz", "Dairy & Eggs"),
     ],
     steps: [
-      "Cook pasta. Make cinnamon meat sauce.",
-      "Layer pasta, meat, béchamel. Bake 40 minutes at 350°F.",
+      "Heat the oven to 350°F. Boil the 1 pound of bucatini or penne 2 minutes shy of al dente and drain.",
+      "Brown the 1½ pounds of ground beef in a wide pan, breaking it up, until no pink remains. Add the 2 cups of tomato sauce, the ½ teaspoon of cinnamon, and the 1 teaspoon of salt, and simmer 15 minutes, until thick.",
+      "Toss the pasta with half the 4 ounces of grated kefalotyri or parmesan and spread it in a baking dish.",
+      "Spoon the meat over in an even layer, then pour the 3 cups of béchamel across the top and smooth it to the edges.",
+      "Scatter the rest of the cheese and bake 45 minutes, until set and deep gold. Rest 20 minutes before cutting or it will not hold its layers.",
     ],
   }),
   dish({
@@ -867,8 +875,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("sourdough", 4, "slices", "Bakery"),
     ],
     steps: [
-      "Melt cheese with ale, mustard, and Worcestershire.",
-      "Spoon on toast and broil until bubbling.",
+      "Toast the 4 slices of sourdough on both sides and set them on a tray that can go under the broiler.",
+      "Melt the 8 ounces of grated sharp cheddar with the ½ cup of ale, the 1 teaspoon of mustard, and the 1 teaspoon of Worcestershire over low heat, stirring, until smooth. Do not let it boil or it will split.",
+      "Spoon the hot cheese thickly over the toast, right to the crusts so the edges do not burn.",
+      "Broil 1–2 minutes, until bubbling and spotted gold.",
+      "Serve at once, while it is still flowing.",
     ],
   }),
 ];
