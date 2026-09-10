@@ -88,3 +88,19 @@ Do not promise photo sourcing over the open web.
 - `VITE_AUTH_ENABLED` + `deploy.database` + `DATABASE_URL` for real accounts.
 - Licensing/provenance for 1,108 committed photos with no recorded source.
 - 431 dishes still have no photograph.
+
+## Source books: a scan is evidence, not truth
+
+466 recipes carry a `source` credit. `docs/source-verification.md` holds the
+method, the progress table, and the list of quantities the scan cannot
+settle. The short version:
+
+- Gutenberg text is human-proofread. archive.org `_djvu.txt` is raw OCR.
+- Fetch archive text from `archive.org/download/<id>/<id>_djvu.txt` — the
+  `ia######` mirror nodes truncate near 100 KB and the missing half is
+  silent.
+- Words are readable (`a quart`, `two heaping tablespoons`). Fraction
+  glyphs that lost their digit are not: `%` is equally ½ or ¾. When a
+  quantity is unreadable, leave ours alone and add a row to the table.
+  A guess encoded into the catalog is worse than a known gap, because it
+  stops looking like a question.
