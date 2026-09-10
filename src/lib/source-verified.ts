@@ -115,4 +115,11 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-cornmeal-dodger",
   "so-brunswick-stew",
   "so-kentucky-burgoo",
+  "so-southern-corn-bread",
+  "so-richmond-corn-cakes",
+  "so-corn-meal-muffins",
+  "so-crackling-bread",
+  "so-tea-scones",
+  "so-sally-lunn",
+  "so-spoon-bread",
 ]);
