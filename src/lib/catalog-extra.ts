@@ -52,11 +52,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("figgy duff mix or raisins", 1, "cup", "Pantry"),
     ],
     steps: [
-      "Soak the salt beef overnight. Drain, cover with fresh water, and simmer 2 hours.",
-      "Tie the split peas in a cloth bag and add them to the pot so they cook into pease pudding.",
-      "Add potato, carrot, and turnip, then the cabbage for the last 40 minutes.",
-      "Lift the meat and vegetables onto a platter. Slice the beef.",
-      "Serve with pease pudding, mustard pickles, and a jug of the pot liquor.",
+      "Soak the 2 pounds of salt beef overnight, changing the water once. Drain, cover with fresh water, and simmer 2 hours, skimming.",
+      "Tie the 1 cup of yellow split peas loosely in a pudding cloth — loosely, they swell — and drop the bag in with the meat so they cook into pease pudding.",
+      "Tie the 1 cup of figgy duff mix or raisins into a second cloth bag and add it to the pot for the last hour.",
+      "Add the 6 potatoes, the 4 carrots, and the turnip, and put the 1 head of quartered cabbage in for the last 40 minutes.",
+      "Lift everything onto a platter and slice the beef. Turn the pease pudding out of its bag and mash it with butter. Serve with mustard pickles and a jug of the pot liquor.",
     ],
   }),
   dish({
@@ -75,8 +75,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("molasses", 0.25, "cup", "Pantry"),
     ],
     steps: [
-      "Flatten pieces of risen dough. Fry in fat until gold on both sides.",
-      "Serve hot with molasses or butter.",
+      "Pull the 1 pound of risen bread dough into pieces the size of an egg and flatten each into a disc about ½ inch thick.",
+      "Melt the 3 tablespoons of pork fat or oil in a wide skillet over medium heat — medium, not high, or the outside colours before the middle cooks.",
+      "Fry the discs 3–4 minutes a side, until deep gold and cooked all the way through.",
+      "Drain briefly and pour the ¼ cup of molasses over while they are still hot.",
+      "Serve right away, while they are still crisp at the edges.",
     ],
   }),
   dish({
@@ -121,8 +124,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("onion", 1, "", "Produce"),
     ],
     steps: [
-      "Make a white sauce with butter, flour, and milk. Fold in most of the cheddar.",
-      "Layer cooked cod in a dish, pour sauce, top with remaining cheese. Bake 20 minutes at 375°F.",
+      "Heat the oven to 375°F. Soften the chopped onion in 1 tablespoon of the butter until translucent, 5 minutes.",
+      "Melt the rest of the 3 tablespoons of butter, stir in the 3 tablespoons of flour, and cook 1 minute. Whisk in the 2 cups of milk a little at a time and simmer to a smooth sauce.",
+      "Take it off the heat and stir in the onion and two-thirds of the 8 ounces of grated cheddar, just until it melts in. Season well.",
+      "Lay the 1½ pounds of raw cod fillets in a buttered dish, pour the sauce over, and scatter the last of the cheddar on top.",
+      "Bake 20–25 minutes, until the top is gold and the fish flakes at the thickest part.",
     ],
   }),
   dish({
@@ -145,8 +151,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("milk", 0.75, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Simmer peas with meat and veg until thick, about an hour.",
-      "Mix dumpling dough, drop on the soup, cover 15 minutes. Do not peek.",
+      "Rinse the 2 cups of yellow split peas. Put them in a heavy pot with the ham bone or salt meat and 8 cups of water. Bring to a boil, skim, then simmer 75 minutes, until the peas have collapsed.",
+      "Soften the chopped onion and the 2 diced carrots in the 2 tablespoons of oil and stir them into the pot. Simmer 15 minutes more. Lift the bone out, pull off any meat, and return it.",
+      "Make the doughboys: stir the 1½ cups of flour with the 2 teaspoons of baking powder and a pinch of salt, then mix in the ¾ cup of milk to a soft, sticky dough.",
+      "Drop spoonfuls onto the simmering soup, leaving room between them. Cover and cook 15 minutes without lifting the lid — the steam is what raises them.",
+      "Season the soup and serve with a doughboy or two in each bowl.",
     ],
   }),
   dish({
@@ -168,10 +177,10 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("Worcestershire", 1, "tbsp", "Pantry"),
     ],
     steps: [
-      "Heat the oven to 350°F. Mix the 2 pounds of ground beef, the 1 cup of breadcrumb, the 2 eggs, the chopped onion, the 1 tablespoon of Worcestershire, and 2 tablespoons of the ketchup until just combined.",
-      "Shape into a loaf in a pan. Paint the top with the remaining ketchup.",
-      "Bake 1 hour at 350°F, until the center is cooked through.",
-      "Rest the loaf 10 minutes so it slices clean. Cut thick slices and serve.",
+      "Heat the oven to 350°F. Mix the 2 pounds of ground beef, the 1 cup of breadcrumb, the 2 eggs, the chopped onion, the 1 tablespoon of Worcestershire, and 2 tablespoons of the ketchup until just combined. Overworking it makes the loaf dense.",
+      "Shape into a loaf in a pan and paint the top with the rest of the ½ cup of ketchup.",
+      "Bake about 1 hour, until a thermometer in the middle reads 160°F.",
+      "Rest 10 minutes so it slices clean. Cut thick slices and serve.",
     ],
   }),
   dish({
@@ -220,11 +229,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("milk", 0.5, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Heat the oven to 400°F. Boil the 2 pounds of potato until tender, then mash with the 3 tablespoons of butter and the ½ cup of milk.",
-      "Set a wide skillet over medium-high heat. Brown the 1½ pounds of ground lamb or beef with the chopped onion and the 2 carrots, 6–8 minutes.",
-      "Stir in the 1 cup of peas. Season well.",
-      "Spread the mash over the mince in an even layer, sealing the edges.",
-      "Bake 25 minutes, until the top is gold and the filling is bubbling.",
+      "Heat the oven to 400°F. Boil the 2 pounds of potato until tender, then mash with the 3 tablespoons of butter and the ½ cup of milk. Season well.",
+      "Brown the 1½ pounds of ground lamb or beef in a wide skillet with the chopped onion and the 2 diced carrots, 8 minutes, until no pink remains.",
+      "Sprinkle over a tablespoon of flour, stir a minute, then add a cup of water or stock and simmer 5 minutes to a thick gravy — without it the filling is dry and the mash slides off.",
+      "Stir in the 1 cup of peas and season. Spread the mash over the top in an even layer, sealing it right to the edges.",
+      "Bake 25 minutes, until the top is gold and the filling bubbles up at the sides.",
     ],
   }),
   dish({
@@ -248,8 +257,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("chicken broth", 2, "cups", "Pantry"),
     ],
     steps: [
-      "Make a gravy with butter, flour, and broth. Fold in chicken and veg.",
-      "Pour into a dish, top with crust, vent, bake 35 minutes at 400°F.",
+      "Melt the 4 tablespoons of butter and soften the 2 diced carrots and the 2 stalks of celery, 8 minutes, until they give when pressed.",
+      "Stir in the ⅓ cup of flour and cook 1 minute, then whisk in the 2 cups of chicken broth a little at a time. Simmer 4–5 minutes to a thick gravy.",
+      "Fold in the 3 cups of cooked chicken and the 1 cup of frozen peas. Season well and cool slightly — a boiling filling melts the pastry before it bakes.",
+      "Pour into a dish, lay the pie crust over, trim, and cut two vents in the lid so the steam escapes.",
+      "Bake 35 minutes at 400°F, until the crust is deep gold and the filling bubbles at the vents.",
     ],
   }),
   dish({
@@ -326,8 +338,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("Greek yogurt", 1, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Marinate chicken in lemon, oregano, garlic, and oil. Skewer and grill.",
-      "Stir yogurt with grated cucumber and garlic. Wrap in pita.",
+      "Cut the 1½ pounds of chicken thighs into 1½-inch pieces and toss with the juice of 1 lemon, the 2 teaspoons of dried oregano, half the 4 cloves of garlic, the 1 teaspoon of salt, and the 2 tablespoons of oil. Leave 20 minutes.",
+      "Thread onto skewers and grill, or sear in a hot ridged pan, 10–12 minutes, turning, until charred at the edges and the pieces read 165°F.",
+      "Make the tzatziki: grate the cucumber, squeeze it dry, and stir it into the 1 cup of Greek yogurt with the rest of the garlic, a pinch of salt, and a squeeze of lemon.",
+      "Warm the 4 pitas in a dry pan until they puff and flex.",
+      "Pile the chicken into the pitas with a spoonful of tzatziki and the last of the lemon squeezed over.",
     ],
   }),
   dish({
@@ -373,8 +388,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("dried oregano", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Chunk tomato, cucumber, and onion. Add olives.",
-      "Lay a slab of feta on top. Olive oil, oregano, salt.",
+      "Cut the 4 ripe tomatoes into thick wedges and the cucumber into half-moons. Slice the ½ red onion thin.",
+      "Put them in a wide bowl with the ½ cup of Kalamata olives.",
+      "Dress with the 3 tablespoons of olive oil and the 1 teaspoon of salt and toss gently, so the tomatoes give up a little juice.",
+      "Lay the 6 ounce slab of feta on top whole, do not crumble it, and dust it with the 1 teaspoon of dried oregano.",
+      "Let it sit 10 minutes, then serve at room temperature with bread for the juices.",
     ],
   }),
   dish({
@@ -393,7 +411,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("black pepper", 2, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Boil pasta. Toast pepper in a pan. Toss with starchy water and pecorino off heat until creamy.",
+      "Boil the 12 ounces of spaghetti or tonnarelli in well-salted water. Use less water than usual so it ends up starchy — that starch is the sauce.",
+      "Toast the 2 teaspoons of coarsely cracked black pepper in a dry wide pan over medium heat, 30 seconds, until it smells sharp. No oil goes into this dish.",
+      "Ladle in a splash of pasta water and swirl. Drain the pasta 2 minutes early and tip it into the pan with a little more of its water.",
+      "Take the pan off the heat and let it stop sizzling. Add the 1½ cups of grated pecorino romano in handfuls, tossing hard — heat above a simmer makes the cheese seize into strings.",
+      "Loosen with more pasta water until it turns to a glossy cream that clings to the strands. Serve at once.",
     ],
   }),
   dish({
@@ -460,8 +482,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("parsley", 0.25, "cup", "Produce"),
     ],
     steps: [
-      "Brown shanks. Sweat soffritto. Deglaze with wine. Braise covered 2 hours.",
-      "Finish with lemon zest, garlic, and parsley.",
+      "Pat the 4 veal shanks dry, season with the 1 teaspoon of salt, and tie a string round each so they hold together. Brown them hard in the 2 tablespoons of oil in a heavy pot and lift out.",
+      "Soften the chopped onion, the 2 carrots, and the 2 stalks of celery in the same pot, 8 minutes.",
+      "Pour in the 1 cup of white wine and let it bubble down by half, scraping the pot clean.",
+      "Return the shanks standing up so the marrow stays in the bone, add water to come two-thirds up, and simmer covered — on the hob or at 325°F — for 2 hours, until the meat gives at the bone.",
+      "Chop the ¼ cup of parsley with the 1 tablespoon of lemon zest and scatter this gremolata over each shank as it goes to the table. Cooked into the pot it loses the point.",
     ],
   }),
   dish({
@@ -483,8 +508,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("cilantro", 1, "bunch", "Produce"),
     ],
     steps: [
-      "Marinate thin pork in achiote and pineapple juice. Sear hot.",
-      "Chop with grilled pineapple. Serve on tortillas with onion and cilantro.",
+      "Slice the 1½ pounds of pork shoulder as thin as you can — this is a thin-cut dish, and a thick slice of shoulder will not cook in a pan.",
+      "Toss the slices with the 2 tablespoons of achiote paste and the 1 teaspoon of salt and leave 20 minutes.",
+      "Sear in the 2 tablespoons of oil in a very hot skillet in batches, 2–3 minutes a side, until the edges char and no pink remains. Chop roughly.",
+      "Char the 1 cup of pineapple in the same pan until it takes colour, then chop it in with the pork.",
+      "Warm the 12 corn tortillas 20–30 seconds a side. Fill, and top with the finely diced white onion and the 1 bunch of chopped cilantro.",
     ],
   }),
   dish({
@@ -507,11 +535,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("fresh ginger", 1, "tbsp", "Produce"),
     ],
     steps: [
-      "Mix the 1½ pounds of chicken thighs with the ½ cup of plain yogurt, the 2 teaspoons of garam masala, and a pinch of salt. Rest 20 minutes.",
-      "Broil until the edges are charred and the chicken is just cooked through, 10–12 minutes.",
-      "Simmer the 1 cup of tomato puree with the 4 cloves of garlic, the 1 tablespoon of fresh ginger, and the ½ cup of cream until the sauce is thick, 8–10 minutes.",
-      "Nestle the chicken back into the sauce and simmer 5 minutes so it drinks the gravy.",
-      "Rest 2 minutes, then plate and serve hot. Rice or naan on the side if you have it.",
+      "Mix the 1½ pounds of chicken thighs with the ½ cup of plain yogurt, the 2 teaspoons of garam masala, and the 1 teaspoon of salt. Rest 20 minutes, or overnight in the fridge.",
+      "Broil 10–12 minutes, turning once, until the edges char and the thickest piece reads 165°F.",
+      "Simmer the 1 cup of tomato puree with the 4 cloves of garlic and the 1 tablespoon of ginger 6 minutes, then stir in the ½ cup of cream and cook 4 minutes more, until the sauce coats a spoon.",
+      "Cut the chicken into chunks, nestle them into the sauce with any charred juices, and simmer 5 minutes so they drink the gravy.",
+      "Serve over the 1½ cups of cooked rice.",
     ],
   }),
   dish({
@@ -587,8 +615,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("mayo", 2, "tbsp", "Pantry"),
     ],
     steps: [
-      "Mix shredded cabbage with batter. Fry like a thick pancake.",
-      "Stripe with sauce and mayo.",
+      "Shred the ½ head of cabbage fine. Beat the 2 eggs with the ¾ cup of dashi or water and the 1 teaspoon of salt, then whisk in the 1 cup of flour to a thick batter.",
+      "Fold the cabbage through — it should look like more cabbage than batter.",
+      "Set a skillet over medium heat with the 2 tablespoons of oil. Spoon the mixture in and pat it into a round cake about an inch thick. Do not press it flat as it cooks or it turns dense.",
+      "Cook 5–6 minutes, until the underside is deep gold and set, then flip and give it 5–6 minutes more, until a skewer comes out clean.",
+      "Slide onto a plate. Brush the 3 tablespoons of okonomi sauce over the top and zigzag the 2 tablespoons of mayo across it. Serve hot.",
     ],
   }),
   dish({
@@ -611,8 +642,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("tahini", 0.25, "cup", "Pantry"),
     ],
     steps: [
-      "Soak chickpeas overnight. Pulse with onion, garlic, herbs, and cumin. Do not use canned.",
-      "Fry scoopfuls until deep brown. Stuff pita with tahini, tomato, and pickle.",
+      "Soak the 1½ cups of dried chickpeas in plenty of cold water overnight. Do not cook them and do not use canned — cooked chickpeas will not hold together.",
+      "Drain well and blitz with the chopped onion, the 4 cloves of garlic, the 1 bunch of parsley, the 2 teaspoons of cumin, and the 1 teaspoon of salt to a coarse paste. Rest 30 minutes, then shape into small patties.",
+      "Fry in the 2 tablespoons of oil over medium heat, 3–4 minutes a side, until deep brown and crisp through. Drain on a rack.",
+      "Loosen the ¼ cup of tahini with cold water and lemon until it pours.",
+      "Warm the 4 pitas, split them, and fill with falafel, tahini, and pickles.",
     ],
   }),
   dish({
@@ -660,8 +694,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("thyme", 4, "sprigs", "Produce"),
     ],
     steps: [
-      "Brown chicken and lardons. Add wine, thyme, mushrooms, and onions.",
-      "Simmer covered 1 hour until the sauce is glossy.",
+      "Render the 4 ounces of bacon lardons in a heavy pot until crisp and lift them out. Pat the 3 pounds of chicken pieces dry, season with the 1 teaspoon of salt, and brown them hard in the fat with the 2 tablespoons of oil. Lift out.",
+      "Brown the 1 cup of pearl onions and the 8 ounces of mushrooms in the same pot and set them aside with the bacon.",
+      "Pour in the 2 cups of red wine, scraping the pot clean, and let it bubble 5 minutes to cook off the raw edge.",
+      "Return the chicken and the 4 sprigs of thyme, cover, and simmer very gently 1 hour, until the meat pulls from the bone.",
+      "Return the bacon, onions and mushrooms for the last 10 minutes. Skim the fat and serve from the pot.",
     ],
   }),
   dish({
@@ -682,8 +719,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("black pepper", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Brown sausage. Sprinkle flour, then whisk in milk until thick. Heavy pepper.",
-      "Split hot biscuits and ladle gravy over.",
+      "Bake the 8 biscuits, from mix or homemade, according to their packet or recipe, and keep them warm.",
+      "Crumble the 1 pound of breakfast sausage into a wide skillet with the 2 tablespoons of oil and cook over medium heat 8 minutes, breaking it up, until no pink remains and the edges have browned.",
+      "Sprinkle the ¼ cup of flour over the meat and its fat and cook 1–2 minutes, stirring, until the raw flour smell goes.",
+      "Whisk in the 3 cups of milk a little at a time so it stays smooth. Simmer 6–8 minutes, stirring, until the gravy coats a spoon — it thickens further off the heat.",
+      "Season hard with the 1 teaspoon of black pepper and the 1 teaspoon of salt. Split the biscuits and ladle the gravy over.",
     ],
   }),
   dish({
@@ -706,8 +746,11 @@ export const EXTRA_RECIPES: Recipe[] = [
       I("lime", 1, "", "Produce"),
     ],
     steps: [
-      "Blend marinade. Rub into chicken at least 1 hour.",
-      "Grill or roast until the edges char and juices run clear.",
+      "Blitz the scotch bonnet (seeds out unless you want it fierce), the 4 green onions, the 1 tablespoon of allspice, the 1 tablespoon of fresh thyme, the 2 tablespoons of soy sauce, the juice of the lime, the 1 teaspoon of salt, and the 2 tablespoons of oil to a rough paste. Wash your hands before touching your face.",
+      "Rub it all over and into the 3 pounds of chicken pieces, getting under the skin. Marinate at least 4 hours, overnight for the real thing.",
+      "Heat the oven to 400°F, or set a grill up for indirect heat.",
+      "Cook 40–45 minutes, turning once, until the skin is blistered and dark and the thickest part reads 165°F.",
+      "Rest 8–10 minutes, then chop through the bone into pieces the way it is served at the drum, and squeeze more lime over.",
     ],
   }),
   dish({

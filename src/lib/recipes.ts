@@ -56,12 +56,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("black pepper", 1, "tsp", "Herbs & Spices")
 		],
 		steps: [
-			"Heat the oven to 425°F. Pat the chicken dry and salt it generously inside and out.",
-			"Stuff the cavity with halved lemons, smashed garlic, and thyme.",
-			"Rub the skin with olive oil, pepper, and a last pinch of salt.",
-			"Roast 60–70 minutes until juices run clear and the skin is deep gold.",
-			"Rest 10 minutes before carving. Spoon pan juices over the slices."
-		]
+      "Heat the oven to 425°F. Pat the whole chicken dry and salt it generously inside and out with the 1½ teaspoons of kosher salt.",
+      "Stuff the cavity with the 2 halved lemons, the 6 cloves of smashed garlic, and the 6 sprigs of fresh thyme.",
+      "Rub the skin with the 2 tablespoons of olive oil and the 1 teaspoon of black pepper.",
+      "Roast 60–70 minutes, until the skin is deep gold and a thermometer in the thickest part of the thigh, not touching bone, reads 165°F.",
+      "Rest 10 minutes before carving. Spoon the pan juices over the slices.",
+    ]
 	},
 	{
 		id: "tomato-basil-pasta",
@@ -156,10 +156,11 @@ const CORE_RECIPES: Recipe[] = [
 			I("kosher salt", 1, "tsp", "Herbs & Spices")
 		],
 		steps: [
-			"Heat the oven to 425°F. Toss asparagus with oil, garlic, and salt on a sheet pan.",
-			"Nestle salmon beside it. Season, add lemon slices, and roast 12–14 minutes.",
-			"Serve with extra lemon at the table."
-		]
+      "Heat the oven to 425°F. Toss the 1 bunch of trimmed asparagus with the 2 tablespoons of olive oil, the 2 sliced cloves of garlic, and the 1 teaspoon of kosher salt on a sheet pan.",
+      "Pat the 4 salmon fillets dry, season them, and nestle them among the asparagus with a few slices of the lemon on top.",
+      "Roast 12–14 minutes, until the salmon flakes at the thickest part and the centre is just opaque.",
+      "Serve from the pan, with the rest of the lemon cut into wedges.",
+    ]
 	},
 	{
 		id: "chicken-stir-fry",
@@ -188,11 +189,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("sesame oil", 1, "tsp", "Pantry")
 		],
 		steps: [
-			"Start the rice. Slice chicken thin and toss with a spoon of soy.",
-			"Sear chicken in a hot skillet until browned. Set aside.",
-			"Stir-fry snap peas and pepper. Add ginger, garlic, remaining soy, and chicken.",
-			"Glaze 1 minute. Finish with sesame oil and serve over rice."
-		]
+      "Start the 1½ cups of rice. Slice the 1½ pounds of chicken thighs thin across the grain and toss with a spoon of the 3 tablespoons of soy sauce.",
+      "Sear the chicken in a hot skillet in one layer, 3–4 minutes, turning once, until browned outside and no longer pink inside. Set aside.",
+      "Stir-fry the 12 ounces of snap peas and the sliced bell pepper 2–3 minutes, until bright and blistered but still snapping.",
+      "Add the 1 tablespoon of ginger, the 3 cloves of garlic, the remaining soy sauce, and the chicken with any juices.",
+      "Toss 1 minute to glaze. Finish with the 1 teaspoon of sesame oil and serve over the rice.",
+    ]
 	},
 	{
 		id: "lentil-soup",
@@ -386,10 +388,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("rice", 1.5, "cups", "Pantry")
 		],
 		steps: [
-			"Marinate chicken in lemon, oregano, salt, and oil. Grill or sear until cooked.",
-			"Chop cucumber, tomato, and onion. Stir yogurt with lemon and salt.",
-			"Slice chicken over rice. Add salad and a spoon of yogurt."
-		]
+      "Marinate the 1½ pounds of chicken breasts in the juice of the lemon, the 1 teaspoon of dried oregano, the 1 teaspoon of salt, and the 2 tablespoons of oil for 15 minutes.",
+      "Grill or sear them 5–6 minutes a side, until the thickest part reads 165°F. Rest on a board.",
+      "Chop the cucumber, halve the 1 pint of cherry tomatoes, and thinly slice the ½ red onion. Toss them together.",
+      "Stir the 1 cup of plain yogurt with a squeeze of lemon and a pinch of salt.",
+      "Slice the rested chicken over the 1½ cups of cooked rice. Add the salad and a spoon of the yogurt.",
+    ]
 	},
 	{
 		id: "mushroom-risotto",
@@ -417,10 +421,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("butter", 3, "tbsp", "Dairy & Eggs")
 		],
 		steps: [
-			"Sauté mushrooms in butter until browned; set aside.",
-			"Cook shallot, add rice, then wine. Add broth a ladle at a time, stirring.",
-			"When creamy, fold in mushrooms and parmesan."
-		]
+      "Sauté the 1 pound of mixed mushrooms in the 3 tablespoons of butter over high heat until browned and squeaky, 8 minutes. Set aside.",
+      "Soften the 2 chopped shallots in the same pan, stir in the 1½ cups of arborio rice until the grains turn glassy, then pour in the ½ cup of white wine and let it cook away.",
+      "Add the 5 cups of vegetable broth a ladle at a time, stirring, waiting for each to be absorbed before the next. This takes 18–20 minutes.",
+      "The risotto is ready when the grains are tender with the faintest bite and a spoon dragged through leaves a trail that fills back in slowly.",
+      "Fold in the mushrooms and the 2 ounces of parmesan off the heat. Serve at once — it stiffens as it sits.",
+    ]
 	},
 	{
 		id: "beef-chili",
@@ -452,10 +458,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("cheddar", 4, "oz", "Dairy & Eggs")
 		],
 		steps: [
-			"Brown the 1½ lb of ground beef with the chopped onion. Drain extra fat.",
-			"Stir in the 2 tablespoons of chili powder, the 1 teaspoon of cumin, the crushed tomatoes, the 2 cans of kidney beans, and a pinch of salt. Simmer 35 minutes.",
-			"Serve with the cheddar."
-		]
+      "Set a wide pot over medium-high heat. Brown the 1½ pounds of ground beef with the chopped onion, breaking it up, until no pink remains.",
+      "Tilt the pan and drain off the extra fat so the chili is not greasy.",
+      "Stir in the 2 tablespoons of chili powder and the 1 teaspoon of cumin and cook 30 seconds, until they smell toasted.",
+      "Add the 1 can of crushed tomatoes, the 2 cans of drained kidney beans, the 1 teaspoon of salt, and a cup of water. Simmer 35 minutes, uncovered, until it thickens and the fat rises.",
+      "Spoon into bowls and pass the 4 ounces of grated cheddar at the table.",
+    ]
 	},
 	{
 		id: "honey-garlic-shrimp",
@@ -585,7 +593,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("olive oil", 2, "tbsp", "Pantry"),
 			I("arugula", 4, "cups", "Produce")
 		],
-		steps: ["Drain tuna and beans. Toss with lemon, oil, shaved onion, and parsley.", "Spoon over arugula. Salt generously."]
+		steps: [
+      "Wash and dry the 4 cups of arugula and put it in a wide bowl.",
+      "Whisk the juice of the lemon with the 2 tablespoons of olive oil and a pinch of the 1 teaspoon of salt until the dressing looks even.",
+      "Drain the 2 cans of tuna and the 1 can of white beans well. Add them to the bowl with the ½ bunch of chopped parsley and the thinly sliced ¼ red onion.",
+      "Pour the dressing over and toss gently, so the beans stay whole and the leaves are coated rather than drowned.",
+      "Taste for salt and serve right away, while the leaves are still crisp.",
+    ]
 	},
 	{
 		id: "crispy-chickpea-wraps",
@@ -671,7 +685,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("baby spinach", 3, "cups", "Produce"),
 			I("parmesan", 1, "oz", "Dairy & Eggs")
 		],
-		steps: ["Crisp gnocchi in a slick of oil without boiling first.", "Add tomatoes until they burst. Kill the heat, fold in pesto and spinach."]
+		steps: [
+      "Set a wide skillet over medium-high heat with the 2 tablespoons of oil. Add the 1 pound of shelf-stable gnocchi straight from the packet — do not boil them first.",
+      "Fry 6–8 minutes, turning every couple of minutes, until they are blistered and crisp on two sides and soft inside.",
+      "Add the 1 pint of cherry tomatoes and cook 3–4 minutes, pressing a few with the spoon, until they burst and make a little sauce.",
+      "Take the pan off the heat. Fold in the ½ cup of basil pesto and the 3 cups of baby spinach so the spinach wilts in the residual heat — pesto cooked hard turns bitter and grey.",
+      "Shower the 1 ounce of parmesan over and serve straight from the pan.",
+    ]
 	},
 	{
 		id: "egg-fried-greens",
@@ -794,7 +814,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("cream", .5, "cup", "Dairy & Eggs"),
 			I("parmesan", 1, "oz", "Dairy & Eggs")
 		],
-		steps: ["Boil pasta. In a pan, warm diced ham, peas, cream, and lemon zest.", "Toss with pasta, pasta water, and parmesan."]
+		steps: [
+      "Bring a large pot of salted water to a boil. Cook the 12 ounces of short pasta until just shy of al dente, 8–10 minutes. Ladle out a cup of the pasta water and drain.",
+      "Meanwhile dice the 8 ounces of ham steak and brown it in the 2 tablespoons of oil in a wide skillet over medium heat, 4–5 minutes, until the edges catch.",
+      "Pour in the ½ cup of cream and let it bubble gently 2 minutes, until it thickens a little. Add the 1½ cups of frozen peas and warm them through.",
+      "Add the pasta with a splash of the pasta water and toss over medium heat until the sauce coats every strand, 1–2 minutes.",
+      "Take the pan off the heat before the lemon goes in, or the cream will split. Squeeze the lemon over, toss with the 1 ounce of parmesan and the 1 teaspoon of salt, and serve at once.",
+    ]
 	},
 	{
 		id: "steak-chimichurri",
@@ -885,11 +911,11 @@ const CORE_RECIPES: Recipe[] = [
 			I("cucumber", 1, "", "Produce")
 		],
 		steps: [
-			"Mix the 1 cup of plain Greek yogurt with the 4 cloves of garlic (minced), the juice of the lemon, the 1 teaspoon of cumin, and a pinch of salt.",
-			"Coat the 2 pounds of chicken thighs and rest at least 20 minutes, or up to overnight in the fridge.",
-			"Grill or roast at 425°F until the edges char and the thighs are cooked through, 18–22 minutes.",
-			"Rest 5 minutes. Slice and serve with the cucumber, cut into thick spears.",
-		],
+      "Mix the 1 cup of plain Greek yogurt with the 4 minced cloves of garlic, the juice of the lemon, the 1 teaspoon of cumin, and the 1 teaspoon of salt.",
+      "Coat the 2 pounds of chicken thighs and rest at least 20 minutes, or up to overnight in the fridge. Scrape most of the marinade off before cooking or it burns rather than chars.",
+      "Grill, or roast at 425°F, 18–22 minutes, until the edges char and the thickest part reads 165°F.",
+      "Rest 5 minutes. Slice and serve with the cucumber, cut into thick spears.",
+    ],
 	},
 	{
 		id: "salmon-quinoa",
@@ -947,7 +973,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("oregano", 1, "tsp", "Herbs & Spices"),
 			I("parmesan", 1, "oz", "Dairy & Eggs")
 		],
-		steps: ["Brown beef. Add sliced zucchini, garlic, tomato, and oregano.", "Simmer until zucchini is tender. Finish with parmesan."]
+		steps: [
+      "Set a wide skillet over medium-high heat with the 2 tablespoons of oil. Add the 1½ pounds of ground beef.",
+      "Cook 6–8 minutes, breaking the meat up with a spoon, until no pink remains. Drain off the extra fat.",
+      "Add the 3 cloves of garlic and the 1 teaspoon of oregano and cook 30 seconds, until fragrant.",
+      "Add the 3 zucchini in thick half-moons and the 1 cup of crushed tomatoes. Simmer 6–8 minutes, until the zucchini is tender and the sauce clings to the meat.",
+      "Take off the heat, shower the 1 ounce of parmesan over, and serve.",
+    ]
 	},
 	{
 		id: "shrimp-cauliflower",
@@ -973,7 +1005,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("lemon", 1, "", "Produce"),
 			I("parsley", .25, "cup", "Produce")
 		],
-		steps: ["Roast cauliflower florets at 425°F until browned.", "Sauté shrimp and garlic. Toss with cauliflower, lemon, and parsley."]
+		steps: [
+      "Break the head of cauliflower into small florets. Steam or boil them 5–6 minutes, until a knife just goes in, and drain well.",
+      "Pat the 1½ pounds of shrimp dry and season with the 1 teaspoon of salt.",
+      "Set a wide skillet over medium-high heat with the 2 tablespoons of olive oil. Sear the shrimp 1 minute a side, just until they turn pink and curl into a loose C — a tight O means they are overdone. Move them to a plate.",
+      "Add the 5 sliced cloves of garlic to the pan and cook 30 seconds, until fragrant but not browned. Add the cauliflower and toss 2 minutes to pick up the flavour.",
+      "Return the shrimp with any juices, squeeze the lemon over, scatter the ¼ cup of parsley, and serve straight away.",
+    ]
 	},
 	{
 		id: "cottage-egg-toast",
@@ -998,7 +1036,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("chives", 2, "tbsp", "Produce"),
 			I("chili flakes", .25, "tsp", "Herbs & Spices")
 		],
-		steps: ["Toast the bread. Spread cottage cheese thickly.", "Fry or poach eggs. Set on toast with chives and chili."]
+		steps: [
+      "Toast the 2 slices of sourdough on both sides until gold, 1–2 minutes a side.",
+      "Spread the 1 cup of cottage cheese thickly over the warm toast.",
+      "Fry the 2 eggs in the 2 tablespoons of butter over medium heat, 2–3 minutes, until the whites are set and the yolks still soft.",
+      "Slide an egg onto each slice. Scatter the 2 tablespoons of chopped chives and the ¼ teaspoon of chili flakes over.",
+      "Serve right away, while the toast is still crisp under the cheese.",
+    ]
 	},
 	{
 		id: "turkey-chili-bowl",
@@ -1024,7 +1068,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("chili powder", 2, "tbsp", "Herbs & Spices"),
 			I("Greek yogurt", .5, "cup", "Dairy & Eggs")
 		],
-		steps: ["Brown the 2 lb of ground turkey with the onion. Stir in the 2 tablespoons of chili powder, the crushed tomatoes, and the 2 cans of black beans.", "Simmer 25 minutes. Top bowls with the Greek yogurt."]
+		steps: [
+      "Warm the 2 tablespoons of oil in a heavy pot over medium heat and soften the chopped onion, 5–6 minutes.",
+      "Add the 2 pounds of ground turkey and cook 8 minutes, breaking it up, until no pink remains and some of it has browned. Browning is where the flavour comes from — boiling it does not get you there.",
+      "Stir in the 2 tablespoons of chili powder and cook 30 seconds, until it smells toasted.",
+      "Add the 1 can of crushed tomatoes, the 2 cans of drained black beans, the 1 teaspoon of salt, and a cup of water. Simmer 25 minutes, uncovered, until it thickens.",
+      "Ladle into warm bowls and pass the ½ cup of Greek yogurt at the table.",
+    ]
 	},
 	{
 		id: "lasagna-bolognese",
@@ -1052,10 +1102,12 @@ const CORE_RECIPES: Recipe[] = [
 			I("garlic", 4, "cloves", "Produce")
 		],
 		steps: [
-			"Make a simple bolognese with beef, onion, garlic, and tomatoes. Simmer 30 minutes.",
-			"Layer noodles, sauce, ricotta, and mozzarella. Bake 45 minutes at 375°F.",
-			"Rest 15 minutes. Cool leftovers in portions."
-		]
+      "Brown the 1½ pounds of ground beef with the chopped onion in a wide pan, breaking it up, until no pink remains. Add the 4 cloves of garlic for the last minute.",
+      "Add the 2 cans of crushed tomatoes and a good pinch of salt. Simmer 30 minutes, uncovered, until the sauce thickens and the fat rises.",
+      "Boil the 12 lasagna noodles 2 minutes shy of the packet time and lay them out flat so they do not stick — or use no-boil sheets and add a splash of water to the sauce.",
+      "Heat the oven to 375°F. Layer sauce, noodles, the 15 ounces of ricotta, and the 12 ounces of mozzarella, finishing with sauce and cheese.",
+      "Bake 45 minutes, until bubbling and browned on top. Rest 15 minutes before cutting, or it slides apart. Cool leftovers in portions.",
+    ]
 	},
 	{
 		id: "chicken-rice-prep",
@@ -1119,7 +1171,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("kale", 1, "bunch", "Produce"),
 			I("vegetable broth", 8, "cups", "Pantry")
 		],
-		steps: ["Sweat carrot, celery, and onion. Add tomato, broth, beans, and zucchini.", "Simmer 25 minutes. Add pasta and kale until tender. Season well."]
+		steps: [
+      "Warm the 2 tablespoons of oil in a heavy pot. Soften the 3 diced carrots and the 3 stalks of celery over medium heat, 6–8 minutes.",
+      "Add the 1 can of diced tomatoes and the 8 cups of vegetable broth and bring to a simmer. Cook 20 minutes.",
+      "Add the 2 cans of drained cannellini beans, the 2 diced zucchini, and the 1 cup of small pasta. Cook 8 minutes, until the pasta is tender and the zucchini still has some bite.",
+      "Stir in the 1 bunch of shredded kale and cook 3 minutes more, until it wilts but keeps its colour.",
+      "Season with the 1 teaspoon of salt and ladle into warm bowls.",
+    ]
 	},
 	{
 		id: "pulled-pork",
@@ -1277,7 +1335,13 @@ const CORE_RECIPES: Recipe[] = [
 			I("potato", 2, "", "Produce"),
 			I("salsa", 1, "cup", "Pantry")
 		],
-		steps: ["Crisp diced potato. Scramble eggs softly. Warm beans.", "Fill tortillas, wrap tight in foil, freeze. Reheat from frozen in a skillet or microwave."]
+		steps: [
+      "Dice the 2 potatoes small and fry them until crisp and tender, 12–15 minutes. Set aside.",
+      "Beat the 12 eggs and scramble them over medium-low heat until just set and still a little wet — they finish cooking when reheated.",
+      "Warm the 8 flour tortillas in a dry pan 15 seconds a side so they flex without cracking.",
+      "Lay a line of egg down each tortilla with the potatoes, the 1 can of drained black beans, the 8 ounces of grated cheddar, and a spoon of the 1 cup of salsa. Fold the sides in and roll tight.",
+      "Eat now, or cool completely, wrap each one in foil, and freeze up to 3 months. Reheat from frozen, unwrapped, 2–3 minutes in the microwave.",
+    ]
 	}
 ];
 const CORE_FLAVOR: Record<string, { cuisine: string; aliases: string[]; extraTags?: string[] }> = {
