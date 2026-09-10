@@ -65,6 +65,16 @@ glyph looks like.
 | `so-delicious-appetizer` | dried beef | `% pound` | 0.5 lb | ½ or ¾; ours is unconfirmed either way |
 | `so-pigs-in-blankets` | salt | `% teaspoon` | 1 tsp | left as-is |
 | `so-mint-tea` | water | `1 ••> cup` | 1 cup | possibly 1½ |
+| `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
+| `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
+| `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
+| `so-spiced-cider` | sugar | `V± cup` | 0.5 cup | left as-is |
+| `so-tom-and-jerry` | boiling water | cup `%` full | "most of the way" | left vague on purpose |
+| `so-baking-powder-biscuits` | milk | `% cup` | 0.75 cup | left as-is |
+| `so-beaten-biscuits` | lard | `Va cup` | 0.25 cup | left as-is |
+| `so-beaten-biscuits` | salt | `Vv teaspoon` | 0.25 tsp | left as-is |
+| `so-beaten-biscuits` | sugar | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-creole-batter-bread` | corn meal | `Vz pint` | 1 cup | ½ pint is 1 cup, so ours is probably right |
 
 Page images are at `https://archive.org/details/<archiveId>`. Image bytes
 cannot be fetched in this environment — the egress proxy rejects image
@@ -75,5 +85,5 @@ hosts — so these rows can only be closed by a person looking at the page.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 14 |
+| The Southern Cook Book (Lustig 1935) | 317 | 22 |
 | The other 20 books | 139 | 0 |

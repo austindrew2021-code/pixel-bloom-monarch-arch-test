@@ -259,11 +259,12 @@ const NEGATED = /\b(?:no|without|never)\s+[\w-]+(?:\s+[\w-]+)?|\bnot\s+(?:add|us
  * A food can be named as a measure, a simile, or a piece of furniture and still
  * not be an ingredient. Gentile's balsamella asks for "a piece of butter as big
  * as an egg" and her gnocchi are rolled out on a "bread board" — which bought
- * this catalog one egg and four slices of bread. Strip the figure of speech
+ * this catalog one egg and four slices of bread. A batter "of the consistency
+ * of milk" bought a cup of milk the same way. Strip the figure of speech
  * before asking whether the food was named, the same way NEGATED strips a
  * denial.
  */
-const FIGURES = /\bas (?:big|large|thick|small|round) as an? [\w-]+|\bthe size of an? [\w-]+|\b(?:bread|pastry|cutting|chopping|carving) board\b|\begg(?:-| )sized\b|\bpea(?:-| )sized\b/gi;
+const FIGURES = /\bas (?:big|large|thick|small|round|thin) as an? [\w-]+|\bthe (?:size|consistency|thickness|colour|color) of (?:an? )?[\w-]+|\b(?:bread|pastry|cutting|chopping|carving) board\b|\begg(?:-| )sized\b|\bpea(?:-| )sized\b/gi;
 
 function namesFood(steps: string, fix: ListFix): boolean {
   const said = steps.replace(NEGATED, " ").replace(FIGURES, " ");
