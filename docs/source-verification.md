@@ -75,6 +75,9 @@ glyph looks like.
 | `so-beaten-biscuits` | salt | `Vv teaspoon` | 0.25 tsp | left as-is |
 | `so-beaten-biscuits` | sugar | `% teaspoon` | 0.25 tsp | left as-is |
 | `so-creole-batter-bread` | corn meal | `Vz pint` | 1 cup | ½ pint is 1 cup, so ours is probably right |
+| `so-corned-beef-hash-south` | cream | `% cup` | 0.5 cup | the book lists cream; ours had none, so it is added at a guessed volume |
+| `so-dried-beef-maryland` | chipped beef | `% pound` | 8 oz | left as-is |
+| `so-creole-goulash` | cheese | `V\ pound` | 0.25 lb | left as-is |
 
 Page images are at `https://archive.org/details/<archiveId>`. Image bytes
 cannot be fetched in this environment — the egress proxy rejects image
@@ -85,5 +88,5 @@ hosts — so these rows can only be closed by a person looking at the page.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 22 |
+| The Southern Cook Book (Lustig 1935) | 317 | 27 |
 | The other 20 books | 139 | 0 |
