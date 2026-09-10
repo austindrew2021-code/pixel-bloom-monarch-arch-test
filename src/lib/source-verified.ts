@@ -72,4 +72,7 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-chicken-pot-pie",
   "so-roast-chicken",
   "so-roast-turkey",
+  "so-chicken-cakes",
+  "so-chicken-hash",
+  "so-chicken-dumplings",
 ]);

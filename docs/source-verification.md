@@ -87,6 +87,7 @@ glyph looks like.
 | `so-chicken-tartare` | mushrooms | `% pound` | 4 oz | left as-is |
 | `so-chicken-pot-pie` | chicken weight | `1% pounds` | "a young chicken" | left unstated |
 | `so-roast-chicken` | basting water | `% cup` | 0.5 cup | left as-is |
+| `so-chicken-hash` | flour | `iVa tablespoons` | 1.5 tbsp | 1½ is the likely reading |
 
 ## One more way the scan lies
 
@@ -122,5 +123,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 43 |
+| The Southern Cook Book (Lustig 1935) | 317 | 46 |
 | The other 20 books | 139 | 0 |

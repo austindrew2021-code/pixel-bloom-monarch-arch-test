@@ -266,8 +266,16 @@ const NEGATED = /\b(?:no|without|never)\s+[\w-]+(?:\s+[\w-]+)?|\bnot\s+(?:add|us
  */
 const FIGURES = /\bas (?:big|large|thick|small|round|thin) as an? [\w-]+|\bthe (?:size|consistency|thickness|colour|color) of (?:an? )?[\w-]+|\b(?:bread|pastry|cutting|chopping|carving) board\b|\begg(?:-| )sized\b|\bpea(?:-| )sized\b/gi;
 
+/**
+ * Naming a food to say you are NOT using it is the negation case; naming one
+ * to say what you are using instead is this one. The Southern Cook Book makes
+ * chicken hash with "a white sauce, using the chicken broth in place of milk",
+ * and the milk it rules out is the whole point of the sentence.
+ */
+const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+/gi;
+
 function namesFood(steps: string, fix: ListFix): boolean {
-  const said = steps.replace(NEGATED, " ").replace(FIGURES, " ");
+  const said = steps.replace(NEGATED, " ").replace(FIGURES, " ").replace(INSTEAD, " ");
   const blob = fix.notNamed ? said.replace(new RegExp(fix.notNamed.source, "gi"), " ") : said;
   return fix.named.test(blob);
 }
