@@ -605,9 +605,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("onion", 1, "", "Produce"),
     ],
     steps: [
-      "Season and pack beef, bake as a loaf, slice thin.",
-      "Whisk evaporated milk, sugar, garlic, and vinegar into donair sauce.",
-      "Warm pita, fill with meat, tomato, onion, and a reckless amount of sauce.",
+      "Knead the 1½ pounds of ground beef with the 1 teaspoon of onion powder, the 1 teaspoon of garlic powder, the 1 teaspoon of paprika, and salt for a full 5 minutes, until it turns tacky and smooth. That kneading is what gives donair meat its texture.",
+      "Pack it into a loaf tin and bake at 350°F for 60 minutes, until a thermometer in the middle reads 160°F. Cool, then chill before slicing — warm, it crumbles.",
+      "Whisk the ¾ cup of evaporated milk with the ½ cup of sugar and the 3 minced cloves of garlic, then add a splash of vinegar drop by drop, whisking, until it thickens. Add it too fast and it will not set.",
+      "Slice the cold loaf paper-thin and crisp the slices in a dry hot pan.",
+      "Warm the 4 pitas and fill with the meat, the 2 chopped tomatoes, the sliced onion, and a reckless amount of sauce.",
     ],
   }),
   dish({
@@ -651,8 +653,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("pie pastry", 1, "double crust", "Bakery"),
     ],
     steps: [
-      "Cook meats with onion, mashed potato, and spices until dry-ish.",
-      "Fill a pie, vent, bake 45 minutes at 375°F. Serve with ketchup if you are honest.",
+      "Boil the potato until soft, then mash it. Cook the 1½ pounds of ground pork and the ½ pound of ground beef with the chopped onion in a wide pan, breaking it up, until no pink remains.",
+      "Stir in the mashed potato, the ¼ teaspoon of cinnamon, the ⅛ teaspoon of clove, the 1 teaspoon of salt, and pepper. Add a splash of water and simmer 20 minutes, until thick but not dry. Cool completely — hot filling melts the pastry.",
+      "Line a pie dish with half the double crust pie pastry and fill it. Lay the second crust over, seal and crimp the edge, and cut two vents.",
+      "Bake at 375°F for 45 minutes, until the crust is deep gold and steam comes from the vents.",
+      "Rest 15 minutes before cutting. Serve with ketchup if you are honest about it.",
     ],
   }),
   dish({
@@ -673,8 +678,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("oil", 3, "tbsp", "Pantry"),
     ],
     steps: [
-      "Heat oil and brown sausages in a roasting tin in a 425°F oven.",
-      "Pour in a rest-beaten batter. Bake 25 minutes until puffed. Onion gravy if you have it.",
+      "Whisk the 1 cup of flour, the 3 eggs, the 1 cup of milk, and the 1 teaspoon of salt to a smooth batter and rest it 30 minutes. Resting is what makes it rise.",
+      "Heat the oven to 425°F. Put the 3 tablespoons of oil in a roasting tin with the 8 pork sausages and roast 15 minutes, until the sausages are browned and the fat is smoking hot.",
+      "Pour the batter around the sausages in one go. It should hiss the moment it lands — if it does not, the fat was not hot enough and it will not puff.",
+      "Bake 25–30 minutes without opening the door, until the batter is risen, deep gold, and crisp at the edges.",
+      "Serve at once with onion gravy, before it sinks.",
     ],
   }),
   dish({
@@ -695,8 +703,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("beef broth", 1.5, "cups", "Pantry"),
     ],
     steps: [
-      "Mash boiled potatoes with butter. Brown sausages.",
-      "Caramelize onions, add broth, simmer into gravy.",
+      "Boil the 2 pounds of potato until a fork slides through, then drain and mash with half the 4 tablespoons of butter and the 1 teaspoon of salt. Keep warm.",
+      "Brown the 8 pork sausages slowly in a skillet over medium heat, turning, 15–18 minutes, until deep gold all over and cooked through. Lift them out.",
+      "Melt the rest of the butter in the pan and cook the 2 thinly sliced onions 15 minutes, until soft and sweet and browning at the edges.",
+      "Stir in a spoon of flour, then the 1½ cups of beef broth, and simmer 5 minutes to a gravy.",
+      "Pile the mash on plates, lay the sausages over, and pour the onion gravy across.",
     ],
   }),
   dish({
@@ -718,8 +729,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("stock", 4, "cups", "Pantry"),
     ],
     steps: [
-      "Layer meat and onion. Cover with stock. Simmer 90 minutes.",
-      "Add potato and carrot. Cook until the broth goes silky.",
+      "Pat the 2 pounds of lamb shoulder dry, season with the 1 teaspoon of salt, and brown it in the 2 tablespoons of oil in a heavy pot. Lift out.",
+      "Soften the 3 sliced onions in the fat, 6–8 minutes, scraping the pot clean.",
+      "Return the lamb with the 4 sprigs of thyme and the 4 cups of stock, bring to a bare simmer, and cook covered 90 minutes.",
+      "Add the 3 carrots and the 2 pounds of potato in big chunks and cook 40 minutes more, until the potatoes are soft enough to thicken the broth and the lamb pulls apart.",
+      "Skim the fat, season, and ladle into warm bowls.",
     ],
   }),
   dish({
@@ -740,8 +754,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("milk", 0.75, "cup", "Dairy & Eggs"),
     ],
     steps: [
-      "Boil potatoes. Wilt cabbage in butter.",
-      "Mash with hot milk, fold cabbage and scallion, make a butter well.",
+      "Boil the 2 pounds of potato in salted water until a fork slides through, 18–20 minutes. Drain and let them steam dry in the pot.",
+      "Meanwhile cook the ½ head of shredded cabbage or kale in half the 6 tablespoons of butter over medium heat, 8–10 minutes, until soft and sweet.",
+      "Warm the ¾ cup of milk with the sliced 4 scallions so they soften without browning.",
+      "Mash the potatoes with the hot milk and scallions until smooth, then fold the cabbage through. Season with the 1 teaspoon of salt.",
+      "Pile into a warm dish, make a well in the middle, and drop the rest of the butter into it to melt.",
     ],
   }),
   dish({
@@ -762,8 +779,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("red pepper flakes", 0.5, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Render guanciale. Add tomato and pepper flakes.",
-      "Toss with al dente bucatini and pecorino.",
+      "Cut the 5 ounces of guanciale into short batons and render them slowly in the 2 tablespoons of oil in a wide pan, 6–8 minutes, until the fat runs and the pieces crisp. Lift the crisp pieces out.",
+      "Add the ½ teaspoon of red pepper flakes to the hot fat, then the 1 can of crushed tomatoes and the 1 teaspoon of salt. Simmer 12–15 minutes, until it darkens and thickens.",
+      "Boil the 12 ounces of bucatini until just shy of al dente and save a cup of the water.",
+      "Toss the pasta through the sauce with a splash of that water, over the heat, until it clings.",
+      "Off the heat, return the crisp guanciale and toss with the 2 ounces of grated pecorino romano. Serve at once — there is no cream in this.",
     ],
   }),
   dish({
@@ -785,8 +805,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("eggs", 2, "", "Dairy & Eggs"),
     ],
     steps: [
-      "Salt, bread, and fry eggplant slices.",
-      "Layer with sauce and cheeses. Bake 30 minutes at 375°F.",
+      "Slice the 2 eggplants into ½-inch rounds, salt them, and leave 30 minutes. Pat every slice properly dry.",
+      "Heat the oven to 375°F. Beat the 2 eggs in one dish and put the 2 cups of breadcrumbs in another. Dip each slice in egg, then press it through the crumbs so it is coated all over.",
+      "Fry the slices in the 2 tablespoons of oil, or bake them on an oiled sheet 25 minutes turning once, until gold and tender.",
+      "Spread some of the 2 cans of crushed tomatoes in a dish, then layer eggplant, tomato, torn mozzarella from the 12 ounces, and some of the 3 ounces of parmesan. Repeat, finishing with cheese.",
+      "Bake 30 minutes, until bubbling and browned. Rest 15 minutes before cutting so the layers hold.",
     ],
   }),
   dish({
@@ -807,8 +830,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("chicken broth", 8, "cups", "Pantry"),
     ],
     steps: [
-      "Simmer chicken, shred, cook rice in the broth.",
-      "Whisk eggs with lemon, temper with hot broth, stir back in off heat.",
+      "Simmer the 1½ pounds of chicken thighs in the 8 cups of chicken broth with the 2 tablespoons of oil for 30 minutes, skimming, until the meat pulls apart. Lift the chicken out, shred it, and return it.",
+      "Add the ½ cup of rice and cook 15 minutes, until tender. Then take the pot off the heat and let it stop bubbling.",
+      "Beat the 2 eggs with the juice of the 2 lemons until frothy.",
+      "Ladle a cup of the hot broth into the eggs in a thin stream, whisking hard the whole time. Do this twice more. Pouring eggs straight into a hot pot gives you lemon soup with scrambled egg in it.",
+      "Stir the tempered mixture back into the pot off the heat. It will turn silky and pale. Season with the 1 teaspoon of salt and serve at once; do not reheat it to a boil.",
     ],
   }),
   dish({
@@ -831,8 +857,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("potato", 3, "", "Produce"),
     ],
     steps: [
-      "Hollow tomatoes and peppers. Mix pulp with rice, onion, mint, oil.",
-      "Fill, nestle potato wedges around, bake 70 minutes at 375°F.",
+      "Heat the oven to 375°F. Slice the tops off the 6 ripe tomatoes and the 4 bell peppers and keep them as lids. Scoop the tomato flesh out and chop it, keeping the shells whole.",
+      "Soften the chopped onion in half the ½ cup of olive oil, 8 minutes. Stir in the 1 cup of rice, the chopped tomato flesh, the ½ cup of chopped mint, and the 1 teaspoon of salt, and cook 3 minutes.",
+      "Fill the shells two-thirds full — the rice swells — and put the lids back on.",
+      "Stand them in a roasting dish with the 3 potatoes cut into wedges tucked between. Pour the rest of the oil and a cup of water over.",
+      "Bake 70 minutes, until the rice is tender, the shells have collapsed a little, and the tops are scorched. Serve warm, not hot.",
     ],
   }),
   dish({
@@ -881,8 +910,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("lime", 2, "", "Produce"),
     ],
     steps: [
-      "Simmer pork until shreddable. Blend soaked chiles with garlic.",
-      "Add chile puree and hominy. Serve with cabbage, radish, lime.",
+      "Simmer the 2 pounds of pork shoulder with the quartered onion and half the 6 cloves of garlic in water to cover, 2 hours, skimming, until it shreds under a fork. Keep the broth.",
+      "Meanwhile stem and seed the 6 dried guajillo chiles, toast them briefly in a dry pan until they smell sweet, then soak in hot water 20 minutes.",
+      "Blend the soaked chiles with the rest of the garlic and a ladle of the broth, then push it through a sieve — the skins never soften.",
+      "Shred the pork and return it with the chile puree and the 2 cans of drained hominy. Simmer 30 minutes so it all comes together. Salt well.",
+      "Serve with the ¼ head of shredded cabbage, the 6 sliced radishes, and the 2 limes cut into wedges, so people dress their own bowl.",
     ],
   }),
   dish({
@@ -929,8 +961,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("turmeric", 0.5, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Simmer lentils with turmeric until soft. Mash slightly.",
-      "Sizzle cumin, garlic, onion, and tomato in ghee. Pour over the dal.",
+      "Rinse the 1 cup of toor or yellow lentils until the water runs clear. Simmer them with the ½ teaspoon of turmeric and 4 cups of water 30 minutes, until collapsing, whisking them smooth.",
+      "Add the 2 chopped tomatoes and the 1 teaspoon of salt and cook 10 minutes more, loosening with water to a pourable dal.",
+      "For the tadka, heat the 2 tablespoons of ghee or oil in a small pan until shimmering. Add the 1 teaspoon of cumin seed and let it crackle, 20 seconds.",
+      "Add the sliced onion and the 4 sliced cloves of garlic and fry until deep gold — not pale, gold, or the dal will taste flat.",
+      "Pour the whole sizzling panful over the dal and stir it in at the table. Serve with rice.",
     ],
   }),
   dish({
@@ -952,8 +987,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("garam masala", 1, "tsp", "Herbs & Spices"),
     ],
     steps: [
-      "Fry cumin, onion, then potato and cauliflower with turmeric.",
-      "Cover until tender. Finish with garam masala.",
+      "Set a wide pan over medium heat with the 2 tablespoons of oil. Add the 1 teaspoon of cumin seed and let it crackle, then add the chopped onion and cook 6–8 minutes, until gold.",
+      "Stir in the ½ teaspoon of turmeric and the 1 teaspoon of garam masala and cook 30 seconds.",
+      "Add the 3 potatoes in chunks and the head of cauliflower in florets and toss until every piece is coated in the spice.",
+      "Add a splash of water, cover, and cook 20–25 minutes on low, shaking the pan rather than stirring so the florets stay whole, until a knife goes into the potato easily. This is a dry curry — it should not have a sauce.",
+      "Season with the 1 teaspoon of salt and serve with rice.",
     ],
   }),
   dish({
@@ -977,8 +1015,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("sesame oil", 2, "tbsp", "Pantry"),
     ],
     steps: [
-      "Season each vegetable separately with sesame and salt.",
-      "Bowl rice, arrange veg, top with a fried egg and gochujang. Mix.",
+      "Cook the 2 cups of rice and keep it warm.",
+      "Cook each vegetable separately and season each with a little of the 2 tablespoons of sesame oil and the 1 teaspoon of salt: wilt the 4 cups of spinach and squeeze it dry, stir-fry the julienned 2 carrots 2 minutes, the zucchini 2 minutes, and blanch the 2 cups of bean sprouts 1 minute. Keeping them apart is the whole look of the dish.",
+      "Fry the 4 eggs so the whites are set and the yolks still liquid.",
+      "Spoon rice into four warm bowls and arrange the vegetables in separate wedges on top.",
+      "Sit an egg in the middle of each and put the 3 tablespoons of gochujang on the table. Mix it all together at the last moment.",
     ],
   }),
   dish({
@@ -1003,8 +1044,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("lime", 2, "", "Produce"),
     ],
     steps: [
-      "Char onion and ginger. Simmer with bones and spices 3 hours. Season with fish sauce.",
-      "Slice raw sirloin thin. Pour boiling broth over noodles and beef. Herbs and lime.",
+      "Blanch the 3 pounds of beef bones in boiling water 5 minutes, then rinse them and the pot. This is what keeps the broth clear.",
+      "Char the 2 halved onions and the piece of ginger in a dry pan or under the broiler until blackened in patches, 8 minutes.",
+      "Return the bones with the charred onion and ginger, the 4 star anise, and water to cover by 2 inches. Simmer very gently 3 hours, skimming — a hard boil turns it cloudy. Strain, then season with the 3 tablespoons of fish sauce and the 1 teaspoon of salt.",
+      "Cook the 1 pound of rice noodles in a separate pot of water and divide them among bowls. Slice the ¾ pound of beef sirloin as thin as you can, half-frozen if that helps, and lay it raw over the noodles.",
+      "Ladle the broth over boiling hot so it cooks the beef in the bowl. Serve with the 1 bunch of Thai basil and the 2 limes.",
     ],
   }),
   dish({
@@ -1027,8 +1071,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("palm or brown sugar", 1, "tsp", "Pantry"),
     ],
     steps: [
-      "Fry paste in a spoon of coconut cream. Add remaining coconut milk.",
-      "Simmer chicken and veg. Finish with fish sauce, sugar, basil. Rice on the side.",
+      "Spoon the thick cream from the top of the 1 can of coconut milk into a hot pot with the 2 tablespoons of oil and let it split and sizzle, 3 minutes.",
+      "Fry the 3 tablespoons of green curry paste in that fat 2 minutes, until it darkens and smells fragrant. Frying the paste, not just warming it, is where the flavour comes from.",
+      "Add the 1½ pounds of sliced chicken thighs and turn them in the paste, then pour in the rest of the coconut milk and bring to a simmer.",
+      "Add the 2 Thai eggplant or zucchini in chunks and simmer 15 minutes, until the chicken is cooked through and the vegetables are tender. Season with the 2 tablespoons of fish sauce, the 1 teaspoon of palm or brown sugar, and the 1 teaspoon of salt.",
+      "Take off the heat and stir in the 1 bunch of Thai basil so it wilts but stays green. Serve with the 1½ cups of rice.",
     ],
   }),
   dish({
@@ -1051,8 +1098,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("scallion", 4, "", "Produce"),
     ],
     steps: [
-      "Velveting optional: toss chicken with a little soy and cornstarch. Stir-fry hot.",
-      "Add chiles, garlic, sauce, peanuts, scallion. 2 minutes more.",
+      "Dice the 1½ pounds of chicken thighs into ¾-inch cubes and toss with the 1 teaspoon of salt and a spoon of the soy sauce.",
+      "Get a wok very hot with the 2 tablespoons of oil. Fry the 8 dried red chiles a few seconds, until they darken but do not blacken — burnt, they turn acrid and the whole dish with them.",
+      "Add the chicken in one layer and leave it to sear, then stir-fry 4–5 minutes total, until browned and no longer pink inside.",
+      "Add the 4 cloves of garlic and the white parts of the 4 scallions for 30 seconds, then the rest of the 3 tablespoons of soy sauce and the 1 tablespoon of Chinkiang vinegar. Toss until it glazes.",
+      "Off the heat, stir in the ½ cup of roasted peanuts and the scallion greens so the nuts stay crunchy.",
     ],
   }),
   dish({
@@ -1099,8 +1149,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("olive oil", 0.33, "cup", "Pantry"),
     ],
     steps: [
-      "Cook lentils until almost tender. Add rice and cumin.",
-      "Fry onions slow until deep brown. Pile on the pot.",
+      "Slice the 3 onions thin. Fry them in the ⅓ cup of olive oil over medium heat 25–30 minutes, stirring, until deep brown and crisp. Take them past golden — this is the flavour of the dish. Lift out onto paper, leaving the oil.",
+      "Simmer the 1 cup of brown lentils in plenty of water 20 minutes, until just tender but not split. Drain.",
+      "Add the 1 cup of rice, the 1 teaspoon of cumin, and the 1 teaspoon of salt to the onion oil and stir a minute.",
+      "Return the lentils with 2 cups of water, bring to a boil, then cover and cook on the lowest heat 18 minutes. Rest off the heat 10 minutes without lifting the lid.",
+      "Fork it up, fold half the onions through, and pile the rest on top.",
     ],
   }),
   dish({
@@ -1123,8 +1176,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("pita", 4, "", "Bakery"),
     ],
     steps: [
-      "Mix meat with grated onion, parsley, and spices. Shape onto skewers.",
-      "Grill or broil. Serve with yogurt and pita.",
+      "Grate the onion and squeeze the liquid out of it. Knead it into the 1½ pounds of ground beef or lamb with the ½ bunch of chopped parsley, the 1 teaspoon of cumin, the 1 teaspoon of coriander, and the 1 teaspoon of salt for 3–4 minutes, until the mixture turns sticky and holds together.",
+      "Chill 20 minutes, then shape into fat fingers around skewers, squeezing firmly so they do not slide off.",
+      "Grill, broil, or sear in the 2 tablespoons of oil, turning, 8–10 minutes, until browned all over and no pink remains in the middle.",
+      "Warm the 4 pitas while they cook.",
+      "Serve the skewers on the pita with the 1 cup of plain yogurt spooned over and more parsley scattered on top.",
     ],
   }),
   dish({
@@ -1173,8 +1229,11 @@ export const WORLD_RECIPES: Recipe[] = [
       I("fresh thyme", 4, "sprigs", "Produce"),
     ],
     steps: [
-      "Brown vegetables in batches in olive oil.",
-      "Stew together with tomato, garlic, and thyme until jammy.",
+      "Cut the eggplant, the 2 zucchini, the 2 bell peppers, the 4 ripe tomatoes, and the onion into similar chunks. Salt the eggplant 10 minutes, then pat it dry.",
+      "Brown each vegetable separately in the ¼ cup of olive oil over medium-high heat, 4–5 minutes each, starting with the eggplant, which drinks the most oil. Do not crowd the pan — crowded, they steam and go grey.",
+      "Return everything to the pan with the 4 cloves of garlic and the 4 sprigs of fresh thyme.",
+      "Stew on medium-low 30–40 minutes, until jammy and the oil separates at the edges.",
+      "Season with the 1 teaspoon of salt. Serve warm or at room temperature — it is better an hour later than straight off the heat.",
     ],
   }),
   dish({
