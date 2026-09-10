@@ -252,8 +252,13 @@ function cookedText(recipe: Recipe): string {
  * to buy. It put half a cup of flour into the three-ingredient flourless
  * pancakes. Two words after the negator is enough to swallow the food itself
  * without eating the rest of the sentence.
+ *
+ * A denial can also carry a list: a real burgoo uses "no thickening like meal
+ * or rice", and the rice at the end of that is the one the aligner reached
+ * for. The first branch swallows the whole list.
  */
-const NEGATED = /\b(?:no|without|never)\s+[\w-]+(?:\s+[\w-]+)?|\bnot\s+(?:add|use|put|include|contain)\s+[\w-]+/gi;
+const NEGATED =
+  /\b(?:no|without|never)\s+[\w-]+\s+(?:like|such as)\s+[\w-]+(?:\s*(?:,|or|and)\s*[\w-]+){0,3}|\b(?:no|without|never)\s+[\w-]+(?:\s+[\w-]+)?|\bnot\s+(?:add|use|put|include|contain)\s+[\w-]+/gi;
 
 /**
  * A food can be named as a measure, a simile, or a piece of furniture and still
@@ -274,8 +279,18 @@ const FIGURES = /\bas (?:big|large|thick|small|round|thin) as an? [\w-]+|\bthe (
  */
 const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+/gi;
 
+/**
+ * Strip the places a food is named without being used: denied, likened to,
+ * or ruled out in favour of something else. Exported because the standalone
+ * invariants need the same reading — a burgoo that uses "no thickening like
+ * meal or rice" is not a recipe that forgot to list rice.
+ */
+export function withoutDenials(text: string): string {
+  return text.replace(NEGATED, " ").replace(FIGURES, " ").replace(INSTEAD, " ");
+}
+
 function namesFood(steps: string, fix: ListFix): boolean {
-  const said = steps.replace(NEGATED, " ").replace(FIGURES, " ").replace(INSTEAD, " ");
+  const said = withoutDenials(steps);
   const blob = fix.notNamed ? said.replace(new RegExp(fix.notNamed.source, "gi"), " ") : said;
   return fix.named.test(blob);
 }

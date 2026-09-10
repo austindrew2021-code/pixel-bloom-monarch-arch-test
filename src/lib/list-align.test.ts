@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { alignListToCook, unlistedFoodsInSteps } from "./list-align.ts";
+import { alignListToCook, unlistedFoodsInSteps, withoutDenials } from "./list-align.ts";
 import { RECIPES, recipeById } from "./recipes.ts";
 import type { Recipe } from "./types.ts";
 
@@ -57,7 +57,7 @@ test("a title whose step says rice either lists rice or stops saying it", () => 
   // "Rice the avocado" is the verb, and a rice noodle is not a bag of rice.
   const notTheGrain = /rice (?:noodles?|cakes?|flour|vinegar|wine|paper)|\brice\s+(?:the|them|it)\b|\briced\b/gi;
   const bad = RECIPES.filter((r) => {
-    const saysRice = r.steps.some((s) => /\brice\b/i.test(s.replace(notTheGrain, " ")));
+    const saysRice = r.steps.some((s) => /\brice\b/i.test(withoutDenials(s).replace(notTheGrain, " ")));
     return saysRice && !names(r).some((n) => /\brice\b/.test(n.replace(notTheGrain, " ")));
   }).map((r) => `${r.name} (${r.id})`);
   assert.deepEqual(bad, [], bad.join("\n"));

@@ -166,5 +166,5 @@ hand, because nothing downstream will fill them in any more.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 74 |
+| The Southern Cook Book (Lustig 1935) | 317 | 76 |
 | The other 20 books | 139 | 0 |
