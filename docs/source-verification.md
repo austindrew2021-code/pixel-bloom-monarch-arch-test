@@ -102,6 +102,10 @@ glyph looks like.
 | `so-oyster-bisque` | celery | `% cup` | 0.5 cup | left as-is |
 | `so-jugged-soup` | rice | `% cup` | 0.5 cup | left as-is |
 | `so-jugged-soup` | pepper | `% teaspoon` | unstated | left as "pepper" |
+| `so-corn-pudding` | salt | `1 tablespoon` | 1 tbsp | legible, but implausibly high for the yield — reproduced with a caution in the step |
+| `so-corn-custard` | sugar | `V-2 teaspoon` | 0.5 tsp | left as-is |
+| `so-string-beans-bacon` | bacon | `% pound` | 0.25 lb | left as-is |
+| `so-corn-pudding` | cold milk | `Mi cup` | 0.5 cup | left as-is |
 | `so-pot-likker` | salt pork | `%-pound` | 0.5 lb | left as-is |
 | `so-brunswick-stew` | sherry | `% cup` | 0.25 cup | left as-is |
 | `so-brunswick-stew` | bread crumbs | `% cup` | 0.25 cup | left as-is |
@@ -188,5 +192,5 @@ hidden, and the app does not repeat its language.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 129 |
+| The Southern Cook Book (Lustig 1935) | 317 | 135 |
 | The other 20 books | 139 | 0 |
