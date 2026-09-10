@@ -101,4 +101,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-md-crab-soup",
   "so-baltimore-crab-soup",
   "so-oyster-soup",
+  "so-onion-au-gratin",
+  "so-plantation-soup",
+  "so-jellied-melange",
+  "so-vegetable-bouillon",
 ]);
