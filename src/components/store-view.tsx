@@ -603,7 +603,20 @@ export function StoreView() {
             <Checkout
               addon={buying}
               onCancel={() => setBuying(null)}
-              onConfirm={() => {
+              onConfirm={(cardLive) => {
+                /*
+                 * "I've sent it" is an honour-system unlock, and it is the right
+                 * thing while this is a test kitchen with no card rail: the copy
+                 * says plainly that nothing is charged. But the moment Stripe is
+                 * switched on it becomes a way to take every paid add-on for
+                 * free, so once cards answer, the transfer has to be seen before
+                 * anything opens.
+                 */
+                if (cardLive) {
+                  toast("Thanks — we'll switch it on once the transfer lands.");
+                  setBuying(null);
+                  return;
+                }
                 unlock(buying.id);
                 const plated =
                   buying.id === "body-sync"
@@ -666,7 +679,8 @@ function Checkout({
 }: {
   addon: Addon;
   onCancel: () => void;
-  onConfirm: () => void;
+  /** `cardLive` says whether Stripe was answering when this was confirmed. */
+  onConfirm: (cardLive: boolean) => void;
 }) {
   const once = addon.period === "once";
   const year = addon.id === "table-year";
@@ -760,7 +774,7 @@ function Checkout({
             {opening ? "Opening the till…" : `Pay ${formatPrice(addon.price)} by card`}
           </Button>
         ) : null}
-        <Button className="w-full" variant={card ? "secondary" : "default"} onClick={onConfirm}>
+        <Button className="w-full" variant={card ? "secondary" : "default"} onClick={() => onConfirm(card)}>
           {interac ? "I've sent it" : "Start"}
         </Button>
         <Button variant="ghost" className="w-full" onClick={onCancel}>
