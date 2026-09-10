@@ -111,4 +111,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-chicken-oyster-gumbo",
   "so-madame-begue-soup",
   "so-jugged-soup",
+  "so-pot-likker",
+  "so-cornmeal-dodger",
+  "so-brunswick-stew",
+  "so-kentucky-burgoo",
 ]);
