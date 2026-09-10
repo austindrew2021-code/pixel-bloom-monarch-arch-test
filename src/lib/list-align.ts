@@ -68,7 +68,9 @@ const LIST_FIXES: readonly ListFix[] = [
   {
     named: /\bbutter(?:ed|y)?\b/i,
     notNamed: /\bbutter(?:milk|nut)\b|\bpeanut butter\b|\balmond butter\b|\bapple butter\b|\bcocoa butter\b|\bnut butter\b|\bbutter beans?\b|\bbutter lettuce\b/i,
-    covered: /\bbutter\b/i,
+    // A row reading "buttered crumbs" is butter already bought. \bbutter\b
+    // will not match "buttered", so the step asked for a second row of it.
+    covered: /\bbutter(?:ed)?\b/i,
     add: { name: "butter", qty: 2, unit: "tbsp", aisle: "Dairy & Eggs" },
     breaks: VEGAN,
   },
