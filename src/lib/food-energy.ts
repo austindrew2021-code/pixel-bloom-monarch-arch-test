@@ -265,7 +265,7 @@ const FOODS: readonly Food[] = [
   { match: /pheasant|guinea/, per100: P(109, 14, 0, 5), eachG: 1000, unitG: { bird: 1000, birds: 1000 } },
   { match: /\bturkey\b|\bduck\b|\bgoose\b/, per100: P(113, 17, 0, 5), eachG: 1800, unitG: { bird: 1800, birds: 1800 } },
   { match: /ground (?:beef|chuck)|chopped beef|hamburger(?! buns)|ground beef and pork/, per100: P(250, 26, 0, 17), cupG: 225, eachG: 115 },
-  { match: /short ribs/, per100: P(150, 15.5, 0, 9.6), eachG: 120 },
+  { match: /short ribs|beef ribs|ribs of beef/, per100: P(150, 15.5, 0, 9.6), eachG: 120 },
   { match: /beef chuck|chuck roast|beef brisket|stew(?:ing)? beef|beef stew meat/, per100: P(250, 26, 0, 16), eachG: 900, cupG: 140 },
   { match: /rib roast|standing rib/, per100: P(155, 20, 0, 7.5), eachG: 1800 },
   { match: /beef tenderloin/, per100: P(206, 27, 0, 10), eachG: 1800 },

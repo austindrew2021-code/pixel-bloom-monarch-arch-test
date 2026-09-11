@@ -422,6 +422,23 @@ warning, not a reassurance.
 | `vh-pc-shrimp-creole` | Yes — *Stewed Shrimp / Chevrettes à la Créole*, p. 39. The shrimp are boiled and picked first, then stewed ten minutes. No green pepper. "Never pour water into stewed Shrimp, as the tomato juice makes gravy enough." |
 | `vh-pc-trout-meuniere` | **No.** The word *meunière* does not appear in the book. Its trout are boiled, broiled, crumbed and fried with sauce tartare, or dipped in milk, floured and deep-fried. Credit withdrawn. |
 
+### The International Jewish Cook Book: six of eight, and two dishes it does not have
+
+The stream text of `cu31924003580952` is complete but for pages 54–64 and
+113–114; every dish below sits outside those. The book's own index settles the
+two absences.
+
+| Recipe | In the book? |
+|---|---|
+| `vh-jw-matzo-ball` | Yes — *Yom-Tov Soup* and *Matzoth Meal Kleis, No. 1*, pp. 380–381. The soup takes **two pounds of beef ribs beside the chicken**, a parsley root and a pinch of saffron, and the meat comes out to be served separately. The kleis are one egg to each tablespoon of meal, spiced with ginger, cinnamon and ground almond and bound with chicken fat — none of which ours had. |
+| `vh-jw-gefilte` | Yes — *Gefillte Fisch with Egg Sauce*, p. 39. Not quenelles: a haddock cut into four-inch steaks, each hollowed and refilled with its own chopped meat, boiled an hour, sauced with the broth beaten into egg yolks. (The book's other *Gefillte Fisch*, p. 38, stuffs the whole skin back.) |
+| `vh-jw-latkes` | Yes — *Potato Pancakes*, p. 238. The potatoes soak several hours before grating, it is two eggs to every pint, the onion is **juice and optional**, and they fry as small cakes on a greased spider rather than in a bath. Served with apple sauce. |
+| `vh-jw-kugel` | Yes — *Noodle Kugel*, p. 178. **Pareve and not sweet**: noodles, ¾ cup of rendered chicken or goose fat, four eggs, baked brown. Ours had sugar, raisins, cottage cheese and butter, none of which are in it. Jelly or stewed fruit goes beside. |
+| `vh-jw-cabbage-rolls` | Yes — *Kal Dolmar*, p. 115. The rice is **boiled first**, the rolls are tied with string and **fried brown** before boiling, and a brown gravy finishes them. There is no sweet-sour tomato sauce, no lemon and no brown sugar in the book's version. |
+| `vh-jw-blintzes` | Yes — *Cheese Blintzes*, p. 239. The batter is one egg, a cup of **water** and a cup of flour — no milk. The filling is pot cheese with lemon peel and cinnamon. The dough makes six. |
+| `vh-jw-tzimmes` | **No.** The index has no tzimmes under any spelling. The carrot dishes are a sugar-syrup *Compote of Carrots (Russian Style)* and a baked *Carrot Schalet*; the prune entries are stewed, baked, brandied, or cooked with red cabbage. Credit withdrawn. |
+| `vh-jw-chopped-liver` | **No.** The book's liver appetisers are *Chicken Liver Paste* Nos. 1 and 2 and an *Imitation Pâté de Foi Gras* — livers simmered, minced or rubbed smooth, bound with egg yolk and spread on toast. Chopped liver with hard egg and browned onion is not in it. Credit withdrawn. |
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -434,4 +451,5 @@ warning, not a reassurance.
 | National Wartime Nutrition Guide (USDA 1943) | 12 | **n/a — holds no recipes; 12 credits withdrawn** |
 | 365 Foreign Dishes (1908) | 8 | **5 (complete; 3 credits withdrawn)** |
 | The Picayune Creole Cook Book (1901) | 8 | **7 (complete; 1 credit withdrawn)** |
-| The other 17 books | 111 | 0 |
+| The International Jewish Cook Book (1918) | 8 | **6 (complete; 2 credits withdrawn)** |
+| The other 16 books | 103 | 0 |
