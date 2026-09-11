@@ -585,6 +585,26 @@ Japanese fish are simmered in syou and vinegar or fried, and its Chinese fish
 are pickled cold, made into cakes, or cooked with pineapple. Four credits
 withdrawn.
 
+### How to Cook Fish: six of six
+
+Olive Green's book has all six, and it prints six different versions of most
+dishes, so the question was which one ours had half-remembered. In each case we
+now follow the numbered recipe the book gives first:
+
+| Recipe | What the book says |
+|---|---|
+| `vh-og-baked-stuffed-fish` | *Baked Whitefish — II*. The stuffing is crumbs, butter and **a beaten egg** — no onion, no parsley, no lemon — and **a cupful of vinegar goes into the pan**, with basting from butter and hot water and a gravy thickened with browned flour. |
+| `vh-og-broiled-mackerel` | *Broiled Fresh Mackerel — I*. The backbone comes out, and the fish is **rubbed with olive-oil**, not brushed with butter; the butter is melted and served with it. |
+| `vh-og-fish-cakes` | *Fish Cakes — I*. Equal parts mashed potato and flaked fish, loosened with **cream sauce**, dredged in seasoned flour and **sautéed in bacon fat**, with fried bacon round the dish. |
+| `vh-og-creamed-cod` | *Creamed Codfish*, three lines long, and the last is the one ours had dropped: **one or two well-beaten eggs go into the sauce just before serving**. |
+| `vh-og-salmon-loaf` | *Baked Salmon Loaf — I*. A milk-and-crumb paste cooked thick first, then salmon and cream, then **three eggs beaten separately with the whites folded in last**, and the mould **baked in a pan of hot water**. |
+| `vh-og-boiled-salmon` | *Boiled Salmon — I*. **Wrapped in a cloth and tied**, started in cold water with a handful of salt — no vinegar — and sauced with two cupfuls of boiling cream and a spoonful of the water it cooked in. |
+
+**A gap the books exposed in the Start-ahead warning.** The wait detector
+matched `overnight` as one word. The books write it as two — "soak the beans
+over night" — and nine recipes across the catalog said it that way and got no
+warning at all, including the salt cod that the whole module was written for.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -605,4 +625,5 @@ withdrawn.
 | Camping and Woodcraft, Vol. I (1916) | 6 | **4 (complete; 2 credits withdrawn)** |
 | Salads, Sandwiches and Chafing Dishes (1909) | 6 | **2 (complete; 4 credits withdrawn)** |
 | Chinese-Japanese Cook Book (1914) | 6 | **2 (complete; 4 credits withdrawn)** |
-| The other 9 books | 59 | 0 |
+| How to Cook Fish (Olive Green 1908) | 6 | **6 (complete)** |
+| The other 8 books | 53 | 0 |

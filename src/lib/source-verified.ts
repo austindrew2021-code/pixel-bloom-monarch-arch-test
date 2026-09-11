@@ -298,4 +298,7 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "vh-hi-tomato-aspic", "vh-hi-chicken-salad",
   // Chinese-Japanese Cook Book — Bosse & Watanna, 1914. Two of the six.
   "vh-bj-fried-rice", "vh-bj-cabbage-pork",
+  // How to Cook Fish — Olive Green, 1908. All six are in it.
+  "vh-og-baked-stuffed-fish", "vh-og-broiled-mackerel", "vh-og-fish-cakes",
+  "vh-og-creamed-cod", "vh-og-salmon-loaf", "vh-og-boiled-salmon",
 ]);

@@ -17,14 +17,17 @@ import type { Recipe } from "./types";
 
 /** Words that mean "and now leave it", with the hours they usually mean. */
 const WAITS: [RegExp, number][] = [
-  [/\bovernight\b/i, 8],
+  // The books write it as two words — "soak the beans over night" — and the
+  // one-word pattern missed every one of them, including the salt cod this
+  // whole module exists for.
+  [/\bover\s?night\b/i, 8],
   [/\b(\d+)\s*(?:to\s*\d+\s*)?days?\b/i, 24],
   [/\b(\d+)\s*(?:to\s*\d+\s*)?hours?\b/i, 1],
 ];
 
 /** True when the step is a wait, not work — soaking, chilling, rising, curing. */
 const UNATTENDED =
-  /\b(soak|chill|refrigerate|marinate|rest|rise|proof|prove|cure|brine|set|freeze|steep|ferment|sit|stand|cool completely|overnight)\b/i;
+  /\b(soak|chill|refrigerate|marinate|rest|rise|proof|prove|cure|brine|set|freeze|steep|ferment|sit|stand|cool completely|over\s?night)\b/i;
 
 /**
  * Hours to start ahead, or 0 when the dish can be cooked start to finish.
