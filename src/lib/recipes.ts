@@ -579,10 +579,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["quick", "pescatarian"],
 		nutrition: {
-			cal: 845,
-			protein: 126,
+			cal: 475,
+			protein: 48,
 			carbs: 36,
-			fat: 19
+			fat: 16
 		},
 		ingredients: [
 			I("canned tuna", 2, "cans", "Pantry"),

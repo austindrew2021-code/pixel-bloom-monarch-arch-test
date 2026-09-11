@@ -395,7 +395,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tuna-melt",
-    nutrition: { cal: 650, protein: 68, carbs: 28, fat: 27 },
+    nutrition: { cal: 465, protein: 29, carbs: 28, fat: 25 },
     name: "Tuna melt",
     description: "Hot tuna salad under a blanket of cheddar. Lunch-counter forever.",
     minutes: 15,
@@ -446,7 +446,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "sunday-pot-roast",
-    nutrition: { cal: 1190, protein: 97, carbs: 62, fat: 62 },
+    servings: 13,
+    nutrition: { cal: 365, protein: 30, carbs: 19, fat: 19 },
     name: "Sunday pot roast",
     description: "Chuck roast, carrots, and potatoes in one pot. The house smells like home.",
     minutes: 210,
@@ -473,7 +474,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "spaghetti-meatballs",
-    nutrition: { cal: 930, protein: 54, carbs: 107, fat: 33 },
+    servings: 5,
+    nutrition: { cal: 745, protein: 43, carbs: 86, fat: 26 },
     name: "Spaghetti and meatballs",
     description: "Sunday sauce, fat meatballs, a mountain of spaghetti.",
     minutes: 75,
@@ -925,7 +927,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pozole-rojo",
-    nutrition: { cal: 1405, protein: 82, carbs: 186, fat: 36 },
+    servings: 7,
+    nutrition: { cal: 805, protein: 47, carbs: 106, fat: 21 },
     name: "Pozole rojo",
     description: "Pork and hominy in a chile broth. Garnish like you mean it.",
     minutes: 150,
@@ -1285,7 +1288,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "croque-monsieur",
-    nutrition: { cal: 1120, protein: 101, carbs: 40, fat: 61 },
+    servings: 12,
+    nutrition: { cal: 375, protein: 34, carbs: 13, fat: 20 },
     name: "Croque monsieur",
     description: "Ham, béchamel, Gruyère, broiled. Add an egg and it is a madame.",
     minutes: 25,
@@ -1448,7 +1452,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "gumbo",
-    nutrition: { cal: 1305, protein: 65, carbs: 86, fat: 79 },
+    servings: 10,
+    nutrition: { cal: 520, protein: 26, carbs: 34, fat: 31 },
     name: "Chicken and sausage gumbo",
     description: "Dark roux, holy trinity, okra or filé. Louisiana in a pot.",
     minutes: 120,
@@ -1510,7 +1515,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "buttermilk-fried-chicken",
-    nutrition: { cal: 1085, protein: 72, carbs: 50, fat: 66 },
+    servings: 7,
+    nutrition: { cal: 620, protein: 41, carbs: 28, fat: 37 },
     name: "Buttermilk fried chicken",
     description: "Overnight buttermilk, a seasoned crust, a cast-iron pot.",
     minutes: 60,
@@ -1537,7 +1543,8 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chicken-paprikash",
-    nutrition: { cal: 920, protein: 62, carbs: 76, fat: 40 },
+    servings: 5,
+    nutrition: { cal: 735, protein: 50, carbs: 61, fat: 32 },
     name: "Chicken paprikash",
     description: "Chicken in a paprika-sour cream sauce. Dumplings or noodles under it.",
     minutes: 55,

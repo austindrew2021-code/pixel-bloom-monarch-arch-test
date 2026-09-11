@@ -100,11 +100,25 @@ test("the discards are fractions, not all-or-nothing", () => {
 });
 
 test("no wired recipe computes to an impossible plate", () => {
+  // A serving is a serving. Anything past this is not a rich dish, it is a
+  // whole cake or a whole joint wearing a serving count of four — which is how
+  // the stamped default showed up once the figures were computed rather than
+  // guessed. 1,500 is comfortably above the richest real plate here (a chicken-
+  // fried steak with gravy, about 1,300).
   const silly = RECIPES.filter((r) => {
     const { nutrition } = fromIngredients(r);
-    return nutrition.cal < 0 || nutrition.cal > 4000;
-  }).map((r) => r.id);
-  assert.deepEqual(silly, [], silly.join(", "));
+    return nutrition.cal < 0 || nutrition.cal > 1500;
+  }).map((r) => `${r.id} (${fromIngredients(r).nutrition.cal} kcal, serves ${r.servings})`);
+  assert.deepEqual(silly, [], silly.join("\n"));
+});
+
+test("a serving is a plausible amount of food", () => {
+  // Grams, not calories, so a bowl of soup is judged by the bowl. Catches a
+  // serving count that is far too low without leaning on the calorie figure.
+  const odd = RECIPES.filter((r) => fromIngredients(r).gramsPerServing > 1200).map(
+    (r) => `${r.id} (${Math.round(fromIngredients(r).gramsPerServing)} g, serves ${r.servings})`,
+  );
+  assert.deepEqual(odd, [], odd.join("\n"));
 });
 
 test("stored nutrition is the computed nutrition", () => {

@@ -191,7 +191,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tuna-casserole",
-    nutrition: { cal: 845, protein: 80, carbs: 77, fat: 22 },
+    nutrition: { cal: 660, protein: 40, carbs: 77, fat: 21 },
     name: "Tuna noodle casserole",
     description: "Creamy noodles, peas, and a crunchy top. Church-basement famous.",
     minutes: 40,
@@ -482,7 +482,8 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "osso-buco",
-    nutrition: { cal: 1005, protein: 105, carbs: 9, fat: 55 },
+    servings: 9,
+    nutrition: { cal: 445, protein: 47, carbs: 4, fat: 24 },
     name: "Osso buco",
     description: "Braised veal shanks with gremolata.",
     minutes: 150,
@@ -865,7 +866,8 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pastitsio",
-    nutrition: { cal: 1190, protein: 74, carbs: 103, fat: 55 },
+    servings: 6,
+    nutrition: { cal: 795, protein: 49, carbs: 69, fat: 36 },
     name: "Pastitsio",
     description: "Greek baked pasta with cinnamon meat and béchamel.",
     minutes: 90,

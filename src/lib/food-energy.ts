@@ -69,7 +69,7 @@ const FRY_BATH_G = 190;
  * book says "in the 4 cups of lard or oil, deep and hot", and no list of
  * phrasings was ever going to cover that.
  */
-const DEEP_FRY = /\bfr(?:y|ies|ied|ying)\b/i;
+const DEEP_FRY = /\bfr(?:y|ies|ied|ying)\b|deep (?:hot )?(?:fat|lard|oil)|pot of [\w ]{0,14}(?:fat|lard|oil)/i;
 
 /**
  * Two more things that are bought but not eaten, and both are large enough to
@@ -203,6 +203,10 @@ const COUNT_G: Record<string, number> = {
  * `potato` and `coconut milk` before `milk`.
  */
 const FOODS: readonly Food[] = [
+  // A fish packed in oil is the fish. Listed here, before the fats, because
+  // "2 cans tuna in olive oil" otherwise matched /olive oil/ and put seven
+  // thousand calories of oil into a salade nicoise.
+  { match: /\b(?:tuna|sardines?|anchov\w*|salmon|mackerel|kippers?|herring)\b.*\bin (?:olive |vegetable )?oil\b/, per100: P(186, 25, 0, 9), unitG: { can: 120, cans: 120, tin: 120, tins: 120 }, eachG: 120, cupG: 150 },
   // --- water and things with no energy ---------------------------------
   { match: /^(?:ice |boiling |cold |warm |hot |soda )?water$|^water,|^dashi$|^ice$|^cracked ice$|^shaved ice$/, per100: P(0, 0, 0, 0), cupG: 237 },
   { match: /\bsalt\b|^kosher salt$|^sea salt$|^celery salt$/, per100: P(0, 0, 0, 0), cupG: 292 },
@@ -277,8 +281,9 @@ const FOODS: readonly Food[] = [
   { match: /crab ?meat|^crab|lobster|scallops?|crayfish|terrapin|turtle meat|^turtle$/, per100: P(90, 19, 1, 1), cupG: 145, eachG: 500 },
   { match: /mussels|clams/, per100: P(86, 12, 3.7, 2.2), cupG: 150, eachG: 10 },
   { match: /salmon/, per100: P(208, 22, 0, 13), eachG: 170, unitG: { fillet: 170, fillets: 170 } },
-  { match: /tuna/, per100: P(132, 28, 0, 1), cupG: 150, eachG: 150 },
-  { match: /anchov|sardines/, per100: P(210, 29, 0, 10), eachG: 4 },
+  { match: /tuna/, per100: P(132, 28, 0, 1), cupG: 150, eachG: 120, unitG: { can: 120, cans: 120 } },
+  { match: /sardines/, per100: P(208, 25, 0, 11), eachG: 120, unitG: { can: 92, cans: 92 } },
+  { match: /anchov/, per100: P(210, 29, 0, 10), eachG: 4, unitG: { can: 45, cans: 45 } },
   { match: /fish fillets?|fillets? of|^fish$|^fish,|fish cakes|boiled fish|roe/, per100: P(129, 23, 0, 3.5), eachG: 180, unitG: { fillet: 170, fillets: 170 } },
   { match: /herring|mackerel|shad|pompano|flounder|sole|haddock|^cod|codfish|snapper|trout|bass|whitefish|white fish/, per100: P(71, 12.7, 0, 1.9), eachG: 400, unitG: { fillet: 170, fillets: 170 } },
 

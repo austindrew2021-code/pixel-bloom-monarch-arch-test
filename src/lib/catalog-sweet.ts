@@ -23,11 +23,15 @@ function h(
   steps: string[],
   source: RecipeSource,
   nutrition: Recipe["nutrition"],
+  /** Portions this makes. Left out, dish() stamps four, which is wrong for
+   * a whole cake or a joint. */
+  servings?: number,
 ): Recipe {
   return dish({
     id, name, cuisine, description, minutes, protein, plate,
     tags: Array.from(new Set(["vintage", ...tags])),
     ingredients, steps, nutrition, source,
+      ...(servings ? { servings } : {}),
   });
 }
 

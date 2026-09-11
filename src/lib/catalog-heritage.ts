@@ -154,6 +154,9 @@ function h(
   steps: string[],
   source: RecipeSource,
   nutrition: Recipe["nutrition"],
+  /** Portions this makes. Left out, dish() stamps four, which is wrong for
+   * a whole cake or a joint. */
+  servings?: number,
 ): Recipe {
   return dish({
     id,
@@ -168,6 +171,7 @@ function h(
     steps,
     nutrition,
     source,
+      ...(servings ? { servings } : {}),
   });
 }
 
