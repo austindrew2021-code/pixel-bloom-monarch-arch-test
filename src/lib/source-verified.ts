@@ -202,4 +202,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-stuffed-sweets",
   "so-scalloped-sweets",
   "so-sweets-honey",
+  "so-marshmallow-sweets",
+  "so-hashed-browns",
+  "so-potato-croquettes",
+  "so-stuffed-potatoes",
+  "so-scalloped-potatoes",
 ]);
