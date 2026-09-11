@@ -274,4 +274,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   // and no onion soup, so those three lost the credit instead.
   "vh-365-goulash", "vh-365-irish-stew", "vh-365-borscht",
   "vh-365-curry-chicken", "vh-365-spanish-rice",
+  // The Picayune Creole Cook Book, 1901. Seven of the eight are in it. There is
+  // no trout meuniere anywhere in the book, so that one lost its credit.
+  "vh-pc-gumbo-file", "vh-pc-red-beans", "vh-pc-grillades", "vh-pc-calas",
+  "vh-pc-pain-perdu", "vh-pc-courtbouillon", "vh-pc-shrimp-creole",
 ]);

@@ -63,6 +63,7 @@ glyph looks like.
 | Recipe | Field | Scan reads | Ours | Note |
 |---|---|---|---|---|
 | `so-delicious-appetizer` | dried beef | `% pound` | 0.5 lb | ½ or ¾; ours is unconfirmed either way |
+| `vh-pc-pain-perdu` | eggs | `B Eggs.` | 6 | the digit is gone in both the download and the stream OCR; six is what a ½ cup of sugar and a family of six suggest, and it is a guess |
 | `vh-365-irish-stew` | milk | `}i cup of milk` | ¼ cup | glyph lost its digit; ¼ is what "a little flour" will take, but it could be ½ |
 | `vh-365-borscht` | cinnamon, nutmeg | `some cinnamon and nutmeg` | ¼ tsp each | the book gives no quantity at all; ours is a working pinch |
 | `vh-365-goulash` | beef | `Cut beef into small pieces` | 2 lb | the book names no weight for the meat |
@@ -397,6 +398,30 @@ hot oysters ... let all get very hot". Raw shucked oysters dropped into a stew
 and merely warmed is not a safe finish, so ours cooks them three minutes, to
 plump and curl, and says why in the step.
 
+### The Picayune Creole Cook Book: read from the stream text, not the download
+
+The same page-drop appears here and is worse: `archive.org/download/.../_djvu.txt`
+came back 1.43 MB and silently missing **Chapter VII (Creole Gumbo, pp. 18–21)**
+and **pp. 107–119**, which is where Calas lives. The text simply runs from
+"Cream of Spinach Soup" into the tail of Gumbo Choux and then into Chapter VIII.
+Nothing marks the seam.
+
+**`archive.org/stream/<id>/<id>_djvu.txt` returns the whole book** — 2.05 MB for
+the same item, with both missing blocks present. Use the stream path, and check
+the size against the download path: a stream text that is not larger is a
+warning, not a reassurance.
+
+| Recipe | In the book? |
+|---|---|
+| `vh-pc-gumbo-file` | Yes — *Gumbo Filé*, ch. VII. **It has no roux.** Ours built a peanut-butter brown roux the Picayune never calls for: the chicken and ham are fried in butter, then boiling water and oyster liquor go straight in. Ham and oysters were missing from ours; filé is two tablespoons off the fire; it serves six. |
+| `vh-pc-red-beans` | Yes — *Haricots Rouges au Riz*, p. 134. No celery, no green pepper, no cayenne, and the beans are not mashed to thicken. There is a carrot and a bay leaf, and the rice is boiled separately and served beside. |
+| `vh-pc-grillades` | Yes — *Grillades à la Sauce*, p. 63. The flour goes into a brown roux with onion and garlic, not onto the meat as a dredge, and the raw grillades are laid on the tomato. Vinegar finishes it. |
+| `vh-pc-calas` | Yes — p. 118, from "one of the last of the olden Cala women". Half a cup of rice boiled to a mush, risen overnight on yeast, then eggs, sugar, three spoons of flour and nutmeg. Ours used left-over rice and a one-hour rest. |
+| `vh-pc-pain-perdu` | Yes — *Lost Bread or Egg Toast*, p. 263. **No milk and no vanilla.** Eggs, orange flower water, sugar, lemon zest, optional brandy, a half-hour soak, and deep lard — not butter in a skillet. |
+| `vh-pc-courtbouillon` | Yes — *Courtbouillon à la Créole*, p. 26. Allspice, four herbs, garlic and a glass of claret, none of which ours had; no green pepper, which ours did; and it is served with potatoes, not rice. |
+| `vh-pc-shrimp-creole` | Yes — *Stewed Shrimp / Chevrettes à la Créole*, p. 39. The shrimp are boiled and picked first, then stewed ten minutes. No green pepper. "Never pour water into stewed Shrimp, as the tomato juice makes gravy enough." |
+| `vh-pc-trout-meuniere` | **No.** The word *meunière* does not appear in the book. Its trout are boiled, broiled, crumbed and fried with sauce tartare, or dipped in milk, floured and deep-fried. Credit withdrawn. |
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -408,4 +433,5 @@ plump and curl, and says why in the step.
 | The White House Cook Book (Gillette 1887) | 8 | 7 (floating island missing from the scan) |
 | National Wartime Nutrition Guide (USDA 1943) | 12 | **n/a — holds no recipes; 12 credits withdrawn** |
 | 365 Foreign Dishes (1908) | 8 | **5 (complete; 3 credits withdrawn)** |
-| The other 18 books | 119 | 0 |
+| The Picayune Creole Cook Book (1901) | 8 | **7 (complete; 1 credit withdrawn)** |
+| The other 17 books | 111 | 0 |

@@ -251,7 +251,7 @@ const FOODS: readonly Food[] = [
   // --- meat, poultry, fish ---------------------------------------------
   { match: /salt pork/, per100: P(748, 5.1, 0, 81), cupG: 200 },
   { match: /^bacon$|sliced bacon|bacon,/, per100: P(541, 37, 1.4, 42), unitG: { slice: 18, slices: 18 }, eachG: 18 },
-  { match: /smithfield ham|country ham|cured ham|^ham$|^ham,|raw ham|cooked ham|ham steak|ham slice/, per100: P(134, 16.5, 1.1, 6.8), unitG: { slice: 250, slices: 250 }, eachG: 250 },
+  { match: /smithfield ham|country ham|cured ham|^ham$|^ham,|raw ham|cooked ham|lean ham|ham steak|ham slice/, per100: P(134, 16.5, 1.1, 6.8), unitG: { slice: 250, slices: 250 }, eachG: 250 },
   { match: /chicken (?:thighs?|legs?|drumsticks?)/, per100: P(167, 21, 0, 9), eachG: 110 },
   { match: /chicken breasts?/, per100: P(165, 31, 0, 3.6), eachG: 175 },
   { match: /chicken livers?|^liver$|calf liver|beef liver/, per100: P(167, 24, 3, 6), eachG: 40 },
@@ -326,7 +326,10 @@ const FOODS: readonly Food[] = [
   { match: /cream of tartar/, per100: P(258, 0, 62, 0), cupG: 150 },
   { match: /cornstarch|corn ?flour thickening|arrowroot/, per100: P(381, 0.3, 91, 0), cupG: 128 },
   { match: /gelatin/, per100: P(335, 86, 0, 0), cupG: 150, unitG: { packet: 7, packets: 7 } },
-  { match: /^yeast$/, per100: P(325, 40, 41, 7.6), cupG: 150, unitG: { packet: 7, packets: 7 } },
+  { match: /^yeast$|compressed yeast/, per100: P(325, 40, 41, 7.6), cupG: 150, unitG: { packet: 7, packets: 7, cake: 17, cakes: 17 } },
+  // Orange flower water is a distillate, not an extract in syrup: it carries
+  // no sugar and no alcohol worth counting, so it sits above them.
+  { match: /orange ?(?:flower|blossom) water/, per100: P(0, 0, 0, 0), cupG: 237, liquid: true },
   { match: /vanilla|almond extract|maple flavo|peppermint extract|lemon extract|rose ?water|^extract$/, per100: P(288, 0, 13, 0), cupG: 208 },
 
   // --- nuts and seeds ----------------------------------------------------
@@ -440,7 +443,7 @@ const FOODS: readonly Food[] = [
   { match: /anisette|triple sec|cointreau|curacao|amaretto|^liqueur|kahlua|benedictine/, per100: P(330, 0, 30, 0), cupG: 240, liquid: true },
   { match: /sherry|madeira|^port$|marsala|vermouth|dubonnet|fortified/, per100: P(150, 0.2, 9, 0), cupG: 236, liquid: true },
   { match: /champagne|prosecco|sparkling wine/, per100: P(76, 0.1, 1.6, 0), cupG: 236, liquid: true },
-  { match: /red wine|white wine|sauterne|riesling|chardonnay|^wine$|^wine,|cooking wine|mirin|sake|shaoxing/, per100: P(83, 0.1, 2.7, 0), cupG: 236, liquid: true },
+  { match: /red wine|white wine|claret|sauterne|riesling|chardonnay|^wine$|^wine,|cooking wine|mirin|sake|shaoxing/, per100: P(83, 0.1, 2.7, 0), cupG: 236, liquid: true },
   { match: /^beer$|ale$|stout|lager|^cider$/, per100: P(43, 0.5, 3.6, 0), cupG: 236, liquid: true },
   { match: /sparkling water|charged water|club soda|seltzer|tonic/, per100: P(0, 0, 0, 0), cupG: 237, liquid: true },
 
