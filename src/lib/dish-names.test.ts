@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { RECIPES } from "./recipes.ts";
 import { searchRecipes } from "./search.ts";
+import { COLLECTIONS } from "./collections.ts";
 
 /**
  * Renaming a dish to its source book's title hides it from everyone who knows
@@ -71,4 +72,59 @@ test("a recipe renamed to a book title carries the name it lost", () => {
       `${r.id} is named for the book ("${r.name}") and lists no everyday alias`,
     );
   }
+});
+
+/**
+ * A `book-*` tag is a provenance claim: it puts the dish on that book's shelf
+ * in the app. Sixty-three recipes lost a source credit they could not support,
+ * and thirty-five of them kept the tag, so they went on standing on the shelf
+ * of a book they are not in. Two of those shelves — Pennsylvania Dutch and
+ * Early vegetarian — were named for books that were never written at all.
+ */
+test("a dish only stands on a book's shelf if it is credited to that book", () => {
+  const unearned = RECIPES.filter(
+    (r) => !r.source && r.tags.some((t) => t.startsWith("book-")),
+  ).map((r) => `${r.id}: ${r.tags.filter((t) => t.startsWith("book-")).join(" ")}`);
+  assert.deepEqual(
+    unearned,
+    [],
+    `these carry a book tag with no source credit behind it:\n${unearned.join("\n")}`,
+  );
+});
+
+/**
+ * Reading the books renamed some tags too, and a tag no shelf matches is a
+ * dish that has quietly left the shelf. "How to Cook Fish" lost all six of its
+ * verified dishes that way: they were retagged `book-how-to-cook-fish` while
+ * the shelf went on matching `book-olive-green`.
+ */
+test("no book shelf is empty", () => {
+  const empty = COLLECTIONS.filter(
+    (c) => c.id.startsWith("book-") && !RECIPES.some((r) => c.match(r)),
+  ).map((c) => `${c.id} (${c.label})`);
+  assert.deepEqual(empty, [], `these shelves show nothing:\n${empty.join("\n")}`);
+});
+
+test("no recipe is unreachable from every shelf in the app", () => {
+  // The accounting guarantee: a dish that matches no collection can only be
+  // found by typing its name, which is how 33 of them went missing once.
+  const stranded = RECIPES.filter((r) => !COLLECTIONS.some((c) => c.match(r))).map((r) => r.id);
+  assert.deepEqual(stranded, [], `on no shelf at all:\n${stranded.join("\n")}`);
+});
+
+test("a book tag the shelves do not match is a dish that has left the shelf", () => {
+  // book-how-to-cook-fish was such a tag: six verified dishes carried it while
+  // the shelf went on matching book-olive-green, so the shelf showed nothing.
+  const shelves = COLLECTIONS.filter((c) => c.id.startsWith("book-"));
+  const matched = new Set<string>();
+  for (const c of shelves) {
+    for (const r of RECIPES) if (c.match(r)) for (const t of r.tags) if (t.startsWith("book-")) matched.add(t);
+  }
+  const used = new Set(RECIPES.flatMap((r) => r.tags).filter((t) => t.startsWith("book-")));
+  const unshelved = [...used].filter((t) => !matched.has(t)).sort();
+  assert.deepEqual(
+    unshelved,
+    [],
+    `these book tags are on dishes but no shelf matches them:\n${unshelved.join("\n")}`,
+  );
 });

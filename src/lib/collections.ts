@@ -295,7 +295,7 @@ export const COLLECTIONS: Collection[] = [
     id: "book-pa-dutch",
     label: "Pennsylvania Dutch",
     hint: "Church-supper classics",
-    match: (r) => has(r, "book-pa-dutch"),
+    match: (r) => has(r, "pennsylvania-dutch"),
   },
   {
     id: "book-picayune",
@@ -354,8 +354,11 @@ export const COLLECTIONS: Collection[] = [
   {
     id: "book-early-veg",
     label: "Early vegetarian",
-    hint: "Fulton, Dwight, Wheldon",
-    match: (r) => has(r, "book-fulton-veg", "book-golden-age", "book-no-animal"),
+    // Named for three books that were never written: the credits behind
+    // book-fulton-veg, book-golden-age and book-no-animal were fabrications,
+    // and were withdrawn. The dishes are real; the shelf is a style, not a book.
+    hint: "Meatless cooking, 1900s",
+    match: (r) => has(r, "early-vegetarian"),
   },
   {
     id: "book-365-desserts",
@@ -368,6 +371,12 @@ export const COLLECTIONS: Collection[] = [
     label: "Virginia Housewife",
     hint: "Mary Randolph, 1824",
     match: (r) => has(r, "book-virginia"),
+  },
+  {
+    id: "book-american-cookery",
+    label: "American Cookery",
+    hint: "Amelia Simmons, 1796",
+    match: (r) => has(r, "book-american-cookery"),
   },
   {
     id: "keto",
