@@ -272,7 +272,19 @@ const NEGATED =
  * before asking whether the food was named, the same way NEGATED strips a
  * denial.
  */
-const FIGURES = /\bas (?:big|large|thick|small|round|thin) as an? [\w-]+|\bthe (?:size|consistency|thickness|colour|color|shape) of (?:an? )?[\w-]+(?:\s+[\w-]+)?|\b(?:bread|pastry|cutting|chopping|carving) board\b|\begg(?:-| )sized\b|\bpea(?:-| )sized\b/gi;
+const FIGURES = /\bas (?:big|large|thick|small|round|thin) as an? [\w-]+|\bthe (?:size|consistency|thickness|colour|color|shape) of (?:an? )?[\w-]+(?:\s+[\w-]+)?|\b(?:bread|pastry|cutting|chopping|carving) board\b|\begg(?:-| )sized\b|\bpea(?:-| )sized\b|\b(?:lemon|straw|amber|honey|cream|chocolate|coffee|wine|butter|olive)[- ]colou?r(?:ed)?\b/gi;
+
+/**
+ * A sauce recipe ends by naming what it is *for*, and what it is for is not in
+ * it. The Southern Cook Book's tomato sauce closes "a very good sauce for veal
+ * cutlets, fish, rice, or baked macaroni" — a sentence about where the sauce
+ * belongs, which bought the sauce a cup of rice. Strip the suitability clause
+ * before reading the step, the same way FIGURES strips a simile. Note this
+ * only covers "<sauce|gravy|...> for X": a step that says "serve over rice"
+ * is still an instruction, and rice still has to be on the list.
+ */
+const SUITABLE =
+  /\b(?:sauce|sauces|gravy|dressing|relish|frosting|icing|syrup|stuffing|garnish)\s+for\s+(?:the |a |an )?[\w-]+(?:\s+[\w-]+)?(?:\s*(?:,\s*)?(?:,|or|and)\s*(?:for\s+)?(?:the |a |an )?[\w-]+(?:\s+[\w-]+)?){0,5}/gi;
 
 /**
  * Naming a food to say you are NOT using it is the negation case; naming one
@@ -291,7 +303,11 @@ const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\
  * meal or rice" is not a recipe that forgot to list rice.
  */
 export function withoutDenials(text: string): string {
-  return text.replace(NEGATED, " ").replace(FIGURES, " ").replace(INSTEAD, " ");
+  return text
+    .replace(NEGATED, " ")
+    .replace(FIGURES, " ")
+    .replace(INSTEAD, " ")
+    .replace(SUITABLE, " ");
 }
 
 function namesFood(steps: string, fix: ListFix): boolean {

@@ -65,6 +65,14 @@ glyph looks like.
 | `so-delicious-appetizer` | dried beef | `% pound` | 0.5 lb | ½ or ¾; ours is unconfirmed either way |
 | `so-pigs-in-blankets` | salt | `% teaspoon` | 1 tsp | left as-is |
 | `so-mint-tea` | water | `1 ••> cup` | 1 cup | possibly 1½ |
+| `so-tomato-sauce` | allspice | `% teaspoon` | 0.25 tsp | glyph lost its digit; left as-is |
+| `so-foaming-sauce` | sherry | `Vs cup` | ⅓ cup | ⅓ or ⅛; left as-is |
+| `so-foaming-sauce` | boiling water | `% cup` | 0.5 cup | left as-is |
+| `so-brandy-sauce` | water | `% cup` | 0.5 cup | left as-is |
+| `so-brandy-sauce` | nutmeg | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-raisin-ham-sauce` | brown sugar | `% cup` | 0.5 cup | left as-is |
+| `so-hollandaise-south` | melted butter | `% cup` | 0.5 cup | left as-is |
+| `so-horseradish-sauce` | horseradish | `/& cup` | ⅓ cup | left as-is |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -213,5 +221,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 183 |
+| The Southern Cook Book (Lustig 1935) | 317 | 201 |
 | The other 20 books | 139 | 0 |

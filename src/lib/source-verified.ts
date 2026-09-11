@@ -213,4 +213,10 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-boiled-custard",
   "so-apple-dumplings",
   "so-pandowdy",
+  // Sauces
+  "so-white-sauce", "so-tomato-sauce", "so-mushroom-sauce", "so-barbecue-sauce",
+  "so-creamed-gravy", "so-poultry-sauce", "so-raisin-ham-sauce", "so-apple-ball-sauce",
+  "so-hard-sauce", "so-foaming-sauce", "so-brandy-sauce", "so-lemon-fritter-sauce",
+  "so-egg-nog-sauce", "so-hollandaise-south", "so-horseradish-sauce", "so-shrimp-sauce",
+  "so-rhubarb-sauce", "so-mint-ice",
 ]);
