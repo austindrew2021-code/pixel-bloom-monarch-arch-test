@@ -269,4 +269,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "vh-wh-oyster-stew", "vh-wh-clam-chowder", "vh-wh-beef-a-la-mode",
   "vh-wh-saratoga", "vh-wh-chicken-croquettes", "vh-wh-macaroni-cheese",
   "vh-wh-hash",
+  // 365 Foreign Dishes — anonymous, 1908. Five of the eight dishes that cited
+  // it are in it; the book has no Swedish meat ball, no German potato salad
+  // and no onion soup, so those three lost the credit instead.
+  "vh-365-goulash", "vh-365-irish-stew", "vh-365-borscht",
+  "vh-365-curry-chicken", "vh-365-spanish-rice",
 ]);

@@ -218,7 +218,10 @@ const FOODS: readonly Food[] = [
   // --- fats and oils ----------------------------------------------------
   { match: /oil for frying|frying fat|deep fat|^fat for frying$/, per100: P(884, 0, 0, 100), cupG: 218, eaten: FRY_ABSORBED },
   { match: /olive oil|sesame oil|neutral oil|vegetable oil|peanut oil|coconut oil|canola|^oil$|^oils$|chili oil/, per100: P(884, 0, 0, 100), cupG: 218 },
-  { match: /^lard\b|lard or oil|^shortening$|^suet$|^beef fat$|^chopped fat$|^drippings$|bacon grease|bacon fat/, per100: P(898, 0, 0, 100), cupG: 205 },
+  // "dripping" is rendered fat and belongs here, not in the catch-all below:
+  // a saucepan of beef dripping weighed as a generic 150 kcal row turned a
+  // stewing fat into a starch.
+  { match: /^lard\b|lard or oil|^shortening$|^suet$|^beef fat$|^chopped fat$|dripping(s)?$|bacon grease|bacon fat/, per100: P(898, 0, 0, 100), cupG: 205 },
   { match: /^butter$|^butter,|unsalted butter|salted butter|melted butter|^clarified butter$|^ghee$|buttered bread/, per100: P(717, 0.9, 0.1, 81), cupG: 227, unitG: { slice: 30, slices: 30, pat: 5 } },
   { match: /mayonnaise|^mayo$/, per100: P(680, 1, 0.6, 75), cupG: 220 },
 
@@ -489,7 +492,7 @@ const FOODS: readonly Food[] = [
   { match: /bacon lardons/, per100: P(541, 37, 1.4, 42), cupG: 140, eachG: 18 },
   { match: /pie dough/, per100: P(450, 6, 43, 29), eachG: 230, cupG: 200 },
   { match: /falafel/, per100: P(333, 13, 32, 18), eachG: 17, cupG: 150 },
-  { match: /chinkiang|black vinegar|cane vinegar|dry wine|dark soy|rice syrup|niter|instant yeast|yeast cake|bread dough|poultry stuffing|bread stuffing|boiled custard|eggnog|dark table syrup|sour or raw milk|heavy sweet cream|cold milk|buttered crumbs|melted fat|beef drippings|fat for basting|butter or drippings|coarse black pepper|breadcrumb$/, per100: P(150, 4, 20, 6), cupG: 240, eachG: 20 },
+  { match: /chinkiang|black vinegar|cane vinegar|dry wine|dark soy|rice syrup|niter|instant yeast|yeast cake|bread dough|poultry stuffing|bread stuffing|boiled custard|eggnog|dark table syrup|sour or raw milk|heavy sweet cream|cold milk|buttered crumbs|melted fat|fat for basting|butter or drippings|coarse black pepper|breadcrumb$/, per100: P(150, 4, 20, 6), cupG: 240, eachG: 20 },
 ];
 
 const NAME_CACHE = new Map<string, Food | null>();

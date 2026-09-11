@@ -63,6 +63,10 @@ glyph looks like.
 | Recipe | Field | Scan reads | Ours | Note |
 |---|---|---|---|---|
 | `so-delicious-appetizer` | dried beef | `% pound` | 0.5 lb | ½ or ¾; ours is unconfirmed either way |
+| `vh-365-irish-stew` | milk | `}i cup of milk` | ¼ cup | glyph lost its digit; ¼ is what "a little flour" will take, but it could be ½ |
+| `vh-365-borscht` | cinnamon, nutmeg | `some cinnamon and nutmeg` | ¼ tsp each | the book gives no quantity at all; ours is a working pinch |
+| `vh-365-goulash` | beef | `Cut beef into small pieces` | 2 lb | the book names no weight for the meat |
+| `vh-365-spanish-rice` | frying fat | `Fry 1 large chopped onion` | 2 tbsp butter | the book names no fat for the frying, only the spoonful stirred in at the end |
 | `so-pigs-in-blankets` | salt | `% teaspoon` | 1 tsp | left as-is |
 | `so-mint-tea` | water | `1 ••> cup` | 1 cup | possibly 1½ |
 | `so-tomato-sauce` | allspice | `% teaspoon` | 0.25 tsp | glyph lost its digit; left as-is |
@@ -368,6 +372,31 @@ the page holds the dish. `source-credit.test.ts` now keeps a `NOT_A_COOKBOOK`
 map so the guide cannot be cited again, and the twelve dishes ship uncredited
 until a real 1940s source is read for them.
 
+### 365 Foreign Dishes: three of the eight dishes are not in it
+
+The scan's OCR loses January 4 through April 4 — 96 of the 365 recipes — and the
+`_djvu.txt` gives no sign that it has. What settles the question is the book's
+own index, which the OCR does carry in full and which lists every dish under its
+nation. Read against it:
+
+| Recipe | In the book? |
+|---|---|
+| `vh-365-goulash` | Yes — *Hungarian Beef Stew*, Feb 28. Ours had caraway and a browning step the book has not. |
+| `vh-365-irish-stew` | Yes — *Irish Mutton Stew*, Dec 28. Ours layered lamb and potato; the book fries the chops in dripping and thickens with flour and milk. |
+| `vh-365-borscht` | Yes — *Russian Beet Soup*, Feb 24. Ours was a beef-and-cabbage borscht with sour cream. The book's is chicken broth, lemon, cinnamon, nutmeg and a glass of red wine, and has neither cabbage nor sour cream. |
+| `vh-365-curry-chicken` | Yes — *Madras Stewed Chicken*, Apr 5. Ours kept the onion, curry powder and apple and dropped the mutton chops, the oysters and the fried egg-plant. |
+| `vh-365-spanish-rice` | Yes — *Spanish Rice*, Sept 10. Ours added ham, green pepper and paprika the book has not, and boiled the rice in the pot instead of stirring boiled rice through. |
+| `vh-365-swedish-balls` | **No.** The Swedish chapter runs baked fish, turnips, batter cakes, cabbage, salads, pie, rice pudding, stewed chicken, mutton and veal. The book's only meat balls are Egyptian (curried beef, Jan 7) and French *boulettes* (Feb 25). Credit withdrawn. |
+| `vh-365-german-potato` | **No.** The German chapter has potato pancakes and two herring salads, no potato salad. The book's potato salads are Belgian and Viennese. Credit withdrawn. |
+| `vh-365-onion-soup` | **No.** The French chapter has no onion soup; the book's only onion dish is Scotch stewed onions. Credit withdrawn. |
+
+The three withdrawn dishes still ship. What they no longer claim is a page.
+
+**Where a safety rule overrode the book:** the Madras chicken ends "add 1 pint of
+hot oysters ... let all get very hot". Raw shucked oysters dropped into a stew
+and merely warmed is not a safe finish, so ours cooks them three minutes, to
+plump and curl, and says why in the step.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -378,4 +407,5 @@ until a real 1940s source is read for them.
 | What Mrs. Fisher Knows (Fisher 1881) | 7 | **7 (complete)** |
 | The White House Cook Book (Gillette 1887) | 8 | 7 (floating island missing from the scan) |
 | National Wartime Nutrition Guide (USDA 1943) | 12 | **n/a — holds no recipes; 12 credits withdrawn** |
-| The other 19 books | 127 | 0 |
+| 365 Foreign Dishes (1908) | 8 | **5 (complete; 3 credits withdrawn)** |
+| The other 18 books | 119 | 0 |
