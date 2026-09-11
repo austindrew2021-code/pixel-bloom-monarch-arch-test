@@ -427,7 +427,7 @@ const FOODS: readonly Food[] = [
   { match: /hoisin|oyster sauce|sriracha|teriyaki/, per100: P(180, 3, 38, 2), cupG: 260 },
   { match: /cream of mushroom soup|condensed soup/, per100: P(80, 1.6, 8, 5), cupG: 250, unitG: { can: 298, cans: 298 } },
   { match: /chicken (?:broth|stock)|beef (?:broth|stock)|vegetable (?:broth|stock)|soup stock|^broth$|^stock$|bone broth|fish stock|clam juice/, per100: P(6, 1, 0.4, 0.2), cupG: 240 },
-  { match: /balsamic|rice vinegar|cider vinegar|apple cider vinegar|red wine vinegar|white vinegar|tarragon vinegar|malt vinegar|sour vinegar|weak vinegar|strong vinegar|^vinegar$|^vinegar,/, per100: P(21, 0, 0.9, 0), cupG: 239 },
+  { match: /balsamic|rice vinegar|cider vinegar|apple cider vinegar|red wine vinegar|white vinegar|tarragon vinegar|malt vinegar|sour vinegar|weak vinegar|strong vinegar|wine vinegar|^vinegar$|^vinegar,/, per100: P(21, 0, 0.9, 0), cupG: 239 },
   { match: /^coffee$|black coffee|strong coffee|hot coffee|^tea$|black tea|brewed/, per100: P(1, 0.1, 0, 0), cupG: 237 },
 
   // --- alcohol: ethanol is 7 kcal/g and belongs in none of the macros --------

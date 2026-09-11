@@ -261,4 +261,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "ar-ff-lobster-newburg", "ar-ff-white-sauce", "ar-ff-popovers",
   "ar-ff-molasses-gingerbread", "ar-ff-cream-tomato-soup", "ar-ff-eggs-goldenrod",
   "ar-ff-welsh-rarebit", "ar-ff-boston-baked-beans", "ar-ff-spider-corn-cake",
+  // What Mrs. Fisher Knows About Old Southern Cooking — Abby Fisher, 1881
+  "ar-mf-jumberlie", "ar-mf-ochra-gumbo", "ar-mf-sweet-potato-pie",
+  "ar-mf-corn-bread", "ar-mf-fried-chicken", "ar-mf-ginger-cookies",
+  "ar-mf-chow-chow",
 ]);

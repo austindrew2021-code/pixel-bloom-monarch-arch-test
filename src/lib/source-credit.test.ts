@@ -61,7 +61,7 @@ test("a source names a work and a person, not a tradition", () => {
   for (const r of RECIPES) {
     const s = r.source;
     if (!s) continue;
-    if (/household|traditional|pages,|cookery, \d{4}/i.test(s.author)) {
+    if (s.author && /household|traditional|pages,|cookery, \d{4}/i.test(s.author)) {
       vague.push(`${r.id}: "${s.book}" by "${s.author}"`);
     }
   }

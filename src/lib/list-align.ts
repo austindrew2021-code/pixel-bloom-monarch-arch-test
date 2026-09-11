@@ -316,6 +316,14 @@ const SIDE_SAUCE =
  * alternatives. The head nouns are deliberately few: "bread or cracker crumbs"
  * must keep reading as crumbs of either kind, not as a loaf of bread.
  */
+/**
+ * A recipe that offers either fat needs one fat. "One tablespoonful of melted
+ * lard or butter" is Abby Fisher giving the cook a choice, and it bought her
+ * corn bread a pound of butter beside the lard already on the list.
+ */
+const EITHER_FAT =
+  /\b(lard|butter|shortening|oil|drippings|suet|bacon grease|schmaltz)\s+or\s+(?:lard|butter|shortening|oil|drippings|suet|bacon grease|schmaltz)\b/gi;
+
 const OR_LIST =
   /\b([\w-]+)(?:,\s*[\w-]+)*\s+or\s+[\w-]+(\s+(?:juice|extract|essence|rind|peel|zest|wine))\b/gi;
 
@@ -375,6 +383,7 @@ export function withoutDenials(text: string, isSauce = false): string {
     .replace(ALTERNATIVES, "$1")
     .replace(GREASING, " ")
     .replace(SIDE_SAUCE, " ")
+    .replace(EITHER_FAT, "$1")
     .replace(OR_LIST, "$1$2")
     .replace(SUITABLE, " ");
   return isSauce ? base.replace(ACCOMPANIES, " ") : base;

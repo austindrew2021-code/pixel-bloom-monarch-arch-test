@@ -210,7 +210,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "sauce", "louisiana", "spicy", "vegetarian", "quick"],
     aliases: ["blackening spice", "cajun seasoning"],
-    nutrition: { cal: 95, protein: 1, carbs: 10, fat: 7 },
+    nutrition: { cal: 65, protein: 1, carbs: 10, fat: 3 },
     ingredients: [
       I("paprika", 3, "tbsp", "Herbs & Spices"),
       I("garlic powder", 1, "tbsp", "Herbs & Spices"),
@@ -883,7 +883,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "French",
     tags: ["sauce"],
     aliases: ["bearnaise", "tarragon butter sauce"],
-    nutrition: { cal: 255, protein: 3, carbs: 2, fat: 26 },
+    nutrition: { cal: 250, protein: 3, carbs: 2, fat: 26 },
     ingredients: [
       I("egg yolks", 3, "", "Dairy & Eggs"),
       I("butter", 0.5, "cup", "Dairy & Eggs"),
