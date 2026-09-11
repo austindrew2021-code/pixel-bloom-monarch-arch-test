@@ -224,4 +224,10 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-butter-icing", "so-never-fail-icing", "so-mocha-icing", "so-orange-icing",
   "so-brown-sugar-frosting", "so-pralines", "so-coconut-pralines", "so-goober-brittle",
   "so-fudge", "so-caramels", "so-pecan-fondant", "so-candied-peel",
+  // Fish and shellfish
+  "so-bouillabaisse", "so-deviled-crabs", "so-crab-croquettes", "so-oyster-loaf",
+  "so-oysters-louisiane", "so-fried-oysters", "so-browned-oysters", "so-oyster-pie",
+  "so-lobster-thermidor", "so-lobster-newburg", "so-pompano", "so-fish-cakes",
+  "so-roe-herring", "so-spanish-mackerel", "so-chesapeake-turtle", "so-flounder",
+  "so-planked-shad", "so-shrimps-caliente", "so-shrimp-rice-croquettes",
 ]);

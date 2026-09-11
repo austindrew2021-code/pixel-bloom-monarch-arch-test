@@ -89,6 +89,16 @@ glyph looks like.
 | `so-pecan-fondant` | salt | `% teaspoon` | 0.25 tsp | left as-is |
 | `so-pecan-fondant` | depth of dish | `MJ inch` | ½ inch | left as-is |
 | `so-candied-peel` | sugar split | `2% cups` then `Vi cup` | not committed | 2½+½ and 2¾+¼ both total 3; the step says “most of” and “the sugar you held back” |
+| `so-bouillabaisse` | water for the shrimp | `1% quarts` | not committed | step says “water to cover them well” |
+| `so-bouillabaisse` | mushrooms | `Vi pound` | 0.5 lb | left as-is |
+| `so-oyster-loaf` | cream | `y% cup` | 0.5 cup | left as-is |
+| `so-lobster-newburg` | salt | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-pompano` | mushrooms | `% cup` | 0.5 cup | left as-is |
+| `so-pompano` | sherry | `% cup` | 0.5 cup | left as-is; the book lists sherry but its method never places it, so ours puts it in the paste |
+| `so-planked-shad` | melted butter | `% cup` | 0.5 cup | left as-is |
+| `so-shrimps-caliente` | boiling time | `y^ hour` | not committed | step gives the doneness sign instead, and says the book's figure is unreadable |
+| `so-shrimps-caliente` | salt | `MJ teaspoon` | 1 tsp | left as-is |
+| `so-chesapeake-turtle` | nutmeg | `% grated nutmeg` | 0.25 tsp | left as-is; the book also lists 1/2 cup butter its method never uses |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -237,5 +247,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 217 |
+| The Southern Cook Book (Lustig 1935) | 317 | 236 |
 | The other 20 books | 139 | 0 |
