@@ -25,6 +25,7 @@ function dish(
 export const WORLD_RECIPES: Recipe[] = [
   dish({
     id: "sloppy-joes",
+    nutrition: { cal: 485, protein: 35, carbs: 41, fat: 21 },
     name: "Sloppy joes",
     description: "Sweet-savory saucy beef on a toasted bun. Cafeteria legend, still a weeknight win.",
     minutes: 25,
@@ -49,6 +50,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chicken-dumplings",
+    nutrition: { cal: 635, protein: 58, carbs: 48, fat: 23 },
     name: "Chicken and dumplings",
     description: "Stewed chicken under fluffy drop dumplings. Grandmother energy.",
     minutes: 70,
@@ -75,6 +77,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tater-tot-hotdish",
+    nutrition: { cal: 615, protein: 43, carbs: 26, fat: 40 },
     name: "Tater tot hotdish",
     description: "Midwest church-basement classic: beef, cream soup, peas, tots.",
     minutes: 55,
@@ -101,6 +104,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "salisbury-steak",
+    nutrition: { cal: 540, protein: 50, carbs: 18, fat: 31 },
     name: "Salisbury steak",
     description: "Seasoned beef patties in onion gravy. TV-dinner glow, homemade.",
     minutes: 40,
@@ -124,6 +128,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "swedish-meatballs",
+    nutrition: { cal: 745, protein: 45, carbs: 28, fat: 52 },
     name: "Swedish meatballs",
     description: "Tiny meatballs in cream gravy. Ikea wishes it tasted like this.",
     minutes: 45,
@@ -151,6 +156,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "american-goulash",
+    nutrition: { cal: 705, protein: 42, carbs: 73, fat: 28 },
     name: "American goulash",
     description: "One-pot elbow pasta, beef, and tomatoes. School-night old school.",
     minutes: 35,
@@ -177,6 +183,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "scalloped-ham",
+    nutrition: { cal: 720, protein: 38, carbs: 73, fat: 30 },
     name: "Ham and scalloped potatoes",
     description: "Sunday leftover ham tucked into creamy potatoes.",
     minutes: 80,
@@ -204,6 +211,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "stuffed-peppers",
+    nutrition: { cal: 780, protein: 44, carbs: 71, fat: 36 },
     name: "Stuffed peppers",
     description: "Bell peppers packed with beef, rice, and tomato. 1970s table, forever.",
     minutes: 65,
@@ -230,6 +238,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "stovetop-mac",
+    nutrition: { cal: 755, protein: 32, carbs: 74, fat: 36 },
     name: "Stovetop mac and cheese",
     description: "A pot of elbows in sharp cheddar sauce. No box required.",
     minutes: 25,
@@ -255,6 +264,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chicken-a-la-king",
+    nutrition: { cal: 605, protein: 42, carbs: 48, fat: 27 },
     name: "Chicken à la king",
     description: "Creamed chicken with peppers and mushrooms on toast or rice.",
     minutes: 35,
@@ -282,6 +292,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pork-chops-apples",
+    nutrition: { cal: 430, protein: 34, carbs: 22, fat: 23 },
     name: "Pork chops with applesauce",
     description: "Pan-seared chops and a warm cinnamon apple mash.",
     minutes: 30,
@@ -307,6 +318,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "cabbage-rolls",
+    nutrition: { cal: 570, protein: 38, carbs: 63, fat: 20 },
     name: "Cabbage rolls",
     description: "Beef and rice wrapped in cabbage, baked in tomato. Homemade hall-of-fame.",
     minutes: 110,
@@ -331,6 +343,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "classic-beef-stew",
+    nutrition: { cal: 765, protein: 66, carbs: 42, fat: 37 },
     name: "Classic beef stew",
     description: "Chuck, potatoes, and carrots that fall apart if you give them time.",
     minutes: 150,
@@ -356,6 +369,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "porcupine-meatballs",
+    nutrition: { cal: 580, protein: 35, carbs: 40, fat: 32 },
     name: "Porcupine meatballs",
     description: "Rice-studded meatballs simmered in tomato. Kids named them, adults eat them.",
     minutes: 50,
@@ -381,6 +395,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tuna-melt",
+    nutrition: { cal: 650, protein: 68, carbs: 28, fat: 27 },
     name: "Tuna melt",
     description: "Hot tuna salad under a blanket of cheddar. Lunch-counter forever.",
     minutes: 15,
@@ -406,6 +421,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "corned-beef-hash",
+    nutrition: { cal: 400, protein: 28, carbs: 26, fat: 20 },
     name: "Corned beef hash",
     description: "Crisp potatoes, chopped corned beef, a fried egg if you have one.",
     minutes: 30,
@@ -430,6 +446,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "sunday-pot-roast",
+    nutrition: { cal: 1190, protein: 97, carbs: 62, fat: 62 },
     name: "Sunday pot roast",
     description: "Chuck roast, carrots, and potatoes in one pot. The house smells like home.",
     minutes: 210,
@@ -456,6 +473,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "spaghetti-meatballs",
+    nutrition: { cal: 930, protein: 54, carbs: 107, fat: 33 },
     name: "Spaghetti and meatballs",
     description: "Sunday sauce, fat meatballs, a mountain of spaghetti.",
     minutes: 75,
@@ -483,6 +501,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "nl-fish-cakes",
+    nutrition: { cal: 285, protein: 6, carbs: 45, fat: 9 },
     name: "Newfoundland fish cakes",
     description: "Salt cod and potato patties fried gold. Breakfast, supper, leftover scoff.",
     minutes: 40,
@@ -509,6 +528,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pan-fried-cod",
+    nutrition: { cal: 260, protein: 23, carbs: 13, fat: 12 },
     name: "Pan-fried cod",
     description: "Crisp-edged fresh cod, lemon, a knob of butter. Outport weeknight.",
     minutes: 20,
@@ -534,6 +554,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "moose-stew",
+    nutrition: { cal: 775, protein: 64, carbs: 51, fat: 35 },
     name: "Moose stew",
     description: "Slow moose, root veg, and a dark gravy. Cabin cooking.",
     minutes: 180,
@@ -560,6 +581,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "hodge-podge",
+    nutrition: { cal: 355, protein: 8, carbs: 37, fat: 20 },
     name: "Hodge podge",
     description: "Maritimes cream of new vegetables — beans, carrots, potatoes, a little butter.",
     minutes: 40,
@@ -584,6 +606,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "halifax-donair",
+    nutrition: { cal: 745, protein: 53, carbs: 60, fat: 34 },
     name: "Halifax donair",
     description: "Spiced beef, sweet garlic sauce, tomato and onion in a pita. East Coast pride.",
     minutes: 50,
@@ -614,6 +637,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "poutine",
+    nutrition: { cal: 745, protein: 33, carbs: 31, fat: 54 },
     name: "Poutine",
     description: "Fries, cheese curds, hot gravy. Quebec’s gift to late night.",
     minutes: 40,
@@ -635,6 +659,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tourtiere",
+    nutrition: { cal: 710, protein: 47, carbs: 17, fat: 51 },
     name: "Tourtière",
     description: "Spiced meat pie for Christmas Eve and every cold Sunday after.",
     minutes: 90,
@@ -662,6 +687,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "toad-in-hole",
+    nutrition: { cal: 650, protein: 31, carbs: 29, fat: 45 },
     name: "Toad in the hole",
     description: "Sausages baked in Yorkshire pudding batter. British supper, no amphibians.",
     minutes: 50,
@@ -687,6 +713,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "bangers-mash",
+    nutrition: { cal: 725, protein: 30, carbs: 60, fat: 41 },
     name: "Bangers and mash",
     description: "Sausages, buttery potatoes, onion gravy. Pub plate at home.",
     minutes: 40,
@@ -712,6 +739,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "irish-stew",
+    nutrition: { cal: 900, protein: 65, carbs: 54, fat: 46 },
     name: "Irish stew",
     description: "Lamb or mutton, potato, onion. Patience is the fourth ingredient.",
     minutes: 140,
@@ -738,6 +766,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "colcannon",
+    nutrition: { cal: 390, protein: 8, carbs: 49, fat: 19 },
     name: "Colcannon",
     description: "Mashed potato folded with cabbage or kale and a well of butter.",
     minutes: 35,
@@ -763,6 +792,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "amatriciana",
+    nutrition: { cal: 460, protein: 18, carbs: 68, fat: 12 },
     name: "Bucatini all’amatriciana",
     description: "Guanciale, tomato, pecorino. Roman, loud, not creamy.",
     minutes: 30,
@@ -788,6 +818,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "eggplant-parm",
+    nutrition: { cal: 585, protein: 36, carbs: 38, fat: 31 },
     name: "Eggplant parmesan",
     description: "Fried eggplant, red sauce, mozzarella. Meatless Sunday.",
     minutes: 80,
@@ -814,6 +845,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "avgolemono",
+    nutrition: { cal: 500, protein: 46, carbs: 23, fat: 26 },
     name: "Avgolemono",
     description: "Greek lemon-egg chicken soup. Bright, silky, homemade.",
     minutes: 45,
@@ -839,6 +871,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "gemista",
+    nutrition: { cal: 600, protein: 10, carbs: 79, fat: 28 },
     name: "Gemista",
     description: "Tomatoes and peppers stuffed with herbed rice. Summer Greek table.",
     minutes: 90,
@@ -866,6 +899,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "huevos-rancheros",
+    nutrition: { cal: 315, protein: 12, carbs: 36, fat: 14 },
     name: "Huevos rancheros",
     description: "Fried eggs on tortillas with a ranchero salsa. Breakfast that is dinner.",
     minutes: 25,
@@ -891,6 +925,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pozole-rojo",
+    nutrition: { cal: 1405, protein: 82, carbs: 186, fat: 36 },
     name: "Pozole rojo",
     description: "Pork and hominy in a chile broth. Garnish like you mean it.",
     minutes: 150,
@@ -919,6 +954,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "palak-paneer",
+    nutrition: { cal: 590, protein: 21, carbs: 67, fat: 27 },
     name: "Palak paneer",
     description: "Spinach gravy, cubes of paneer. Homestyle Punjabi.",
     minutes: 40,
@@ -943,6 +979,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "dal-tadka",
+    nutrition: { cal: 395, protein: 11, carbs: 73, fat: 7 },
     name: "Dal tadka",
     description: "Yellow lentils finished with a sizzling cumin-garlic tadka.",
     minutes: 40,
@@ -970,6 +1007,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "aloo-gobi",
+    nutrition: { cal: 470, protein: 12, carbs: 89, fat: 8 },
     name: "Aloo gobi",
     description: "Dry-ish potato and cauliflower with cumin and turmeric.",
     minutes: 35,
@@ -996,6 +1034,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "bibimbap",
+    nutrition: { cal: 530, protein: 17, carbs: 86, fat: 13 },
     name: "Bibimbap",
     description: "Rice, sautéed vegetables, a fried egg, gochujang. Mix at the table.",
     minutes: 40,
@@ -1024,6 +1063,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pho-bo",
+    nutrition: { cal: 860, protein: 67, carbs: 98, fat: 21 },
     name: "Phở bò",
     description: "Beef noodle soup with star anise broth. Homemade takes a Saturday.",
     minutes: 180,
@@ -1053,6 +1093,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "thai-green-curry",
+    nutrition: { cal: 880, protein: 46, carbs: 76, fat: 45 },
     name: "Thai green curry",
     description: "Coconut, green curry paste, Thai basil. Heat you can tune.",
     minutes: 30,
@@ -1080,6 +1121,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "kung-pao-chicken",
+    nutrition: { cal: 480, protein: 42, carbs: 9, fat: 31 },
     name: "Kung pao chicken",
     description: "Diced chicken, dried chiles, peanuts. Sichuan-ish weeknight.",
     minutes: 25,
@@ -1107,6 +1149,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "potstickers",
+    nutrition: { cal: 875, protein: 38, carbs: 97, fat: 37 },
     name: "Potstickers",
     description: "Pan-fried dumplings, steamed in the same skillet. Dip in vinegar-soy.",
     minutes: 45,
@@ -1133,6 +1176,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "mujadara",
+    nutrition: { cal: 430, protein: 9, carbs: 57, fat: 19 },
     name: "Mujadara",
     description: "Lentils, rice, and a pile of fried onions. Pantry feast.",
     minutes: 50,
@@ -1158,6 +1202,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "kofta",
+    nutrition: { cal: 670, protein: 52, carbs: 30, fat: 39 },
     name: "Beef kofta",
     description: "Spiced ground meat on skewers, yogurt, herbs. Grill or broiler.",
     minutes: 35,
@@ -1185,6 +1230,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "french-onion",
+    nutrition: { cal: 595, protein: 25, carbs: 50, fat: 32 },
     name: "French onion soup",
     description: "Onions cooked past patience, stock, a Gruyère crouton.",
     minutes: 90,
@@ -1210,6 +1256,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "ratatouille",
+    nutrition: { cal: 230, protein: 5, carbs: 24, fat: 15 },
     name: "Ratatouille",
     description: "Late-summer vegetables stewed in olive oil until they agree.",
     minutes: 60,
@@ -1238,6 +1285,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "croque-monsieur",
+    nutrition: { cal: 1120, protein: 101, carbs: 40, fat: 61 },
     name: "Croque monsieur",
     description: "Ham, béchamel, Gruyère, broiled. Add an egg and it is a madame.",
     minutes: 25,
@@ -1264,6 +1312,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "paella",
+    nutrition: { cal: 655, protein: 55, carbs: 68, fat: 19 },
     name: "Weeknight paella",
     description: "Saffron rice, chicken, shrimp, peas. Not Valencia-strict — Tuesday-friendly.",
     minutes: 50,
@@ -1292,6 +1341,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "spanish-tortilla",
+    nutrition: { cal: 660, protein: 14, carbs: 42, fat: 48 },
     name: "Spanish tortilla",
     description: "Potato, onion, egg. Thick omelette, room-temp or hot.",
     minutes: 40,
@@ -1316,6 +1366,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "schnitzel",
+    nutrition: { cal: 805, protein: 65, carbs: 14, fat: 53 },
     name: "Pork schnitzel",
     description: "Pound, bread, fry. Lemon wedge non-negotiable.",
     minutes: 30,
@@ -1342,6 +1393,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pierogi",
+    nutrition: { cal: 880, protein: 24, carbs: 116, fat: 34 },
     name: "Pierogi",
     description: "Potato-cheese dumplings boiled then butter-fried. Sour cream on the side.",
     minutes: 90,
@@ -1369,6 +1421,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "rice-and-peas",
+    nutrition: { cal: 675, protein: 14, carbs: 92, fat: 29 },
     name: "Rice and peas",
     description: "Coconut rice with kidney beans, thyme, and Scotch bonnet. Jamaican table.",
     minutes: 45,
@@ -1395,6 +1448,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "gumbo",
+    nutrition: { cal: 1305, protein: 65, carbs: 86, fat: 79 },
     name: "Chicken and sausage gumbo",
     description: "Dark roux, holy trinity, okra or filé. Louisiana in a pot.",
     minutes: 120,
@@ -1426,6 +1480,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "jambalaya",
+    nutrition: { cal: 815, protein: 48, carbs: 69, fat: 39 },
     name: "Jambalaya",
     description: "Rice cooked with chicken, sausage, the trinity, and a little heat.",
     minutes: 50,
@@ -1455,6 +1510,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "buttermilk-fried-chicken",
+    nutrition: { cal: 1085, protein: 72, carbs: 50, fat: 66 },
     name: "Buttermilk fried chicken",
     description: "Overnight buttermilk, a seasoned crust, a cast-iron pot.",
     minutes: 60,
@@ -1481,6 +1537,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chicken-paprikash",
+    nutrition: { cal: 920, protein: 62, carbs: 76, fat: 40 },
     name: "Chicken paprikash",
     description: "Chicken in a paprika-sour cream sauce. Dumplings or noodles under it.",
     minutes: 55,

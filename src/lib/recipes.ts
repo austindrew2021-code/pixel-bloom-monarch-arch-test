@@ -41,10 +41,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["roast", "comfort"],
 		nutrition: {
-			cal: 420,
-			protein: 38,
-			carbs: 6,
-			fat: 26
+			cal: 510,
+			protein: 62,
+			carbs: 5,
+			fat: 28
 		},
 		ingredients: [
 			I("whole chicken", 1, "bird", "Meat & Seafood"),
@@ -74,9 +74,9 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["vegetarian", "quick"],
 		nutrition: {
-			cal: 510,
-			protein: 16,
-			carbs: 78,
+			cal: 515,
+			protein: 19,
+			carbs: 75,
 			fat: 16
 		},
 		ingredients: [
@@ -110,10 +110,10 @@ const CORE_RECIPES: Recipe[] = [
 			"budget"
 		],
 		nutrition: {
-			cal: 390,
-			protein: 16,
-			carbs: 54,
-			fat: 13
+			cal: 575,
+			protein: 20,
+			carbs: 85,
+			fat: 20
 		},
 		ingredients: [
 			I("black beans", 2, "cans", "Pantry"),
@@ -142,10 +142,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["quick", "pescatarian"],
 		nutrition: {
-			cal: 430,
-			protein: 36,
-			carbs: 8,
-			fat: 28
+			cal: 445,
+			protein: 40,
+			carbs: 6,
+			fat: 29
 		},
 		ingredients: [
 			I("salmon fillets", 4, "", "Meat & Seafood"),
@@ -173,10 +173,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["quick"],
 		nutrition: {
-			cal: 380,
-			protein: 32,
-			carbs: 28,
-			fat: 14
+			cal: 600,
+			protein: 43,
+			carbs: 66,
+			fat: 17
 		},
 		ingredients: [
 			I("chicken thighs", 1.5, "lb", "Meat & Seafood"),
@@ -211,10 +211,10 @@ const CORE_RECIPES: Recipe[] = [
 			"batch"
 		],
 		nutrition: {
-			cal: 310,
-			protein: 18,
-			carbs: 44,
-			fat: 8
+			cal: 155,
+			protein: 9,
+			carbs: 20,
+			fat: 5
 		},
 		ingredients: [
 			I("red lentils", 2, "cups", "Pantry"),
@@ -244,9 +244,9 @@ const CORE_RECIPES: Recipe[] = [
 		tags: ["comfort"],
 		nutrition: {
 			cal: 440,
-			protein: 34,
-			carbs: 22,
-			fat: 24
+			protein: 54,
+			carbs: 12,
+			fat: 19
 		},
 		ingredients: [
 			I("ground turkey", 1.5, "lb", "Meat & Seafood"),
@@ -278,9 +278,9 @@ const CORE_RECIPES: Recipe[] = [
 			"budget"
 		],
 		nutrition: {
-			cal: 360,
-			protein: 12,
-			carbs: 52,
+			cal: 835,
+			protein: 21,
+			carbs: 157,
 			fat: 12
 		},
 		ingredients: [
@@ -309,10 +309,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["budget"],
 		nutrition: {
-			cal: 480,
-			protein: 24,
-			carbs: 18,
-			fat: 34
+			cal: 620,
+			protein: 32,
+			carbs: 16,
+			fat: 48
 		},
 		ingredients: [
 			I("Italian sausage", 1.5, "lb", "Meat & Seafood"),
@@ -339,10 +339,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["vegetarian", "budget"],
 		nutrition: {
-			cal: 470,
-			protein: 16,
-			carbs: 48,
-			fat: 24
+			cal: 750,
+			protein: 20,
+			carbs: 99,
+			fat: 32
 		},
 		ingredients: [
 			I("chickpeas", 2, "cans", "Pantry"),
@@ -372,10 +372,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: [],
 		nutrition: {
-			cal: 450,
-			protein: 36,
-			carbs: 32,
-			fat: 18
+			cal: 635,
+			protein: 60,
+			carbs: 64,
+			fat: 14
 		},
 		ingredients: [
 			I("chicken breasts", 1.5, "lb", "Meat & Seafood"),
@@ -406,10 +406,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["vegetarian", "comfort"],
 		nutrition: {
-			cal: 520,
-			protein: 14,
-			carbs: 72,
-			fat: 18
+			cal: 460,
+			protein: 17,
+			carbs: 64,
+			fat: 14
 		},
 		ingredients: [
 			I("arborio rice", 1.5, "cups", "Pantry"),
@@ -443,10 +443,10 @@ const CORE_RECIPES: Recipe[] = [
 			"comfort"
 		],
 		nutrition: {
-			cal: 410,
-			protein: 28,
-			carbs: 32,
-			fat: 18
+			cal: 500,
+			protein: 43,
+			carbs: 26,
+			fat: 26
 		},
 		ingredients: [
 			I("ground beef", 1.5, "lb", "Meat & Seafood"),
@@ -476,10 +476,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: ["quick", "pescatarian"],
 		nutrition: {
-			cal: 360,
-			protein: 28,
-			carbs: 34,
-			fat: 10
+			cal: 520,
+			protein: 50,
+			carbs: 78,
+			fat: 1
 		},
 		ingredients: [
 			I("shrimp", 1.5, "lb", "Meat & Seafood"),
@@ -511,9 +511,9 @@ const CORE_RECIPES: Recipe[] = [
 			"budget"
 		],
 		nutrition: {
-			cal: 280,
-			protein: 16,
-			carbs: 18,
+			cal: 515,
+			protein: 25,
+			carbs: 68,
 			fat: 16
 		},
 		ingredients: [
@@ -547,10 +547,10 @@ const CORE_RECIPES: Recipe[] = [
 			"budget"
 		],
 		nutrition: {
-			cal: 490,
-			protein: 16,
-			carbs: 62,
-			fat: 20
+			cal: 475,
+			protein: 18,
+			carbs: 76,
+			fat: 12
 		},
 		ingredients: [
 			I("spaghetti or ramen", 12, "oz", "Pantry"),
@@ -579,10 +579,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["quick", "pescatarian"],
 		nutrition: {
-			cal: 340,
-			protein: 28,
-			carbs: 22,
-			fat: 16
+			cal: 845,
+			protein: 126,
+			carbs: 36,
+			fat: 19
 		},
 		ingredients: [
 			I("canned tuna", 2, "cans", "Pantry"),
@@ -612,10 +612,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["vegetarian", "quick"],
 		nutrition: {
-			cal: 410,
-			protein: 15,
-			carbs: 52,
-			fat: 16
+			cal: 390,
+			protein: 17,
+			carbs: 54,
+			fat: 13
 		},
 		ingredients: [
 			I("chickpeas", 2, "cans", "Pantry"),
@@ -643,10 +643,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["quick", "pescatarian"],
 		nutrition: {
-			cal: 320,
-			protein: 30,
-			carbs: 8,
-			fat: 18
+			cal: 580,
+			protein: 62,
+			carbs: 49,
+			fat: 16
 		},
 		ingredients: [
 			I("cod fillets", 4, "", "Meat & Seafood"),
@@ -673,10 +673,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["vegetarian", "quick"],
 		nutrition: {
-			cal: 540,
-			protein: 14,
-			carbs: 68,
-			fat: 24
+			cal: 520,
+			protein: 19,
+			carbs: 86,
+			fat: 11
 		},
 		ingredients: [
 			I("shelf-stable gnocchi", 1, "lb", "Pantry"),
@@ -708,10 +708,10 @@ const CORE_RECIPES: Recipe[] = [
 			"budget"
 		],
 		nutrition: {
-			cal: 310,
-			protein: 16,
-			carbs: 18,
-			fat: 20
+			cal: 460,
+			protein: 22,
+			carbs: 36,
+			fat: 26
 		},
 		ingredients: [
 			I("eggs", 4, "", "Dairy & Eggs"),
@@ -738,10 +738,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["quick"],
 		nutrition: {
-			cal: 390,
-			protein: 32,
-			carbs: 24,
-			fat: 18
+			cal: 585,
+			protein: 61,
+			carbs: 22,
+			fat: 28
 		},
 		ingredients: [
 			I("ground turkey", 1.5, "lb", "Meat & Seafood"),
@@ -770,10 +770,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["vegetarian", "quick"],
 		nutrition: {
-			cal: 430,
-			protein: 14,
-			carbs: 64,
-			fat: 14
+			cal: 305,
+			protein: 10,
+			carbs: 49,
+			fat: 8
 		},
 		ingredients: [
 			I("soba noodles", 8, "oz", "Pantry"),
@@ -801,10 +801,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "weeknight",
 		tags: ["quick", "budget"],
 		nutrition: {
-			cal: 520,
-			protein: 24,
-			carbs: 70,
-			fat: 16
+			cal: 575,
+			protein: 27,
+			carbs: 72,
+			fat: 20
 		},
 		ingredients: [
 			I("short pasta", 12, "oz", "Pantry"),
@@ -834,9 +834,9 @@ const CORE_RECIPES: Recipe[] = [
 		tags: [],
 		nutrition: {
 			cal: 520,
-			protein: 42,
-			carbs: 4,
-			fat: 38
+			protein: 47,
+			carbs: 2,
+			fat: 35
 		},
 		ingredients: [
 			I("sirloin steaks", 1.5, "lb", "Meat & Seafood"),
@@ -864,10 +864,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "protein",
 		tags: ["vegetarian"],
 		nutrition: {
-			cal: 480,
-			protein: 28,
-			carbs: 48,
-			fat: 20
+			cal: 495,
+			protein: 32,
+			carbs: 60,
+			fat: 17
 		},
 		ingredients: [
 			I("extra-firm tofu", 14, "oz", "Produce"),
@@ -897,10 +897,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "protein",
 		tags: [],
 		nutrition: {
-			cal: 390,
-			protein: 44,
-			carbs: 8,
-			fat: 18
+			cal: 445,
+			protein: 52,
+			carbs: 9,
+			fat: 22
 		},
 		ingredients: [
 			I("chicken thighs", 2, "lb", "Meat & Seafood"),
@@ -928,10 +928,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "protein",
 		tags: ["pescatarian"],
 		nutrition: {
-			cal: 510,
-			protein: 40,
-			carbs: 34,
-			fat: 24
+			cal: 680,
+			protein: 48,
+			carbs: 44,
+			fat: 34
 		},
 		ingredients: [
 			I("salmon fillets", 4, "", "Meat & Seafood"),
@@ -960,10 +960,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "protein",
 		tags: [],
 		nutrition: {
-			cal: 410,
-			protein: 32,
-			carbs: 12,
-			fat: 26
+			cal: 555,
+			protein: 49,
+			carbs: 9,
+			fat: 38
 		},
 		ingredients: [
 			I("ground beef", 1.5, "lb", "Meat & Seafood"),
@@ -993,9 +993,9 @@ const CORE_RECIPES: Recipe[] = [
 		tags: ["quick", "pescatarian"],
 		nutrition: {
 			cal: 280,
-			protein: 32,
-			carbs: 12,
-			fat: 12
+			protein: 45,
+			carbs: 11,
+			fat: 8
 		},
 		ingredients: [
 			I("shrimp", 1.5, "lb", "Meat & Seafood"),
@@ -1025,9 +1025,9 @@ const CORE_RECIPES: Recipe[] = [
 		tags: ["vegetarian", "quick"],
 		nutrition: {
 			cal: 360,
-			protein: 28,
-			carbs: 28,
-			fat: 14
+			protein: 22,
+			carbs: 18,
+			fat: 22
 		},
 		ingredients: [
 			I("cottage cheese", 1, "cup", "Dairy & Eggs"),
@@ -1055,10 +1055,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "protein",
 		tags: ["batch"],
 		nutrition: {
-			cal: 360,
-			protein: 34,
-			carbs: 30,
-			fat: 10
+			cal: 480,
+			protein: 52,
+			carbs: 27,
+			fat: 18
 		},
 		ingredients: [
 			I("ground turkey", 2, "lb", "Meat & Seafood"),
@@ -1087,10 +1087,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "batch",
 		tags: ["batch", "comfort"],
 		nutrition: {
-			cal: 580,
-			protein: 32,
-			carbs: 48,
-			fat: 28
+			cal: 525,
+			protein: 41,
+			carbs: 23,
+			fat: 29
 		},
 		ingredients: [
 			I("lasagna noodles", 12, "", "Pantry"),
@@ -1120,10 +1120,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "batch",
 		tags: ["batch"],
 		nutrition: {
-			cal: 440,
-			protein: 36,
-			carbs: 46,
-			fat: 12
+			cal: 605,
+			protein: 50,
+			carbs: 62,
+			fat: 18
 		},
 		ingredients: [
 			I("chicken thighs", 2.5, "lb", "Meat & Seafood"),
@@ -1156,10 +1156,10 @@ const CORE_RECIPES: Recipe[] = [
 			"batch"
 		],
 		nutrition: {
-			cal: 280,
+			cal: 210,
 			protein: 12,
-			carbs: 46,
-			fat: 6
+			carbs: 33,
+			fat: 5
 		},
 		ingredients: [
 			I("cannellini beans", 2, "cans", "Pantry"),
@@ -1190,10 +1190,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "batch",
 		tags: ["batch"],
 		nutrition: {
-			cal: 390,
-			protein: 34,
-			carbs: 8,
-			fat: 24
+			cal: 490,
+			protein: 49,
+			carbs: 6,
+			fat: 28
 		},
 		ingredients: [
 			I("pork shoulder", 4, "lb", "Meat & Seafood"),
@@ -1226,10 +1226,10 @@ const CORE_RECIPES: Recipe[] = [
 			"budget"
 		],
 		nutrition: {
-			cal: 260,
-			protein: 8,
-			carbs: 38,
-			fat: 8
+			cal: 270,
+			protein: 10,
+			carbs: 39,
+			fat: 9
 		},
 		ingredients: [
 			I("rolled oats", 3, "cups", "Pantry"),
@@ -1257,10 +1257,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "batch",
 		tags: ["vegetarian", "batch"],
 		nutrition: {
-			cal: 320,
-			protein: 10,
-			carbs: 48,
-			fat: 12
+			cal: 335,
+			protein: 11,
+			carbs: 42,
+			fat: 14
 		},
 		ingredients: [
 			I("farro", 2, "cups", "Pantry"),
@@ -1290,9 +1290,9 @@ const CORE_RECIPES: Recipe[] = [
 		tags: ["batch"],
 		nutrition: {
 			cal: 330,
-			protein: 28,
-			carbs: 26,
-			fat: 12
+			protein: 43,
+			carbs: 27,
+			fat: 6
 		},
 		ingredients: [
 			I("chicken breasts", 2, "lb", "Meat & Seafood"),
@@ -1322,10 +1322,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "batch",
 		tags: ["vegetarian", "batch"],
 		nutrition: {
-			cal: 380,
-			protein: 20,
-			carbs: 42,
-			fat: 14
+			cal: 370,
+			protein: 22,
+			carbs: 30,
+			fat: 18
 		},
 		ingredients: [
 			I("eggs", 12, "", "Dairy & Eggs"),

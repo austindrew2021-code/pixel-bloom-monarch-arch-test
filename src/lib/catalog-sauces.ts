@@ -14,7 +14,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Nova Scotia",
     tags: ["sauce", "maritimes", "atlantic", "nova-scotia", "vegetarian", "quick"],
     aliases: ["mom and pop donair sauce", "homemade donair sauce", "halifax garlic sauce", "donair sweet sauce"],
-    nutrition: { cal: 90, protein: 2, carbs: 14, fat: 3 },
+    nutrition: { cal: 135, protein: 4, carbs: 22, fat: 4 },
     ingredients: [
       I("evaporated milk", 1, "can", "Pantry"),
       I("white sugar", 0.66, "cup", "Pantry"),
@@ -39,7 +39,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Nova Scotia",
     tags: ["sauce", "maritimes", "atlantic", "nova-scotia", "vegetarian", "quick"],
     aliases: ["greco donair sauce", "greco sauce", "greek pizza donair sauce", "greco garlic sauce"],
-    nutrition: { cal: 110, protein: 2, carbs: 18, fat: 3 },
+    nutrition: { cal: 150, protein: 4, carbs: 23, fat: 5 },
     ingredients: [
       I("evaporated milk", 1, "can", "Pantry"),
       I("condensed milk", 0.25, "cup", "Pantry"),
@@ -71,7 +71,7 @@ export const SAUCE_RECIPES: Recipe[] = [
       "garlic fingers sauce",
       "donair pizza sauce",
     ],
-    nutrition: { cal: 95, protein: 2, carbs: 15, fat: 3 },
+    nutrition: { cal: 120, protein: 4, carbs: 18, fat: 4 },
     ingredients: [
       I("evaporated milk", 1, "can", "Pantry"),
       I("white sugar", 0.5, "cup", "Pantry"),
@@ -98,7 +98,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "sauce", "tennessee", "vegetarian", "quick"],
     aliases: ["memphis rub", "rib rub", "dry rib rub"],
-    nutrition: { cal: 20, protein: 0, carbs: 4, fat: 0 },
+    nutrition: { cal: 35, protein: 1, carbs: 8, fat: 1 },
     ingredients: [
       I("paprika", 0.25, "cup", "Herbs & Spices"),
       I("brown sugar", 3, "tbsp", "Pantry"),
@@ -126,7 +126,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "sauce", "texas", "vegetarian", "quick"],
     aliases: ["dalmatian rub", "salt and pepper brisket", "texas rub"],
-    nutrition: { cal: 8, protein: 0, carbs: 1, fat: 0 },
+    nutrition: { cal: 35, protein: 0, carbs: 8, fat: 0 },
     ingredients: [
       I("coarse black pepper", 0.25, "cup", "Herbs & Spices"),
       I("kosher salt", 3, "tbsp", "Herbs & Spices"),
@@ -151,7 +151,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "sauce", "canadian", "vegetarian", "quick"],
     aliases: ["montreal steak seasoning", "steak spice"],
-    nutrition: { cal: 10, protein: 0, carbs: 2, fat: 0 },
+    nutrition: { cal: 35, protein: 0, carbs: 9, fat: 0 },
     ingredients: [
       I("coarse black pepper", 2, "tbsp", "Herbs & Spices"),
       I("kosher salt", 2, "tbsp", "Herbs & Spices"),
@@ -180,7 +180,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Caribbean",
     tags: ["dry-rub", "sauce", "spicy", "vegetarian", "quick"],
     aliases: ["jerk seasoning", "jamaican jerk rub"],
-    nutrition: { cal: 12, protein: 0, carbs: 2, fat: 0 },
+    nutrition: { cal: 25, protein: 1, carbs: 6, fat: 0 },
     ingredients: [
       I("allspice", 2, "tbsp", "Herbs & Spices"),
       I("dried thyme", 1, "tbsp", "Herbs & Spices"),
@@ -210,7 +210,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "sauce", "louisiana", "spicy", "vegetarian", "quick"],
     aliases: ["blackening spice", "cajun seasoning"],
-    nutrition: { cal: 10, protein: 0, carbs: 2, fat: 0 },
+    nutrition: { cal: 95, protein: 1, carbs: 10, fat: 7 },
     ingredients: [
       I("paprika", 3, "tbsp", "Herbs & Spices"),
       I("garlic powder", 1, "tbsp", "Herbs & Spices"),
@@ -240,7 +240,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "kansas", "missouri", "vegetarian"],
     aliases: ["kc sauce", "missouri barbecue sauce", "sweet bbq"],
-    nutrition: { cal: 70, protein: 1, carbs: 16, fat: 0 },
+    nutrition: { cal: 145, protein: 1, carbs: 28, fat: 4 },
     ingredients: [
       I("ketchup", 1.5, "cups", "Pantry"),
       I("molasses", 0.25, "cup", "Pantry"),
@@ -268,7 +268,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "north-carolina", "vegetarian", "quick"],
     aliases: ["eastern nc sauce", "vinegar pepper sauce", "whole hog sauce"],
-    nutrition: { cal: 15, protein: 0, carbs: 3, fat: 0 },
+    nutrition: { cal: 30, protein: 0, carbs: 8, fat: 0 },
     ingredients: [
       I("apple cider vinegar", 1.5, "cups", "Pantry"),
       I("red pepper flakes", 2, "tsp", "Herbs & Spices"),
@@ -294,7 +294,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "alabama", "vegetarian", "quick"],
     aliases: ["white bbq sauce", "big bob gibson sauce"],
-    nutrition: { cal: 90, protein: 0, carbs: 1, fat: 10 },
+    nutrition: { cal: 195, protein: 0, carbs: 2, fat: 21 },
     ingredients: [
       I("mayonnaise", 1, "cup", "Pantry"),
       I("apple cider vinegar", 0.25, "cup", "Pantry"),
@@ -321,7 +321,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["argentine chimichurri", "parsley garlic sauce"],
-    nutrition: { cal: 80, protein: 1, carbs: 2, fat: 8 },
+    nutrition: { cal: 170, protein: 0, carbs: 1, fat: 18 },
     ingredients: [
       I("fresh parsley", 1, "bunch", "Produce"),
       I("garlic", 4, "cloves", "Produce"),
@@ -343,7 +343,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "French",
     tags: ["sauce", "quick"],
     aliases: ["benedict sauce", "butter lemon sauce"],
-    nutrition: { cal: 180, protein: 3, carbs: 1, fat: 18 },
+    nutrition: { cal: 250, protein: 2, carbs: 2, fat: 26 },
     ingredients: [
       I("egg yolks", 3, "", "Dairy & Eggs"),
       I("butter", 0.5, "cup", "Dairy & Eggs"),
@@ -369,7 +369,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Greek",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["cacik", "cucumber yogurt sauce"],
-    nutrition: { cal: 60, protein: 4, carbs: 5, fat: 3 },
+    nutrition: { cal: 90, protein: 5, carbs: 8, fat: 5 },
     ingredients: [
       I("greek yogurt", 2, "cups", "Dairy & Eggs"),
       I("cucumber", 1, "", "Produce"),
@@ -397,7 +397,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Spanish",
     tags: ["sauce", "vegetarian", "nuts"],
     aliases: ["spanish pepper sauce", "romesco sauce"],
-    nutrition: { cal: 140, protein: 4, carbs: 10, fat: 10 },
+    nutrition: { cal: 185, protein: 4, carbs: 9, fat: 15 },
     ingredients: [
       I("roasted red peppers", 2, "", "Pantry"),
       I("tomato", 1, "", "Produce"),
@@ -424,7 +424,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "new-york", "spicy", "vegetarian", "quick"],
     aliases: ["frank's butter", "wing sauce"],
-    nutrition: { cal: 90, protein: 0, carbs: 1, fat: 10 },
+    nutrition: { cal: 105, protein: 2, carbs: 2, fat: 10 },
     ingredients: [
       I("hot sauce", 0.66, "cup", "Pantry"),
       I("butter", 0.33, "cup", "Dairy & Eggs"),
@@ -448,7 +448,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Newfoundland",
     tags: ["sauce", "atlantic", "vegetarian", "quick"],
     aliases: ["tartare", "fish sauce mayo"],
-    nutrition: { cal: 95, protein: 0, carbs: 2, fat: 10 },
+    nutrition: { cal: 195, protein: 1, carbs: 2, fat: 21 },
     ingredients: [
       I("mayonnaise", 0.75, "cup", "Pantry"),
       I("dill pickle", 2, "", "Pantry"),
@@ -475,7 +475,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Italian",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["fettuccine alfredo sauce", "cream parmesan sauce"],
-    nutrition: { cal: 280, protein: 8, carbs: 4, fat: 26 },
+    nutrition: { cal: 440, protein: 14, carbs: 3, fat: 42 },
     ingredients: [
       I("butter", 4, "tbsp", "Dairy & Eggs"),
       I("heavy cream", 1, "cup", "Dairy & Eggs"),
@@ -502,7 +502,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "East Asian",
     tags: ["sauce", "vegetarian", "nuts", "quick"],
     aliases: ["satay sauce", "gado gado sauce"],
-    nutrition: { cal: 140, protein: 6, carbs: 8, fat: 10 },
+    nutrition: { cal: 145, protein: 6, carbs: 8, fat: 11 },
     ingredients: [
       I("peanut butter", 0.5, "cup", "Pantry"),
       I("soy sauce", 2, "tbsp", "Pantry"),
@@ -529,7 +529,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "East Asian",
     tags: ["sauce", "vegetarian", "spicy", "quick"],
     aliases: ["mae ploy style", "thai sweet chili"],
-    nutrition: { cal: 50, protein: 0, carbs: 12, fat: 0 },
+    nutrition: { cal: 85, protein: 0, carbs: 14, fat: 3 },
     ingredients: [
       I("rice vinegar", 0.5, "cup", "Pantry"),
       I("sugar", 0.5, "cup", "Pantry"),
@@ -557,7 +557,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["homemade ranch", "buttermilk ranch"],
-    nutrition: { cal: 80, protein: 1, carbs: 2, fat: 8 },
+    nutrition: { cal: 130, protein: 1, carbs: 2, fat: 13 },
     ingredients: [
       I("mayonnaise", 0.5, "cup", "Pantry"),
       I("sour cream", 0.5, "cup", "Dairy & Eggs"),
@@ -583,7 +583,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "East Asian",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["homemade teriyaki", "soy ginger glaze"],
-    nutrition: { cal: 45, protein: 1, carbs: 8, fat: 0 },
+    nutrition: { cal: 50, protein: 1, carbs: 9, fat: 0 },
     ingredients: [
       I("soy sauce", 0.5, "cup", "Pantry"),
       I("mirin", 0.25, "cup", "Pantry"),
@@ -611,7 +611,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Italian",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["pesto genovese", "green sauce pasta"],
-    nutrition: { cal: 160, protein: 4, carbs: 2, fat: 16 },
+    nutrition: { cal: 185, protein: 3, carbs: 2, fat: 18 },
     ingredients: [
       I("fresh basil", 2, "bunches", "Produce"),
       I("pine nuts", 0.33, "cup", "Pantry"),
@@ -638,7 +638,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Mexican",
     tags: ["sauce", "vegetarian", "quick", "spicy"],
     aliases: ["tomatillo salsa", "green salsa"],
-    nutrition: { cal: 25, protein: 1, carbs: 4, fat: 1 },
+    nutrition: { cal: 30, protein: 1, carbs: 6, fat: 1 },
     ingredients: [
       I("tomatillos", 1, "lb", "Produce"),
       I("jalapeño", 2, "", "Produce"),
@@ -665,7 +665,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Mexican",
     tags: ["sauce", "vegetarian"],
     aliases: ["mole poblano shortcut", "chocolate chile sauce"],
-    nutrition: { cal: 90, protein: 3, carbs: 8, fat: 6 },
+    nutrition: { cal: 85, protein: 2, carbs: 3, fat: 8 },
     ingredients: [
       I("ancho chile", 3, "", "Herbs & Spices"),
       I("cocoa powder", 1, "tbsp", "Pantry"),
@@ -693,7 +693,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "African",
     tags: ["sauce", "vegetarian", "quick", "spicy"],
     aliases: ["piri piri", "peri peri", "nandos sauce"],
-    nutrition: { cal: 40, protein: 1, carbs: 3, fat: 3 },
+    nutrition: { cal: 55, protein: 0, carbs: 3, fat: 5 },
     ingredients: [
       I("red chiles", 8, "", "Produce"),
       I("garlic", 4, "cloves", "Produce"),
@@ -721,7 +721,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Middle Eastern",
     tags: ["sauce", "vegetarian", "spicy"],
     aliases: ["tunisian harissa", "chile paste"],
-    nutrition: { cal: 30, protein: 1, carbs: 3, fat: 2 },
+    nutrition: { cal: 45, protein: 0, carbs: 2, fat: 4 },
     ingredients: [
       I("dried chiles", 8, "", "Herbs & Spices"),
       I("roasted red pepper", 1, "", "Produce"),
@@ -749,7 +749,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "East Asian",
     tags: ["sauce", "quick"],
     aliases: ["nuoc cham", "vietnamese dipping sauce", "fish sauce lime"],
-    nutrition: { cal: 20, protein: 1, carbs: 4, fat: 0 },
+    nutrition: { cal: 30, protein: 1, carbs: 7, fat: 0 },
     ingredients: [
       I("fish sauce", 3, "tbsp", "Pantry"),
       I("lime", 2, "", "Produce"),
@@ -777,7 +777,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["white sauce hibachi", "japanese steakhouse sauce"],
-    nutrition: { cal: 90, protein: 0, carbs: 3, fat: 9 },
+    nutrition: { cal: 225, protein: 0, carbs: 2, fat: 24 },
     ingredients: [
       I("mayonnaise", 1, "cup", "Pantry"),
       I("ketchup", 2, "tbsp", "Pantry"),
@@ -805,7 +805,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["shrimp cocktail sauce", "seafood sauce"],
-    nutrition: { cal: 25, protein: 0, carbs: 6, fat: 0 },
+    nutrition: { cal: 35, protein: 1, carbs: 9, fat: 0 },
     ingredients: [
       I("ketchup", 1, "cup", "Pantry"),
       I("prepared horseradish", 3, "tbsp", "Pantry"),
@@ -830,7 +830,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Italian",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["sunday sauce shortcut", "red sauce"],
-    nutrition: { cal: 70, protein: 2, carbs: 8, fat: 4 },
+    nutrition: { cal: 95, protein: 2, carbs: 7, fat: 7 },
     ingredients: [
       I("crushed tomatoes", 28, "oz", "Pantry"),
       I("garlic", 4, "cloves", "Produce"),
@@ -857,7 +857,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "French",
     tags: ["sauce", "quick"],
     aliases: ["aioli", "garlic mayo"],
-    nutrition: { cal: 90, protein: 0, carbs: 1, fat: 10 },
+    nutrition: { cal: 160, protein: 0, carbs: 1, fat: 17 },
     ingredients: [
       I("mayonnaise", 0.75, "cup", "Pantry"),
       I("garlic", 3, "cloves", "Produce"),
@@ -883,7 +883,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "French",
     tags: ["sauce"],
     aliases: ["bearnaise", "tarragon butter sauce"],
-    nutrition: { cal: 180, protein: 2, carbs: 1, fat: 19 },
+    nutrition: { cal: 255, protein: 3, carbs: 2, fat: 26 },
     ingredients: [
       I("egg yolks", 3, "", "Dairy & Eggs"),
       I("butter", 0.5, "cup", "Dairy & Eggs"),
@@ -910,7 +910,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian"],
     aliases: ["brown gravy", "poutine sauce", "fry gravy"],
-    nutrition: { cal: 60, protein: 2, carbs: 6, fat: 3 },
+    nutrition: { cal: 70, protein: 1, carbs: 3, fat: 6 },
     ingredients: [
       I("butter", 3, "tbsp", "Dairy & Eggs"),
       I("flour", 3, "tbsp", "Pantry"),
@@ -959,7 +959,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Middle Eastern",
     tags: ["sauce", "vegetarian", "quick", "spicy"],
     aliases: ["schug", "skhug", "yemeni hot sauce"],
-    nutrition: { cal: 35, protein: 1, carbs: 2, fat: 3 },
+    nutrition: { cal: 70, protein: 1, carbs: 2, fat: 7 },
     ingredients: [
       I("cilantro", 1, "bunch", "Produce"),
       I("parsley", 0.5, "bunch", "Produce"),
@@ -988,7 +988,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Middle Eastern",
     tags: ["sauce", "vegetarian"],
     aliases: ["lebanese garlic sauce", "garlic whip"],
-    nutrition: { cal: 80, protein: 0, carbs: 1, fat: 9 },
+    nutrition: { cal: 300, protein: 0, carbs: 2, fat: 33 },
     ingredients: [
       I("garlic", 1, "head", "Produce"),
       I("neutral oil", 1.5, "cups", "Pantry"),
@@ -1014,7 +1014,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "East Asian",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["ponzu sauce", "citrus soy"],
-    nutrition: { cal: 15, protein: 1, carbs: 2, fat: 0 },
+    nutrition: { cal: 20, protein: 1, carbs: 3, fat: 0 },
     ingredients: [
       I("soy sauce", 0.5, "cup", "Pantry"),
       I("rice vinegar", 2, "tbsp", "Pantry"),
@@ -1041,7 +1041,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Middle Eastern",
     tags: ["sauce", "vegetarian"],
     aliases: ["walnut red pepper dip", "aleppo dip"],
-    nutrition: { cal: 110, protein: 3, carbs: 8, fat: 8 },
+    nutrition: { cal: 140, protein: 1, carbs: 7, fat: 13 },
     ingredients: [
       I("roasted red peppers", 2, "", "Produce"),
       I("walnuts", 0.75, "cup", "Pantry"),
@@ -1069,7 +1069,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Caribbean",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["mojo criollo", "cuban garlic sauce"],
-    nutrition: { cal: 45, protein: 1, carbs: 4, fat: 3 },
+    nutrition: { cal: 85, protein: 1, carbs: 7, fat: 7 },
     ingredients: [
       I("garlic", 8, "cloves", "Produce"),
       I("orange", 2, "", "Produce"),
@@ -1097,7 +1097,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["comeback sauce", "mississippi come back"],
-    nutrition: { cal: 95, protein: 0, carbs: 3, fat: 10 },
+    nutrition: { cal: 200, protein: 1, carbs: 3, fat: 21 },
     ingredients: [
       I("mayonnaise", 1, "cup", "Pantry"),
       I("chili sauce", 0.25, "cup", "Pantry"),
@@ -1125,7 +1125,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["honey dijon", "pretzel sauce"],
-    nutrition: { cal: 45, protein: 0, carbs: 7, fat: 2 },
+    nutrition: { cal: 65, protein: 0, carbs: 9, fat: 3 },
     ingredients: [
       I("dijon mustard", 0.33, "cup", "Pantry"),
       I("honey", 0.25, "cup", "Pantry"),
@@ -1151,7 +1151,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "East Asian",
     tags: ["sauce", "vegetarian", "quick"],
     aliases: ["sweet and sour", "takeout red sauce"],
-    nutrition: { cal: 50, protein: 0, carbs: 12, fat: 0 },
+    nutrition: { cal: 55, protein: 0, carbs: 13, fat: 0 },
     ingredients: [
       I("pineapple juice", 0.5, "cup", "Pantry"),
       I("rice vinegar", 0.25, "cup", "Pantry"),
@@ -1180,7 +1180,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "Middle Eastern",
     tags: ["dry-rub", "vegetarian", "quick"],
     aliases: ["zaatar", "zaatar spice"],
-    nutrition: { cal: 15, protein: 1, carbs: 1, fat: 1 },
+    nutrition: { cal: 30, protein: 0, carbs: 1, fat: 3 },
     ingredients: [
       I("dried thyme", 2, "tbsp", "Herbs & Spices"),
       I("sesame seeds", 2, "tbsp", "Pantry"),
@@ -1205,7 +1205,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "vegetarian", "quick"],
     aliases: ["espresso rub", "coffee chile rub"],
-    nutrition: { cal: 12, protein: 0, carbs: 2, fat: 0 },
+    nutrition: { cal: 10, protein: 0, carbs: 2, fat: 0 },
     ingredients: [
       I("finely ground coffee", 2, "tbsp", "Pantry"),
       I("cocoa powder", 1, "tbsp", "Pantry"),
@@ -1233,7 +1233,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "vegetarian", "quick"],
     aliases: ["lemon pepper", "citrus pepper rub"],
-    nutrition: { cal: 8, protein: 0, carbs: 1, fat: 0 },
+    nutrition: { cal: 30, protein: 0, carbs: 2, fat: 3 },
     ingredients: [
       I("lemons", 2, "", "Produce"),
       I("black pepper", 2, "tbsp", "Herbs & Spices"),

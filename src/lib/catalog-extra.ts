@@ -25,6 +25,7 @@ function dish(
 export const EXTRA_RECIPES: Recipe[] = [
   dish({
     id: "jiggs-dinner",
+    nutrition: { cal: 455, protein: 21, carbs: 73, fat: 11 },
     name: "Jiggs dinner",
     description: "Newfoundland boiled dinner: salt beef, pease pudding, cabbage, and root veg.",
     minutes: 180,
@@ -61,6 +62,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "toutons",
+    nutrition: { cal: 250, protein: 6, carbs: 39, fat: 8 },
     name: "Toutons",
     description: "Fried bread dough, Newfoundland breakfast, with molasses.",
     minutes: 25,
@@ -84,6 +86,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "fish-and-brewis",
+    nutrition: { cal: 60, protein: 2, carbs: 12, fat: 1 },
     name: "Fish and brewis",
     description: "Salt cod, hard bread, and scrunchions. A winter staple.",
     minutes: 40,
@@ -107,6 +110,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "cod-au-gratin",
+    nutrition: { cal: 535, protein: 41, carbs: 14, fat: 35 },
     name: "Cod au gratin",
     description: "Newfoundland baked cod under a cheddar crust.",
     minutes: 45,
@@ -133,6 +137,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pea-soup-doughboys",
+    nutrition: { cal: 405, protein: 19, carbs: 55, fat: 12 },
     name: "Pea soup with doughboys",
     description: "Split-pea pot with fluffy dumplings on top.",
     minutes: 90,
@@ -160,6 +165,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "meatloaf",
+    nutrition: { cal: 745, protein: 66, carbs: 24, fat: 45 },
     name: "Classic meatloaf",
     description: "The old-school loaf with a ketchup glaze.",
     minutes: 75,
@@ -185,6 +191,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tuna-casserole",
+    nutrition: { cal: 845, protein: 80, carbs: 77, fat: 22 },
     name: "Tuna noodle casserole",
     description: "Creamy noodles, peas, and a crunchy top. Church-basement famous.",
     minutes: 40,
@@ -211,6 +218,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "shepherds-pie",
+    nutrition: { cal: 820, protein: 52, carbs: 63, fat: 39 },
     name: "Shepherd's pie",
     description: "Minced lamb (or beef cottage pie) under mashed potato.",
     minutes: 60,
@@ -238,6 +246,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chicken-pot-pie",
+    nutrition: { cal: 650, protein: 37, carbs: 42, fat: 38 },
     name: "Chicken pot pie",
     description: "A pastry lid over a creamy chicken stew.",
     minutes: 70,
@@ -266,6 +275,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "beef-stroganoff",
+    nutrition: { cal: 860, protein: 61, carbs: 72, fat: 35 },
     name: "Beef stroganoff",
     description: "Sour-cream beef and mushrooms over egg noodles.",
     minutes: 40,
@@ -292,6 +302,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "moussaka",
+    nutrition: { cal: 745, protein: 52, carbs: 35, fat: 45 },
     name: "Moussaka",
     description: "Layered eggplant, spiced lamb, and béchamel.",
     minutes: 110,
@@ -320,6 +331,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "souvlaki",
+    nutrition: { cal: 535, protein: 44, carbs: 32, fat: 26 },
     name: "Chicken souvlaki",
     description: "Lemon-oregano skewers with pita and tzatziki.",
     minutes: 35,
@@ -347,6 +359,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "spanakopita",
+    nutrition: { cal: 630, protein: 21, carbs: 33, fat: 48 },
     name: "Spanakopita",
     description: "Spinach and feta in shatter-crisp phyllo.",
     minutes: 55,
@@ -370,6 +383,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "horiatiki",
+    nutrition: { cal: 345, protein: 11, carbs: 27, fat: 22 },
     name: "Horiatiki salad",
     description: "The real Greek village salad. No lettuce.",
     minutes: 15,
@@ -397,6 +411,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "cacio-e-pepe",
+    nutrition: { cal: 450, protein: 23, carbs: 66, fat: 10 },
     name: "Cacio e pepe",
     description: "Pasta, pecorino, and a lot of black pepper.",
     minutes: 20,
@@ -421,6 +436,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "carbonara",
+    nutrition: { cal: 480, protein: 22, carbs: 67, fat: 12 },
     name: "Spaghetti carbonara",
     description: "Eggs, guanciale, pecorino. No cream.",
     minutes: 25,
@@ -443,6 +459,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "puttanesca",
+    nutrition: { cal: 435, protein: 14, carbs: 71, fat: 11 },
     name: "Pasta puttanesca",
     description: "Anchovy, olive, caper, tomato. Pantry fireworks.",
     minutes: 25,
@@ -465,6 +482,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "osso-buco",
+    nutrition: { cal: 1005, protein: 105, carbs: 9, fat: 55 },
     name: "Osso buco",
     description: "Braised veal shanks with gremolata.",
     minutes: 150,
@@ -492,6 +510,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "tacos-al-pastor",
+    nutrition: { cal: 715, protein: 52, carbs: 48, fat: 34 },
     name: "Tacos al pastor",
     description: "Achiote pork, pineapple, onion, cilantro.",
     minutes: 40,
@@ -518,6 +537,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chicken-tikka-masala",
+    nutrition: { cal: 675, protein: 46, carbs: 72, fat: 23 },
     name: "Chicken tikka masala",
     description: "Charred tikka in a creamy tomato masala.",
     minutes: 50,
@@ -545,6 +565,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "chana-masala",
+    nutrition: { cal: 325, protein: 14, carbs: 46, fat: 11 },
     name: "Chana masala",
     description: "Chickpeas in a tangy tomato-onion gravy.",
     minutes: 35,
@@ -572,6 +593,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "mapo-tofu",
+    nutrition: { cal: 230, protein: 19, carbs: 8, fat: 14 },
     name: "Mapo tofu",
     description: "Silken tofu in a numbing chili-pork sauce.",
     minutes: 25,
@@ -599,6 +621,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "okonomiyaki",
+    nutrition: { cal: 300, protein: 8, carbs: 33, fat: 15 },
     name: "Okonomiyaki",
     description: "Osaka cabbage pancake with okonomi sauce.",
     minutes: 30,
@@ -625,6 +648,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "falafel-pita",
+    nutrition: { cal: 405, protein: 13, carbs: 49, fat: 18 },
     name: "Falafel pita",
     description: "Crisp chickpea fritters with tahini and pickles.",
     minutes: 40,
@@ -652,6 +676,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "shakshuka-pepper",
+    nutrition: { cal: 300, protein: 14, carbs: 27, fat: 15 },
     name: "Shakshuka with peppers",
     description: "North African eggs in a pepper-tomato pan.",
     minutes: 30,
@@ -678,6 +703,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "coq-au-vin",
+    nutrition: { cal: 805, protein: 78, carbs: 9, fat: 41 },
     name: "Coq au vin",
     description: "Chicken braised in red wine with lardons and mushrooms.",
     minutes: 120,
@@ -704,6 +730,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "biscuits-gravy",
+    nutrition: { cal: 660, protein: 29, carbs: 37, fat: 45 },
     name: "Biscuits and sausage gravy",
     description: "Southern breakfast: tender biscuits drowned in peppered gravy.",
     minutes: 35,
@@ -729,6 +756,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "jerk-chicken",
+    nutrition: { cal: 545, protein: 66, carbs: 4, fat: 29 },
     name: "Jerk chicken",
     description: "Scotch bonnet, allspice, and thyme on grilled chicken.",
     minutes: 50,
@@ -756,6 +784,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pad-thai",
+    nutrition: { cal: 530, protein: 37, carbs: 61, fat: 16 },
     name: "Pad Thai",
     description: "Tamarind noodles, egg, shrimp or tofu, crushed peanut.",
     minutes: 30,
@@ -783,6 +812,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "quiche-lorraine",
+    nutrition: { cal: 765, protein: 29, carbs: 30, fat: 59 },
     name: "Quiche Lorraine",
     description: "Custard, bacon, and Gruyère in a pastry shell.",
     minutes: 60,
@@ -808,6 +838,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "red-beans-rice",
+    nutrition: { cal: 755, protein: 33, carbs: 107, fat: 22 },
     name: "Red beans and rice",
     description: "Monday pot: creamy beans, smoked sausage, rice.",
     minutes: 120,
@@ -834,6 +865,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "pastitsio",
+    nutrition: { cal: 1190, protein: 74, carbs: 103, fat: 55 },
     name: "Pastitsio",
     description: "Greek baked pasta with cinnamon meat and béchamel.",
     minutes: 90,
@@ -860,6 +892,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "welsh-rarebit",
+    nutrition: { cal: 315, protein: 17, carbs: 16, fat: 20 },
     name: "Welsh rarebit",
     description: "Beer-cheese on toast. Old-school supper.",
     minutes: 20,

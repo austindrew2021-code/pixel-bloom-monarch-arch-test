@@ -52,7 +52,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Cover tightly and cook 15 minutes without lifting the lid. The dumplings steam rather than boil, and a peek lets the steam out and leaves them raw underneath.",
       "Spoon into bowls with the berries and their juice, and serve with cream.",
     ],
-    nutrition: { cal: 280, protein: 5, carbs: 48, fat: 8 },
+    nutrition: { cal: 215, protein: 4, carbs: 39, fat: 6 },
   }),
   sweet({
     id: "nanaimo-bars",
@@ -79,7 +79,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Melt the 4 ounces of dark chocolate with a teaspoon of butter and pour it over, tilting to level it. Chill just until set — rock-hard chocolate shatters instead of cutting.",
       "Cut into squares with a hot dry knife, wiping it between cuts.",
     ],
-    nutrition: { cal: 310, protein: 3, carbs: 34, fat: 18 },
+    nutrition: { cal: 610, protein: 8, carbs: 65, fat: 37 },
   }),
   sweet({
     id: "butter-tarts",
@@ -102,7 +102,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Divide raisins into shells. Pour filling two-thirds full.",
       "Bake 375°F about 15 minutes until the tops blister and the centres still wobble.",
     ],
-    nutrition: { cal: 290, protein: 3, carbs: 38, fat: 14 },
+    nutrition: { cal: 300, protein: 2, carbs: 49, fat: 12 },
   }),
   sweet({
     id: "apple-crisp",
@@ -125,7 +125,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Rub butter into oats, flour, and brown sugar. Scatter.",
       "Bake 375°F 35–40 minutes until the fruit bubbles at the edge.",
     ],
-    nutrition: { cal: 260, protein: 3, carbs: 42, fat: 10 },
+    nutrition: { cal: 295, protein: 3, carbs: 46, fat: 13 },
   }),
   sweet({
     id: "molten-chocolate",
@@ -151,7 +151,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Rest 1 minute, run a knife round each, invert onto plates and serve at once.",
     ],
     protein: "eggs",
-    nutrition: { cal: 410, protein: 7, carbs: 28, fat: 30 },
+    nutrition: { cal: 280, protein: 4, carbs: 21, fat: 20 },
   }),
   sweet({
     id: "chip-cookies",
@@ -180,7 +180,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Scatter the 1 teaspoon of flaky salt over while they are hot, and cool on the sheet 5 minutes before moving them.",
     ],
     protein: "eggs",
-    nutrition: { cal: 220, protein: 3, carbs: 28, fat: 11 },
+    nutrition: { cal: 745, protein: 8, carbs: 93, fat: 38 },
   }),
   sweet({
     id: "yogurt-berries",
@@ -202,7 +202,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Heap the 2 cups of mixed berries over the yogurt.",
       "Drizzle with the 2 tablespoons of honey and crush the ¼ cup of pistachios over the top. Serve cold.",
     ],
-    nutrition: { cal: 240, protein: 18, carbs: 28, fat: 7 },
+    nutrition: { cal: 410, protein: 16, carbs: 50, fat: 18 },
   }),
   sweet({
     id: "chia-pudding",
@@ -224,7 +224,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Whisk chia, coconut milk, maple, and vanilla. Rest 10 minutes, whisk again so it does not clump.",
       "Chill at least 4 hours. Top with fruit.",
     ],
-    nutrition: { cal: 210, protein: 5, carbs: 18, fat: 14 },
+    nutrition: { cal: 395, protein: 6, carbs: 24, fat: 33 },
   }),
   sweet({
     id: "tiramisu",
@@ -250,7 +250,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Dust the 2 tablespoons of cocoa over through a sieve and chill at least 4 hours, overnight for the best slice.",
     ],
     protein: "eggs",
-    nutrition: { cal: 380, protein: 8, carbs: 32, fat: 24 },
+    nutrition: { cal: 420, protein: 18, carbs: 40, fat: 21 },
   }),
   sweet({
     id: "mango-sticky-rice",
@@ -275,7 +275,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Peel and slice the 2 ripe mangoes.",
       "Mound the rice on plates, lay the mango alongside, and spoon the reserved coconut cream over the top.",
     ],
-    nutrition: { cal: 340, protein: 5, carbs: 62, fat: 9 },
+    nutrition: { cal: 545, protein: 9, carbs: 88, fat: 19 },
   }),
   sweet({
     id: "baklava",
@@ -300,7 +300,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Bake at 325°F for about 45 minutes, until deep gold all the way through.",
       "Meanwhile simmer the ¾ cup of honey with the ½ cup of sugar, ½ cup of water, and the juice of the ½ lemon 10 minutes, then cool it. Pour the cool syrup over the hot pastry — one hot and one cold is what makes it crisp instead of soggy. Rest 4 hours before cutting.",
     ],
-    nutrition: { cal: 360, protein: 6, carbs: 38, fat: 22 },
+    nutrition: { cal: 745, protein: 6, carbs: 56, fat: 60 },
   }),
   sweet({
     id: "churros",
@@ -325,7 +325,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Melt chocolate with a splash of milk for dipping.",
     ],
     protein: "eggs",
-    nutrition: { cal: 330, protein: 5, carbs: 38, fat: 18 },
+    nutrition: { cal: 580, protein: 8, carbs: 69, fat: 31 },
   }),
   sweet({
     id: "flan",
@@ -351,7 +351,7 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Cool, then chill overnight. Run a knife round the edge and invert onto a lipped plate so the caramel runs over it.",
     ],
     protein: "eggs",
-    nutrition: { cal: 290, protein: 8, carbs: 42, fat: 10 },
+    nutrition: { cal: 375, protein: 11, carbs: 57, fat: 11 },
   }),
   sweet({
     id: "figgy-duff",
@@ -374,6 +374,6 @@ export const DESSERT_RECIPES: Recipe[] = [
       "Spoon into a pudding cloth or greased bowl. Steam 1 hour.",
       "Turn out. Serve with molasses sauce or cream.",
     ],
-    nutrition: { cal: 270, protein: 4, carbs: 52, fat: 6 },
+    nutrition: { cal: 280, protein: 4, carbs: 54, fat: 6 },
   }),
 ];

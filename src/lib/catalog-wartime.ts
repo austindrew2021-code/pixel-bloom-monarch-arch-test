@@ -75,7 +75,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Toast the bread. Spoon the creamed beef over the toast and serve at once while the sauce is hot.",
     ],
     ww2,
-    { cal: 390, protein: 22, carbs: 28, fat: 20 },
+    { cal: 420, protein: 24, carbs: 43, fat: 17 },
   ),
   w(
     "vh-ww2-pea-soup",
@@ -101,7 +101,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Salt and pepper. If it is thicker than you like, add a splash of water. Ladle into bowls and serve hot.",
     ],
     ww2,
-    { cal: 320, protein: 22, carbs: 42, fat: 6 },
+    { cal: 185, protein: 15, carbs: 23, fat: 4 },
   ),
   w(
     "vh-ww2-nut-loaf",
@@ -127,7 +127,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Rest 10 minutes. Slice and serve with gravy or tomato sauce.",
     ],
     ww2,
-    { cal: 380, protein: 12, carbs: 28, fat: 26 },
+    { cal: 525, protein: 14, carbs: 41, fat: 36 },
   ),
   w(
     "vh-ww2-succotash",
@@ -153,7 +153,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Serve hot as a side, or as a meatless plate with bread.",
     ],
     ww2,
-    { cal: 220, protein: 8, carbs: 32, fat: 8 },
+    { cal: 325, protein: 14, carbs: 51, fat: 9 },
   ),
   w(
     "vh-ww1-oatmeal-cookies",
@@ -181,7 +181,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Bake 10–12 minutes, until the edges are brown. Cool on the sheet 2 minutes, then move to a rack.",
     ],
     ww1,
-    { cal: 140, protein: 2, carbs: 20, fat: 6 },
+    { cal: 765, protein: 12, carbs: 112, fat: 30 },
   ),
   w(
     "vh-ww2-cornmeal-mush",
@@ -200,7 +200,7 @@ export const WARTIME_RECIPES: Recipe[] = [
     ],
     ["Bring 3 cups of the 4 cups of water to a boil with the 1 teaspoon of salt.", "Stir the 1 cup of cornmeal into the remaining cup of cold water until smooth. Mixing it cold first is what stops it lumping.", "Pour the wet meal into the boiling water in a steady stream, stirring. Cook over low heat 15 minutes, stirring often, until it is thick enough that a spoon stands in it.", "Pack it into a greased loaf pan and chill at least 2 hours, until firm enough to slice cleanly.", "Cut into ½-inch slices and fry them in the 3 tablespoons of butter or bacon fat over medium heat, 4 minutes a side, until a brown crust forms.", "Serve hot with the ¼ cup of maple syrup or molasses."],
     ww2,
-    { cal: 240, protein: 4, carbs: 36, fat: 10 },
+    { cal: 285, protein: 3, carbs: 47, fat: 9 },
   ),
   w(
     "vh-ww2-potato-soup",
@@ -226,7 +226,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Salt and pepper. Stir in the parsley. Ladle into bowls and serve hot.",
     ],
     ww2,
-    { cal: 260, protein: 8, carbs: 38, fat: 8 },
+    { cal: 355, protein: 11, carbs: 51, fat: 12 },
   ),
   w(
     "vh-ww1-carrot-marmalade",
@@ -251,7 +251,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Cover the jars and keep them in the icebox. Spread the marmalade on bread or biscuits.",
     ],
     ww1,
-    { cal: 80, protein: 0, carbs: 20, fat: 0 },
+    { cal: 715, protein: 4, carbs: 179, fat: 1 },
   ),
   w(
     "vh-ww1-wheatless-muffins",
@@ -277,7 +277,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Bake 18–20 minutes, until the tops are gold and a toothpick comes out clean. Serve warm.",
     ],
     ww1,
-    { cal: 160, protein: 5, carbs: 22, fat: 6 },
+    { cal: 395, protein: 11, carbs: 61, fat: 12 },
   ),
   w(
     "vh-ww2-cabbage-pork",
@@ -302,7 +302,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Pepper the cabbage. Splash with vinegar. Serve hot with the pork bits on top.",
     ],
     ww2,
-    { cal: 280, protein: 10, carbs: 14, fat: 20 },
+    { cal: 75, protein: 3, carbs: 17, fat: 0 },
   ),
   w(
     "vh-ww2-stuffed-potato",
@@ -328,7 +328,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Bake 12 minutes more, until the cheese melts. Scatter chives and serve hot.",
     ],
     ww2,
-    { cal: 320, protein: 10, carbs: 44, fat: 12 },
+    { cal: 260, protein: 8, carbs: 32, fat: 12 },
   ),
   w(
     "vh-ww2-applesauce-cake",
@@ -356,7 +356,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Cool 10 minutes in the pan, then turn out. Slice when cool.",
     ],
     ww2,
-    { cal: 220, protein: 3, carbs: 38, fat: 7 },
+    { cal: 625, protein: 11, carbs: 102, fat: 19 },
   ),
   w(
     "vh-ww2-navy-bean",
@@ -376,7 +376,7 @@ export const WARTIME_RECIPES: Recipe[] = [
     ],
     ["Soak the 1 pound of dried navy beans in water overnight, or boil them 2 minutes and let them sit 1 hour. Drain.", "Put the beans, the ham hock and 8 cups of water in a pot. Bring to a boil and skim the foam.", "Add the chopped onion, the 2 stalks of celery, the carrot and the 2 cloves of garlic. Simmer 90 minutes, until the beans crush easily between two fingers.", "Lift out the hock, chop the meat, and return it to the pot. Discard the bone and skin.", "Mash a cup of the beans against the side to thicken the broth.", "Season with the 1 teaspoon of salt and pepper and serve hot with the 4 slices of bread."],
     ww2,
-    { cal: 340, protein: 22, carbs: 44, fat: 8 },
+    { cal: 305, protein: 22, carbs: 46, fat: 5 },
   ),
   w(
     "vh-ww1-rice-pudding",
@@ -402,7 +402,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Serve the rice pudding warm from the dish, or cold the next day. A spoon of jam on top if you have it.",
     ],
     ww1,
-    { cal: 210, protein: 6, carbs: 34, fat: 6 },
+    { cal: 325, protein: 9, carbs: 47, fat: 11 },
   ),
   w(
     "vh-ww2-liver-onions",
@@ -428,7 +428,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Plate the liver with the onions on top. Serve at once.",
     ],
     ww2,
-    { cal: 360, protein: 32, carbs: 14, fat: 18 },
+    { cal: 310, protein: 28, carbs: 13, fat: 16 },
   ),
   w(
     "vh-ww2-cottage-salad",
@@ -447,6 +447,6 @@ export const WARTIME_RECIPES: Recipe[] = [
     ],
     ["Drain the 1 cup of canned peaches and cut them into bite-size pieces.", "Wash the 1 head of lettuce and arrange the leaves on four plates.", "Spoon the 2 cups of cottage cheese onto the lettuce and nest the peaches beside it.", "Add a small spoon of the 2 tablespoons of mayonnaise if you want it, and dust with the ¼ teaspoon of paprika.", "Serve cold, the same day. Nothing here is cooked or baked."],
     ww2,
-    { cal: 180, protein: 14, carbs: 14, fat: 8 },
+    { cal: 185, protein: 14, carbs: 10, fat: 10 },
   ),
 ];

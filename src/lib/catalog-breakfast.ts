@@ -49,7 +49,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Chill overnight.",
       "Top with berries and honey.",
     ],
-    nutrition: { cal: 340, protein: 16, carbs: 52, fat: 8 },
+    nutrition: { cal: 320, protein: 13, carbs: 51, fat: 8 },
   }),
   morning({
     id: "blueberry-pancakes",
@@ -77,7 +77,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Cook on a buttered pan over medium heat until the bubbles on top set and stay open, 2–3 minutes, then flip once and give them 1–2 minutes more.",
       "Serve with the ¼ cup of maple syrup at the table.",
     ],
-    nutrition: { cal: 420, protein: 12, carbs: 62, fat: 14 },
+    nutrition: { cal: 825, protein: 18, carbs: 131, fat: 26 },
   }),
   morning({
     id: "avocado-toast-egg",
@@ -101,7 +101,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Smash the avocado with the lemon juice, a pinch of salt, and the 1 tablespoon of olive oil.",
       "Spread the avocado on the toast. Set the eggs on top and dust with the ½ teaspoon of chili flakes.",
     ],
-    nutrition: { cal: 390, protein: 16, carbs: 28, fat: 24 },
+    nutrition: { cal: 330, protein: 11, carbs: 22, fat: 24 },
   }),
   morning({
     id: "veggie-omelette",
@@ -124,7 +124,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Pour in the eggs. Scatter the spinach, the tomato, and the cheddar when the edges just set.",
       "Fold the omelette in half and slide it onto a plate while the middle is still a little soft.",
     ],
-    nutrition: { cal: 360, protein: 24, carbs: 6, fat: 26 },
+    nutrition: { cal: 250, protein: 15, carbs: 4, fat: 19 },
   }),
   morning({
     id: "breakfast-burrito",
@@ -151,7 +151,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Roll tight. Toast the seam in a dry pan 1–2 minutes if you want the wrap to hold.",
     ],
     servings: 2,
-    nutrition: { cal: 480, protein: 28, carbs: 44, fat: 20 },
+    nutrition: { cal: 515, protein: 31, carbs: 39, fat: 26 },
   }),
   morning({
     id: "salmon-bagel",
@@ -176,7 +176,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Layer the 4 ounces of smoked salmon, the red onion, and the 1 tablespoon of capers.",
       "Squeeze the lemon over the top. Serve at once, no pan needed.",
     ],
-    nutrition: { cal: 430, protein: 24, carbs: 42, fat: 18 },
+    nutrition: { cal: 390, protein: 20, carbs: 34, fat: 19 },
   }),
   morning({
     id: "steel-cut-porridge",
@@ -201,6 +201,6 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Stir in the 1 cup of milk and cook 6–8 minutes more, until creamy and the grains still have some chew.",
       "Sweeten with the 2 tablespoons of brown sugar and serve hot.",
     ],
-    nutrition: { cal: 310, protein: 10, carbs: 48, fat: 8 },
+    nutrition: { cal: 450, protein: 11, carbs: 75, fat: 11 },
   }),
 ];
