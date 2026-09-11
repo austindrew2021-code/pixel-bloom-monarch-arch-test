@@ -238,4 +238,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-baked-oranges", "so-baked-papaya", "so-stewed-prunes", "so-kumquat-prunes",
   "so-spiced-cantaloupe", "so-orange-marmalade", "so-grapefruit-marmalade", "so-guava-jelly",
   "so-pear-chips", "so-sherry-jelly",
+  // Puddings and cold desserts
+  "so-plantation-plum", "so-marmalade-pudding", "so-batter-pudding", "so-molasses-pudding",
+  "so-bread-pudding", "so-barbara-fritchie", "so-rice-custard", "so-cottage-pudding",
+  "so-orange-fluff", "so-southern-whip", "so-spanish-cream", "so-apple-float",
+  "so-jelly-meringue", "so-carrot-pudding",
 ]);

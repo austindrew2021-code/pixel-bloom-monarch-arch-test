@@ -113,6 +113,14 @@ glyph looks like.
 | `so-stewed-prunes` | sugar | `% cup` | 0.5 cup | left as-is |
 | `so-kumquat-prunes` | prune juice | `MJ cup` | not listed | the juice is what the prunes cooked in |
 | `so-sherry-jelly` | boiling water | `2% cups` | 2.5 cups | left as-is |
+| `so-marmalade-pudding` | sugar | `% cup` | 0.5 cup | left as-is |
+| `so-batter-pudding` | flour / milk / vanilla | `% cup`, `% cup`, `% teaspoon` | 0.75, 0.75, 0.5 | left as-is |
+| `so-barbara-fritchie` | granulated and brown sugar | `% cup` each | 0.75 cup | left as-is |
+| `so-barbara-fritchie` | vanilla | `% teaspoon` | 0.5 tsp | left as-is |
+| `so-southern-whip` | cream / sherry / sugar | `% pint`, `% cup`, `% cup` | 0.5, 0.25, 0.25 | left as-is |
+| `so-spanish-cream` | gelatin soak cream, sugar split | `% cup`, `% of sugar` | 0.25 cup, half | left as-is |
+| `so-carrot-pudding` | citron | `5/4 pound` | 0.75 lb | left as-is |
+| `so-carrot-pudding` | salt | `% teaspoon` | 0.25 tsp | left as-is |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -261,5 +269,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 262 |
+| The Southern Cook Book (Lustig 1935) | 317 | 276 |
 | The other 20 books | 139 | 0 |

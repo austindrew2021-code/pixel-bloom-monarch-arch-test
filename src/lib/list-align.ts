@@ -300,6 +300,15 @@ const SUITABLE =
 const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+|\bor\s+[\w-]+\s+(?:in its place|instead)\b/gi;
 
 /**
+ * A sauce named as what you serve the dish WITH is a separate recipe, not a row
+ * on this one's list. "Serve hot with chocolate or lemon sauce" closes the
+ * cottage pudding, and it bought the pudding a lemon. Only the "with <x> sauce"
+ * shape is stripped: "add it to the white sauce" is a step, and stays.
+ */
+const SIDE_SAUCE =
+  /\b(?:with|and)\s+(?:hot |cold |warm |a |an |the |your favorite |your favourite )*[\w-]+(?:\s+or\s+[\w-]+)?(?:\s+[\w-]+)?\s+(?:sauce|gravy|syrup|dressing|icing|frosting)\b/gi;
+
+/**
  * Interchangeable ingredients offered as an or-list share one head noun, and
  * only one of them is bought. The book's baked papaya takes "a little sugar and
  * orange, lime or lemon juice" — one juice, the cook's choice — and it bought a
@@ -331,6 +340,7 @@ export function withoutDenials(text: string, isSauce = false): string {
     .replace(NEGATED, " ")
     .replace(FIGURES, " ")
     .replace(INSTEAD, " ")
+    .replace(SIDE_SAUCE, " ")
     .replace(OR_LIST, "$1$2")
     .replace(SUITABLE, " ");
   return isSauce ? base.replace(ACCOMPANIES, " ") : base;
