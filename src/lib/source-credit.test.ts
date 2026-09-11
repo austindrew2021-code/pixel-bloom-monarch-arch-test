@@ -35,7 +35,6 @@ const CONFIRMED = new Set([
   "italiancookbooka00gentiala",
   "cu31924003574187",
   "saladssandwiches00hillrich",
-  "the-woman-suffrage-cook-book-compilation-accessible-version",
 ]);
 
 test("every archive identifier the catalog cites is one that was checked", () => {
@@ -54,13 +53,21 @@ test("every archive identifier the catalog cites is one that was checked", () =>
 });
 
 /**
- * Items that resolve on archive.org but are not cookbooks. An identifier that
- * opens is not evidence that the page it opens holds the recipe: the National
+ * Items that resolve on archive.org but are not the work that cites them. An
+ * identifier that opens is not evidence that the page it opens holds the
+ * recipe, and it is not evidence that the item is the book: the National
  * Wartime Nutrition Guide is a four-page USDA pamphlet — the "Basic 7" food
  * groups and a dozen conservation hints — and carries no recipes at all. Twelve
  * recipes cited it. Their credits were withdrawn rather than guessed at.
  */
 const NOT_A_COOKBOOK = new Map([
+  [
+    "the-woman-suffrage-cook-book-compilation-accessible-version",
+    "that identifier is a 28-page 2020 Johns Hopkins Sheridan Libraries " +
+      "sampler of holiday sweets drawn from three different suffrage " +
+      "cookbooks. It is not Burr's Woman Suffrage Cook Book, and the 1886 " +
+      "book is not on the archive under any identifier.",
+  ],
   [
     "nationalwartimen04unit",
     "National Wartime Nutrition Guide (USDA, 1943) is a four-page food-group " +
@@ -68,7 +75,7 @@ const NOT_A_COOKBOOK = new Map([
   ],
 ]);
 
-test("no recipe credits a document that holds no recipes", () => {
+test("no recipe credits an item that is not the work it is cited as", () => {
   const wrong: string[] = [];
   for (const r of RECIPES) {
     const id = r.source?.archiveId;

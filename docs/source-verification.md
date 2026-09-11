@@ -465,6 +465,47 @@ its liquid behind when the method says the food comes out of it. And the plain
 gelatin", weighing two boxes of Jell-O as unflavoured leaf: 175 g of protein a
 serving in a fruit salad. Flavoured gelatin is now read first.
 
+### The identifier resolved, the book was not there
+
+`the-woman-suffrage-cook-book-compilation-accessible-version` passes every
+check the provenance test could make: it resolves, it is a text item, its title
+is the book's title. It is **not the book**. The archive metadata gives it away
+— 28 page images and a 45 KB text — and reading it settles it: it is a 2020
+**Johns Hopkins Sheridan Libraries holiday sampler**, a handful of sweets
+excerpted from *three* different suffrage cookbooks (Burr's second edition of
+1890, Kleber 1915, and the Washington Women's Cook Book of 1909), with a
+librarian's foreword and a "bake like a suffragette this winter" invitation.
+
+Seven recipes cited it: church chicken and dumplings, ham loaf, three-bean
+salad, scalloped potatoes, jellied fruit salad, baked macaroni and escalloped
+oysters. **None of the seven is in it** — it contains no savoury dish at all.
+The credit's own wording had already admitted the problem: "…and typical
+Ladies' Aid church-supper dishes", which is a tradition standing where a page
+should be. All seven credits are withdrawn and the constant is deleted.
+
+Burr's *Woman Suffrage Cook Book* is not on the Internet Archive under any
+identifier — a title search returns this compilation and nothing else — so
+there is no honest source to re-point them at from here.
+
+The lesson for the next one: **check what the item is, not only that it opens.**
+`https://archive.org/metadata/<id>` gives the page count and the derivative
+sizes before you read a word. A cookbook of 28 pages is not a cookbook.
+
+### The Suffrage Cook Book (Kleber, 1915): five of five, all five wrong
+
+| Recipe | What the book actually prints |
+|---|---|
+| `vh-sf-nut-bread` | *Excellent Nut Bread*, p. 101. **New Orleans molasses and soda**, not sugar and baking powder. Ours had half a cup of sugar and four teaspoons of baking powder, neither of which is in it. The twenty-minute rest was right. |
+| `vh-sf-hot-slaw` | p. 171. The cabbage cooks **twenty minutes** in bacon fat and a little water with the onion, and the sugar and vinegar go in at the very end — **one teaspoon each**, not three tablespoons. "It must be sour-sweet." |
+| `vh-sf-hawaiian-sandwich` | p. 165. The whole recipe is two sentences and ours had added trimming and cutting to triangles. "A small cream cheese" is the 1915 three-ounce package, not eight ounces. |
+| `vh-sf-carrot-croquettes` | p. 90. Bound with **a cupful of thick white sauce and nothing else** — no egg and no crumbs in the mixture. The coating is egg then crumbs once, per the book's own croquette rule (see its Salmon and Chicken Croquettes), not crumb-egg-crumb. |
+| `vh-sf-tomato-toast` | p. 96. **It is a cheese savoury**: butter, a tablespoon of tomato and two ounces of grated cheese melted together with paprika and poured over fried rounds of bread. Ours was four tomatoes and an onion with no cheese in it at all. |
+
+**Two more engine defects.** `tomatoes?` is "tomatoe" plus an optional s — it
+never matched a singular "stewed tomato", and only the exact `^tomato$` rule
+was catching the bare word. And butter named for the pan rather than the batter
+had no rule at all.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -479,4 +520,6 @@ serving in a fruit salad. Flavoured gelatin is now read first.
 | The Picayune Creole Cook Book (1901) | 8 | **7 (complete; 1 credit withdrawn)** |
 | The International Jewish Cook Book (1918) | 8 | **6 (complete; 2 credits withdrawn)** |
 | 365 Desserts (1900) | 8 | **6 (complete; 2 credits withdrawn)** |
-| The other 15 books | 95 | 0 |
+| The Suffrage Cook Book (Kleber 1915) | 5 | **5 (complete)** |
+| "Woman Suffrage Cook Book" | 7 | **n/a — the identifier is not that book; 7 credits withdrawn** |
+| The other 13 books | 83 | 0 |

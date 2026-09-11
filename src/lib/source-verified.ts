@@ -286,4 +286,7 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   // and no boiled custard of its own, so those two lost their credit.
   "vh-ds-blancmange", "vh-ds-cottage-pudding", "vh-ds-apple-tapioca",
   "vh-ds-prune-whip", "vh-ds-rice-pudding", "vh-ds-charlotte",
+  // The Suffrage Cook Book — Kleber, 1915. All five are in it.
+  "vh-sf-nut-bread", "vh-sf-hot-slaw", "vh-sf-hawaiian-sandwich",
+  "vh-sf-carrot-croquettes", "vh-sf-tomato-toast",
 ]);

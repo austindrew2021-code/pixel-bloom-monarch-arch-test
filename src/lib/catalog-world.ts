@@ -369,7 +369,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "porcupine-meatballs",
-    nutrition: { cal: 580, protein: 35, carbs: 40, fat: 32 },
+    nutrition: { cal: 465, protein: 33, carbs: 27, fat: 26 },
     name: "Porcupine meatballs",
     description: "Rice-studded meatballs simmered in tomato. Kids named them, adults eat them.",
     minutes: 50,

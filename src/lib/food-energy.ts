@@ -231,7 +231,7 @@ const FOODS: readonly Food[] = [
   // a saucepan of beef dripping weighed as a generic 150 kcal row turned a
   // stewing fat into a starch.
   { match: /^lard\b|lard or oil|^shortening$|^suet$|^beef fat$|^chopped fat$|dripping(s)?$|bacon grease|bacon fat/, per100: P(898, 0, 0, 100), cupG: 205 },
-  { match: /^butter$|^butter,|unsalted butter|salted butter|melted butter|^clarified butter$|^ghee$|buttered bread/, per100: P(717, 0.9, 0.1, 81), cupG: 227, unitG: { slice: 30, slices: 30, pat: 5 } },
+  { match: /^butter$|^butter,|unsalted butter|salted butter|melted butter|butter for (?:frying|the pan)|^clarified butter$|^ghee$|buttered bread/, per100: P(717, 0.9, 0.1, 81), cupG: 227, unitG: { slice: 30, slices: 30, pat: 5 } },
   { match: /mayonnaise|^mayo$/, per100: P(680, 1, 0.6, 75), cupG: 220 },
 
   // --- dairy and eggs ---------------------------------------------------
@@ -380,7 +380,7 @@ const FOODS: readonly Food[] = [
   { match: /cherry tomatoes/, per100: P(18, 0.9, 3.9, 0.2), cupG: 149, eachG: 17 },
   { match: /sun[- ]dried tomatoes/, per100: P(258, 14, 56, 3), cupG: 54 },
   { match: /tomato (?:paste|puree|pulp)/, per100: P(82, 4.3, 19, 0.5), cupG: 262 },
-  { match: /tomato sauce|marinara|passata|crushed tomatoes|canned tomatoes|ripe tomatoes|tomatoes?|^tomato$/, per100: P(24, 1.2, 5, 0.2), eachG: 123, cupG: 245 },
+  { match: /tomato sauce|marinara|passata|crushed tomatoes|canned tomatoes|ripe tomatoes|tomato(?:es)?/, per100: P(24, 1.2, 5, 0.2), eachG: 123, cupG: 245 },
   { match: /tomatillos?/, per100: P(32, 1, 5.8, 1), eachG: 34 },
   { match: /bell peppers?|green peppers?|red peppers?|sweet peppers?|yellow (?:sweet )?peppers?|pimien?to|green pepper/, per100: P(26, 1, 6, 0.2), eachG: 120, cupG: 150 },
   { match: /jalape|serrano|scotch bonnet|habanero|green chile|chiles?$|chili peppers?|hot peppers?|red chile/, per100: P(40, 1.9, 9, 0.4), eachG: 15, cupG: 90 },
