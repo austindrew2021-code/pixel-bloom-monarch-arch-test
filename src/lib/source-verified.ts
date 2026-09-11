@@ -282,4 +282,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   // in it. The book has no tzimmes and no chopped liver, so those lost theirs.
   "vh-jw-matzo-ball", "vh-jw-gefilte", "vh-jw-latkes", "vh-jw-kugel",
   "vh-jw-cabbage-rolls", "vh-jw-blintzes",
+  // 365 Desserts, 1900. Six of the eight are in it. There is no snow pudding
+  // and no boiled custard of its own, so those two lost their credit.
+  "vh-ds-blancmange", "vh-ds-cottage-pudding", "vh-ds-apple-tapioca",
+  "vh-ds-prune-whip", "vh-ds-rice-pudding", "vh-ds-charlotte",
 ]);

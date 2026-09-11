@@ -87,6 +87,15 @@ export const COAT_ADHERES = 0.3;
 
 const MARINADE = /buttermilk|^milk$|yogurt|yoghurt|wine|vinegar|soy sauce|tamari|brine/i;
 const SOAKS = /marinat|soak|steep|brine|let stand in|refrigerate.{0,30}overnight/i;
+/**
+ * A soak only leaves its liquid behind if the cook takes the food out of it.
+ * Without that the liquid *is* the dish: 365 Desserts soaks Irish moss an hour
+ * in a quart of milk and then cooks the milk down into the blanc mange, and
+ * reading that quart as a marinade threw away five sixths of the pudding —
+ * 90 kcal a serving for something made of milk and sugar.
+ */
+const SOAK_DRAINED =
+  /\bdrain|discard the (?:marinade|milk|buttermilk|brine|soaking (?:liquid|water))|(?:lift|take|remove) (?:it |them |the [\w-]+ )?(?:out of|from) the|shake off the|pat (?:it |them |the [\w-]+ )?dry|wipe (?:it|them|the [\w-]+) (?:well|dry)|dip (?:each|the) [\w-]+ in(?:to)?[^.]{0,30}?\b(?:flour|crumbs|corn ?meal|matzo meal|cracker dust)\b/i;
 /** Share of a marinade that clings when the food is lifted out. */
 export const MARINADE_CLINGS = 0.15;
 
@@ -325,7 +334,11 @@ const FOODS: readonly Food[] = [
   { match: /baking soda|^soda$|^soda,|saleratus/, per100: P(0, 0, 0, 0), cupG: 220 },
   { match: /cream of tartar/, per100: P(258, 0, 62, 0), cupG: 150 },
   { match: /cornstarch|corn ?flour thickening|arrowroot/, per100: P(381, 0.3, 91, 0), cupG: 128 },
-  { match: /gelatin/, per100: P(335, 86, 0, 0), cupG: 150, unitG: { packet: 7, packets: 7 } },
+  // Irish moss is dried carrageen seaweed. It sets a quart of milk from half
+  // an ounce, so the food that matters in the dish is the milk, not this.
+  { match: /irish moss|carrageen/, per100: P(49, 1.5, 12, 0.2), cupG: 20 },
+  { match: /(?:lemon|lime|orange|cherry|strawberry|raspberry|flavou?red) gelatin|jell-?o/, per100: P(381, 7, 89, 0), unitG: { box: 85, boxes: 85, packet: 85, packets: 85 }, eachG: 85, cupG: 200 },
+  { match: /gelatin/, per100: P(335, 86, 0, 0), cupG: 150, unitG: { packet: 7, packets: 7, box: 28, boxes: 28 } },
   { match: /^yeast$|compressed yeast/, per100: P(325, 40, 41, 7.6), cupG: 150, unitG: { packet: 7, packets: 7, cake: 17, cakes: 17 } },
   // Orange flower water is a distillate, not an extract in syrup: it carries
   // no sugar and no alcohol worth counting, so it sits above them.
@@ -454,7 +467,6 @@ const FOODS: readonly Food[] = [
   // --- second tier: the long tail the first pass could not place --------------
   // Small countable things first: the broad patterns below would otherwise
   // claim them and hand back the weight of a joint instead of a sausage.
-  { match: /(?:lemon|lime|orange|cherry|strawberry|raspberry|flavou?red) gelatin|jell-?o/, per100: P(381, 7, 89, 0), unitG: { box: 85, boxes: 85, packet: 85, packets: 85 }, eachG: 85, cupG: 200 },
   { match: /frog legs?/, per100: P(73, 16, 0, 0.3), eachG: 35 },
   { match: /hot dogs?|frankfurters?|wieners?/, per100: P(290, 11, 4, 26), eachG: 45 },
   { match: /pepperoni sticks?/, per100: P(504, 20, 5, 45), eachG: 28 },
@@ -600,7 +612,7 @@ export function fromIngredients(recipe: Pick<Recipe, "ingredients" | "servings" 
   const method = (recipe.steps ?? []).join(" ");
   const deepFries = DEEP_FRY.test(method);
   const coats = COATS.test(method);
-  const soaks = SOAKS.test(method);
+  const soaks = SOAKS.test(method) && SOAK_DRAINED.test(method);
 
   // First pass: weigh every row, and set the frying baths aside.
   type Weighed = { food: Food; grams: number };

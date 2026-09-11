@@ -372,10 +372,10 @@ const CORE_RECIPES: Recipe[] = [
 		pack: "free",
 		tags: [],
 		nutrition: {
-			cal: 635,
-			protein: 60,
-			carbs: 64,
-			fat: 14
+			cal: 670,
+			protein: 62,
+			carbs: 67,
+			fat: 16
 		},
 		ingredients: [
 			I("chicken breasts", 1.5, "lb", "Meat & Seafood"),

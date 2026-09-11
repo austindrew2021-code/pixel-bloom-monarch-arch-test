@@ -64,6 +64,8 @@ glyph looks like.
 |---|---|---|---|---|
 | `so-delicious-appetizer` | dried beef | `% pound` | 0.5 lb | ½ or ¾; ours is unconfirmed either way |
 | `vh-pc-pain-perdu` | eggs | `B Eggs.` | 6 | the digit is gone in both the download and the stream OCR; six is what a ½ cup of sugar and a family of six suggest, and it is a guess |
+| `vh-ds-charlotte` | gelatine, water | `Cover % box of gelatine with ^ cup of cold water` | ¼ box, ¼ cup | both fraction glyphs lost their digits; ¼ box is one envelope, which is what a cup of milk and a pint of cream will take |
+| `vh-ds-prune-whip` | gelatine | `Have ^ of a box of gelatine` | 1 tbsp | the glyph is gone; one tablespoon is about a quarter box |
 | `vh-365-irish-stew` | milk | `}i cup of milk` | ¼ cup | glyph lost its digit; ¼ is what "a little flour" will take, but it could be ½ |
 | `vh-365-borscht` | cinnamon, nutmeg | `some cinnamon and nutmeg` | ¼ tsp each | the book gives no quantity at all; ours is a working pinch |
 | `vh-365-goulash` | beef | `Cut beef into small pieces` | 2 lb | the book names no weight for the meat |
@@ -439,6 +441,30 @@ two absences.
 | `vh-jw-tzimmes` | **No.** The index has no tzimmes under any spelling. The carrot dishes are a sugar-syrup *Compote of Carrots (Russian Style)* and a baked *Carrot Schalet*; the prune entries are stewed, baked, brandied, or cooked with red cabbage. Credit withdrawn. |
 | `vh-jw-chopped-liver` | **No.** The book's liver appetisers are *Chicken Liver Paste* Nos. 1 and 2 and an *Imitation Pâté de Foi Gras* — livers simmered, minced or rubbed smooth, bound with egg yolk and spread on toast. Chopped liver with hard egg and browned onion is not in it. Credit withdrawn. |
 
+### 365 Desserts: six of eight, and the two it does not have
+
+| Recipe | In the book? |
+|---|---|
+| `vh-ds-blancmange` | Yes, but not ours — the book's blanc manges are *Irish Moss* and *Peach*, and there is no cornstarch mould in it. Rewritten to the Irish moss one: half an ounce of carrageen soaked an hour in a quart of milk, cooked down in a farina boiler until it almost dissolves, strained into a mould. |
+| `vh-ds-cottage-pudding` | Yes, p. 127. **No butter and no sauce.** The yolk is beaten light with a whole cup of sugar and the white folded in last with the baking powder; 25 minutes in a slow oven. |
+| `vh-ds-apple-tapioca` | Yes — *Apple Tapioca Pudding*, p. 122. Whole pared and cored apples in the dish, a soaked-tapioca custard of three eggs and a quart of milk poured over, baked. Eaten with cream and sugar. |
+| `vh-ds-prune-whip` | Yes under another name — *Prune Pudding*. A pound of prunes soaked overnight, cooked tender, pressed to a pulp, lightened with beaten whites and **set with gelatine**, served with soft custard. Renamed to what the book calls it. |
+| `vh-ds-rice-pudding` | Yes, p. 44. Two tablespoons of rice to a quart of new milk, no butter and no vanilla, and the distinctive instruction to stir **every two minutes until the last half hour**. |
+| `vh-ds-charlotte` | Yes — *Charlotte Russe*, p. 50. A cooked custard base set with gelatine and folded into whipped cream, hardened in a wet mould, then turned out and **covered with stale macaroons**. It is not lined with ladyfingers; the book's No. 2 lines its moulds with sponge cake. |
+| `vh-ds-snow-pudding` | **No.** The book's *Snow Balls* Nos. 1 and 2 are little baked cakes rolled in powdered sugar. There is no lemon-gelatin snow pudding in the 365. Credit withdrawn. |
+| `vh-ds-boiled-custard` | **No** — not as a recipe of its own. "Boiled custard" appears only as an ingredient poured over other puddings; the book's custard recipes are *Baked Custard* and the flavoured ones. Credit withdrawn. |
+
+**Safety change against the source:** the prune pudding folds raw beaten whites into a cold mould that is never heated. Ours calls for pasteurised whites and says why.
+
+**Two engine defects this book exposed.** A soak was being read as a marinade
+whenever the word "soak" appeared, so the quart of milk the Irish moss soaks in
+— which is then cooked into the pudding — was discounted to 15%, giving a
+blanc mange made of milk and sugar 90 kcal a serving. A soak now only leaves
+its liquid behind when the method says the food comes out of it. And the plain
+`/gelatin/` rule sat 130 lines above the flavoured one and swallowed "lemon
+gelatin", weighing two boxes of Jell-O as unflavoured leaf: 175 g of protein a
+serving in a fruit salad. Flavoured gelatin is now read first.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -452,4 +478,5 @@ two absences.
 | 365 Foreign Dishes (1908) | 8 | **5 (complete; 3 credits withdrawn)** |
 | The Picayune Creole Cook Book (1901) | 8 | **7 (complete; 1 credit withdrawn)** |
 | The International Jewish Cook Book (1918) | 8 | **6 (complete; 2 credits withdrawn)** |
-| The other 16 books | 103 | 0 |
+| 365 Desserts (1900) | 8 | **6 (complete; 2 credits withdrawn)** |
+| The other 15 books | 95 | 0 |

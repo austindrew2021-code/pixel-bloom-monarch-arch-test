@@ -49,7 +49,7 @@ export const BREAKFAST_RECIPES: Recipe[] = [
       "Chill overnight.",
       "Top with berries and honey.",
     ],
-    nutrition: { cal: 320, protein: 13, carbs: 51, fat: 8 },
+    nutrition: { cal: 385, protein: 16, carbs: 56, fat: 12 },
   }),
   morning({
     id: "blueberry-pancakes",
