@@ -301,4 +301,11 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   // How to Cook Fish — Olive Green, 1908. All six are in it.
   "vh-og-baked-stuffed-fish", "vh-og-broiled-mackerel", "vh-og-fish-cakes",
   "vh-og-creamed-cod", "vh-og-salmon-loaf", "vh-og-boiled-salmon",
+  // Foods That Will Win the War — Goudiss, 1918. Three of the four are in it.
+  "vh-ww1-carrot-marmalade", "vh-ww1-wheatless-muffins", "vh-ww1-rice-pudding",
+  // American Cookery — Amelia Simmons, 1796. Both are in it.
+  "vh-am-indian-pudding", "vh-am-slapjacks",
+  // The White House Cook Book's floating island, recovered from the /stream/
+  // text after the /download/ text dropped page 339.
+  "vh-wh-floating-island",
 ]);

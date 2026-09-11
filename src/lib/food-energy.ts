@@ -328,7 +328,7 @@ const FOODS: readonly Food[] = [
   { match: /molasses|treacle|sorghum|cane syrup/, per100: P(290, 0, 75, 0), cupG: 337 },
   { match: /maple syrup|corn syrup|gum syrup|golden syrup|^syrup$/, per100: P(300, 0, 78, 0), cupG: 320 },
   { match: /^honey$/, per100: P(304, 0.3, 82, 0), cupG: 340 },
-  { match: /marmalade|^jelly$|^jelly,|firm jelly|^jam$|strawberry jam|preserves|apple butter/, per100: P(278, 0.4, 69, 0), cupG: 320, unitG: { glass: 240, "1 glass": 240 } },
+  { match: /marmalade|^jelly$|^jelly,|firm jelly|currant jelly|^jam$|strawberry jam|preserves|apple butter/, per100: P(278, 0.4, 69, 0), cupG: 320, unitG: { glass: 240, "1 glass": 240 } },
 
   // --- chocolate, cocoa, leaveners, thickeners ---------------------------
   { match: /dark chocolate|semi ?sweet chocolate|chocolate chips|unsweetened chocolate|cooking chocolate|scraped chocolate|^chocolate$|^chocolate,/, per100: P(546, 5, 61, 31), cupG: 175, unitG: { square: 28, squares: 28 } },
@@ -436,7 +436,7 @@ const FOODS: readonly Food[] = [
   { match: /fresh ginger|^ginger$|ground ginger|crystallized ginger/, per100: P(80, 1.8, 18, 0.8), cupG: 96, eachG: 30, unitG: { strip: 10 } },
   { match: /parsley|cilantro|basil|thai basil|^mint$|fresh mint|dill|chives|tarragon|watercress|^herbs$|lemongrass|makrut|curry leaves/, per100: P(36, 3, 6, 0.8), cupG: 60, unitG: { bunch: 60, bunches: 60, sprig: 1, sprigs: 1, spray: 1, sprays: 1, stalk: 15, stalks: 15 }, eachG: 2 },
   { match: /rosemary|thyme|sage|oregano|marjoram|savory|bay lea(?:f|ves)|dried mint|sassafras|fil[eé] powder|fresh herbs/, per100: P(100, 4, 20, 2), cupG: 40, unitG: { sprig: 1, sprigs: 1, leaf: 0.2, leaves: 0.2, bunch: 30 }, eachG: 0.2 },
-  { match: /cumin|coriander|paprika|smoked paprika|chili powder|curry powder|garam masala|turmeric|cayenne|allspice|nutmeg|mace|cardamom|cinnamon|cloves?|star anise|caraway|fennel seed|celery seed|mustard seed|poppy seed|juniper|saffron|old bay|five[- ]spice|za.atar|herbes|italian seasoning|poultry seasoning|pumpkin spice|chinese five/, per100: P(320, 12, 55, 12), cupG: 100, unitG: { stick: 2.6, sticks: 2.6, pinch: 0.4 }, eachG: 0.1 },
+  { match: /cumin|coriander|paprika|smoked paprika|chili powder|curry powder|garam masala|turmeric|cayenne|allspice|nutmeg|mace|cardamom|cinnamon|cloves?|star anise|caraway|fennel seed|celery seed|mustard seed|poppy seed|juniper|saffron|old bay|five[- ]spice|za.atar|herbes|italian seasoning|poultry seasoning|pumpkin spice|mixed spices?|chinese five/, per100: P(320, 12, 55, 12), cupG: 100, unitG: { stick: 2.6, sticks: 2.6, pinch: 0.4 }, eachG: 0.1 },
   { match: /red pepper flakes|crushed red pepper|chile flakes/, per100: P(318, 12, 57, 17), cupG: 90 },
   { match: /dry mustard|mustard powder/, per100: P(508, 26, 28, 36), cupG: 100 },
   { match: /dijon|^mustard$|prepared mustard|yellow mustard/, per100: P(66, 4, 6, 3.3), cupG: 249 },

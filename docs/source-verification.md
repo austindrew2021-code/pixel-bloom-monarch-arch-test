@@ -465,6 +465,35 @@ its liquid behind when the method says the food comes out of it. And the plain
 gelatin", weighing two boxes of Jell-O as unflavoured leaf: 175 g of protein a
 serving in a fruit salad. Flavoured gelatin is now read first.
 
+### The last two books, and the page that was not missing after all
+
+*Foods That Will Win the War* has three of its four. The carrot marmalade is
+Goudiss's *Pumpkin or Carrot Marmalade* and uses **no sugar and no lemon** —
+grape juice boiled down by half, and corn syrup. The wheatless muffins are her
+*Buttermilk or Sour Milk Cornmeal Muffins*: all cornmeal, soured milk, and soda
+dissolved in cold water and added last, with no wheat flour and no baking
+powder in them. The rice pudding is *Maple Rice Pudding* and **never sees the
+oven** — thirty-five minutes in the top of a double boiler. "Oatmeal Cookies"
+appears in the book only as a line in a luncheon menu; its cookie recipes are
+crisp ginger and soft cinnamon. That credit is withdrawn.
+
+*American Cookery* has both. Simmons gives three Indian puddings and ours is
+now her No. 2 exactly: three pints of scalded milk to a pint of meal, salted and
+**cooled** before the two eggs and four ounces of butter go in, and two and a
+half hours in the oven. Her slapjack is an **Indian** slapjack — a quart of milk
+to a pint of cornmeal with only four spoons of wheat flour, where ours had been
+all wheat with a single egg.
+
+And `vh-wh-floating-island`, the one recipe recorded as absent from a scan, was
+not absent: the White House book's page 339 is missing from the `/download/`
+text and present in the `/stream/` text, the same split the Picayune showed.
+Read at last, the book's *Floating Island* is five yolks and **one** white
+cooked into the custard, chilled hard, with the four remaining whites beaten
+with sugar and **currant jelly** for the islands. Ours steams that froth over
+boiling water before it goes on, which is the direction the book gives in its
+own companion recipe three lines above — the singular recipe never heats it, and
+four raw whites on a cold custard is not a risk worth taking.
+
 ### The identifier resolved, the book was not there
 
 `the-woman-suffrage-cook-book-compilation-accessible-version` passes every
@@ -613,7 +642,7 @@ warning at all, including the salt cod that the whole module was written for.
 | The Southern Cook Book (Lustig 1935) | 317 | **317 (complete)** |
 | The Boston Cooking-School Cook Book (Farmer) | 13 | **12 (complete; 1 credit withdrawn)** |
 | What Mrs. Fisher Knows (Fisher 1881) | 7 | **7 (complete)** |
-| The White House Cook Book (Gillette 1887) | 8 | 7 (floating island missing from the scan) |
+| The White House Cook Book (Gillette 1887) | 8 | **8 (complete)** |
 | National Wartime Nutrition Guide (USDA 1943) | 12 | **n/a — holds no recipes; 12 credits withdrawn** |
 | 365 Foreign Dishes (1908) | 8 | **5 (complete; 3 credits withdrawn)** |
 | The Picayune Creole Cook Book (1901) | 8 | **7 (complete; 1 credit withdrawn)** |
@@ -626,4 +655,6 @@ warning at all, including the salt cod that the whole module was written for.
 | Salads, Sandwiches and Chafing Dishes (1909) | 6 | **2 (complete; 4 credits withdrawn)** |
 | Chinese-Japanese Cook Book (1914) | 6 | **2 (complete; 4 credits withdrawn)** |
 | How to Cook Fish (Olive Green 1908) | 6 | **6 (complete)** |
-| The other 8 books | 53 | 0 |
+| Foods That Will Win the War (Goudiss 1918) | 4 | **3 (complete; 1 credit withdrawn)** |
+| American Cookery (Simmons 1796) | 2 | **2 (complete)** |
+| **Total** | **466** | **403 verified; 63 credits withdrawn; 0 outstanding** |
