@@ -73,6 +73,22 @@ glyph looks like.
 | `so-raisin-ham-sauce` | brown sugar | `% cup` | 0.5 cup | left as-is |
 | `so-hollandaise-south` | melted butter | `% cup` | 0.5 cup | left as-is |
 | `so-horseradish-sauce` | horseradish | `/& cup` | ⅓ cup | left as-is |
+| `so-mayonnaise-south` | olive oil | `y% cup` | 0.5 cup | left as-is |
+| `so-mayonnaise-south` | salt | `% teaspoon (scant)` | 0.25 tsp | left as-is |
+| `so-french-dressing` | white pepper | `ys teaspoon` | a pinch | ⅛ or ⅓; left unquantified |
+| `so-sour-cream-dressing` | vinegar | `ai cup` | 0.25 cup | left as-is |
+| `so-richmond-dressing` | sour cream | `y% pint` | 0.5 pint | left as-is |
+| `so-never-fail-icing` | cream of tartar | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-mocha-icing` | confectioner's sugar | `% cup` | 0.75 cup | book adds “more if needed” |
+| `so-orange-icing` | orange | `% orange` | 0.5 | left as-is |
+| `so-pralines` | cream | `y% cup` | 0.5 cup | left as-is |
+| `so-pralines` | vanilla | `% teaspoon` | 0.5 tsp | left as-is |
+| `so-coconut-pralines` | water | `y% cup` | 0.5 cup | left as-is |
+| `so-caramels` | milk | `y% cup` | 0.5 cup | left as-is |
+| `so-caramels` | scraped chocolate | `% cup` | 0.5 cup | left as-is |
+| `so-pecan-fondant` | salt | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-pecan-fondant` | depth of dish | `MJ inch` | ½ inch | left as-is |
+| `so-candied-peel` | sugar split | `2% cups` then `Vi cup` | not committed | 2½+½ and 2¾+¼ both total 3; the step says “most of” and “the sugar you held back” |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -221,5 +237,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 201 |
+| The Southern Cook Book (Lustig 1935) | 317 | 217 |
 | The other 20 books | 139 | 0 |

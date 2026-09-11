@@ -297,21 +297,32 @@ const SUITABLE =
 const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+|\bor\s+[\w-]+\s+(?:in its place|instead)\b/gi;
 
 /**
+ * A sauce, dressing or icing closes by naming what it is served ON, and what it
+ * is served on is not in it. The Richmond sour cream dressing ends "Serve on
+ * tomatoes. This is very good on chopped cabbage" — and bought itself two
+ * tomatoes. This reading is given ONLY to recipes tagged `sauce`: "serve over
+ * rice" in a curry is an instruction, and the rice still has to be listed.
+ */
+const ACCOMPANIES =
+  /\b(?:serve|served|serving)\b[^.]{0,80}?\b(?:on|over|with|upon|beside|alongside)\s+(?:the |a |an )?[\w-]+(?:\s+[\w-]+)?(?:\s*(?:,|or|and)\s*(?:the |a |an )?[\w-]+(?:\s+[\w-]+)?){0,4}|\b(?:very |also )?(?:good|fine|excellent|delicious)\s+(?:on|with|for|over)\s+(?:the |a |an )?[\w-]+(?:\s+[\w-]+)?(?:\s*(?:,|or|and)\s*(?:the |a |an )?[\w-]+(?:\s+[\w-]+)?){0,4}/gi;
+
+/**
  * Strip the places a food is named without being used: denied, likened to,
  * or ruled out in favour of something else. Exported because the standalone
  * invariants need the same reading — a burgoo that uses "no thickening like
  * meal or rice" is not a recipe that forgot to list rice.
  */
-export function withoutDenials(text: string): string {
-  return text
+export function withoutDenials(text: string, isSauce = false): string {
+  const base = text
     .replace(NEGATED, " ")
     .replace(FIGURES, " ")
     .replace(INSTEAD, " ")
     .replace(SUITABLE, " ");
+  return isSauce ? base.replace(ACCOMPANIES, " ") : base;
 }
 
-function namesFood(steps: string, fix: ListFix): boolean {
-  const said = withoutDenials(steps);
+function namesFood(steps: string, fix: ListFix, isSauce = false): boolean {
+  const said = withoutDenials(steps, isSauce);
   const blob = fix.notNamed ? said.replace(new RegExp(fix.notNamed.source, "gi"), " ") : said;
   return fix.named.test(blob);
 }
@@ -333,9 +344,10 @@ function forbidden(recipe: Recipe, fix: ListFix): boolean {
  */
 export function alignListToCook(recipe: Recipe): Recipe {
   const steps = cookedText(recipe);
+  const isSauce = (recipe.tags ?? []).includes("sauce");
   const extra: Pantry[] = [];
   for (const fix of LIST_FIXES) {
-    if (!namesFood(steps, fix)) continue;
+    if (!namesFood(steps, fix, isSauce)) continue;
     if (isCovered(recipe, fix)) continue;
     if (extra.some((e) => fix.covered.test(e.name))) continue;
     if (forbidden(recipe, fix)) continue;
@@ -352,7 +364,8 @@ export function alignListToCook(recipe: Recipe): Recipe {
  */
 export function unlistedFoodsInSteps(recipe: Recipe): string[] {
   const steps = cookedText(recipe);
+  const isSauce = (recipe.tags ?? []).includes("sauce");
   return LIST_FIXES.filter(
-    (fix) => namesFood(steps, fix) && !isCovered(recipe, fix) && !forbidden(recipe, fix) && !fix.madeHere?.(recipe),
+    (fix) => namesFood(steps, fix, isSauce) && !isCovered(recipe, fix) && !forbidden(recipe, fix) && !fix.madeHere?.(recipe),
   ).map((fix) => fix.add.name);
 }

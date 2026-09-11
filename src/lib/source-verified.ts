@@ -219,4 +219,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-hard-sauce", "so-foaming-sauce", "so-brandy-sauce", "so-lemon-fritter-sauce",
   "so-egg-nog-sauce", "so-hollandaise-south", "so-horseradish-sauce", "so-shrimp-sauce",
   "so-rhubarb-sauce", "so-mint-ice",
+  // Dressings, icings and candies
+  "so-mayonnaise-south", "so-french-dressing", "so-sour-cream-dressing", "so-richmond-dressing",
+  "so-butter-icing", "so-never-fail-icing", "so-mocha-icing", "so-orange-icing",
+  "so-brown-sugar-frosting", "so-pralines", "so-coconut-pralines", "so-goober-brittle",
+  "so-fudge", "so-caramels", "so-pecan-fondant", "so-candied-peel",
 ]);
