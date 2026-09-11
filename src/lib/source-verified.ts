@@ -293,4 +293,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "vh-va-chicken-pudding",
   // Camping and Woodcraft, Vol. I — Kephart, 1916. Four of the six are in it.
   "vh-kp-bannock", "vh-kp-trail-beans", "vh-kp-foil-potato", "vh-kp-kabobs",
+  // Salads, Sandwiches and Chafing Dishes — Janet McKenzie Hill, 1909. Two of
+  // the six are in it.
+  "vh-hi-tomato-aspic", "vh-hi-chicken-salad",
+  // Chinese-Japanese Cook Book — Bosse & Watanna, 1914. Two of the six.
+  "vh-bj-fried-rice", "vh-bj-cabbage-pork",
 ]);

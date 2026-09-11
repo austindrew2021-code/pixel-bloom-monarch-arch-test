@@ -261,7 +261,7 @@ const FOODS: readonly Food[] = [
   { match: /hard[- ]cooked eggs?|hard[- ]boiled eggs?|^eggs?$|^eggs?,|whole eggs/, per100: P(143, 12.6, 0.7, 9.5), cupG: 243, eachG: 50 },
 
   // --- meat, poultry, fish ---------------------------------------------
-  { match: /salt pork/, per100: P(748, 5.1, 0, 81), cupG: 200 },
+  { match: /salt pork|^fat pork$|fat pork,/, per100: P(748, 5.1, 0, 81), cupG: 200 },
   { match: /^bacon$|sliced bacon|bacon,/, per100: P(541, 37, 1.4, 42), unitG: { slice: 18, slices: 18 }, eachG: 18 },
   { match: /smithfield ham|country ham|cured ham|^ham$|^ham,|raw ham|cooked ham|lean ham|ham steak|ham slice/, per100: P(134, 16.5, 1.1, 6.8), unitG: { slice: 250, slices: 250 }, eachG: 250 },
   { match: /chicken (?:thighs?|legs?|drumsticks?)/, per100: P(167, 21, 0, 9), eachG: 110 },

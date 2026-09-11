@@ -552,6 +552,39 @@ now excluded from the seasoning rule, they read 755, 465 and 880. Fifteen
 recipes were understated by this; the parsnip dish needed eight portions rather
 than four once its pork was actually counted.
 
+### Hill's Salads, Sandwiches and Chafing Dishes: two of six
+
+*Tomato Jelly* (p. 43) is ours now: a can of tomatoes cooked with onion, celery,
+a bay leaf and two cloves, sharpened with **tarragon vinegar** rather than lemon,
+strained into a ring mould, the centre filled with celery and English walnuts in
+French dressing. And *Chicken Salad*: two parts chicken to one of celery, with
+the chicken **marinated in French dressing and drained** before it meets the
+mayonnaise — Hill's order, which ours had skipped.
+
+The other four are not in the book. Cucumber appears only in her salads and as a
+boat for shrimp; there is no cucumber sandwich. There are no stuffed or deviled
+eggs — the only deviled things in the index are crabs. There are no cheese
+dreams; her chafing-dish cheese is a Welsh rarebit and a Yorkshire rabbit. And
+her egg sandwiches are egg-and-cress and ham-and-egg, not a plain egg salad.
+Four credits withdrawn.
+
+### The Chinese-Japanese Cook Book: two of six
+
+*Fried Rice with Eggs and Herbs* is in it and ours now matches: fat pork fried
+brown with onion, celery and water chestnuts, the boiled rice turned in, then
+**six** beaten eggs poured over and shaken through. No soy in that one.
+
+*Mushi Tamana and Buta* is the book's "Cabbage and Pork", and it is not a
+stir-fry: a whole hard cabbage is hollowed out, packed with boiled salt pork,
+onion and goma seeds, **tied in cheesecloth and boiled two hours**, then dressed
+with boiled syou sauce.
+
+The book has no miso soup — miso is an ingredient in its Satsuma and fish soups,
+never a soup of its own — no sukiyaki, no donburi, and no steamed fish: its
+Japanese fish are simmered in syou and vinegar or fried, and its Chinese fish
+are pickled cold, made into cakes, or cooked with pineapple. Four credits
+withdrawn.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -570,4 +603,6 @@ than four once its pork was actually counted.
 | "Woman Suffrage Cook Book" | 7 | **n/a — the identifier is not that book; 7 credits withdrawn** |
 | The Virginia Housewife (1824) | 6 | **1 (complete; 5 credits withdrawn)** |
 | Camping and Woodcraft, Vol. I (1916) | 6 | **4 (complete; 2 credits withdrawn)** |
-| The other 11 books | 71 | 0 |
+| Salads, Sandwiches and Chafing Dishes (1909) | 6 | **2 (complete; 4 credits withdrawn)** |
+| Chinese-Japanese Cook Book (1914) | 6 | **2 (complete; 4 credits withdrawn)** |
+| The other 9 books | 59 | 0 |
