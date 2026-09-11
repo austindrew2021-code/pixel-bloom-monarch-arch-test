@@ -121,6 +121,17 @@ glyph looks like.
 | `so-spanish-cream` | gelatin soak cream, sugar split | `% cup`, `% of sugar` | 0.25 cup, half | left as-is |
 | `so-carrot-pudding` | citron | `5/4 pound` | 0.75 lb | left as-is |
 | `so-carrot-pudding` | salt | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-marble-cake` | butter / milk / nutmeg | `% cup`, `% cup`, `% teaspoon` | 0.5, 0.5, 0.5 | left as-is |
+| `so-poinciana-cake` | citron | `% pound` | 0.75 lb | left as-is |
+| `so-gingerbread` | melted butter | `% cup` | 0.5 cup | left as-is |
+| `so-hot-frosted-ginger` | coffee / sugar / molasses | `% cup` each | 0.5 cup each | left as-is |
+| `so-strawberry-shortcake` | milk | `•/^ cup` | 0.5 cup | left as-is |
+| `so-strawberry-jam-cake` | flour | `2 Mr cups` | 2.25 cups | left as-is |
+| `so-brown-white-cake` | butter / milk | `% cup`, `Va cup` | 0.5, 0.25 | left as-is |
+| `so-devils-food` | soda water | `% cup` | 0.5 cup | left as-is |
+| `so-coffee-cake` | butter / milk | `% cup` each | 0.5 cup each | left as-is |
+| `so-pineapple-upside-down` | butter | `% cup` | 0.5 cup | left as-is |
+| `so-christening-cake` | butter | `% pound` | 0.75 lb | left as-is |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -269,5 +280,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 276 |
+| The Southern Cook Book (Lustig 1935) | 317 | 296 |
 | The other 20 books | 139 | 0 |

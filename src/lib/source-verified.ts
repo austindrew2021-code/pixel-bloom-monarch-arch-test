@@ -243,4 +243,10 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-bread-pudding", "so-barbara-fritchie", "so-rice-custard", "so-cottage-pudding",
   "so-orange-fluff", "so-southern-whip", "so-spanish-cream", "so-apple-float",
   "so-jelly-meringue", "so-carrot-pudding",
+  // Cakes
+  "so-lady-baltimore", "so-angel-food", "so-fruit-cake", "so-marble-cake",
+  "so-poinciana-cake", "so-poinciana-filling", "so-shortnin-bread", "so-gingerbread",
+  "so-hot-frosted-ginger", "so-jelly-roll", "so-strawberry-shortcake", "so-orange-cake",
+  "so-strawberry-jam-cake", "so-blackberry-roll", "so-pecan-cake", "so-brown-white-cake",
+  "so-devils-food", "so-coffee-cake", "so-pineapple-upside-down", "so-christening-cake",
 ]);

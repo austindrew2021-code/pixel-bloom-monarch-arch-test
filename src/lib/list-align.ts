@@ -320,6 +320,15 @@ const OR_LIST =
   /\b([\w-]+)(?:,\s*[\w-]+)*\s+or\s+[\w-]+(\s+(?:juice|extract|essence|rind|peel|zest|wine))\b/gi;
 
 /**
+ * The other shape an or-list takes: a generic ingredient followed by the kinds
+ * it may be. The Confederate coffee cake asks for "chopped nut meats (almonds,
+ * walnuts or pecans)" and bought a bag of almonds on top of the nuts already on
+ * the list. Keep the generic term and drop the choices offered after it.
+ */
+const ALTERNATIVES =
+  /\b(nut ?meats|nuts|shortening|drippings|berries|greens|herbs|fruit)\s*(?:\u2014|--|-|,|\()\s*[\w-]+(?:,\s*[\w-]+)*\s+or\s+[\w-]+\)?/gi;
+
+/**
  * A sauce, dressing or icing closes by naming what it is served ON, and what it
  * is served on is not in it. The Richmond sour cream dressing ends "Serve on
  * tomatoes. This is very good on chopped cabbage" — and bought itself two
@@ -340,6 +349,7 @@ export function withoutDenials(text: string, isSauce = false): string {
     .replace(NEGATED, " ")
     .replace(FIGURES, " ")
     .replace(INSTEAD, " ")
+    .replace(ALTERNATIVES, "$1")
     .replace(SIDE_SAUCE, " ")
     .replace(OR_LIST, "$1$2")
     .replace(SUITABLE, " ");
