@@ -33,7 +33,6 @@ const CONFIRMED = new Set([
   "foodsthatwillwin15464gut",
   "cu31924003580952",
   "italiancookbooka00gentiala",
-  "nationalwartimen04unit",
   "cu31924003574187",
   "saladssandwiches00hillrich",
   "the-woman-suffrage-cook-book-compilation-accessible-version",
@@ -52,6 +51,31 @@ test("every archive identifier the catalog cites is one that was checked", () =>
       `https://archive.org/advancedsearch.php?q=identifier:(<id>)&fl[]=identifier&output=json\n` +
       `— then add it to CONFIRMED:\n${[...unchecked].join("\n")}`,
   );
+});
+
+/**
+ * Items that resolve on archive.org but are not cookbooks. An identifier that
+ * opens is not evidence that the page it opens holds the recipe: the National
+ * Wartime Nutrition Guide is a four-page USDA pamphlet — the "Basic 7" food
+ * groups and a dozen conservation hints — and carries no recipes at all. Twelve
+ * recipes cited it. Their credits were withdrawn rather than guessed at.
+ */
+const NOT_A_COOKBOOK = new Map([
+  [
+    "nationalwartimen04unit",
+    "National Wartime Nutrition Guide (USDA, 1943) is a four-page food-group " +
+      "chart. It contains no recipes.",
+  ],
+]);
+
+test("no recipe credits a document that holds no recipes", () => {
+  const wrong: string[] = [];
+  for (const r of RECIPES) {
+    const id = r.source?.archiveId;
+    const why = id ? NOT_A_COOKBOOK.get(id) : undefined;
+    if (why) wrong.push(`${r.id} cites ${id} — ${why}`);
+  }
+  assert.deepEqual([...new Set(wrong)], [], wrong.join("\n"));
 });
 
 test("a source names a work and a person, not a tradition", () => {

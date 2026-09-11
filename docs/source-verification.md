@@ -358,6 +358,16 @@ recipe still ships; its source credit does not. This is the diet-tag rule
 applied to provenance: a claim the recipe cannot support is removed rather than
 softened.
 
+The same rule took twelve more. Twelve recipes credited the **National Wartime
+Nutrition Guide** (`nationalwartimen04unit`). The identifier resolves — it was
+one of the fourteen corrected above — but what it opens is a four-page USDA
+pamphlet: the "Basic 7" food-group lists, a short section on foods commonly used
+but not included, and "A Dozen Hints on Conservation". It ends `QPO <T 533707`.
+It contains **no recipes at all**. A resolving identifier is not evidence that
+the page holds the dish. `source-credit.test.ts` now keeps a `NOT_A_COOKBOOK`
+map so the guide cannot be cited again, and the twelve dishes ship uncredited
+until a real 1940s source is read for them.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -367,4 +377,5 @@ softened.
 | The Boston Cooking-School Cook Book (Farmer) | 13 | **12 (complete; 1 credit withdrawn)** |
 | What Mrs. Fisher Knows (Fisher 1881) | 7 | **7 (complete)** |
 | The White House Cook Book (Gillette 1887) | 8 | 7 (floating island missing from the scan) |
-| The other 20 books | 139 | 0 |
+| National Wartime Nutrition Guide (USDA 1943) | 12 | **n/a — holds no recipes; 12 credits withdrawn** |
+| The other 19 books | 127 | 0 |
