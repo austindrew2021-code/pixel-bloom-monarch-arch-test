@@ -634,6 +634,24 @@ matched `overnight` as one word. The books write it as two — "soak the beans
 over night" — and nine recipes across the catalog said it that way and got no
 warning at all, including the salt cod that the whole module was written for.
 
+## The name is not the credit
+
+Reading the books renamed 33 dishes to the titles the books print — "Shrimp
+Creole" to *Stewed Shrimp à la Créole*, "Holishkes" to *Kal Dolmar*, "Potato
+latkes" to *Potato Pancakes*. Nothing was deleted and the catalog still held all
+1,539 dishes, but to anyone searching the app they were gone.
+
+**Matching the source means matching the method, not adopting the book's
+title.** The names are back to what a cook would type; the book's title lives in
+the description, where the provenance already is, and in `aliases`, so it stays
+searchable. Two dishes keep the book's name because the familiar one had become
+untrue of them — the Yom-tov soup has two pounds of beef ribs in it beside the
+chicken, and the prune pudding is set with gelatine rather than whipped — and
+both carry the old name as an alias.
+
+`dish-names.test.ts` runs the 29 searches that broke and fails if any of them
+stops finding its dish.
+
 ## Progress
 
 | Book | Recipes | Verified |

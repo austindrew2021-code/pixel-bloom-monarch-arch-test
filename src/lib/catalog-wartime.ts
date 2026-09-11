@@ -27,6 +27,9 @@ function w(
   /** Portions this makes. Left out, dish() stamps four, which is wrong for
    * a whole cake or a joint. */
   servings?: number,
+  /** Other names the dish goes by, so renaming it to the book's title
+   * does not hide it from search. */
+  aliases?: string[],
 ): Recipe {
   return dish({
     id,
@@ -42,6 +45,7 @@ function w(
     nutrition,
     source,
       ...(servings ? { servings } : {}),
+      ...(aliases && aliases.length ? { aliases } : {}),
   });
 }
 
@@ -225,7 +229,7 @@ export const WARTIME_RECIPES: Recipe[] = [
   ),
   w(
     "vh-ww1-carrot-marmalade",
-    "Pumpkin or carrot marmalade",
+    "Carrot marmalade",
     ["era-1910s", "relish", "vegetarian", "vegan", "gluten-free", "budget"],
     "veg",
     "bowl",
@@ -246,11 +250,10 @@ export const WARTIME_RECIPES: Recipe[] = [
     ],
     ww1,
     { cal: 80, protein: 0, carbs: 21, fat: 0 },
-    16,
-  ),
+    16, ["Pumpkin or carrot marmalade"]),
   w(
     "vh-ww1-wheatless-muffins",
-    "Sour milk cornmeal muffins",
+    "Wheatless corn muffins",
     ["era-1910s", "baking", "vegetarian", "budget", "gluten-free"],
     "veg",
     "dessert",
@@ -274,8 +277,7 @@ export const WARTIME_RECIPES: Recipe[] = [
     ],
     ww1,
     { cal: 145, protein: 4, carbs: 25, fat: 3 },
-    12,
-  ),
+    12, ["Sour milk cornmeal muffins", "buttermilk cornmeal muffins"]),
   w(
     "vh-ww2-cabbage-pork",
     "Cabbage with salt pork",
@@ -377,7 +379,7 @@ export const WARTIME_RECIPES: Recipe[] = [
   ),
   w(
     "vh-ww1-rice-pudding",
-    "Maple rice pudding",
+    "Wartime rice pudding",
     ["era-1910s", "dessert", "vegetarian", "gluten-free", "budget"],
     "veg",
     "dessert",
@@ -400,8 +402,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Serve it warm, or cold the next day.",
     ],
     ww1,
-    { cal: 290, protein: 7, carbs: 58, fat: 4 },
-  ),
+    { cal: 290, protein: 7, carbs: 58, fat: 4 }, undefined, ["Maple rice pudding"]),
   w(
     "vh-ww2-liver-onions",
     "Liver and onions",
