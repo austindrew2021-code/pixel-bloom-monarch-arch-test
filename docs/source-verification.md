@@ -132,6 +132,20 @@ glyph looks like.
 | `so-coffee-cake` | butter / milk | `% cup` each | 0.5 cup each | left as-is |
 | `so-pineapple-upside-down` | butter | `% cup` | 0.5 cup | left as-is |
 | `so-christening-cake` | butter | `% pound` | 0.75 lb | left as-is |
+| `so-turtle-soup` | sherry | `M> cup` | 0.5 cup | left as-is |
+| `so-ham-apples` | brown sugar | `Vz cup` | 0.5 cup | reads as ½ |
+| `so-hamburger-bacon-roast` | bacon | `% pound` | 0.5 lb | left as-is |
+| `so-crepes-suzette` | lemon rind / melted butter | `% lemon`, `% cup` | 0.5, 0.5 | left as-is |
+| `so-rice-flour-waffles` | wheat flour / water | `% cup` each | 0.5 cup each | left as-is |
+| `so-southern-pastry` | ice water | `% cup` | 0.25 cup | left as-is |
+| `so-nut-bread` | sugar / salt | `% cup`, `% teaspoon` | 0.5, 0.5 | left as-is |
+| `so-nut-drop-cookies` | salt | `y^ teaspoon` | 0.25 tsp | left as-is |
+| `so-currant-cakes` | currants | `% pound` | 0.5 lb | left as-is |
+| `so-ginger-cookies` | brown sugar / salt / soda / molasses | `%` each | 0.5, 0.25, 0.5, 0.5 | left as-is |
+| `so-orange-cookies` | sugar / orange juice | `% cup` each | 0.5 cup each | left as-is |
+| `so-chocolate-brownies` | flour / baking powder / salt / walnuts | `%` each | 0.5, 0.25, 0.25, 0.5 | left as-is |
+| `so-pecan-brownies` | maple flavoring | `y% teaspoon` | 0.25 tsp | left as-is |
+| `so-eggs-livers` | onion juice / grated cheese | `V6 teaspoon`, `% cup` | 0.25 tsp, 0.25 cup | left as-is |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -280,5 +294,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 296 |
+| The Southern Cook Book (Lustig 1935) | 317 | **317 (complete)** |
 | The other 20 books | 139 | 0 |

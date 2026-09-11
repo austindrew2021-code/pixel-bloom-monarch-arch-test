@@ -249,4 +249,11 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-hot-frosted-ginger", "so-jelly-roll", "so-strawberry-shortcake", "so-orange-cake",
   "so-strawberry-jam-cake", "so-blackberry-roll", "so-pecan-cake", "so-brown-white-cake",
   "so-devils-food", "so-coffee-cake", "so-pineapple-upside-down", "so-christening-cake",
+  // Cookies, breakfast and the last of the book
+  "so-zazarac-cocktail", "so-nut-bread", "so-turtle-soup", "so-ham-apples",
+  "so-hamburger-bacon-roast", "so-broiled-hamburger", "so-dixie-shortcake", "so-crepes-suzette",
+  "so-biltmore-eggs", "so-eggs-livers", "so-rice-flour-waffles", "so-creole-peppers",
+  "so-southern-pastry", "so-doughnuts", "so-nut-drop-cookies", "so-sour-cream-cookies",
+  "so-currant-cakes", "so-ginger-cookies", "so-colonial-cookies", "so-orange-cookies",
+  "so-chocolate-brownies", "so-pecan-brownies",
 ]);
