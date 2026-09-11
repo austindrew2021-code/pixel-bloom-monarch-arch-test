@@ -6,10 +6,10 @@ function src(book: string, author: string, year: number, era: string, archiveId:
 }
 
 const kephart = src("Camping and Woodcraft", "Horace Kephart", 1917, "1910s", "campingwoodcraft00keph", "Horace Kephart, Camping and Woodcraft (1917). Public domain.");
-const ladiesAid = src("Woman Suffrage Cook Book", "Mrs. Hattie A. Burr", 1886, "1880s", "womansuffragecoo00burr", "Mrs. Hattie A. Burr, The Woman Suffrage Cook Book (Boston, 1886), and typical Ladies' Aid church-supper dishes. Public domain.");
+const ladiesAid = src("Woman Suffrage Cook Book", "Mrs. Hattie A. Burr", 1886, "1880s", "the-woman-suffrage-cook-book-compilation-accessible-version", "Mrs. Hattie A. Burr, The Woman Suffrage Cook Book (Boston, 1886), and typical Ladies' Aid church-supper dishes. Public domain.");
 const kleber = src("The Suffrage Cook Book", "Mrs. L. O. Kleber", 1915, "1910s", "suffragecookbook00kleb", "Mrs. L. O. Kleber, The Suffrage Cook Book (Pittsburgh, 1915). Public domain.");
-const hill = src("Salads, Sandwiches and Chafing Dishes", "Janet McKenzie Hill", 1909, "1900s", "saladssandwiches00hill", "Janet McKenzie Hill, Salads, Sandwiches and Chafing Dishes (1909). Public domain.");
-const bosse = src("Chinese-Japanese Cook Book", "Sara Bosse & Onoto Watanna", 1914, "1910s", "chinesejapanesec00boss", "Sara Bosse and Onoto Watanna (Winnifred Eaton), Chinese-Japanese Cook Book (Rand McNally, 1914). Public domain.");
+const hill = src("Salads, Sandwiches and Chafing Dishes", "Janet McKenzie Hill", 1909, "1900s", "saladssandwiches00hillrich", "Janet McKenzie Hill, Salads, Sandwiches and Chafing Dishes (1909). Public domain.");
+const bosse = src("Chinese-Japanese Cook Book", "Sara Bosse & Onoto Watanna", 1914, "1910s", "chinesejapanesec00boss_1", "Sara Bosse and Onoto Watanna (Winnifred Eaton), Chinese-Japanese Cook Book (Rand McNally, 1914). Public domain.");
 const oliveGreen = src("How to Cook Fish", "Olive Green", 1908, "1900s", "howtocookfish00gree", "Olive Green, How to Cook Fish (Putnam, 1908). Public domain.");
 
 function h(
@@ -23,7 +23,7 @@ function h(
   description: string,
   ingredients: Recipe["ingredients"],
   steps: string[],
-  source: RecipeSource,
+  source: Recipe["source"],
   nutrition: Recipe["nutrition"],
   /** Portions this makes. Left out, dish() stamps four, which is wrong for
    * a whole cake or a joint. */

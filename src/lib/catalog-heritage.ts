@@ -25,7 +25,7 @@ const simmons = src(
   "Amelia Simmons",
   1796,
   "1790s",
-  "americancookery00simm",
+  "americancookery12815gut",
   "Amelia Simmons, American Cookery (Hartford, 1796). Public domain. The first American cookbook.",
 );
 const whiteHouse = src(
@@ -41,7 +41,7 @@ const gentile = src(
   "Maria Gentile",
   1919,
   "1910s",
-  "italiancookbook00gent",
+  "italiancookbooka00gentiala",
   "Maria Gentile, The Italian Cook Book (Italian Book Co., 1919). Public domain via Project Gutenberg #24407.",
 );
 const foreign365 = src(
@@ -49,7 +49,7 @@ const foreign365 = src(
   "Anonymous",
   1908,
   "1900s",
-  "365foreigndishes00newy",
+  "365foreigndishes00phil",
   "365 Foreign Dishes (George W. Jacobs, 1908). Public domain.",
 );
 const paDutch = src(
@@ -65,7 +65,7 @@ const picayune = src(
   "The Picayune",
   1901,
   "1900s",
-  "picayunecreoleco00neworich",
+  "cu31924003574187",
   "The Picayune Creole Cook Book (New Orleans, 1901). Public domain.",
 );
 const kephart = src(
@@ -81,7 +81,7 @@ const ladiesAid = src(
   "Mrs. Hattie A. Burr",
   1886,
   "1880s",
-  "womansuffragecoo00burr",
+  "the-woman-suffrage-cook-book-compilation-accessible-version",
   "Mrs. Hattie A. Burr, The Woman Suffrage Cook Book (Boston, 1886), and typical Ladies' Aid church-supper dishes. Public domain.",
 );
 const hill = src(
@@ -89,7 +89,7 @@ const hill = src(
   "Janet McKenzie Hill",
   1909,
   "1900s",
-  "saladssandwiches00hill",
+  "saladssandwiches00hillrich",
   "Janet McKenzie Hill, Salads, Sandwiches and Chafing Dishes (1909). Public domain.",
 );
 const bosse = src(
@@ -97,7 +97,7 @@ const bosse = src(
   "Sara Bosse & Onoto Watanna",
   1914,
   "1910s",
-  "chinesejapanesec00boss",
+  "chinesejapanesec00boss_1",
   "Sara Bosse and Onoto Watanna (Winnifred Eaton), Chinese-Japanese Cook Book (Rand McNally, 1914). Public domain.",
 );
 const oliveGreen = src(
@@ -113,7 +113,7 @@ const jewish = src(
   "Florence Kreisler Greenbaum",
   1918,
   "1910s",
-  "internationaljew00gree",
+  "cu31924003580952",
   "Florence Kreisler Greenbaum, The International Jewish Cook Book (Bloch, 1918). Public domain.",
 );
 const fulton = src(
@@ -129,7 +129,7 @@ const desserts365 = src(
   "Anonymous",
   1900,
   "1900s",
-  "365desserts00newy",
+  "365dessertsdesse00nels",
   "365 Desserts: A Dessert for Every Day in the Year (1900). Public domain.",
 );
 const twenties = src(

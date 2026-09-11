@@ -6,7 +6,7 @@ const ww1: RecipeSource = {
   author: "C. Houston Goudiss & Alberta M. Goudiss",
   year: 1918,
   era: "1910s",
-  archiveId: "foodsthatwillwin00goud",
+  archiveId: "foodsthatwillwin15464gut",
   credit:
     "C. Houston Goudiss and Alberta M. Goudiss, Foods That Will Win the War and How to Cook Them (1918). Public domain.",
 };
@@ -16,7 +16,7 @@ const ww2: RecipeSource = {
   author: "USDA",
   year: 1943,
   era: "1940s",
-  archiveId: "nationalwartimen00unit",
+  archiveId: "nationalwartimen04unit",
   credit:
     "United States Department of Agriculture, National Wartime Nutrition Guide (1943). Public domain U.S. government work.",
 };

@@ -289,6 +289,46 @@ repo; nothing depends on a scratch directory surviving.
    asserts that every listed recipe reaches the app exactly as stored, so a
    drift shows up as a failure rather than as a surprise in the kitchen.
 
+## Fourteen of the twenty-two archive identifiers pointed at nothing
+
+Checked with the archive's own search API, which answers for a batch in one
+call and is cheap enough to re-run whenever a source is added:
+
+```
+https://archive.org/advancedsearch.php?q=identifier:(id1+OR+id2+OR+...)&fl[]=identifier&rows=60&output=json
+```
+
+`https://archive.org/metadata/<id>` answers `{}` for an item that does not
+exist, which is the single-identifier version of the same check.
+
+Only eight of the twenty-two cited identifiers resolved. Eleven of the
+remaining fourteen were near-misses of a real item and have been corrected:
+
+| cited | actual |
+|---|---|
+| `nationalwartimen00unit` | `nationalwartimen04unit` |
+| `saladssandwiches00hill` | `saladssandwiches00hillrich` |
+| `chinesejapanesec00boss` | `chinesejapanesec00boss_1` |
+| `italiancookbook00gent` | `italiancookbooka00gentiala` |
+| `365desserts00newy` | `365dessertsdesse00nels` |
+| `365foreigndishes00newy` | `365foreigndishes00phil` |
+| `americancookery00simm` | `americancookery12815gut` |
+| `foodsthatwillwin00goud` | `foodsthatwillwin15464gut` |
+| `internationaljew00gree` | `cu31924003580952` |
+| `picayunecreoleco00neworich` | `cu31924003574187` |
+| `womansuffragecoo00burr` | `the-woman-suffrage-cook-book-compilation-accessible-version` |
+
+The other three were not books. `Vegetarian cookery, 1900–1910` by "Early
+vegetarian household", `American luncheon cookery` by "Household pages, 1925"
+and `Pennsylvania German household cooking` by "Traditional" each name a
+tradition where the author should be, and no archive item exists for any of
+them. The nineteen recipes that cited them keep their recipes and lose their
+citations, the same way `ar-ff-chocolate-fudge` did.
+
+`source-credit.test.ts` guards all three shapes: an identifier that was never
+checked, an author that is a tradition rather than a person, and a credit
+missing any of book, author, year or archive item.
+
 ## Fetching a book now that direct download is refused
 
 The egress proxy answers 403 to CONNECT for both `archive.org` and
