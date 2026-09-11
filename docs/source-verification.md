@@ -289,10 +289,39 @@ repo; nothing depends on a scratch directory surviving.
    asserts that every listed recipe reaches the app exactly as stored, so a
    drift shows up as a failure rather than as a surprise in the kitchen.
 
+## Fetching a book now that direct download is refused
+
+The egress proxy answers 403 to CONNECT for both `archive.org` and
+`www.gutenberg.org`, so the `curl` recipe that fetched the Southern book no
+longer works. What does work is `nimble_extract` with `driver: "vx6"`: the whole
+file comes back too large to return inline, so the connector writes it to disk
+under the session's `tool-results/` directory and hands back the path. Parse the
+JSON, take `.content`, and grep it locally exactly as before.
+
+Prefer Gutenberg to archive.org wherever the book exists on both. The archive
+scan of Farmer's book is raw OCR of a two-column page and its ingredient lists
+come out interleaved — Boston brown bread arrives spliced into New England brown
+bread, with "Rye meal / Granulated corn meal / Graham flour" collapsed into one
+unreadable line. The Gutenberg text of the same book is human-proofread and
+clean. **Cite the edition you actually read**, not the one the credit happened
+to name: the Farmer credit moved from the 1918 archive scan to the 1896
+Gutenberg first edition for exactly that reason.
+
+## A credit a recipe has not earned is removed
+
+`ar-ff-chocolate-fudge` credited Fannie Farmer for a chocolate fudge candy.
+Neither the 1896 Gutenberg text nor the 1918 archive scan contains one. Both
+contain **Chocolate Fudge Frosting**, and both indexes list it as "Chocolate
+Fudge, 531" — which is almost certainly where the attribution came from. The
+recipe still ships; its source credit does not. This is the diet-tag rule
+applied to provenance: a claim the recipe cannot support is removed rather than
+softened.
+
 ## Progress
 
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
 | The Southern Cook Book (Lustig 1935) | 317 | **317 (complete)** |
+| The Boston Cooking-School Cook Book (Farmer) | 13 | **12 (complete; 1 credit withdrawn)** |
 | The other 20 books | 139 | 0 |

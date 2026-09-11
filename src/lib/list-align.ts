@@ -329,6 +329,29 @@ const ALTERNATIVES =
   /\b(nut ?meats|nuts|shortening|drippings|berries|greens|herbs|fruit)\s*(?:\u2014|--|-|,|\()\s*[\w-]+(?:,\s*[\w-]+)*\s+or\s+[\w-]+\)?/gi;
 
 /**
+ * Greasing the tin is preparing equipment, not an ingredient of the dish.
+ * Farmer's brown bread goes into "a well-buttered mould" whose "cover should be
+ * buttered before being placed on mould" — and that bought a loaf of brown
+ * bread, which contains no butter at all, two rows of butter.
+ */
+const GREASING =
+  /\b(?:well-)?(?:butter|grease|oil)(?:ed|ing)?\s+(?:the\s+|a\s+|an\s+)?(?:cover|mould|mold|pan|pans|tin|tins|sheet|dish|cups|plate|griddle|skillet|spider|basket|paper|board|slab)\b/gi;
+
+/**
+ * A recipe naming the thing it makes is not naming an ingredient. "The bread
+ * rising might force off cover" is about the loaf in the mould, not about a
+ * loaf you were meant to buy.
+ */
+function withoutSelf(text: string, name: string): string {
+  const words = name
+    .toLowerCase()
+    .split(/[^a-z]+/)
+    .filter((w) => w.length > 3);
+  if (!words.length) return text;
+  return text.replace(new RegExp(`\\b(?:${words.join("|")})\\b`, "gi"), " ");
+}
+
+/**
  * A sauce, dressing or icing closes by naming what it is served ON, and what it
  * is served on is not in it. The Richmond sour cream dressing ends "Serve on
  * tomatoes. This is very good on chopped cabbage" — and bought itself two
@@ -350,6 +373,7 @@ export function withoutDenials(text: string, isSauce = false): string {
     .replace(FIGURES, " ")
     .replace(INSTEAD, " ")
     .replace(ALTERNATIVES, "$1")
+    .replace(GREASING, " ")
     .replace(SIDE_SAUCE, " ")
     .replace(OR_LIST, "$1$2")
     .replace(SUITABLE, " ");
@@ -378,7 +402,7 @@ function forbidden(recipe: Recipe, fix: ListFix): boolean {
  * the same object when the list already covers the method.
  */
 export function alignListToCook(recipe: Recipe): Recipe {
-  const steps = cookedText(recipe);
+  const steps = withoutSelf(cookedText(recipe), recipe.name);
   const isSauce = (recipe.tags ?? []).includes("sauce");
   const extra: Pantry[] = [];
   for (const fix of LIST_FIXES) {
@@ -398,7 +422,7 @@ export function alignListToCook(recipe: Recipe): Recipe {
  * wired title — the alignment test walks the whole catalog with this.
  */
 export function unlistedFoodsInSteps(recipe: Recipe): string[] {
-  const steps = cookedText(recipe);
+  const steps = withoutSelf(cookedText(recipe), recipe.name);
   const isSauce = (recipe.tags ?? []).includes("sauce");
   return LIST_FIXES.filter(
     (fix) => namesFood(steps, fix, isSauce) && !isCovered(recipe, fix) && !forbidden(recipe, fix) && !fix.madeHere?.(recipe),

@@ -3,6 +3,11 @@ import assert from "node:assert/strict";
 import { RECIPES } from "./recipes.ts";
 import { SOUTHERN_RECIPES } from "./catalog-southern.ts";
 import { HERITAGE_RECIPES } from "./catalog-heritage.ts";
+import { BOOK_RECIPES } from "./catalog-books.ts";
+import { CLASSIC_RECIPES } from "./catalog-classics.ts";
+import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
+import { TABLE_RECIPES } from "./catalog-table.ts";
+import { WARTIME_RECIPES } from "./catalog-wartime.ts";
 import { VERIFIED_AGAINST_SOURCE } from "./source-verified.ts";
 
 /**
@@ -16,8 +21,19 @@ import { VERIFIED_AGAINST_SOURCE } from "./source-verified.ts";
  * bought an egg off the back of "a piece of butter as big as an egg". Each of
  * those was caught by eye, which is not a mechanism.
  */
+// Every catalog that carries a source credit, so a newly verified book does not
+// silently fall out of the freeze check by living in a file this list forgot.
 const RAW = new Map<string, (typeof SOUTHERN_RECIPES)[number]>();
-for (const r of [...SOUTHERN_RECIPES, ...HERITAGE_RECIPES]) RAW.set(r.id, r);
+for (const r of [
+  ...SOUTHERN_RECIPES,
+  ...HERITAGE_RECIPES,
+  ...BOOK_RECIPES,
+  ...CLASSIC_RECIPES,
+  ...SWEET_ERA_RECIPES,
+  ...TABLE_RECIPES,
+  ...WARTIME_RECIPES,
+])
+  RAW.set(r.id, r);
 
 test("every verified recipe reaches the app exactly as the catalog stores it", () => {
   for (const id of VERIFIED_AGAINST_SOURCE) {

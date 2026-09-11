@@ -238,7 +238,7 @@ const FOODS: readonly Food[] = [
   { match: /feta/, per100: P(264, 14, 4.1, 21), cupG: 150 },
   { match: /mozzarella/, per100: P(280, 22, 2.2, 17), cupG: 112 },
   { match: /cheddar|gruy|swiss cheese|jack cheese|sharp cheese/, per100: P(403, 25, 1.3, 33), cupG: 113 },
-  { match: /grated cheese|^cheese$|cheese, grated|shredded cheese/, per100: P(390, 25, 2, 31), cupG: 100 },
+  { match: /grated cheese|^cheese$|cheese, grated|shredded cheese|soft mild cheese|mild cheese/, per100: P(390, 25, 2, 31), cupG: 100 },
   { match: /^milk$|whole milk|^milk,|rich milk|sweet milk|scalded milk|hot milk/, per100: P(61, 3.2, 4.8, 3.3), cupG: 244 },
   { match: /egg whites?|white of (?:an? )?eggs?|whites of/, per100: P(52, 10.9, 0.7, 0.2), cupG: 243, eachG: 33 },
   { match: /egg yolks?|yolks? of/, per100: P(322, 16, 3.6, 27), cupG: 243, eachG: 17 },

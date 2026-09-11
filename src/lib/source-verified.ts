@@ -256,4 +256,9 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-southern-pastry", "so-doughnuts", "so-nut-drop-cookies", "so-sour-cream-cookies",
   "so-currant-cakes", "so-ginger-cookies", "so-colonial-cookies", "so-orange-cookies",
   "so-chocolate-brownies", "so-pecan-brownies",
+  // The Boston Cooking-School Cook Book — Fannie Farmer, 1896 (Gutenberg 65061)
+  "ar-ff-parker-house-rolls", "ar-ff-boston-brown-bread", "ar-ff-fish-chowder",
+  "ar-ff-lobster-newburg", "ar-ff-white-sauce", "ar-ff-popovers",
+  "ar-ff-molasses-gingerbread", "ar-ff-cream-tomato-soup", "ar-ff-eggs-goldenrod",
+  "ar-ff-welsh-rarebit", "ar-ff-boston-baked-beans", "ar-ff-spider-corn-cake",
 ]);
