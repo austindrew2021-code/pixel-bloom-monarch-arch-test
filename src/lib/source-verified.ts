@@ -207,4 +207,10 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-potato-croquettes",
   "so-stuffed-potatoes",
   "so-scalloped-potatoes",
+  "so-ambrosia",
+  "so-plum-pudding",
+  "so-queen-trifle",
+  "so-boiled-custard",
+  "so-apple-dumplings",
+  "so-pandowdy",
 ]);
