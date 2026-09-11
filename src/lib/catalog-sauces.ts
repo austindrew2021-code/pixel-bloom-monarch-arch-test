@@ -210,7 +210,7 @@ export const SAUCE_RECIPES: Recipe[] = [
     cuisine: "American",
     tags: ["dry-rub", "sauce", "louisiana", "spicy", "vegetarian", "quick"],
     aliases: ["blackening spice", "cajun seasoning"],
-    nutrition: { cal: 65, protein: 1, carbs: 10, fat: 3 },
+    nutrition: { cal: 40, protein: 1, carbs: 10, fat: 0 },
     ingredients: [
       I("paprika", 3, "tbsp", "Herbs & Spices"),
       I("garlic powder", 1, "tbsp", "Herbs & Spices"),

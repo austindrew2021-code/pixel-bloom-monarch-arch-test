@@ -69,7 +69,8 @@ const FRY_BATH_G = 190;
  * book says "in the 4 cups of lard or oil, deep and hot", and no list of
  * phrasings was ever going to cover that.
  */
-const DEEP_FRY = /\bfr(?:y|ies|ied|ying)\b|deep (?:hot )?(?:fat|lard|oil)|pot of [\w ]{0,14}(?:fat|lard|oil)/i;
+const DEEP_FRY =
+  /\bfr(?:y|ies|ied|ying)\b|deep (?:hot )?(?:fat|lard|oil)|pot of [\w ]{0,14}(?:fat|lard|oil)|kettle of [\w ]{0,14}(?:fat|lard|oil)|(?:boiling|very hot|smoking hot) (?:fat|lard|oil)/i;
 
 /**
  * Two more things that are bought but not eaten, and both are large enough to

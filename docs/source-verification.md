@@ -99,6 +99,7 @@ glyph looks like.
 | `so-shrimps-caliente` | boiling time | `y^ hour` | not committed | step gives the doneness sign instead, and says the book's figure is unreadable |
 | `so-shrimps-caliente` | salt | `MJ teaspoon` | 1 tsp | left as-is |
 | `so-chesapeake-turtle` | nutmeg | `% grated nutmeg` | 0.25 tsp | left as-is; the book also lists 1/2 cup butter its method never uses |
+| `vh-wh-floating-island` | the whole recipe | page 339 absent from the OCR | left as-is | indexed but not in the scanned text; unverified |
 | `so-shrimp-pea-salad` | diced celery | `y% cup` | 0.5 cup | left as-is |
 | `so-grapefruit-ring` | orange juice | `MJ cup` | 0.5 cup | left as-is |
 | `so-grapefruit-ring` | gelatin soak water | `% cup` | 0.5 cup | matches the listed ½ cup cold water |
@@ -364,4 +365,6 @@ softened.
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
 | The Southern Cook Book (Lustig 1935) | 317 | **317 (complete)** |
 | The Boston Cooking-School Cook Book (Farmer) | 13 | **12 (complete; 1 credit withdrawn)** |
+| What Mrs. Fisher Knows (Fisher 1881) | 7 | **7 (complete)** |
+| The White House Cook Book (Gillette 1887) | 8 | 7 (floating island missing from the scan) |
 | The other 20 books | 139 | 0 |

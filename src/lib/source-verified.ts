@@ -265,4 +265,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "ar-mf-jumberlie", "ar-mf-ochra-gumbo", "ar-mf-sweet-potato-pie",
   "ar-mf-corn-bread", "ar-mf-fried-chicken", "ar-mf-ginger-cookies",
   "ar-mf-chow-chow",
+  // The White House Cook Book — Gillette & Ziemann, 1887 (floating island not in the scan)
+  "vh-wh-oyster-stew", "vh-wh-clam-chowder", "vh-wh-beef-a-la-mode",
+  "vh-wh-saratoga", "vh-wh-chicken-croquettes", "vh-wh-macaroni-cheese",
+  "vh-wh-hash",
 ]);
