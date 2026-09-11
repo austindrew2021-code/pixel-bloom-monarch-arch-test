@@ -99,6 +99,20 @@ glyph looks like.
 | `so-shrimps-caliente` | boiling time | `y^ hour` | not committed | step gives the doneness sign instead, and says the book's figure is unreadable |
 | `so-shrimps-caliente` | salt | `MJ teaspoon` | 1 tsp | left as-is |
 | `so-chesapeake-turtle` | nutmeg | `% grated nutmeg` | 0.25 tsp | left as-is; the book also lists 1/2 cup butter its method never uses |
+| `so-shrimp-pea-salad` | diced celery | `y% cup` | 0.5 cup | left as-is |
+| `so-grapefruit-ring` | orange juice | `MJ cup` | 0.5 cup | left as-is |
+| `so-grapefruit-ring` | gelatin soak water | `% cup` | 0.5 cup | matches the listed ½ cup cold water |
+| `so-guspachy` | A-1 sauce | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-apple-chutney` | vinegar | `% cup` | 0.75 cup | left as-is |
+| `so-apple-chutney` | ground cloves | `Vs teaspoon` | 0.25 tsp | left as-is |
+| `so-india-relish` | sweet peppers | `% dozen` | 6 | left as-is |
+| `so-india-relish` | celery seed / allspice / cloves | `% ounce` each | 0.5 oz | left as-is |
+| `so-india-relish` | cinnamon | `% teaspoon` | 0.25 tsp | left as-is |
+| `so-cole-slaw` | onion | `J/& chopped onion` | 0.5 | left as-is |
+| `so-baked-bananas` | sugar | `% cup` | 0.5 cup | left as-is |
+| `so-stewed-prunes` | sugar | `% cup` | 0.5 cup | left as-is |
+| `so-kumquat-prunes` | prune juice | `MJ cup` | not listed | the juice is what the prunes cooked in |
+| `so-sherry-jelly` | boiling water | `2% cups` | 2.5 cups | left as-is |
 | `so-syllabub` | milk | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sweet cider | `% cup` | 0.5 cup | left as-is |
 | `so-syllabub` | sugar | `V-2 cup` | 0.5 cup | left as-is |
@@ -247,5 +261,5 @@ repo; nothing depends on a scratch directory surviving.
 | Book | Recipes | Verified |
 |---|---|---|
 | The Italian Cook Book (Gentile 1919) | 10 | **10** |
-| The Southern Cook Book (Lustig 1935) | 317 | 236 |
+| The Southern Cook Book (Lustig 1935) | 317 | 262 |
 | The other 20 books | 139 | 0 |

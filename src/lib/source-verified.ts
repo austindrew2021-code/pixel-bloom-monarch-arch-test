@@ -230,4 +230,12 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   "so-lobster-thermidor", "so-lobster-newburg", "so-pompano", "so-fish-cakes",
   "so-roe-herring", "so-spanish-mackerel", "so-chesapeake-turtle", "so-flounder",
   "so-planked-shad", "so-shrimps-caliente", "so-shrimp-rice-croquettes",
+  // Salads, relishes, preserved and baked fruit
+  "so-shrimp-pea-salad", "so-lafite-salad", "so-grapefruit-ring", "so-cinnamon-apple-salad",
+  "so-chicken-fruit-salad", "so-avocado-salad", "so-poinsettia-salad", "so-cole-slaw",
+  "so-guspachy", "so-apple-chutney", "so-pepper-relish", "so-india-relish",
+  "so-pickled-cherries", "so-glazed-apples", "so-baked-bananas", "so-fried-peaches",
+  "so-baked-oranges", "so-baked-papaya", "so-stewed-prunes", "so-kumquat-prunes",
+  "so-spiced-cantaloupe", "so-orange-marmalade", "so-grapefruit-marmalade", "so-guava-jelly",
+  "so-pear-chips", "so-sherry-jelly",
 ]);

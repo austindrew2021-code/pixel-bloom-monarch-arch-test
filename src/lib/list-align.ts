@@ -50,7 +50,10 @@ const NO_MEAT = ["vegan", "plant-based", "vegetarian"] as const;
 const LIST_FIXES: readonly ListFix[] = [
   {
     named: /\bsalt(?:ed|ing)?\b/i,
-    notNamed: /\bunsalted\b|\bsalt pork\b|\bsalt cod\b|\bsalted butter\b|\bsalt and pepper of\b/i,
+    // A food bought already salted describes itself; it is not a call for the
+    // salt cellar. "15 salted almonds" asked this catalog for a teaspoon of salt.
+    notNamed:
+      /\bunsalted\b|\bsalt pork\b|\bsalt cod\b|\bsalted butter\b|\bsalted (?:almonds|nuts|peanuts|pecans|cashews|crackers)\b|\bsalt and pepper of\b/i,
     covered: /\bsalt\b/i,
     add: { name: "salt", qty: 1, unit: "tsp", aisle: "Herbs & Spices" },
   },
@@ -297,6 +300,17 @@ const SUITABLE =
 const INSTEAD = /\b(?:in place of|instead of|rather than|in lieu of|to replace)\s+(?:the |a |an )?[\w-]+|\bor\s+[\w-]+\s+(?:in its place|instead)\b/gi;
 
 /**
+ * Interchangeable ingredients offered as an or-list share one head noun, and
+ * only one of them is bought. The book's baked papaya takes "a little sugar and
+ * orange, lime or lemon juice" — one juice, the cook's choice — and it bought a
+ * lime AND a lemon on top of the orange. Keep the first and drop the
+ * alternatives. The head nouns are deliberately few: "bread or cracker crumbs"
+ * must keep reading as crumbs of either kind, not as a loaf of bread.
+ */
+const OR_LIST =
+  /\b([\w-]+)(?:,\s*[\w-]+)*\s+or\s+[\w-]+(\s+(?:juice|extract|essence|rind|peel|zest|wine))\b/gi;
+
+/**
  * A sauce, dressing or icing closes by naming what it is served ON, and what it
  * is served on is not in it. The Richmond sour cream dressing ends "Serve on
  * tomatoes. This is very good on chopped cabbage" — and bought itself two
@@ -317,6 +331,7 @@ export function withoutDenials(text: string, isSauce = false): string {
     .replace(NEGATED, " ")
     .replace(FIGURES, " ")
     .replace(INSTEAD, " ")
+    .replace(OR_LIST, "$1$2")
     .replace(SUITABLE, " ");
   return isSauce ? base.replace(ACCOMPANIES, " ") : base;
 }
