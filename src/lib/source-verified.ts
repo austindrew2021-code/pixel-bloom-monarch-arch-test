@@ -289,4 +289,8 @@ export const VERIFIED_AGAINST_SOURCE: ReadonlySet<string> = new Set([
   // The Suffrage Cook Book — Kleber, 1915. All five are in it.
   "vh-sf-nut-bread", "vh-sf-hot-slaw", "vh-sf-hawaiian-sandwich",
   "vh-sf-carrot-croquettes", "vh-sf-tomato-toast",
+  // The Virginia Housewife — Mary Randolph, 1824. One of the six is in it.
+  "vh-va-chicken-pudding",
+  // Camping and Woodcraft, Vol. I — Kephart, 1916. Four of the six are in it.
+  "vh-kp-bannock", "vh-kp-trail-beans", "vh-kp-foil-potato", "vh-kp-kabobs",
 ]);

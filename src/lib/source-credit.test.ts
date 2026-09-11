@@ -25,7 +25,7 @@ const CONFIRMED = new Set([
   "howtocookfish00gree",
   "suffragecookbook00kleb",
   "virginiahousewif00rand",
-  "campingwoodcraft00keph",
+  "campingwoodcraft01keph",
   "365dessertsdesse00nels",
   "365foreigndishes00phil",
   "americancookery12815gut",

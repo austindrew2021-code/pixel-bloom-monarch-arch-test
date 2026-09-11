@@ -297,7 +297,7 @@ export const WARTIME_RECIPES: Recipe[] = [
       "Pepper the cabbage. Splash with vinegar. Serve hot with the pork bits on top.",
     ],
     undefined,
-    { cal: 75, protein: 3, carbs: 17, fat: 0 },
+    { cal: 285, protein: 5, carbs: 17, fat: 23 },
   ),
   w(
     "vh-ww2-stuffed-potato",

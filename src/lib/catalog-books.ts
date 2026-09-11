@@ -7,7 +7,6 @@ function src(book: string, author: string, year: number, era: string, archiveId:
 
 const foreign365 = src("365 Foreign Dishes", "Anonymous", 1908, "1900s", "365foreigndishes00phil", "365 Foreign Dishes (George W. Jacobs, 1908). Public domain.");
 const picayune = src("The Picayune Creole Cook Book", "The Picayune", 1901, "1900s", "cu31924003574187", "The Picayune Creole Cook Book (New Orleans, 1901). Public domain.");
-const kephart = src("Camping and Woodcraft", "Horace Kephart", 1917, "1910s", "campingwoodcraft00keph", "Horace Kephart, Camping and Woodcraft (1917). Public domain.");
 const hill = src("Salads, Sandwiches and Chafing Dishes", "Janet McKenzie Hill", 1909, "1900s", "saladssandwiches00hillrich", "Janet McKenzie Hill, Salads, Sandwiches and Chafing Dishes (1909). Public domain.");
 const bosse = src("Chinese-Japanese Cook Book", "Sara Bosse & Onoto Watanna", 1914, "1910s", "chinesejapanesec00boss_1", "Sara Bosse and Onoto Watanna (Winnifred Eaton), Chinese-Japanese Cook Book (Rand McNally, 1914). Public domain.");
 const oliveGreen = src("How to Cook Fish", "Olive Green", 1908, "1900s", "howtocookfish00gree", "Olive Green, How to Cook Fish (Putnam, 1908). Public domain.");

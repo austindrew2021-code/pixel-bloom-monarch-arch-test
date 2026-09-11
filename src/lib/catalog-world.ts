@@ -503,7 +503,7 @@ export const WORLD_RECIPES: Recipe[] = [
   }),
   dish({
     id: "nl-fish-cakes",
-    nutrition: { cal: 285, protein: 6, carbs: 45, fat: 9 },
+    nutrition: { cal: 410, protein: 28, carbs: 46, fat: 11 },
     name: "Newfoundland fish cakes",
     description: "Salt cod and potato patties fried gold. Breakfast, supper, leftover scoff.",
     minutes: 40,

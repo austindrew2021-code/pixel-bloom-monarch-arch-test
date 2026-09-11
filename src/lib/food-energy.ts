@@ -219,7 +219,10 @@ const FOODS: readonly Food[] = [
   { match: /\b(?:tuna|sardines?|anchov\w*|salmon|mackerel|kippers?|herring)\b.*\bin (?:olive |vegetable )?oil\b/, per100: P(186, 25, 0, 9), unitG: { can: 120, cans: 120, tin: 120, tins: 120 }, eachG: 120, cupG: 150 },
   // --- water and things with no energy ---------------------------------
   { match: /^(?:ice |boiling |cold |warm |hot |soda )?water$|^water,|^dashi$|^ice$|^cracked ice$|^shaved ice$/, per100: P(0, 0, 0, 0), cupG: 237 },
-  { match: /\bsalt\b|^kosher salt$|^sea salt$|^celery salt$/, per100: P(0, 0, 0, 0), cupG: 292 },
+  // \bsalt\b sat 40 rules above the salt-pork entry and swallowed it, so every
+  // salt pork, salt cod and salt beef row in the catalog weighed as pure salt:
+  // nothing at all. Salt followed by a food noun is that food, not seasoning.
+  { match: /\bsalt\b(?!\s*(?:pork|cod|fish|beef|meat|herring|mackerel))|^kosher salt$|^sea salt$|^celery salt$/, per100: P(0, 0, 0, 0), cupG: 292 },
   { match: /^(?:black |white |ground |coarse black )?pepper$|peppercorns/, per100: P(251, 10, 64, 3), cupG: 100 },
   { match: /bitters/, per100: P(200, 0, 0, 0), cupG: 230, liquid: true },
   { match: /food colou?ring|vegetable colou?ring/, per100: P(0, 0, 0, 0), cupG: 240 },
@@ -488,9 +491,9 @@ const FOODS: readonly Food[] = [
   { match: /chicken (?:wings|tenders)|ground chicken|stewing chicken|frying chicken|broiling chicken|young chicken|rotisserie chicken|cooked shredded chicken|roasted chicken bones|^chickens$|schmaltz|chicken fat/, per100: P(200, 26, 0, 11), eachG: 1400, cupG: 140 },
   { match: /baby back ribs|roast pork|pork cutlets|pork fat|bony pork|guanciale|pancetta|prosciutto|salami|pepperoni|bratwurst|hot dogs|spam|smoked ham|city ham|ground ham|cracklings|pork rinds|pork p[aâ]t[eé]|chitterlings|ham broth|meat broth|lean soup meat|soup bone|ham bone/, per100: P(300, 20, 2, 24), eachG: 250, cupG: 140, unitG: { slice: 25, slices: 25 } },
   { match: /cubed steak|minute steak/, per100: P(230, 26, 0, 13), eachG: 170 },
-  { match: /ribeye|filet mignon|beef roast|beef round|beef shank|roast beef|corned beef|lean beef|thinly sliced beef|ground bison|elk|venison|wild boar|goat meat|rabbit|opossum|oxtail|sweetbreads|calves. liver|suckling pig|frog legs|fat hen|cooked tongue/, per100: P(230, 26, 0, 13), eachG: 400, cupG: 140 },
+  { match: /ribeye|filet mignon|beef roast|beef round|salt beef|beef shank|roast beef|corned beef|lean beef|thinly sliced beef|ground bison|elk|venison|wild boar|goat meat|rabbit|opossum|oxtail|sweetbreads|calves. liver|suckling pig|frog legs|fat hen|cooked tongue/, per100: P(230, 26, 0, 13), eachG: 400, cupG: 140 },
   { match: /meatballs/, per100: P(250, 18, 8, 16), eachG: 30, cupG: 200 },
-  { match: /lump crab|imitation crab|salted cod|carp|pike|branzino|shiitake|cooked fish/, per100: P(110, 20, 1, 2), eachG: 180, cupG: 145 },
+  { match: /lump crab|imitation crab|salted cod|salt cod|salt fish|carp|pike|branzino|shiitake|cooked fish/, per100: P(110, 20, 1, 2), eachG: 180, cupG: 145 },
   { match: /bamboo shoots|daikon|fennel|poblano|nopales|bok choy|napa cabbage|snap peas|edamame|brussels sprouts|burdock|water chestnuts|salsify|squash$|egg ?plant|young okra|okra pods|pearl onions|butter lettuce|leaf lettuce|mixed greens|fris[eé]e|escarole|roasted vegetables|mixed vegetables|leftover vegetables|frozen corn|canned corn|green corn|fresh corn pulp|drained crushed corn|crushed canned corn|corn on the cob|wax beans|fava beans|dried beans|pea beans|dried peas|shelled edamame|frozen or canned peas|chopped pimento|diced pimentos|^pimento$|sugar pumpkin|green plantains|ripe plantains|canned ackee|fiddleheads|young jackfruit|mixed fruit/, per100: P(45, 2, 9, 0.4), eachG: 120, cupG: 140, unitG: { head: 500, heads: 500, ear: 90, ears: 90, can: 400, cans: 400 } },
   { match: /asian pear|key limes?|red grapes|apricots|mango|orange segments|apple juice|tomato juice|lemon zest|lime zest|lemon peel|grape jelly|apricot jam|tart jelly|cherry pie filling|mango puree/, per100: P(60, 0.6, 15, 0.2), eachG: 100, cupG: 240 },
   { match: /chestnuts|ground egusi|toasted sesame|unsweetened coconut|milk chocolate|dark rum/, per100: P(400, 8, 40, 25), cupG: 140 },

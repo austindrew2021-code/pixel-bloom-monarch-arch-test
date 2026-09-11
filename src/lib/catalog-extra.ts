@@ -25,7 +25,7 @@ function dish(
 export const EXTRA_RECIPES: Recipe[] = [
   dish({
     id: "jiggs-dinner",
-    nutrition: { cal: 455, protein: 21, carbs: 73, fat: 11 },
+    nutrition: { cal: 980, protein: 79, carbs: 73, fat: 41 },
     name: "Jiggs dinner",
     description: "Newfoundland boiled dinner: salt beef, pease pudding, cabbage, and root veg.",
     minutes: 180,
@@ -86,7 +86,7 @@ export const EXTRA_RECIPES: Recipe[] = [
   }),
   dish({
     id: "fish-and-brewis",
-    nutrition: { cal: 60, protein: 2, carbs: 12, fat: 1 },
+    nutrition: { cal: 400, protein: 26, carbs: 13, fat: 26 },
     name: "Fish and brewis",
     description: "Salt cod, hard bread, and scrunchions. A winter staple.",
     minutes: 40,

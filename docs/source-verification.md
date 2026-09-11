@@ -506,6 +506,52 @@ never matched a singular "stewed tomato", and only the exact `^tomato$` rule
 was catching the bare word. And butter named for the pan rather than the batter
 had no rule at all.
 
+### The Virginia Housewife: one of six
+
+Randolph's *Chicken Pudding, a Favourite Virginia Dish* is in the book and ours
+now matches it: the chicken is **boiled nearly done** with thyme and parsley
+before it goes into a thin egg batter, not browned in butter, and white gravy is
+sent in a boat. The book makes it with four young chickens; ours is a quarter of
+that and says so.
+
+The other five are not in the book under any spelling. It has no beaten biscuit
+(its beaten dough is *Apoquiniminc Cakes*, an egg-and-butter paste beaten with a
+pestle and baked on a gridiron), no fried catfish (*Catfish Soup* and *To Make a
+Curry of Catfish*), no hoe cake (*Batter Cakes* of hominy and meal on a
+griddle), no apple tansey (its *Tansey Pudding* is cream and spinach juice with
+no apple in it), and no Brunswick stew at all. Five credits withdrawn.
+
+### Camping and Woodcraft: the wrong printing, and a rights problem
+
+`campingwoodcraft00keph` is the **1937 Macmillan printing**. Its metadata says
+`"access-restricted-item": "true"`, its collections are `inlibrary` and
+`printdisabled`, and its `_djvu.txt` is marked private — the text cannot be read
+at all. The credit called it 1917 and called it public domain. Both were wrong,
+and the second was the kind of wrong that matters.
+
+The credit now points at **`campingwoodcraft01keph`, Volume I: Camping (1916)**,
+which is unrestricted, readable, and is where the cookery chapters are. Read
+against it, four of the six hold:
+
+| Recipe | In the book? |
+|---|---|
+| `vh-kp-bannock` | Yes, pp. 344–5, quoting Kathrene Pinkerton. **Double the lard**, a dough thin enough to smooth with a knife, the pan held **three feet above the blaze** until it doubles, then lowered and browned on both sides. "A bannock should never be baked in less than twenty-five minutes." |
+| `vh-kp-trail-beans` | Yes — *Beans, Baked*, p. 367. Parboil until one will **pop open when blown upon**, parboil the pork separately, gash it and layer it, a tablespoon of molasses, hung high over the fire two hours. No onion and no mustard. |
+| `vh-kp-foil-potato` | Yes — *Potatoes, Baked*, quoting Nessmuk, and **there is no foil in it**: a basin of hardwood coals under the fore-stick, the potatoes buried in hot sand and ashes, tried with a sharpened hardwood sliver, the steam let out and eaten at once. |
+| `vh-kp-kabobs` | Yes, p. 291. A tender cut pounded and broken into fragments, impaled on a sharpened stick, **plunged for a moment into a clear bright flame** and then toasted slowly over the embers. No onion and no bacon on the stick. |
+| `vh-kp-mulligan` | **No.** The index reads "Mulligan (skilly), 376", and page 376 is *Skilligalee* — a perpetual stock-pot of fag-ends kept simmering at all hours, not a dredged beef stew. Credit withdrawn. |
+| `vh-kp-camp-coffee-stew` | **No.** There is no coffee in any stew in the book, and its coffee chapter is emphatic that coffee must not boil. Credit withdrawn. |
+
+### The salt rule ate every salt pork in the catalog
+
+`\bsalt\b` sat forty rules above the salt-pork entry and matched first, so
+**every salt pork, salt cod and salt beef row in the catalog weighed as pure
+salt: nothing at all.** Boston baked beans came to 120 kcal a serving, pot
+likker to 40, parsnips and salt pork to 65. With salt followed by a food noun
+now excluded from the seasoning rule, they read 755, 465 and 880. Fifteen
+recipes were understated by this; the parsnip dish needed eight portions rather
+than four once its pork was actually counted.
+
 ## Progress
 
 | Book | Recipes | Verified |
@@ -522,4 +568,6 @@ had no rule at all.
 | 365 Desserts (1900) | 8 | **6 (complete; 2 credits withdrawn)** |
 | The Suffrage Cook Book (Kleber 1915) | 5 | **5 (complete)** |
 | "Woman Suffrage Cook Book" | 7 | **n/a — the identifier is not that book; 7 credits withdrawn** |
-| The other 13 books | 83 | 0 |
+| The Virginia Housewife (1824) | 6 | **1 (complete; 5 credits withdrawn)** |
+| Camping and Woodcraft, Vol. I (1916) | 6 | **4 (complete; 2 credits withdrawn)** |
+| The other 11 books | 71 | 0 |
