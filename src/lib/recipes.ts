@@ -13,6 +13,7 @@ import { CLASSIC_RECIPES } from "./catalog-classics.ts";
 import { WARTIME_RECIPES } from "./catalog-wartime.ts";
 import { HERITAGE_RECIPES } from "./catalog-heritage.ts";
 import { BOOK_RECIPES } from "./catalog-books.ts";
+import { FOREIGN_365_RECIPES } from "./catalog-365-foreign.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { polishCatalog } from "./cook-steps.ts";
@@ -1503,6 +1504,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...WARTIME_RECIPES,
     ...HERITAGE_RECIPES,
     ...BOOK_RECIPES,
+    ...FOREIGN_365_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
   ],
