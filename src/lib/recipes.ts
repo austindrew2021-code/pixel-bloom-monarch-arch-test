@@ -15,6 +15,7 @@ import { HERITAGE_RECIPES } from "./catalog-heritage.ts";
 import { BOOK_RECIPES } from "./catalog-books.ts";
 import { FOREIGN_365_RECIPES } from "./catalog-365-foreign.ts";
 import { FOREIGN_365_APR_JUN_RECIPES } from "./catalog-365-foreign-apr-jun.ts";
+import { FOREIGN_365_JUL_SEP_RECIPES } from "./catalog-365-foreign-jul-sep.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { polishCatalog } from "./cook-steps.ts";
@@ -1507,6 +1508,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...BOOK_RECIPES,
     ...FOREIGN_365_RECIPES,
     ...FOREIGN_365_APR_JUN_RECIPES,
+    ...FOREIGN_365_JUL_SEP_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
   ],
