@@ -11,7 +11,13 @@ import {
   HiLoGame, TowerGame,
   type HiLoEnd, type HiLoView, type TowerEnd, type TowerView,
 } from "@/components/arcade/chain-games";
+import {
+  BlackjackPlay, CardLobby, CarrierPlay, TableCardPlay, VideoPokerPlay,
+  type BjEnd, type BjRound, type CarrierEnd, type CarrierRound,
+  type PokerEnd, type PokerRound, type TableOption, type TableResult,
+} from "@/components/arcade/card-room";
 import { SlotLobby } from "@/components/arcade/slot-lobby";
+import { VikingPlay, type VikingResult } from "@/components/arcade/viking-play";
 import {
   DiceGame, KenoGame, RouletteGame, ScratchGame, WheelGame,
   type DiceResult, type KenoResult, type RouletteResult,
@@ -29,6 +35,14 @@ import type { Bet, RouletteDetail } from "@/lib/arcade/games/roulette";
 import type { ScratchDetail } from "@/lib/arcade/games/scratch";
 import type { Difficulty } from "@/lib/arcade/games/tower";
 import type { RiskTier, WheelDetail } from "@/lib/arcade/games/wheel";
+import type { Action } from "@/lib/arcade/cards/blackjack";
+import type { VikingDetail } from "@/lib/arcade/games/viking";
+import type { TableCardDetail } from "@/lib/arcade/cards/table-card";
+import {
+  actBlackjack, bankCarrier, dealBlackjack, dealPoker, drawPoker, flyCarrier,
+  getBlackjackRound, getCardInfo, getCarrierRound, getPokerRound,
+  openCarrier, playTableCard, playViking,
+} from "@/lib/arcade/server-cards";
 import { GAMES, GAME_IDS, type GameId } from "@/lib/arcade/games/index";
 import type { TumbleDetail } from "@/lib/arcade/games/tumble";
 import { dropBall, getArcade, getLeaderboard } from "@/lib/arcade/server";
@@ -54,12 +68,18 @@ import { UserButton } from "@/lib/auth/gates";
  * in feel, not in what they are worth.
  */
 /** The picker holds the five standalone games plus the slot catalogue. */
-type Tab = GameId | "slots";
+type Tab = GameId | "slots" | "cards";
 
 export function Cascade() {
   const queryClient = useQueryClient();
   const [game, setGame] = useState<Tab>("plinko");
   const [slotId, setSlotId] = useState<string | null>(null);
+  const [cardId, setCardId] = useState<string | null>(null);
+  const [pokerEnd, setPokerEnd] = useState<PokerEnd>(null);
+  const [bjEnd, setBjEnd] = useState<BjEnd>(null);
+  const [tableResult, setTableResult] = useState<TableResult>(null);
+  const [vikingResult, setVikingResult] = useState<VikingResult>(null);
+  const [carrierEnd, setCarrierEnd] = useState<CarrierEnd>(null);
 
   const [runs, setRuns] = useState<BallRun[]>([]);
   const [flash, setFlash] = useState<string | null>(null);
@@ -115,6 +135,12 @@ export function Cascade() {
     setTumble(null);
     setMinesEnd(null);
     setSlotId(null);
+    setCardId(null);
+    setPokerEnd(null);
+    setBjEnd(null);
+    setTableResult(null);
+    setVikingResult(null);
+    setCarrierEnd(null);
     setDiceResult(null);
     setWheelResult(null);
     setRouletteResult(null);
@@ -239,6 +265,144 @@ export function Cascade() {
     onError: (error) => toast(message(error)),
   });
 
+  const cardInfo = useQuery({
+    queryKey: ["cards", "info", cardId],
+    queryFn: () => getCardInfo({ data: { titleId: cardId! } }),
+    enabled: game === "cards" && !!cardId,
+  });
+  const pokerRound = useQuery({
+    queryKey: ["cards", "poker"],
+    queryFn: () => getPokerRound(),
+    enabled: game === "cards" && cardInfo.data?.title.family === "video-poker",
+  });
+  const bjRound = useQuery({
+    queryKey: ["cards", "blackjack"],
+    queryFn: () => getBlackjackRound(),
+    enabled: game === "cards" && cardInfo.data?.title.family === "blackjack",
+  });
+  const carrierRound = useQuery({
+    queryKey: ["cards", "carrier"],
+    queryFn: () => getCarrierRound(),
+    enabled: game === "cards" && cardInfo.data?.title.family === "carrier",
+  });
+
+  const deal = useMutation({
+    mutationFn: () => dealPoker({ data: { titleId: cardId! } }),
+    onSuccess: () => {
+      setPokerEnd(null);
+      void queryClient.invalidateQueries({ queryKey: ["cards", "poker"] });
+      refresh();
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const draw = useMutation({
+    mutationFn: (held: boolean[]) => drawPoker({ data: { held } }),
+    onSuccess: (result) => {
+      setPokerEnd({ finals: result.finals, held: result.held, points: result.points });
+      showFlash(result.points);
+      refresh();
+      void queryClient.invalidateQueries({ queryKey: ["cards", "poker"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const dealBj = useMutation({
+    mutationFn: () => dealBlackjack({ data: { titleId: cardId! } }),
+    onSuccess: () => {
+      setBjEnd(null);
+      void queryClient.invalidateQueries({ queryKey: ["cards", "blackjack"] });
+      refresh();
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const actBj = useMutation({
+    mutationFn: (action: Action) => actBlackjack({ data: { action } }),
+    onSuccess: (result) => {
+      if (result.finished) {
+        setBjEnd({
+          player: result.player, dealer: result.dealer,
+          outcome: result.outcome, points: result.points,
+        });
+        showFlash(result.points);
+        refresh();
+      }
+      void queryClient.invalidateQueries({ queryKey: ["cards", "blackjack"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const dealTable = useMutation({
+    mutationFn: (bet: string) => playTableCard({ data: { titleId: cardId!, bet } }),
+    onSuccess: (result) => {
+      const detail = result.detail as unknown as TableCardDetail;
+      setTableResult({
+        labels: detail.labels, outcome: detail.outcome,
+        won: detail.won, points: result.points,
+      });
+      showFlash(result.points);
+      refresh();
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const sail = useMutation({
+    mutationFn: () => playViking({ data: { titleId: cardId! } }),
+    onSuccess: (result) => {
+      setVikingResult({
+        detail: result.detail as unknown as VikingDetail,
+        points: result.points,
+      });
+      showFlash(result.points);
+      refresh();
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const launch = useMutation({
+    mutationFn: () => openCarrier(),
+    onSuccess: () => {
+      setCarrierEnd(null);
+      void queryClient.invalidateQueries({ queryKey: ["cards", "carrier"] });
+      refresh();
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const fly = useMutation({
+    mutationFn: (lane: number) => flyCarrier({ data: { lane } }),
+    onSuccess: (result) => {
+      if (!result.survived) {
+        setCarrierEnd({
+          grid: result.grid, path: carrierRound.data?.path ?? [], points: 0,
+        });
+        refresh();
+      } else if ("landed" in result && result.landed) {
+        setCarrierEnd({
+          grid: result.grid,
+          path: [...(carrierRound.data?.path ?? []), 0],
+          points: result.points,
+        });
+        showFlash(result.points);
+        refresh();
+      }
+      void queryClient.invalidateQueries({ queryKey: ["cards", "carrier"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const breakOff = useMutation({
+    mutationFn: () => bankCarrier(),
+    onSuccess: (result) => {
+      setCarrierEnd({ grid: result.grid, path: result.path, points: result.points });
+      showFlash(result.points);
+      refresh();
+      void queryClient.invalidateQueries({ queryKey: ["cards", "carrier"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
   const dealHiLo = useMutation({
     mutationFn: () => openHiLo(),
     onSuccess: () => {
@@ -339,7 +503,10 @@ export function Cascade() {
   const busy =
     drop.isPending || play.isPending || openRound.isPending || reveal.isPending ||
     bank.isPending || dealHiLo.isPending || makeCall.isPending || cashHiLo.isPending ||
-    startTower.isPending || climb.isPending || cashTower.isPending;
+    startTower.isPending || climb.isPending || cashTower.isPending ||
+    deal.isPending || draw.isPending || dealBj.isPending || actBj.isPending ||
+    dealTable.isPending || sail.isPending || launch.isPending || fly.isPending ||
+    breakOff.isPending;
 
   return (
     <Shell>
@@ -361,6 +528,17 @@ export function Cascade() {
 
       <nav className="mt-4 -mx-4 overflow-x-auto px-4">
         <div className="flex gap-1.5 pb-1">
+          <button
+            type="button"
+            onClick={() => setGame("cards")}
+            className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold transition ${
+              game === "cards"
+                ? "bg-amber-500 text-slate-950"
+                : "bg-slate-900 text-slate-300 hover:bg-slate-800"
+            }`}
+          >
+            Card Room
+          </button>
           <button
             type="button"
             onClick={() => setGame("slots")}
@@ -388,7 +566,7 @@ export function Cascade() {
           ))}
         </div>
       </nav>
-      {game !== "slots" ? (
+      {game !== "slots" && game !== "cards" ? (
         <p className="mt-1 text-xs text-slate-500">{GAMES[game].tagline}</p>
       ) : null}
 
@@ -442,6 +620,76 @@ export function Cascade() {
             result={tumble}
             disabled={out}
           />
+        ) : null}
+
+        {game === "cards" ? (
+          cardId && cardInfo.data ? (
+            <div>
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCardId(null)}
+                  className="text-xs text-amber-400 underline underline-offset-2"
+                >
+                  ← All games
+                </button>
+                <p className="truncate text-sm font-bold text-slate-100">
+                  {cardInfo.data.title.name}
+                </p>
+              </div>
+              {cardInfo.data.title.family === "video-poker" ? (
+                <VideoPokerPlay
+                  round={(pokerRound.data as PokerRound) ?? null}
+                  ended={pokerEnd}
+                  busy={busy}
+                  disabled={out}
+                  onDeal={() => deal.mutate()}
+                  onDraw={(held) => draw.mutate(held)}
+                />
+              ) : null}
+              {cardInfo.data.title.family === "blackjack" ? (
+                <BlackjackPlay
+                  round={(bjRound.data as BjRound) ?? null}
+                  ended={bjEnd}
+                  busy={busy}
+                  disabled={out}
+                  onDeal={() => dealBj.mutate()}
+                  onAct={(action) => actBj.mutate(action)}
+                />
+              ) : null}
+              {cardInfo.data.title.family === "table" ? (
+                <TableCardPlay
+                  options={(cardInfo.data.options ?? []) as TableOption[]}
+                  result={tableResult}
+                  busy={busy}
+                  disabled={out}
+                  onPlay={(bet) => dealTable.mutate(bet)}
+                />
+              ) : null}
+              {cardInfo.data.title.family === "viking" ? (
+                <VikingPlay
+                  onSail={() => sail.mutate()}
+                  busy={busy}
+                  result={vikingResult}
+                  disabled={out}
+                  hard={cardInfo.data.title.hard}
+                />
+              ) : null}
+              {cardInfo.data.title.family === "carrier" ? (
+                <CarrierPlay
+                  round={(carrierRound.data as CarrierRound) ?? null}
+                  ended={carrierEnd}
+                  busy={busy}
+                  disabled={out}
+                  onOpen={() => launch.mutate()}
+                  onFly={(lane) => fly.mutate(lane)}
+                  onBank={() => breakOff.mutate()}
+                />
+              ) : null}
+            </div>
+          ) : (
+            <CardLobby onPick={setCardId} />
+          )
         ) : null}
 
         {game === "slots" ? (
@@ -542,7 +790,9 @@ export function Cascade() {
       </section>
 
       <div className="mt-3 grid gap-2">
-        {allowance.remaining <= 5 && !(game === "slots" && !slotId) ? (
+        {allowance.remaining <= 5 &&
+        !(game === "slots" && !slotId) &&
+        !(game === "cards" && !cardId) ? (
           <AdOffer
             placement={out ? "out-of-drops" : "top-up"}
             label={`Watch a short video for +${allowance.perAd} plays`}
