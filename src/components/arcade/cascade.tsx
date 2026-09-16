@@ -7,6 +7,8 @@ import { AscentGame, type AscentResult } from "@/components/arcade/ascent-game";
 import { CoinMatch, type CoinResult } from "@/components/arcade/coin-match";
 import { DropBoard, type BallRun } from "@/components/arcade/drop-board";
 import { MinesGame, type MinesEnd, type MinesView } from "@/components/arcade/mines-game";
+import { SlotLobby } from "@/components/arcade/slot-lobby";
+import { SlotPlay } from "@/components/arcade/slot-play";
 import { TumbleGame, type TumbleResult } from "@/components/arcade/tumble-game";
 import { WalletCard } from "@/components/arcade/wallet-card";
 import type { AscentDetail } from "@/lib/arcade/games/ascent";
@@ -31,9 +33,13 @@ import { UserButton } from "@/lib/auth/gates";
  * ladder are the same numbers throughout. That is the point: the games differ
  * in feel, not in what they are worth.
  */
+/** The picker holds the five standalone games plus the slot catalogue. */
+type Tab = GameId | "slots";
+
 export function Cascade() {
   const queryClient = useQueryClient();
-  const [game, setGame] = useState<GameId>("plinko");
+  const [game, setGame] = useState<Tab>("plinko");
+  const [slotId, setSlotId] = useState<string | null>(null);
 
   const [runs, setRuns] = useState<BallRun[]>([]);
   const [flash, setFlash] = useState<string | null>(null);
@@ -71,6 +77,7 @@ export function Cascade() {
     setAscent(null);
     setTumble(null);
     setMinesEnd(null);
+    setSlotId(null);
   }, [game]);
 
   const drop = useMutation({
@@ -195,6 +202,17 @@ export function Cascade() {
 
       <nav className="mt-4 -mx-4 overflow-x-auto px-4">
         <div className="flex gap-1.5 pb-1">
+          <button
+            type="button"
+            onClick={() => setGame("slots")}
+            className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold transition ${
+              game === "slots"
+                ? "bg-amber-500 text-slate-950"
+                : "bg-slate-900 text-slate-300 hover:bg-slate-800"
+            }`}
+          >
+            Slots
+          </button>
           {GAME_IDS.map((id) => (
             <button
               key={id}
@@ -211,7 +229,9 @@ export function Cascade() {
           ))}
         </div>
       </nav>
-      <p className="mt-1 text-xs text-slate-500">{GAMES[game].tagline}</p>
+      {game !== "slots" ? (
+        <p className="mt-1 text-xs text-slate-500">{GAMES[game].tagline}</p>
+      ) : null}
 
       <section className="relative mt-3">
         {flash ? (
@@ -265,6 +285,20 @@ export function Cascade() {
           />
         ) : null}
 
+        {game === "slots" ? (
+          slotId ? (
+            <SlotPlay
+              slotId={slotId}
+              onBack={() => setSlotId(null)}
+              disabled={out}
+              remaining={allowance.remaining}
+              onScored={(points) => showFlash(points)}
+            />
+          ) : (
+            <SlotLobby onPick={setSlotId} />
+          )
+        ) : null}
+
         {game === "mines" ? (
           <MinesGame
             round={(mines.data as MinesView) ?? null}
@@ -279,7 +313,7 @@ export function Cascade() {
       </section>
 
       <div className="mt-3 grid gap-2">
-        {allowance.remaining <= 5 ? (
+        {allowance.remaining <= 5 && !(game === "slots" && !slotId) ? (
           <AdOffer
             placement={out ? "out-of-drops" : "top-up"}
             label={`Watch a short video for +${allowance.perAd} plays`}
