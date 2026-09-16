@@ -5,6 +5,7 @@ import { verifyCommitment } from "@/lib/arcade/fair";
 import { verifyDrop } from "@/lib/arcade/plinko";
 import { getSeasonProof } from "@/lib/arcade/server";
 import { seasonId } from "@/lib/arcade/season";
+import { ArcadeQueryProvider } from "@/components/arcade/query-provider";
 import { RedirectToSignIn, SignedIn, SignedOut } from "@/lib/auth/gates";
 
 export const Route = createFileRoute("/cascade/verify")({ component: Page });
@@ -13,7 +14,9 @@ function Page() {
   return (
     <>
       <SignedIn>
-        <Verify />
+        <ArcadeQueryProvider>
+          <Verify />
+        </ArcadeQueryProvider>
       </SignedIn>
       <SignedOut>
         <RedirectToSignIn />
