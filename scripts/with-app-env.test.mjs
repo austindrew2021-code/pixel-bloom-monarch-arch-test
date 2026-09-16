@@ -59,8 +59,11 @@ test("an explicit process-env override wins over the file", () => {
   assert.equal(merged.PATH, "/usr/bin");
 });
 
-test("the template ships auth off", () => {
-  assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "false" });
+test("this app ships auth on", () => {
+  // Cascade needs real accounts: the leaderboard is identified and prizes are
+  // paid to a person. Turning sign-in on means removing VITE_AUTH_ENABLED
+  // entirely rather than setting it to "true", so the key must be absent.
+  assert.equal(readAppEnv(projectRoot()).VITE_AUTH_ENABLED, undefined);
 });
 
 test("vite loadEnv resolves the wrapped value", () => {
@@ -80,7 +83,9 @@ test("the wrapped command runs with the app env applied", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "false");
+  // Undefined, not "false": with auth on the key is absent from app-env, and
+  // the wrapper must pass that absence through rather than inventing a value.
+  assert.equal(stdout, "undefined");
 });
 
 test("the wrapped command sees an explicit override, not the file value", async () => {
@@ -124,5 +129,5 @@ test("the CLI still runs when invoked through a symlinked path", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "false");
+  assert.equal(stdout, "undefined");
 });

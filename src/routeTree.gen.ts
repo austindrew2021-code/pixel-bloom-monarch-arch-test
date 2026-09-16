@@ -15,6 +15,9 @@ import { Route as WatchRouteImport } from './routes/watch'
 import { Route as ApiGroceryCartRouteImport } from './routes/api/grocery-cart'
 import { Route as ApiGrocerySearchRouteImport } from './routes/api/grocery-search'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe-webhook'
+import { Route as CascadeIndexRouteImport } from './routes/cascade.index'
+import { Route as CascadeRulesRouteImport } from './routes/cascade.rules'
+import { Route as CascadeVerifyRouteImport } from './routes/cascade.verify'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +50,21 @@ const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
   path: '/api/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CascadeIndexRoute = CascadeIndexRouteImport.update({
+  id: '/cascade/',
+  path: '/cascade/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CascadeRulesRoute = CascadeRulesRouteImport.update({
+  id: '/cascade/rules',
+  path: '/cascade/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CascadeVerifyRoute = CascadeVerifyRouteImport.update({
+  id: '/cascade/verify',
+  path: '/cascade/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -60,6 +78,9 @@ export interface FileRoutesByFullPath {
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
   '/api/stripe-webhook': typeof ApiStripeWebhookRoute
+  '/cascade/rules': typeof CascadeRulesRoute
+  '/cascade/verify': typeof CascadeVerifyRoute
+  '/cascade/': typeof CascadeIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +90,9 @@ export interface FileRoutesByTo {
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
   '/api/stripe-webhook': typeof ApiStripeWebhookRoute
+  '/cascade/rules': typeof CascadeRulesRoute
+  '/cascade/verify': typeof CascadeVerifyRoute
+  '/cascade': typeof CascadeIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -79,6 +103,9 @@ export interface FileRoutesById {
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
   '/api/stripe-webhook': typeof ApiStripeWebhookRoute
+  '/cascade/rules': typeof CascadeRulesRoute
+  '/cascade/verify': typeof CascadeVerifyRoute
+  '/cascade/': typeof CascadeIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +117,9 @@ export interface FileRouteTypes {
     | '/api/grocery-cart'
     | '/api/grocery-search'
     | '/api/stripe-webhook'
+    | '/cascade/rules'
+    | '/cascade/verify'
+    | '/cascade/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +129,9 @@ export interface FileRouteTypes {
     | '/api/grocery-cart'
     | '/api/grocery-search'
     | '/api/stripe-webhook'
+    | '/cascade/rules'
+    | '/cascade/verify'
+    | '/cascade'
     | '/api/auth/$'
   id:
     | '__root__'
@@ -108,6 +141,9 @@ export interface FileRouteTypes {
     | '/api/grocery-cart'
     | '/api/grocery-search'
     | '/api/stripe-webhook'
+    | '/cascade/rules'
+    | '/cascade/verify'
+    | '/cascade/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +154,9 @@ export interface RootRouteChildren {
   ApiGroceryCartRoute: typeof ApiGroceryCartRoute
   ApiGrocerySearchRoute: typeof ApiGrocerySearchRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
+  CascadeRulesRoute: typeof CascadeRulesRoute
+  CascadeVerifyRoute: typeof CascadeVerifyRoute
+  CascadeIndexRoute: typeof CascadeIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -165,6 +204,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cascade/': {
+      id: '/cascade/'
+      path: '/cascade'
+      fullPath: '/cascade/'
+      preLoaderRoute: typeof CascadeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cascade/rules': {
+      id: '/cascade/rules'
+      path: '/cascade/rules'
+      fullPath: '/cascade/rules'
+      preLoaderRoute: typeof CascadeRulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cascade/verify': {
+      id: '/cascade/verify'
+      path: '/cascade/verify'
+      fullPath: '/cascade/verify'
+      preLoaderRoute: typeof CascadeVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -182,6 +242,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGroceryCartRoute: ApiGroceryCartRoute,
   ApiGrocerySearchRoute: ApiGrocerySearchRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
+  CascadeRulesRoute: CascadeRulesRoute,
+  CascadeVerifyRoute: CascadeVerifyRoute,
+  CascadeIndexRoute: CascadeIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
