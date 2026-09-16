@@ -17,7 +17,19 @@
 
 export const TARGET_EV = 99;
 
-export type GameId = "plinko" | "coinflip" | "ascent" | "tumble" | "mines";
+export type GameId =
+  | "plinko"
+  | "coinflip"
+  | "ascent"
+  | "tumble"
+  | "dice"
+  | "wheel"
+  | "roulette"
+  | "keno"
+  | "scratch"
+  | "mines"
+  | "hilo"
+  | "tower";
 
 export type GameMeta = {
   id: GameId;

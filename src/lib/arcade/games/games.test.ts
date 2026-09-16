@@ -46,7 +46,8 @@ test("the registry is internally consistent", () => {
     assert.ok(GAMES[id].byteBudget > 0);
   }
   assert.equal(isGameId("coinflip"), true);
-  assert.equal(isGameId("roulette"), false);
+  assert.equal(isGameId("roulette"), true);
+  assert.equal(isGameId("baccarat"), false, "an unregistered name must not resolve");
 });
 
 test("every game replays identically from the same seed and nonce", async () => {

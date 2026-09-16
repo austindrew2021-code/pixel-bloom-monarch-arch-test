@@ -22,10 +22,14 @@ import {
   GAMES,
   ascent,
   coinflip,
+  dice,
   isGameId,
+  keno,
   mines,
   openMinesRound,
   playGame,
+  roulette,
+  wheel,
   type GameId,
 } from "./games/index.ts";
 import {
@@ -72,6 +76,10 @@ const playSchema = z.object({
   game: z.string().trim(),
   coins: z.number().int().optional(),
   target: z.number().optional(),
+  direction: z.string().trim().optional(),
+  tier: z.string().trim().optional(),
+  bet: z.object({ kind: z.string().trim(), selection: z.number().int() }).optional(),
+  picks: z.array(z.number().int()).optional(),
 });
 
 /** Play any single-call game. */
@@ -85,12 +93,38 @@ export const playArcadeGame = createServerFn({ method: "POST" })
       throw new Error(`${GAMES[gameId].name} is played as a round.`);
     }
 
-    // Validate the player's choices before spending a drop on them.
+    // Every choice is validated before a play is spent on it, so a malformed
+    // request costs the player nothing.
     if (gameId === "coinflip" && !coinflip.isValidCoinCount(data.coins ?? coinflip.MIN_COINS)) {
       throw new Error(`Pick between ${coinflip.MIN_COINS} and ${coinflip.MAX_COINS} coins.`);
     }
     if (gameId === "ascent" && !ascent.isValidTarget(data.target ?? ascent.MIN_TARGET)) {
       throw new Error(`Target must be ${ascent.MIN_TARGET}x to ${ascent.MAX_TARGET}x.`);
+    }
+    if (gameId === "dice") {
+      if (!dice.isValidTarget(data.target ?? 50)) {
+        throw new Error(`Line must be ${dice.MIN_TARGET} to ${dice.MAX_TARGET}.`);
+      }
+      if (data.direction && data.direction !== "under" && data.direction !== "over") {
+        throw new Error("Call it under or over.");
+      }
+    }
+    if (gameId === "wheel" && !wheel.isValidTier(data.tier ?? "medium")) {
+      throw new Error(`Wheel must be one of ${wheel.TIERS.join(", ")}.`);
+    }
+    if (gameId === "roulette") {
+      const bet = data.bet as roulette.Bet | undefined;
+      if (bet && !roulette.isValidBet(bet)) throw new Error("That is not a bet on this wheel.");
+    }
+    if (gameId === "keno") {
+      const picks = data.picks ?? [];
+      if (!keno.isValidPickCount(picks.length)) {
+        throw new Error(`Pick between 1 and ${keno.MAX_PICKS} numbers.`);
+      }
+      if (new Set(picks).size !== picks.length) throw new Error("Pick each number once.");
+      if (picks.some((n) => n < 1 || n > keno.POOL)) {
+        throw new Error(`Numbers run from 1 to ${keno.POOL}.`);
+      }
     }
 
     const { sql, season, allowance, clientSeed, nonce } = await beginPlay(context.userId);
@@ -98,6 +132,10 @@ export const playArcadeGame = createServerFn({ method: "POST" })
     const result = await playGame(gameId, serverSeed, clientSeed, nonce, {
       coins: data.coins,
       target: data.target,
+      direction: data.direction as dice.Direction | undefined,
+      tier: data.tier as wheel.RiskTier | undefined,
+      bet: data.bet as roulette.Bet | undefined,
+      picks: data.picks,
     });
 
     await recordPlay(sql, {

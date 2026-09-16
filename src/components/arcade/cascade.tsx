@@ -7,15 +7,35 @@ import { AscentGame, type AscentResult } from "@/components/arcade/ascent-game";
 import { CoinMatch, type CoinResult } from "@/components/arcade/coin-match";
 import { DropBoard, type BallRun } from "@/components/arcade/drop-board";
 import { MinesGame, type MinesEnd, type MinesView } from "@/components/arcade/mines-game";
+import {
+  HiLoGame, TowerGame,
+  type HiLoEnd, type HiLoView, type TowerEnd, type TowerView,
+} from "@/components/arcade/chain-games";
 import { SlotLobby } from "@/components/arcade/slot-lobby";
+import {
+  DiceGame, KenoGame, RouletteGame, ScratchGame, WheelGame,
+  type DiceResult, type KenoResult, type RouletteResult,
+  type ScratchResult, type WheelResult,
+} from "@/components/arcade/table-games";
 import { SlotPlay } from "@/components/arcade/slot-play";
 import { TumbleGame, type TumbleResult } from "@/components/arcade/tumble-game";
 import { WalletCard } from "@/components/arcade/wallet-card";
 import type { AscentDetail } from "@/lib/arcade/games/ascent";
 import type { CoinFlipDetail } from "@/lib/arcade/games/coinflip";
+import type { DiceDetail, Direction } from "@/lib/arcade/games/dice";
+import type { Call } from "@/lib/arcade/games/hilo";
+import type { KenoDetail } from "@/lib/arcade/games/keno";
+import type { Bet, RouletteDetail } from "@/lib/arcade/games/roulette";
+import type { ScratchDetail } from "@/lib/arcade/games/scratch";
+import type { Difficulty } from "@/lib/arcade/games/tower";
+import type { RiskTier, WheelDetail } from "@/lib/arcade/games/wheel";
 import { GAMES, GAME_IDS, type GameId } from "@/lib/arcade/games/index";
 import type { TumbleDetail } from "@/lib/arcade/games/tumble";
 import { dropBall, getArcade, getLeaderboard } from "@/lib/arcade/server";
+import {
+  bankHiLo, bankTower, callHiLo, climbTower,
+  getHiLoRound, getTowerRound, openHiLo, openTower,
+} from "@/lib/arcade/server-chain";
 import {
   bankMines,
   getMinesRound,
@@ -47,6 +67,13 @@ export function Cascade() {
   const [ascent, setAscent] = useState<AscentResult>(null);
   const [tumble, setTumble] = useState<TumbleResult>(null);
   const [minesEnd, setMinesEnd] = useState<MinesEnd>(null);
+  const [diceResult, setDiceResult] = useState<DiceResult>(null);
+  const [wheelResult, setWheelResult] = useState<WheelResult>(null);
+  const [rouletteResult, setRouletteResult] = useState<RouletteResult>(null);
+  const [kenoResult, setKenoResult] = useState<KenoResult>(null);
+  const [scratchResult, setScratchResult] = useState<ScratchResult>(null);
+  const [hiloEnd, setHiloEnd] = useState<HiLoEnd>(null);
+  const [towerEnd, setTowerEnd] = useState<TowerEnd>(null);
 
   const arcade = useQuery({ queryKey: ["arcade"], queryFn: () => getArcade() });
   const board = useQuery({ queryKey: ["arcade", "board"], queryFn: () => getLeaderboard() });
@@ -54,6 +81,16 @@ export function Cascade() {
     queryKey: ["arcade", "mines"],
     queryFn: () => getMinesRound(),
     enabled: game === "mines",
+  });
+  const hiloRound = useQuery({
+    queryKey: ["arcade", "hilo"],
+    queryFn: () => getHiLoRound(),
+    enabled: game === "hilo",
+  });
+  const towerRound = useQuery({
+    queryKey: ["arcade", "tower"],
+    queryFn: () => getTowerRound(),
+    enabled: game === "tower",
   });
 
   const refresh = useCallback(() => {
@@ -78,6 +115,13 @@ export function Cascade() {
     setTumble(null);
     setMinesEnd(null);
     setSlotId(null);
+    setDiceResult(null);
+    setWheelResult(null);
+    setRouletteResult(null);
+    setKenoResult(null);
+    setScratchResult(null);
+    setHiloEnd(null);
+    setTowerEnd(null);
   }, [game]);
 
   const drop = useMutation({
@@ -97,8 +141,15 @@ export function Cascade() {
   });
 
   const play = useMutation({
-    mutationFn: (input: { game: GameId; coins?: number; target?: number }) =>
-      playArcadeGame({ data: input }),
+    mutationFn: (input: {
+      game: GameId;
+      coins?: number;
+      target?: number;
+      direction?: Direction;
+      tier?: RiskTier;
+      bet?: Bet;
+      picks?: number[];
+    }) => playArcadeGame({ data: input }),
     onSuccess: (result) => {
       // The server returns each game's replay detail as plain JSON; narrow it
       // to the shape the matching component expects.
@@ -113,6 +164,29 @@ export function Cascade() {
           cleared: detail.cleared,
           points: result.points,
         });
+      } else if (result.game === "dice") {
+        const detail = result.detail as unknown as DiceDetail;
+        setDiceResult({ roll: detail.roll, won: detail.won, points: result.points });
+      } else if (result.game === "wheel") {
+        const detail = result.detail as unknown as WheelDetail;
+        setWheelResult({
+          segment: detail.segment,
+          multiplier: detail.multiplier,
+          points: result.points,
+        });
+      } else if (result.game === "roulette") {
+        const detail = result.detail as unknown as RouletteDetail;
+        setRouletteResult({ pocket: detail.pocket, won: detail.won, points: result.points });
+      } else if (result.game === "keno") {
+        const detail = result.detail as unknown as KenoDetail;
+        setKenoResult({
+          drawn: detail.drawn,
+          matched: detail.matched,
+          points: result.points,
+        });
+      } else if (result.game === "scratch") {
+        const detail = result.detail as unknown as ScratchDetail;
+        setScratchResult({ cells: detail.cells, wins: detail.wins, points: result.points });
       } else if (result.game === "tumble") {
         const detail = result.detail as unknown as TumbleDetail;
         setTumble({
@@ -165,6 +239,88 @@ export function Cascade() {
     onError: (error) => toast(message(error)),
   });
 
+  const dealHiLo = useMutation({
+    mutationFn: () => openHiLo(),
+    onSuccess: () => {
+      setHiloEnd(null);
+      void queryClient.invalidateQueries({ queryKey: ["arcade"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const makeCall = useMutation({
+    mutationFn: (call: Call) => callHiLo({ data: { call } }),
+    onSuccess: (result) => {
+      if (!result.survived) {
+        setHiloEnd({ card: result.card, points: 0, busted: true });
+        refresh();
+      } else if ("banked" in result && result.banked) {
+        // The chain hit its length limit and settled itself.
+        setHiloEnd({ card: result.card, points: result.points, busted: false });
+        showFlash(result.points);
+        refresh();
+      }
+      void queryClient.invalidateQueries({ queryKey: ["arcade", "hilo"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const cashHiLo = useMutation({
+    mutationFn: () => bankHiLo(),
+    onSuccess: (result) => {
+      setHiloEnd({ points: result.points, busted: false });
+      showFlash(result.points);
+      refresh();
+      void queryClient.invalidateQueries({ queryKey: ["arcade", "hilo"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const startTower = useMutation({
+    mutationFn: (difficulty: Difficulty) => openTower({ data: { difficulty } }),
+    onSuccess: () => {
+      setTowerEnd(null);
+      void queryClient.invalidateQueries({ queryKey: ["arcade"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const climb = useMutation({
+    mutationFn: (tile: number) => climbTower({ data: { tile } }),
+    onSuccess: (result) => {
+      if (!result.survived) {
+        setTowerEnd({
+          safeTiles: result.safeTiles,
+          picks: towerRound.data?.picks ?? [],
+          hit: result.tile,
+          points: 0,
+        });
+        refresh();
+      } else if ("topped" in result && result.topped) {
+        setTowerEnd({
+          safeTiles: result.safeTiles,
+          picks: [...(towerRound.data?.picks ?? []), result.tile],
+          points: result.points,
+        });
+        showFlash(result.points);
+        refresh();
+      }
+      void queryClient.invalidateQueries({ queryKey: ["arcade", "tower"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const cashTower = useMutation({
+    mutationFn: () => bankTower(),
+    onSuccess: (result) => {
+      setTowerEnd({ safeTiles: result.safeTiles, picks: result.picks, points: result.points });
+      showFlash(result.points);
+      refresh();
+      void queryClient.invalidateQueries({ queryKey: ["arcade", "tower"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
   if (arcade.isPending) {
     return <Shell><p className="py-24 text-center text-slate-400">Opening the arcade…</p></Shell>;
   }
@@ -180,7 +336,10 @@ export function Cascade() {
 
   const { season, player, allowance, score, ladder, prizePool } = arcade.data;
   const out = allowance.remaining <= 0;
-  const busy = drop.isPending || play.isPending || openRound.isPending || reveal.isPending || bank.isPending;
+  const busy =
+    drop.isPending || play.isPending || openRound.isPending || reveal.isPending ||
+    bank.isPending || dealHiLo.isPending || makeCall.isPending || cashHiLo.isPending ||
+    startTower.isPending || climb.isPending || cashTower.isPending;
 
   return (
     <Shell>
@@ -297,6 +456,76 @@ export function Cascade() {
           ) : (
             <SlotLobby onPick={setSlotId} />
           )
+        ) : null}
+
+        {game === "dice" ? (
+          <DiceGame
+            onRoll={(target, direction) =>
+              play.mutate({ game: "dice", target, direction })}
+            busy={busy}
+            result={diceResult}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "wheel" ? (
+          <WheelGame
+            onSpin={(tier) => play.mutate({ game: "wheel", tier })}
+            busy={busy}
+            result={wheelResult}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "roulette" ? (
+          <RouletteGame
+            onSpin={(bet) => play.mutate({ game: "roulette", bet })}
+            busy={busy}
+            result={rouletteResult}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "keno" ? (
+          <KenoGame
+            onPlay={(picks) => play.mutate({ game: "keno", picks })}
+            busy={busy}
+            result={kenoResult}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "scratch" ? (
+          <ScratchGame
+            onPlay={() => play.mutate({ game: "scratch" })}
+            busy={busy}
+            result={scratchResult}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "hilo" ? (
+          <HiLoGame
+            round={(hiloRound.data as HiLoView) ?? null}
+            ended={hiloEnd}
+            busy={busy}
+            disabled={out}
+            onOpen={() => dealHiLo.mutate()}
+            onCall={(call) => makeCall.mutate(call)}
+            onBank={() => cashHiLo.mutate()}
+          />
+        ) : null}
+
+        {game === "tower" ? (
+          <TowerGame
+            round={(towerRound.data as TowerView) ?? null}
+            ended={towerEnd}
+            busy={busy}
+            disabled={out}
+            onOpen={(difficulty) => startTower.mutate(difficulty)}
+            onClimb={(tile) => climb.mutate(tile)}
+            onBank={() => cashTower.mutate()}
+          />
         ) : null}
 
         {game === "mines" ? (
