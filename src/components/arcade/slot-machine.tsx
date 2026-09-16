@@ -1,4 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { SlotFx, type Burst } from "@/components/arcade/slot-fx";
+import { SlotSymbol } from "@/components/arcade/slot-symbol";
+import { ambientFor } from "@/lib/arcade/slots/art";
 import type { RoundResult, SlotConfig, SpinResult } from "@/lib/arcade/slots/types";
 
 /**
@@ -27,15 +30,21 @@ export function SlotMachine({
   config,
   view,
   spinning,
+  intense,
 }: {
   config: SlotConfig;
   view: SlotView;
   spinning: boolean;
+  /** Big-win mode: denser effects and more frequent lightning. */
+  intense?: boolean;
 }) {
   const { reels, rows } = config.mechanic;
   const [phase, setPhase] = useState<"idle" | "spinning" | "settling" | "done">("idle");
   const [shown, setShown] = useState(0);
   const [freeIndex, setFreeIndex] = useState(-1);
+  const [bursts, setBursts] = useState<Burst[]>([]);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const burstId = useRef(0);
 
   // Reel-by-reel settle, then step through any free spins.
   useEffect(() => {
@@ -82,6 +91,35 @@ export function SlotMachine({
     return set;
   }, [active, phase]);
 
+  /** Spray sparks from the cells that paid, positioned over the real grid. */
+  const fireBursts = useCallback(
+    (cells: [number, number][], power: number) => {
+      const grid = gridRef.current;
+      if (!grid || cells.length === 0) return;
+      const box = grid.getBoundingClientRect();
+      const cellWidth = box.width / reels;
+      const cellHeight = box.height / rows;
+      setBursts(
+        cells.map(([reel, row]) => ({
+          id: (burstId.current += 1),
+          x: (reel + 0.5) * cellWidth,
+          y: (row + 0.5) * cellHeight,
+          colour: config.theme.glow,
+          power,
+        })),
+      );
+    },
+    [config.theme.glow, reels, rows],
+  );
+
+  // Burst once the grid on screen has settled and its wins are visible.
+  useEffect(() => {
+    if (phase !== "done" || !active || active.wins.length === 0) return;
+    const cells = active.wins.flatMap((win) => win.cells).slice(0, 24);
+    const power = Math.min(1, active.rawPay / Math.max(1, 40 / config.scale));
+    fireBursts(cells, power);
+  }, [phase, active, fireBursts, config.scale]);
+
   const inFreeSpins = freeIndex >= 0;
   const [from, to] = config.theme.backdrop;
 
@@ -94,6 +132,13 @@ export function SlotMachine({
         boxShadow: inFreeSpins ? `0 0 28px -8px ${config.theme.glow}` : undefined,
       }}
     >
+      <SlotFx
+        ambient={ambientFor(config.theme.id)}
+        glow={config.theme.glow}
+        bursts={bursts}
+        intense={intense || inFreeSpins}
+      />
+
       {inFreeSpins ? (
         <div className="absolute inset-x-0 top-2 z-10 text-center">
           <span
@@ -107,7 +152,8 @@ export function SlotMachine({
       ) : null}
 
       <div
-        className="grid gap-1"
+        ref={gridRef}
+        className="relative grid gap-1"
         style={{ gridTemplateColumns: `repeat(${reels}, minmax(0, 1fr))` }}
       >
         {Array.from({ length: reels }, (_, reel) => {
@@ -122,6 +168,7 @@ export function SlotMachine({
                   settled={settled && phase !== "spinning"}
                   lit={lit.has(`${reel}:${row}`)}
                   spinKey={`${view?.key ?? 0}-${freeIndex}-${reel}-${row}`}
+                  offset={reel * 3 + row * 5}
                 />
               ))}
             </div>
@@ -138,45 +185,49 @@ function Cell({
   settled,
   lit,
   spinKey,
+  offset,
 }: {
   config: SlotConfig;
   symbol: number | undefined;
   settled: boolean;
   lit: boolean;
   spinKey: string;
+  /** Per-cell phase, so the grid does not cycle as one block. */
+  offset: number;
 }) {
-  const definition = symbol === undefined ? null : config.symbols[symbol];
-  const glyph = definition?.glyph ?? "◆";
-  const isSpecial = definition?.kind !== "pay";
-  const color = isSpecial
-    ? config.theme.glow
-    : config.theme.palette[Math.min(symbol ?? 0, config.theme.palette.length - 1)];
-
-  // While a reel is still turning, cycle faces so it reads as motion rather
-  // than a frozen grid that suddenly changes.
-  const blur = useReelBlur(settled, spinKey, config.theme.glyphs.length);
-  const face = settled ? glyph : (config.theme.glyphs[blur] ?? glyph);
+  // While a reel is still turning, cycle through the theme's own symbols so the
+  // blur is made of the artwork rather than a placeholder. Each cell starts at
+  // its own offset: without one, every hook ticks on the same interval from the
+  // same index and the whole grid shows one symbol at a time, which reads as a
+  // broken reel rather than a spinning one.
+  const blur = useReelBlur(settled, spinKey, config.symbols.length, offset);
+  // An untouched machine shows a settled, varied grid rather than a blur —
+  // there is nothing spinning yet to blur.
+  const idle = symbol === undefined && !settled;
+  const shownSymbol = settled ? symbol : idle ? (offset * 7) % config.symbols.length : blur;
 
   return (
     <div
-      className={`grid aspect-square place-items-center rounded-md text-2xl transition-all duration-200 sm:text-3xl ${
-        settled ? "" : "blur-[1.5px] opacity-70"
-      } ${lit ? "scale-105" : ""}`}
+      className={`grid aspect-square place-items-center rounded-md transition-all duration-200 ${
+        settled || idle ? "" : "blur-[1.5px] opacity-70"
+      }`}
       style={{
         background: lit ? `${config.theme.glow}22` : "rgba(2, 6, 23, 0.55)",
-        color: lit ? config.theme.glow : color,
-        boxShadow: lit ? `0 0 16px -2px ${config.theme.glow}, inset 0 0 0 1px ${config.theme.glow}66` : undefined,
-        textShadow: lit || isSpecial ? `0 0 12px ${config.theme.glow}` : undefined,
+        boxShadow: lit
+          ? `0 0 18px -2px ${config.theme.glow}, inset 0 0 0 1px ${config.theme.glow}66`
+          : undefined,
       }}
     >
-      {face}
+      {shownSymbol === undefined ? null : (
+        <SlotSymbol config={config} symbol={shownSymbol} lit={lit} size={38} />
+      )}
     </div>
   );
 }
 
 /** Cycles a face index while a reel is still turning. */
-function useReelBlur(settled: boolean, spinKey: string, faces: number): number {
-  const [index, setIndex] = useState(0);
+function useReelBlur(settled: boolean, spinKey: string, faces: number, offset = 0): number {
+  const [index, setIndex] = useState(offset % Math.max(1, faces));
   const timer = useRef<number | null>(null);
 
   useEffect(() => {
@@ -185,12 +236,14 @@ function useReelBlur(settled: boolean, spinKey: string, faces: number): number {
       return;
     }
     timer.current = window.setInterval(() => {
-      setIndex((current) => (current + 1) % faces);
+      // Step by a number coprime with most symbol counts so neighbouring cells
+      // stay visually out of step rather than drifting back into lockstep.
+      setIndex((current) => (current + 3) % faces);
     }, 65);
     return () => {
       if (timer.current) window.clearInterval(timer.current);
     };
-  }, [settled, spinKey, faces]);
+  }, [settled, spinKey, faces, offset]);
 
   return index;
 }

@@ -417,3 +417,20 @@ test("flooring small wins moves expected value by a negligible amount", async ()
     `floor adds ${drift.toFixed(3)} points per spin, over the 0.5% bound`,
   );
 });
+
+test("a title's count is labelled by its pay mode, not its size", () => {
+  // Regression: the word was chosen by whether the count passed a threshold,
+  // so a 243-ways game was advertised as "243 lines".
+  for (const row of lobby()) {
+    const entry = slotById(row.id)!;
+    assert.equal(row.payMode, entry.mechanic.payMode, row.id);
+    if (entry.mechanic.payMode === "ways") {
+      assert.equal(row.ways, waysCount(entry.mechanic.reels, entry.mechanic.rows), row.id);
+    } else {
+      assert.equal(row.ways, entry.mechanic.lines, row.id);
+    }
+  }
+  // Both a small ways count and a large one must still read as ways.
+  const small = lobby().find((r) => r.payMode === "ways" && r.ways < 999);
+  assert.ok(small, "expected a ways game under a thousand ways");
+});

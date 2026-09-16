@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { SHAPES, shapeFor } from "@/lib/arcade/slots/art";
 import type { LobbyEntry } from "@/lib/arcade/slots/catalog";
 import { getSlotLobby } from "@/lib/arcade/server-slots";
 
@@ -117,6 +118,42 @@ function Chip({
   );
 }
 
+/** The title's top symbol, drawn, as its cover. */
+function CoverArt({ game }: { game: LobbyEntry }) {
+  // Index 5 is the theme's top-paying face, which is the one worth showing.
+  const art = SHAPES[shapeFor(game.themeId, 5)];
+  const gradientId = `cover-${game.id}`;
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      width={56}
+      height={56}
+      className="overflow-visible transition-transform duration-200 group-hover:scale-110"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={game.glow} />
+          <stop offset="100%" stopColor="#0b1120" stopOpacity="0.85" />
+        </linearGradient>
+        <filter id={`${gradientId}-glow`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.6" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g filter={`url(#${gradientId}-glow)`}>
+        <path d={art.body} fill={`url(#${gradientId})`} stroke={game.glow} strokeWidth="2.5" strokeLinejoin="round" />
+        {art.detail ? (
+          <path d={art.detail} fill="none" stroke={game.glow} strokeOpacity="0.55" strokeWidth="2.4" strokeLinecap="round" />
+        ) : null}
+      </g>
+    </svg>
+  );
+}
+
 function Card({ game, onPick }: { game: LobbyEntry; onPick: (id: string) => void }) {
   const [from, to] = game.backdrop;
   return (
@@ -127,17 +164,16 @@ function Card({ game, onPick }: { game: LobbyEntry; onPick: (id: string) => void
       style={{ background: `linear-gradient(${game.angle}deg, ${from} 0%, ${to} 100%)` }}
     >
       <div className="relative grid h-24 place-items-center">
-        <span
-          className="text-4xl transition-transform duration-200 group-hover:scale-110"
-          style={{ color: game.glow, textShadow: `0 0 20px ${game.glow}` }}
-        >
-          {game.glyph}
-        </span>
+        <CoverArt game={game} />
         <span
           className="absolute right-1.5 top-1.5 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-slate-950"
           style={{ background: game.glow }}
         >
-          {game.ways > 999 ? `${game.ways} ways` : game.ways === 1 ? "1 line" : `${game.ways}`}
+          {game.payMode === "ways"
+            ? `${game.ways} ways`
+            : game.ways === 1
+              ? "1 line"
+              : `${game.ways} lines`}
         </span>
       </div>
       <div className="border-t border-white/5 bg-slate-950/50 px-2 py-1.5">

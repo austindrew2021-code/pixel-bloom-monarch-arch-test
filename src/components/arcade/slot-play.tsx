@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { BonusPopup, type BonusEvent } from "@/components/arcade/bonus-popup";
 import { SlotMachine, type SlotView } from "@/components/arcade/slot-machine";
+import { TARGET_EV } from "@/lib/arcade/games/types";
+import { BIG_WIN_MULTIPLE, bonusFor } from "@/lib/arcade/slots/bonus";
 import { getSlot, playSlot } from "@/lib/arcade/server-slots";
 
 /** One slot, opened from the lobby. */
@@ -21,6 +24,8 @@ export function SlotPlay({
   const queryClient = useQueryClient();
   const [view, setView] = useState<SlotView>(null);
   const [spins, setSpins] = useState(0);
+  const [bonus, setBonus] = useState<BonusEvent>(null);
+  const bonusId = useRef(0);
 
   const game = useQuery({
     queryKey: ["slots", "game", slotId],
@@ -34,6 +39,22 @@ export function SlotPlay({
       setSpins((n) => n + 1);
       setView({ config: game.data.config, round: result.round, key: result.nonce });
       onScored(result.round.points);
+
+      // Hold the takeover until the reels have settled, so it lands on the win
+      // rather than covering the spin that produced it.
+      const kind = bonusFor(result.round.points, TARGET_EV, result.round.featureTriggered);
+      if (kind) {
+        const settleMs = 420 + game.data.config.mechanic.reels * 170 + 400;
+        window.setTimeout(() => {
+          setBonus({
+            id: (bonusId.current += 1),
+            kind,
+            points: result.round.points,
+            spins: game.data?.config.mechanic.feature.spins,
+            multiplier: game.data?.config.mechanic.feature.multiplier,
+          });
+        }, settleMs);
+      }
       void queryClient.invalidateQueries({ queryKey: ["arcade"] });
     },
     onError: (error) =>
@@ -72,13 +93,23 @@ export function SlotPlay({
 
       <p className="mt-0.5 text-right text-[11px] text-slate-500">
         {config.mechanic.reels}×{config.mechanic.rows} ·{" "}
-        {info.ways > 999 ? `${info.ways} ways` : `${info.ways} line${info.ways === 1 ? "" : "s"}`} ·{" "}
+        {config.mechanic.payMode === "ways"
+          ? `${info.ways} ways`
+          : `${info.ways} line${info.ways === 1 ? "" : "s"}`}{" "}
+        ·{" "}
         {info.volatility} · feature 1 in {Math.round(1 / info.featureChance)}
       </p>
 
       <div className="mt-2">
-        <SlotMachine config={config} view={view} spinning={spin.isPending} />
+        <SlotMachine
+          config={config}
+          view={view}
+          spinning={spin.isPending}
+          intense={!!last && last.points >= TARGET_EV * BIG_WIN_MULTIPLE}
+        />
       </div>
+
+      <BonusPopup event={bonus} theme={config.theme} onClose={() => setBonus(null)} />
 
       <div className="mt-2 min-h-[24px] text-center">
         {last ? (

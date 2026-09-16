@@ -161,6 +161,8 @@ export type LobbyEntry = {
   themeId: string;
   mechanicId: string;
   mechanicName: string;
+  /** "lines" or "ways" — what the count on the card actually means. */
+  payMode: string;
   volatility: string;
   reels: number;
   rows: number;
@@ -180,6 +182,7 @@ export function lobby(): LobbyEntry[] {
     themeId: entry.themeId,
     mechanicId: entry.mechanicId,
     mechanicName: entry.mechanic.name,
+    payMode: entry.mechanic.payMode,
     volatility: entry.volatility.name,
     reels: entry.mechanic.reels,
     rows: entry.mechanic.rows,

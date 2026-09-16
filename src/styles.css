@@ -2201,3 +2201,51 @@
 .tap {
   padding-block: 0.625rem;
 }
+
+/* ------------------------------------------------------------- slot art -- */
+
+/*
+ * Idle motion for wilds and scatters: a slow breath so a special symbol reads
+ * as alive on a still reel, and a firmer pulse once it is part of a win.
+ */
+@keyframes slot-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.94; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+@keyframes slot-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.22) rotate(-3deg); }
+  100% { transform: scale(1.08); }
+}
+.slot-sym-special { animation: slot-breathe 2.4s ease-in-out infinite; }
+.slot-sym-lit { animation: slot-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slot-sym-special, .slot-sym-lit { animation: none; }
+}
+
+/* Bonus takeover ----------------------------------------------------------- */
+
+@keyframes bonus-in {
+  0% { transform: scale(0.6) translateY(24px); opacity: 0; }
+  60% { transform: scale(1.06) translateY(0); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes bonus-rays {
+  to { transform: rotate(360deg); }
+}
+@keyframes bonus-shine {
+  0% { background-position: -240% 0; }
+  100% { background-position: 240% 0; }
+}
+.bonus-card { animation: bonus-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.bonus-rays { animation: bonus-rays 14s linear infinite; }
+.bonus-shine {
+  background: linear-gradient(100deg, transparent 38%, rgba(255,255,255,0.75) 50%, transparent 62%);
+  background-size: 240% 100%;
+  animation: bonus-shine 1.9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bonus-card, .bonus-rays, .bonus-shine { animation: none; }
+}
