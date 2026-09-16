@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as WatchRouteImport } from './routes/watch'
+import { Route as ApiAdRewardRouteImport } from './routes/api/ad-reward'
 import { Route as ApiGroceryCartRouteImport } from './routes/api/grocery-cart'
 import { Route as ApiGrocerySearchRouteImport } from './routes/api/grocery-search'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe-webhook'
@@ -33,6 +34,11 @@ const LoginRoute = LoginRouteImport.update({
 const WatchRoute = WatchRouteImport.update({
   id: '/watch',
   path: '/watch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdRewardRoute = ApiAdRewardRouteImport.update({
+  id: '/api/ad-reward',
+  path: '/api/ad-reward',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGroceryCartRoute = ApiGroceryCartRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/watch': typeof WatchRoute
+  '/api/ad-reward': typeof ApiAdRewardRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
   '/api/stripe-webhook': typeof ApiStripeWebhookRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/watch': typeof WatchRoute
+  '/api/ad-reward': typeof ApiAdRewardRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
   '/api/stripe-webhook': typeof ApiStripeWebhookRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/watch': typeof WatchRoute
+  '/api/ad-reward': typeof ApiAdRewardRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
   '/api/stripe-webhook': typeof ApiStripeWebhookRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/watch'
+    | '/api/ad-reward'
     | '/api/grocery-cart'
     | '/api/grocery-search'
     | '/api/stripe-webhook'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/watch'
+    | '/api/ad-reward'
     | '/api/grocery-cart'
     | '/api/grocery-search'
     | '/api/stripe-webhook'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/watch'
+    | '/api/ad-reward'
     | '/api/grocery-cart'
     | '/api/grocery-search'
     | '/api/stripe-webhook'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   WatchRoute: typeof WatchRoute
+  ApiAdRewardRoute: typeof ApiAdRewardRoute
   ApiGroceryCartRoute: typeof ApiGroceryCartRoute
   ApiGrocerySearchRoute: typeof ApiGrocerySearchRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/watch'
       fullPath: '/watch'
       preLoaderRoute: typeof WatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ad-reward': {
+      id: '/api/ad-reward'
+      path: '/api/ad-reward'
+      fullPath: '/api/ad-reward'
+      preLoaderRoute: typeof ApiAdRewardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/grocery-cart': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   WatchRoute: WatchRoute,
+  ApiAdRewardRoute: ApiAdRewardRoute,
   ApiGroceryCartRoute: ApiGroceryCartRoute,
   ApiGrocerySearchRoute: ApiGrocerySearchRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,

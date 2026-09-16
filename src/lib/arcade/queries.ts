@@ -158,3 +158,189 @@ export async function consumeChallenge(
   `;
   return rows[0] ?? null;
 }
+
+/* ------------------------------------------------------------- multi-game */
+
+/** Append a play of any game. Idempotent on (player, season, nonce). */
+export async function recordPlay(
+  sql: Sql,
+  play: {
+    id: string;
+    userId: string;
+    seasonId: string;
+    game: string;
+    nonce: number;
+    clientSeed: string;
+    points: number;
+    detail: unknown;
+  },
+): Promise<void> {
+  await sql`
+    insert into drops (id, user_id, season_id, game, nonce, client_seed, points, detail)
+    values (${play.id}, ${play.userId}, ${play.seasonId}, ${play.game}, ${play.nonce},
+            ${play.clientSeed}, ${play.points}, ${JSON.stringify(play.detail)}::jsonb)
+    on conflict (user_id, season_id, nonce) do nothing
+  `;
+}
+
+export type RoundRow = {
+  id: string;
+  season_id: string;
+  game: string;
+  nonce: number;
+  client_seed: string;
+  layout: unknown;
+  progress: unknown;
+  status: string;
+  points: number;
+};
+
+/**
+ * Open an interactive round.
+ *
+ * The partial unique index on (user_id, game) where status = 'live' is what
+ * makes this safe: without it a player could open many rounds against one
+ * drop each, play them all, and bank only the ones that went well.
+ */
+export async function openRound(
+  sql: Sql,
+  round: {
+    id: string;
+    userId: string;
+    seasonId: string;
+    game: string;
+    nonce: number;
+    clientSeed: string;
+    layout: unknown;
+  },
+): Promise<RoundRow | null> {
+  const rows = await sql<RoundRow>`
+    insert into game_rounds (id, user_id, season_id, game, nonce, client_seed, layout, progress)
+    values (${round.id}, ${round.userId}, ${round.seasonId}, ${round.game}, ${round.nonce},
+            ${round.clientSeed}, ${JSON.stringify(round.layout)}::jsonb, '{}'::jsonb)
+    on conflict do nothing
+    returning id, season_id, game, nonce, client_seed, layout, progress, status, points
+  `;
+  return rows[0] ?? null;
+}
+
+export async function readLiveRound(
+  sql: Sql,
+  userId: string,
+  game: string,
+): Promise<RoundRow | null> {
+  const rows = await sql<RoundRow>`
+    select id, season_id, game, nonce, client_seed, layout, progress, status, points
+    from game_rounds
+    where user_id = ${userId} and game = ${game} and status = 'live'
+  `;
+  return rows[0] ?? null;
+}
+
+/**
+ * Advance a live round's progress.
+ *
+ * Guarded on `status = 'live'` so a reveal racing a bank cannot resurrect a
+ * finished round; a null return means the round already closed.
+ */
+export async function advanceRound(
+  sql: Sql,
+  roundId: string,
+  userId: string,
+  progress: unknown,
+): Promise<RoundRow | null> {
+  const rows = await sql<RoundRow>`
+    update game_rounds
+    set progress = ${JSON.stringify(progress)}::jsonb
+    where id = ${roundId} and user_id = ${userId} and status = 'live'
+    returning id, season_id, game, nonce, client_seed, layout, progress, status, points
+  `;
+  return rows[0] ?? null;
+}
+
+/**
+ * Close a round exactly once.
+ *
+ * Also guarded on `status = 'live'`, so two concurrent bank requests cannot
+ * both settle and award points twice.
+ */
+export async function closeRound(
+  sql: Sql,
+  roundId: string,
+  userId: string,
+  status: "banked" | "bust",
+  points: number,
+  progress: unknown,
+): Promise<RoundRow | null> {
+  const rows = await sql<RoundRow>`
+    update game_rounds
+    set status = ${status}, points = ${points}, closed_at = now(),
+        progress = ${JSON.stringify(progress)}::jsonb
+    where id = ${roundId} and user_id = ${userId} and status = 'live'
+    returning id, season_id, game, nonce, client_seed, layout, progress, status, points
+  `;
+  return rows[0] ?? null;
+}
+
+/* ---------------------------------------------------------------- ad flow */
+
+export async function mintAdToken(
+  sql: Sql,
+  token: string,
+  userId: string,
+  seasonId: string,
+  placement: string,
+  expiresAt: Date,
+): Promise<void> {
+  await sql`
+    insert into ad_tokens (token, user_id, season_id, placement, expires_at)
+    values (${token}, ${userId}, ${seasonId}, ${placement}, ${expiresAt.toISOString()})
+  `;
+}
+
+/** Consume an ad token exactly once, in the same statement that reads it. */
+export async function consumeAdToken(
+  sql: Sql,
+  token: string,
+): Promise<{ user_id: string; season_id: string; placement: string } | null> {
+  const rows = await sql<{ user_id: string; season_id: string; placement: string }>`
+    update ad_tokens
+    set consumed_at = now()
+    where token = ${token} and consumed_at is null and expires_at > now()
+    returning user_id, season_id, placement
+  `;
+  return rows[0] ?? null;
+}
+
+/**
+ * Record a confirmed ad view.
+ *
+ * Returns null when this provider/transaction pair has already been recorded.
+ * Ad networks retry callbacks as a matter of course, so this insert is the
+ * idempotency gate and must happen *before* any drops are credited.
+ */
+export async function recordAdView(
+  sql: Sql,
+  view: {
+    id: string;
+    userId: string;
+    seasonId: string;
+    day: string;
+    placement: string;
+    provider: string;
+    networkTxnId: string;
+    dropsGranted: number;
+    revenueUsd?: number;
+  },
+): Promise<{ id: string } | null> {
+  const rows = await sql<{ id: string }>`
+    insert into ad_views (id, user_id, season_id, day, placement, provider,
+                          network_txn_id, drops_granted, revenue_usd)
+    values (${view.id}, ${view.userId}, ${view.seasonId}, ${view.day}, ${view.placement},
+            ${view.provider}, ${view.networkTxnId}, ${view.dropsGranted},
+            ${view.revenueUsd ?? null})
+    on conflict (provider, network_txn_id) do nothing
+    returning id
+  `;
+  return rows[0] ?? null;
+}

@@ -2,18 +2,76 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { AdOffer } from "@/components/arcade/ad-offer";
+import { AscentGame, type AscentResult } from "@/components/arcade/ascent-game";
+import { CoinMatch, type CoinResult } from "@/components/arcade/coin-match";
 import { DropBoard, type BallRun } from "@/components/arcade/drop-board";
+import { MinesGame, type MinesEnd, type MinesView } from "@/components/arcade/mines-game";
+import { TumbleGame, type TumbleResult } from "@/components/arcade/tumble-game";
 import { WalletCard } from "@/components/arcade/wallet-card";
-import { dropBall, getArcade, getLeaderboard, grantAdDrops } from "@/lib/arcade/server";
+import type { AscentDetail } from "@/lib/arcade/games/ascent";
+import type { CoinFlipDetail } from "@/lib/arcade/games/coinflip";
+import { GAMES, GAME_IDS, type GameId } from "@/lib/arcade/games/index";
+import type { TumbleDetail } from "@/lib/arcade/games/tumble";
+import { dropBall, getArcade, getLeaderboard } from "@/lib/arcade/server";
+import {
+  bankMines,
+  getMinesRound,
+  openMines,
+  playArcadeGame,
+  revealMinesTile,
+} from "@/lib/arcade/server-games";
 import { UserButton } from "@/lib/auth/gates";
 
+/**
+ * The arcade shell.
+ *
+ * Five games share one daily budget and one leaderboard, so the picker is the
+ * only thing that changes between them — the score, the drops left and the
+ * ladder are the same numbers throughout. That is the point: the games differ
+ * in feel, not in what they are worth.
+ */
 export function Cascade() {
   const queryClient = useQueryClient();
+  const [game, setGame] = useState<GameId>("plinko");
+
   const [runs, setRuns] = useState<BallRun[]>([]);
   const [flash, setFlash] = useState<string | null>(null);
+  const [coin, setCoin] = useState<CoinResult>(null);
+  const [ascent, setAscent] = useState<AscentResult>(null);
+  const [tumble, setTumble] = useState<TumbleResult>(null);
+  const [minesEnd, setMinesEnd] = useState<MinesEnd>(null);
 
   const arcade = useQuery({ queryKey: ["arcade"], queryFn: () => getArcade() });
   const board = useQuery({ queryKey: ["arcade", "board"], queryFn: () => getLeaderboard() });
+  const mines = useQuery({
+    queryKey: ["arcade", "mines"],
+    queryFn: () => getMinesRound(),
+    enabled: game === "mines",
+  });
+
+  const refresh = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ["arcade"] });
+  }, [queryClient]);
+
+  const showFlash = useCallback((points: number) => {
+    setFlash(`+${points.toLocaleString()}`);
+  }, []);
+
+  useEffect(() => {
+    if (!flash) return;
+    const timer = window.setTimeout(() => setFlash(null), 1100);
+    return () => window.clearTimeout(timer);
+  }, [flash]);
+
+  // Clear the previous game's result when switching, so a stale board from
+  // another game never sits under a new one's controls.
+  useEffect(() => {
+    setCoin(null);
+    setAscent(null);
+    setTumble(null);
+    setMinesEnd(null);
+  }, [game]);
 
   const drop = useMutation({
     mutationFn: () => dropBall({ data: {} }),
@@ -28,39 +86,80 @@ export function Cascade() {
         },
       ]);
     },
-    onError: (error) => toast(error instanceof Error ? error.message : "Could not drop."),
+    onError: (error) => toast(message(error)),
   });
 
-  const watchAd = useMutation({
-    mutationFn: () => grantAdDrops(),
+  const play = useMutation({
+    mutationFn: (input: { game: GameId; coins?: number; target?: number }) =>
+      playArcadeGame({ data: input }),
     onSuccess: (result) => {
-      toast(
-        result.granted > 0
-          ? `+${result.granted} drops added.`
-          : "You have taken every bonus available today.",
-      );
-      void queryClient.invalidateQueries({ queryKey: ["arcade"] });
+      // The server returns each game's replay detail as plain JSON; narrow it
+      // to the shape the matching component expects.
+      if (result.game === "coinflip") {
+        const detail = result.detail as unknown as CoinFlipDetail;
+        setCoin({ faces: detail.faces, matched: detail.matched, points: result.points });
+      } else if (result.game === "ascent") {
+        const detail = result.detail as unknown as AscentDetail;
+        setAscent({
+          target: detail.target,
+          bust: detail.bust,
+          cleared: detail.cleared,
+          points: result.points,
+        });
+      } else if (result.game === "tumble") {
+        const detail = result.detail as unknown as TumbleDetail;
+        setTumble({
+          initialGrid: detail.initialGrid,
+          steps: detail.steps,
+          orbTotal: detail.orbTotal,
+          points: result.points,
+        });
+      }
+      showFlash(result.points);
+      refresh();
     },
+    onError: (error) => toast(message(error)),
   });
 
-  // Refresh score and board only once the ball has actually landed, so the
-  // numbers on screen never move before the animation that explains them.
-  const onLanded = useCallback(
-    (run: BallRun) => {
-      setFlash(`+${run.points.toLocaleString()}`);
+  const openRound = useMutation({
+    mutationFn: (mineCount: number) => openMines({ data: { mineCount } }),
+    onSuccess: () => {
+      setMinesEnd(null);
       void queryClient.invalidateQueries({ queryKey: ["arcade"] });
     },
-    [queryClient],
-  );
+    onError: (error) => toast(message(error)),
+  });
 
-  useEffect(() => {
-    if (!flash) return;
-    const timer = window.setTimeout(() => setFlash(null), 1100);
-    return () => window.clearTimeout(timer);
-  }, [flash]);
+  const reveal = useMutation({
+    mutationFn: (tile: number) => revealMinesTile({ data: { tile } }),
+    onSuccess: (result) => {
+      if (result.hit) {
+        setMinesEnd({
+          mines: result.mines,
+          revealed: mines.data?.revealed ?? [],
+          hit: result.tile,
+          points: 0,
+        });
+        refresh();
+      }
+      void queryClient.invalidateQueries({ queryKey: ["arcade", "mines"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
+
+  const bank = useMutation({
+    mutationFn: () => bankMines(),
+    onSuccess: (result) => {
+      setMinesEnd({ mines: result.mines, revealed: result.revealed, points: result.points });
+      showFlash(result.points);
+      refresh();
+      void queryClient.invalidateQueries({ queryKey: ["arcade", "mines"] });
+    },
+    onError: (error) => toast(message(error)),
+  });
 
   if (arcade.isPending) {
-    return <Shell><p className="py-24 text-center text-slate-400">Opening the board…</p></Shell>;
+    return <Shell><p className="py-24 text-center text-slate-400">Opening the arcade…</p></Shell>;
   }
   if (arcade.isError || !arcade.data) {
     return (
@@ -73,7 +172,8 @@ export function Cascade() {
   }
 
   const { season, player, allowance, score, ladder, prizePool } = arcade.data;
-  const canDrop = allowance.remaining > 0 && !drop.isPending;
+  const out = allowance.remaining <= 0;
+  const busy = drop.isPending || play.isPending || openRound.isPending || reveal.isPending || bank.isPending;
 
   return (
     <Shell>
@@ -87,45 +187,107 @@ export function Cascade() {
             <span className="ml-1.5 text-sm font-medium text-slate-400">points</span>
           </h1>
           <p className="mt-0.5 text-xs text-slate-400">
-            Rank #{score.rank} · {score.dropsUsed} drops · closes {formatClose(season.closesAt)}
+            Rank #{score.rank} · {score.dropsUsed} plays · closes {formatClose(season.closesAt)}
           </p>
         </div>
         <UserButton />
       </header>
 
-      <section className="relative mt-4 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
-        <DropBoard runs={runs} onLanded={onLanded} />
+      <nav className="mt-4 -mx-4 overflow-x-auto px-4">
+        <div className="flex gap-1.5 pb-1">
+          {GAME_IDS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setGame(id)}
+              className={`shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold transition ${
+                game === id
+                  ? "bg-amber-500 text-slate-950"
+                  : "bg-slate-900 text-slate-300 hover:bg-slate-800"
+              }`}
+            >
+              {GAMES[id].name}
+            </button>
+          ))}
+        </div>
+      </nav>
+      <p className="mt-1 text-xs text-slate-500">{GAMES[game].tagline}</p>
+
+      <section className="relative mt-3">
         {flash ? (
-          <div className="pointer-events-none absolute inset-x-0 top-6 text-center">
+          <div className="pointer-events-none absolute inset-x-0 top-4 z-10 text-center">
             <span className="rounded-full bg-amber-400 px-3 py-1 text-sm font-bold text-slate-950">
               {flash}
             </span>
           </div>
         ) : null}
+
+        {game === "plinko" ? (
+          <div className="grid gap-3">
+            <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
+              <DropBoard runs={runs} onLanded={(run) => { showFlash(run.points); refresh(); }} />
+            </div>
+            <button
+              type="button"
+              onClick={() => drop.mutate()}
+              disabled={out || busy}
+              className="h-14 rounded-xl bg-amber-500 text-base font-bold text-slate-950 transition active:scale-[0.98] disabled:bg-slate-800 disabled:text-slate-500"
+            >
+              {out ? "Out of drops today" : `Drop · ${allowance.remaining} left today`}
+            </button>
+          </div>
+        ) : null}
+
+        {game === "coinflip" ? (
+          <CoinMatch
+            onFlip={(coins) => play.mutate({ game: "coinflip", coins })}
+            busy={busy}
+            result={coin}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "ascent" ? (
+          <AscentGame
+            onLaunch={(target) => play.mutate({ game: "ascent", target })}
+            busy={busy}
+            result={ascent}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "tumble" ? (
+          <TumbleGame
+            onSpin={() => play.mutate({ game: "tumble" })}
+            busy={busy}
+            result={tumble}
+            disabled={out}
+          />
+        ) : null}
+
+        {game === "mines" ? (
+          <MinesGame
+            round={(mines.data as MinesView) ?? null}
+            ended={minesEnd}
+            busy={busy}
+            disabled={out}
+            onOpen={(count) => openRound.mutate(count)}
+            onReveal={(tile) => reveal.mutate(tile)}
+            onBank={() => bank.mutate()}
+          />
+        ) : null}
       </section>
 
       <div className="mt-3 grid gap-2">
-        <button
-          type="button"
-          onClick={() => drop.mutate()}
-          disabled={!canDrop}
-          className="h-14 rounded-xl bg-amber-500 text-base font-bold text-slate-950 transition active:scale-[0.98] disabled:bg-slate-800 disabled:text-slate-500"
-        >
-          {allowance.remaining > 0 ? `Drop · ${allowance.remaining} left today` : "Out of drops today"}
-        </button>
         {allowance.remaining <= 5 ? (
-          <button
-            type="button"
-            onClick={() => watchAd.mutate()}
-            disabled={watchAd.isPending}
-            className="h-11 rounded-xl border border-slate-700 text-sm font-semibold text-slate-200 transition hover:border-slate-500 disabled:opacity-50"
-          >
-            Watch a short video for +{allowance.perAd} drops
-          </button>
+          <AdOffer
+            placement={out ? "out-of-drops" : "top-up"}
+            label={`Watch a short video for +${allowance.perAd} plays`}
+          />
         ) : null}
         <p className="text-center text-[11px] text-slate-500">
-          {allowance.freePerDay} free drops every day at 00:00 UTC. Drops are never
-          for sale.
+          {allowance.remaining} plays left today · {allowance.freePerDay} free every day at
+          00:00 UTC. Plays are never for sale.
         </p>
       </div>
 
@@ -156,10 +318,8 @@ export function Cascade() {
             </div>
           ))}
           <p className="mt-1 px-1 text-[11px] leading-relaxed text-slate-500">
-            Fixed and published before the season opened. Prize values never change
-            with how many people enter. Everyone who plays{" "}
-            {arcade.data.participationMinDrops}+ drops and finishes outside the top
-            20 gets bonus drops next season.
+            Fixed and published before the season opened. Every game pays the same on
+            average, so play whichever you like — none of them is the better bet.
           </p>
         </div>
       </section>
@@ -194,7 +354,7 @@ export function Cascade() {
             ))
           ) : (
             <p className="px-3 py-6 text-center text-sm text-slate-500">
-              No drops yet this season. Go first.
+              No plays yet this season. Go first.
             </p>
           )}
         </div>
@@ -213,6 +373,10 @@ export function Cascade() {
       </footer>
     </Shell>
   );
+}
+
+function message(error: unknown): string {
+  return error instanceof Error ? error.message : "Something went wrong.";
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
