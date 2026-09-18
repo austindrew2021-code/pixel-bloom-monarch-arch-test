@@ -25,6 +25,7 @@ import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import { HILL_SALADS_RECIPES } from "./catalog-hill-salads.ts";
 import { AMERICAN_COOKERY_RECIPES } from "./catalog-american-cookery.ts";
 import { LADIES_AID_RECIPES } from "./catalog-ladies-aid.ts";
+import { CRISCO_SALAD_RECIPES } from "./catalog-crisco-salad.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { polishCatalog } from "./cook-steps.ts";
@@ -1527,6 +1528,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...HILL_SALADS_RECIPES,
     ...AMERICAN_COOKERY_RECIPES,
     ...LADIES_AID_RECIPES,
+    ...CRISCO_SALAD_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
   ],
