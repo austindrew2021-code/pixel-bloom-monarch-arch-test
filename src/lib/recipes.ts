@@ -21,6 +21,7 @@ import { DESSERTS_365_JAN_MAR_RECIPES } from "./catalog-365-desserts-jan-mar.ts"
 import { DESSERTS_365_APR_JUN_RECIPES } from "./catalog-365-desserts-apr-jun.ts";
 import { DESSERTS_365_JUL_SEP_RECIPES } from "./catalog-365-desserts-jul-sep.ts";
 import { DESSERTS_365_OCT_DEC_RECIPES } from "./catalog-365-desserts-oct-dec.ts";
+import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { polishCatalog } from "./cook-steps.ts";
@@ -1519,6 +1520,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...DESSERTS_365_APR_JUN_RECIPES,
     ...DESSERTS_365_JUL_SEP_RECIPES,
     ...DESSERTS_365_OCT_DEC_RECIPES,
+    ...HOW_TO_COOK_FISH_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
   ],
