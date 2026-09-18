@@ -28,6 +28,7 @@ import { LADIES_AID_RECIPES } from "./catalog-ladies-aid.ts";
 import { CRISCO_SALAD_RECIPES } from "./catalog-crisco-salad.ts";
 import { YOUR_SHARE_1943_RECIPES } from "./catalog-your-share-1943.ts";
 import { IDAHO_WILD_GAME_RECIPES } from "./catalog-idaho-wild-game.ts";
+import { MIXING_BOWL_1938_RECIPES } from "./catalog-mixing-bowl-1938.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { polishCatalog } from "./cook-steps.ts";
@@ -1533,6 +1534,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...CRISCO_SALAD_RECIPES,
     ...YOUR_SHARE_1943_RECIPES,
     ...IDAHO_WILD_GAME_RECIPES,
+    ...MIXING_BOWL_1938_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
   ],
