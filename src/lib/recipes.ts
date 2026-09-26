@@ -31,6 +31,7 @@ import { IDAHO_WILD_GAME_RECIPES } from "./catalog-idaho-wild-game.ts";
 import { MIXING_BOWL_1938_RECIPES } from "./catalog-mixing-bowl-1938.ts";
 import { PTA_PETERSBURG_RECIPES } from "./catalog-pta.ts";
 import { KFYR_1969_RECIPES } from "./catalog-kfyr.ts";
+import { TROOP_2023_RECIPES } from "./catalog-troop.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { polishCatalog } from "./cook-steps.ts";
@@ -1539,6 +1540,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...MIXING_BOWL_1938_RECIPES,
     ...PTA_PETERSBURG_RECIPES,
     ...KFYR_1969_RECIPES,
+    ...TROOP_2023_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
   ],
