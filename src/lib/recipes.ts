@@ -17,10 +17,6 @@ import { FOREIGN_365_RECIPES } from "./catalog-365-foreign.ts";
 import { FOREIGN_365_APR_JUN_RECIPES } from "./catalog-365-foreign-apr-jun.ts";
 import { FOREIGN_365_JUL_SEP_RECIPES } from "./catalog-365-foreign-jul-sep.ts";
 import { FOREIGN_365_OCT_DEC_RECIPES } from "./catalog-365-foreign-oct-dec.ts";
-import { DESSERTS_365_JAN_MAR_RECIPES } from "./catalog-365-desserts-jan-mar.ts";
-import { DESSERTS_365_APR_JUN_RECIPES } from "./catalog-365-desserts-apr-jun.ts";
-import { DESSERTS_365_JUL_SEP_RECIPES } from "./catalog-365-desserts-jul-sep.ts";
-import { DESSERTS_365_OCT_DEC_RECIPES } from "./catalog-365-desserts-oct-dec.ts";
 import { HILL_SALADS_RECIPES } from "./catalog-hill-salads.ts";
 import { AMERICAN_COOKERY_RECIPES } from "./catalog-american-cookery.ts";
 import { LADIES_AID_RECIPES } from "./catalog-ladies-aid.ts";
@@ -1774,6 +1770,38 @@ const ARCHIVE_HIDDEN_IDS = new Set<string>([
   "hill-0337",
   "hill-0379",
   "hill-0382",
+  // Line re-check 2026-10-03 (ARCHIVE-HIDE-ADD-2): 31 more
+  "ac-0034",
+  "hill-0030",
+  "hill-0084",
+  "hill-0157",
+  "hill-0160",
+  "hill-0173",
+  "hill-0211",
+  "hill-0217",
+  "hill-0225",
+  "hill-0232",
+  "hill-0238",
+  "hill-0255",
+  "hill-0284",
+  "hill-0300",
+  "kleber-0020",
+  "kleber-0038",
+  "kleber-0044",
+  "kleber-0047",
+  "kleber-0066",
+  "kleber-0119",
+  "kleber-0157",
+  "kleber-0158",
+  "kleber-0167",
+  "kleber-0203",
+  "kleber-0205",
+  "kleber-0236",
+  "kleber-0240",
+  "kleber-0254",
+  "kleber-0255",
+  "kleber-0283",
+  "ys-012",
 ]);
 
 export const RECIPES: Recipe[] = polishCatalog(
@@ -1797,10 +1825,6 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...FOREIGN_365_APR_JUN_RECIPES,
     ...FOREIGN_365_JUL_SEP_RECIPES,
     ...FOREIGN_365_OCT_DEC_RECIPES,
-    ...DESSERTS_365_JAN_MAR_RECIPES,
-    ...DESSERTS_365_APR_JUN_RECIPES,
-    ...DESSERTS_365_JUL_SEP_RECIPES,
-    ...DESSERTS_365_OCT_DEC_RECIPES,
     ...HILL_SALADS_RECIPES,
     ...AMERICAN_COOKERY_RECIPES,
     ...LADIES_AID_RECIPES,
