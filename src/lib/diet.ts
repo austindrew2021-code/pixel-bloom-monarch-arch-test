@@ -82,10 +82,12 @@ function withoutLookalikes(text: string): string {
   return text
     .replace(
       /\b(almond|coconut|chickpea|rice|corn|cassava|tapioca|buckwheat|oat|gluten[- ]free|masa|potato|nut)\s+(flour|meal|bread|pasta|noodles?|tortillas?|crumbs?|wrappers?)\b/gi,
-      " ",
+      // "gf", not a blank: what is left ("rice bread crumbs" -> "gf crumbs")
+      // still reads as a gluten-free form to the gluten check in shield.ts.
+      "gf",
     )
     .replace(/\bcorn(starch|meal|flour)\b/gi, " ")
-    .replace(/\bgluten[- ]free\b/gi, " ")
+    .replace(/\bgluten[- ]free\b/gi, "gf")
     .replace(/\brice (noodles?|paper|vermicelli|wine)\b/gi, " ")
     .replace(/\b(tamari|coconut aminos)\b/gi, " ")
     .replace(
