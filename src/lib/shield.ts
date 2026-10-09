@@ -21,12 +21,64 @@ const PATTERNS: Record<AllergyId, RegExp> = {
     /chili|chile|cayenne|jalape[nñ]o|hot sauce|pepper flake|harissa|sriracha|gochujang|chipotle|scotch bonnet|habanero|berbere/i,
 };
 
+/*
+ * Gluten the word list above never saw. QA found dishes passing as gluten-free
+ * with linguine, ziti, baguettes, graham crumbs, matzo meal, beer, puff paste,
+ * a flour-roux white sauce or gravy, period soy-based "Chinese sauce", frozen
+ * meatballs or "serve on toast" in them. A false "safe" is worse than a false
+ * "unsafe" here, so wheat-by-default prepared foods count. These only ever take
+ * a gluten-free pass away.
+ *
+ * They read the ingredient rows (not the dish name, so flourless "peanut butter
+ * cookies" is not condemned by its title) and, for gluten only, the steps,
+ * because old books put the toast, the crust and the crackers in the method.
+ * A gluten-free, rice, corn or nut form is never matched.
+ */
+const NOT_GF = String.raw`(?<!\b(?:gluten[- ]free|gf|rice|corn|almond|chickpea|cassava|tapioca|buckwheat)[- ](?:\w+[- ])?)`;
+const GLUTEN_INGREDIENT = new RegExp(
+  NOT_GF +
+    "(?:" +
+    String.raw`\b(?:linguine|fettuccine|fettuccini|tagliatelle|pappardelle|bucatini|rigatoni|ziti|rotini|fusilli|farfalle|orecchiette|ditalini|cavatappi|gemelli|vermicelli|ravioli|tortellini|tortelloni|manicotti|cannelloni|gnocchi|spaetzle|baguettes?|ciabatta|focaccia|brioche|croissants?|challah|crostini|sourdough|pumpernickel|zwieback|hardtack|rolls|toast|sippets|crumbs|saltines?|graham|gingersnaps?|cookies?|wafers?|lady[- ]?fingers|matzo|matzah|matzoh|lager|stout|malt|malted|oats|oatmeal|muffins?|waffles?|freekeh|kamut|einkorn|triticale|durum|farina|shoyu|pierogi|pierogies|perogies|panettone|cornflakes|cheerioats)\b` +
+    String.raw`|(?<!\broot )\bbeer\b|(?<!\bginger )\bale\b` +
+    String.raw`|\b(?:sponge|pound|layer|coffee|service|angel food|chiffon|sheet)[- ]cake\b|\bcake[- ](?:mix|crumbs|batter)\b|^cake$` +
+    String.raw`|\b(?:pie|puff|plain|short)[- ]paste\b|\bpie[- ]crust\b|^crust$|\b(?:tart|pie|pastry|patty) shells?\b|\bpancake (?:batter|mix)\b` +
+    String.raw`|\b(?:french|italian|bread|sandwich|sourdough|white|rye|wheat) loa(?:f|ves)\b|\bcorn flakes\b|\bempanada (?:discs|dough|wrappers|shells)\b|^soy$` +
+    String.raw`|\bgravy\b|\b(?:egg|fritter|frying) batter\b|\b(?:chinese|japanese|chop suey) sauce\b|\bfiggy duff\b|\b(?:frozen|cooked|prepared|store-bought) meatballs\b` +
+    String.raw`|(?<!\balabama )\bwhite sauce\b|\bcream sauce\b|\bb[eé]chamel\b|\broux\b` +
+    ")",
+  "i",
+);
+const GLUTEN_STEP = new RegExp(
+  NOT_GF +
+    "(?:" +
+    String.raw`\b(?:on|onto|over|with|of|the|buttered|hot|fresh|dry|anchovy|french) toast\b` +
+    String.raw`|\btoast under\.|\bbuttered and salted cereal\b|\bsippets\b|\bpaste,? no\b|\b(?:pint|cups?) of (?:thick |thin |medium )?white sauce\b|\bwith white sauce\b|\b(?:lady[- ]?fingers|sponge-cake|puff[- ]paste|pie[- ]paste|pie[- ]crust|graham|matzo)\b` +
+    String.raw`|\b(?:top|under|upper|pastry)[- ]crust\b|\bpastry-(?:lined|covered)\b|\blined with (?:\w+ )?(?:pastry|paste|pie crust)\b|\b(?:tart|pie|pastry|patty) shells?\b|\bbiscuit dough\b|\bbuttered noodles\b` +
+    String.raw`|\bcrackers?\b|(?<!\bloose )\bcrumbs\b|\bbread ?crumbs\b` +
+    ")",
+  "i",
+);
+
+const LABELLED_GF = /\bgluten[- ]free\b|\bgf\b/i;
+
+/** Gluten in an ingredient row or a step that the name-and-tag check misses. */
+function glutenBeyondNames(recipe: Recipe): boolean {
+  return (
+    // A row that labels itself gluten-free ("angel food cake (gluten-free)"; diet.ts
+    // leaves "gf" where it said so) is taken at its word by these extra words.
+    recipe.ingredients.some((i) => !LABELLED_GF.test(i.name) && GLUTEN_INGREDIENT.test(i.name.trim())) ||
+    (recipe.steps ?? []).some((s) => GLUTEN_STEP.test(s))
+  );
+}
+
 export function recipeAllergens(recipe: Recipe): AllergyId[] {
   // Pipe-joined so a pattern cannot span two rows: "grated coconut" next to
   // "butter" is not coconut butter, and "short-grain rice" next to "milk" is
   // not rice milk.
   const blob = [recipe.name, ...recipe.tags, ...recipe.ingredients.map((i) => i.name)].join(" | ");
-  return ALLERGIES.map((a) => a.id).filter((id) => PATTERNS[id].test(blob));
+  return ALLERGIES.map((a) => a.id).filter(
+    (id) => PATTERNS[id].test(blob) || (id === "gluten" && glutenBeyondNames(recipe)),
+  );
 }
 
 export function recipeSafe(recipe: Recipe, allergies: AllergyId[]): boolean {
