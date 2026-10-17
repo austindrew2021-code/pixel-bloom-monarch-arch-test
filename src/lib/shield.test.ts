@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { isDairyFree, isGlutenFree, isVegan, isVegetarian } from "./diet.ts";
-import { mealSavings, plateCost, recipeAllergens, takeoutCost } from "./shield.ts";
+import { mealSavings, plateCost, recipeAllergens, recipeSafe, takeoutCost } from "./shield.ts";
 import type { AllergyId, Protein, Recipe } from "./types.ts";
 
 const PROTEINS: Protein[] = ["chicken", "beef", "lamb", "pork", "fish", "seafood", "veg", "eggs", "turkey"];
@@ -177,8 +177,8 @@ test("gluten: gravy, a bare flour, a bread serve-with, open shells and the torti
 });
 
 test("gluten: descriptions and sandwich names are read; negations and a gluten-free label are trusted", () => {
-  assert.equal(gf(withDesc("Sharp cheddar, pimentos, mayo. Celery or white bread.")), false);
-  assert.equal(gf(withDesc("Salt cod, hard bread, and scrunchions.")), false);
+  assert.equal(gf(withDesc("Sharp cheddar, pimentos, mayo. Celery or white toast.")), false);
+  assert.equal(gf(withDesc("Salt cod, hard biscuit, and scrunchions.")), false);
   assert.equal(gf(withDesc("Lettuce cups, not bread.")), true);
   assert.equal(gf(withDesc("Gluten-free, no bread.")), true);
   assert.equal(gf({ ...withRows(["mushrooms"]), name: "Mushroom-and-Lobster Sandwiches" }), false);
@@ -306,4 +306,64 @@ test("vegan: a salad-dressing cake fails; the Crisco book's own fruit-salad dres
     assert.equal(isVegan({ ...withRows(["oranges", row]), id: "cris-045" }), true, `${row} (cris) stays vegan`);
     assert.equal(isVegan({ ...withRows(["oranges", row]), id: "pta-154" }), false, `${row} elsewhere is the cooked kind`);
   }
+});
+
+// Follow-up pack (Line's friction asks): shield and badge agree on corn tortillas / almond flour, a
+// description is not an ingredient list for pita / sandwiches / bread, and the Crisco book's own recipe rows.
+const glutenSafe = (r: Recipe) => recipeSafe(r, ["gluten"]);
+
+test("shield matches the badge: corn / masa / gluten-free tortillas and almond flour pass, flour tortillas still fail", () => {
+  for (const row of ["corn tortillas", "masa tortillas", "gluten-free tortillas", "almond flour"]) {
+    const r = withRows([row, "chicken"]);
+    assert.equal(glutenSafe(r), true, `${row}: shield passes`);
+    assert.equal(gf(r), true, `${row}: badge passes`);
+  }
+  for (const row of ["flour tortillas", "tortillas", "7-inch flour tortillas", "corn tortillas or flour tortillas", "wheat flour", "almond flour and flour"]) {
+    assert.equal(glutenSafe(withRows([row, "chicken"])), false, `${row}: shield still fails`);
+  }
+  // One clean row never clears a wheat row beside it, and nuts still fail on almond flour.
+  assert.equal(glutenSafe(withRows(["corn tortillas", "flour tortillas"])), false);
+  assert.equal(recipeSafe(withRows(["almond flour"]), ["nuts"]), false);
+});
+
+test("description: pita, sandwiches and bread are serve-withs, rows and steps still count; rice noodles clear 'noodles'", () => {
+  for (const d of ["Stuffed in pita.", "Tacos, bowls, sandwiches.", "Shawarma, roast chicken, bread.", "The one that drips down the pita."]) {
+    assert.equal(gf({ ...withRows(["garlic", "oil"]), description: d }), true, `${d} passes`);
+  }
+  assert.equal(gf({ ...withRows(["garlic", "pita"]), description: "Stuffed in pita." }), false);
+  assert.equal(gf({ ...withRows(["garlic"], ["Spoon onto toast."]), description: "Bread." }), false);
+  assert.equal(gf({ ...withRows(["rice noodles", "shrimp"]), description: "Tamarind noodles, shrimp." }), true);
+  assert.equal(gf({ ...withRows(["rice noodles", "egg noodles"]), description: "Tamarind noodles." }), false);
+  // Held for Line: a bare serve-with bread in a non-sauce dish stays blocked.
+  assert.equal(gf({ ...withRows(["chickpeas", "rice"]), id: "md-chickpea-stew", description: "Chickpeas, tomato. Bread." }), false);
+  assert.equal(gf({ ...withRows(["shrimp"]), description: "Tamarind noodles, shrimp." }), false);
+  assert.equal(gf({ ...withRows(["potatoes"]), description: "Grated-potato dumplings. Sauce for pasta." }), true);
+  assert.equal(gf({ ...withRows(["potatoes", "dumpling wrappers"]), description: "Dumplings." }), false);
+});
+
+test("crisco: a row that is the book's own gluten-free dressing or marinade title is exempt; elsewhere it is not", () => {
+  for (const row of ["Italian Dressing", "Mild Garlic Marinade", "Green Goddess Salad Dressing", "Fruit Salad Dressing or Poppy Seed Fruit Salad Dressing"]) {
+    assert.equal(gf({ ...withRows(["lettuce", row]), id: "cris-031" }), true, `${row} (cris) passes`);
+    assert.equal(gf({ ...withRows(["lettuce", row]), id: "pta-154" }), false, `${row} elsewhere still fails`);
+  }
+  assert.equal(gf({ ...withRows(["lettuce", "Italian Dressing", "croutons"]), id: "cris-031" }), false);
+  assert.equal(gf({ ...withRows(["lettuce", "Italian Dressing or ranch dressing"]), id: "cris-031" }), false);
+});
+
+test("shield: a printed rice noodle row clears 'noodle' (as the badge does); wheat, egg and bare noodle rows still fail", () => {
+  for (const row of ["rice noodles", "rice noodle", "Rice Noodles", "8 oz rice noodles", "flat rice noodles"]) {
+    const r = withRows([row, "shrimp"]);
+    assert.equal(glutenSafe(r), true, `${row}: shield passes`);
+    assert.equal(gf(r), true, `${row}: badge passes`);
+  }
+  for (const row of ["wheat noodles", "egg noodles", "noodles", "ramen noodles", "udon noodles", "rice noodles or egg noodles", "egg noodles or rice noodles"]) {
+    assert.equal(glutenSafe(withRows([row, "shrimp"])), false, `${row}: shield still fails`);
+  }
+  // A clean rice-noodle row never clears a wheat row beside it.
+  assert.equal(glutenSafe(withRows(["rice noodles", "egg noodles"])), false);
+  assert.equal(glutenSafe(withRows(["rice noodles", "soy sauce"])), false);
+  // Printed row says rice though the parsed name is bare "noodles".
+  const bare = { ...withRows(["shrimp"]) };
+  bare.ingredients = [{ name: "noodles", raw: "rice noodles", qty: 1, unit: "", aisle: "Pantry" } as Recipe["ingredients"][number]];
+  assert.equal(glutenSafe(bare), true);
 });
