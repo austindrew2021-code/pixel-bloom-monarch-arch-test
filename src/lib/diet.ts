@@ -81,11 +81,14 @@ function blob(recipe: Recipe): string {
 function withoutLookalikes(text: string): string {
   return text
     .replace(
-      /\b(almond|coconut|chickpea|rice|corn|cassava|tapioca|buckwheat|oat|gluten[- ]free|masa|potato|nut)\s+(flour|meal|bread|pasta|noodles?|tortillas?|crumbs?|wrappers?)\b/gi,
+      /\b(almond|coconut|chickpea|rice|corn|cassava|tapioca|buckwheat|oat|gluten[- ]free|masa|potato|nut)\s+(flour|meal|pasta|noodles?|tortillas?|wrappers?)\b/gi,
       // "gf", not a blank: what is left ("rice bread crumbs" -> "gf crumbs")
       // still reads as a gluten-free form to the gluten check in shield.ts.
       "gf",
     )
+    // Bread and crumbs: only a plainly gluten-free form clears them. Corn, nut and potato bread
+    // (and corn muffins, see shield.ts) are wheat by default.
+    .replace(/\b(almond|coconut|chickpea|rice|cassava|tapioca|buckwheat|gluten[- ]free|masa)\s+(bread|crumbs?)\b/gi, "gf")
     .replace(/\bcorn(starch|meal|flour)\b/gi, " ")
     .replace(/\bgluten[- ]free\b/gi, "gf")
     .replace(/\brice (noodles?|paper|vermicelli|wine)\b/gi, " ")
@@ -105,13 +108,13 @@ function withoutLookalikes(text: string): string {
 const SUGAR =
   /\b(brown sugar|powdered sugar|confectioners|icing sugar|granulated sugar|caster sugar|white sugar|cane sugar|coconut sugar|maple syrup|molasses|corn syrups?|agave|sweetened condensed|chocolate chips?|semi-sweet|milk chocolate|dark chocolate|caramels?|fudge|marshmallows?|honey|jelly|jam|preserves)\b|\bsugars?\b/i;
 const EGG = /\b(eggs?|egg white|egg yolk|mayonnaise)\b/i;
-const HONEY_GEL = /\b(honey|gelatin)\b/i;
+const HONEY_GEL = /\b(honey|gelatine?)\b/i;
 
 /** Fish and shellfish are fine; nothing else that had a face is. */
 export function isPescatarian(recipe: Recipe): boolean {
   if (["chicken", "beef", "lamb", "pork", "turkey"].includes(recipe.protein)) return false;
   const text = withoutLookalikes(blob(recipe));
-  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|gelatin|beef (stock|broth)|chicken (stock|broth))\b/i.test(
+  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|gelatine?|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth))\b/i.test(
     text,
   );
 }
@@ -121,7 +124,7 @@ export function isVegetarian(recipe: Recipe): boolean {
   if (["chicken", "beef", "lamb", "pork", "fish", "seafood", "turkey"].includes(recipe.protein)) return false;
   if (!["veg", "eggs"].includes(recipe.protein)) return false;
   const text = withoutLookalikes(blob(recipe));
-  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov(y|ies)|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatin|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth))\b/i.test(
+  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov(y|ies)|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatine?|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth))\b/i.test(
     text,
   );
 }
@@ -131,6 +134,14 @@ export function isVegan(recipe: Recipe): boolean {
   if (!isVegetarian(recipe)) return false;
   const text = withoutLookalikes(blob(recipe));
   if (EGG.test(text) || HONEY_GEL.test(text)) return false;
+  // A boxed or printed "salad dressing" (the old cooked, egg-based kind) is not vegan
+  // unless the row says vegan, eggless or egg-free (mayonnaise already failed vegan, unchanged).
+  // The Crisco book's own fruit-salad dressings (cris-025, cris-047) are oil, sugar, mustard and vinegar: vegan.
+  const crisco = recipe.id.startsWith("cris-") ? /\b(?:poppy ?seed )?fruit salad dressing\b/g : /$^/g;
+  const rows = recipe.ingredients.map((i) => i.name).join(" | ").toLowerCase().replace(/\b(vegan|eggless|egg[- ]free|dairy[- ]free)\s+(salad dressing)\b/g, " ").replace(crisco, " ");
+  if (/\bsalad dressing\b/.test(rows)) return false;
+  // "Salad Dressing Cake" (kfyr-063): the row only says "salad", the name says what it is made with.
+  if (/\bsalad dressing (?:cake|cookies?|bread|muffins?|pie|biscuits?|frosting)\b/i.test(recipe.name) && !/\b(?:vegan|eggless|egg[- ]free)\b/i.test(recipe.name)) return false;
   if (/\b(butter|buttermilk|milk|cream|cheese|parmesan|mozzarella|cheddar|feta|ricotta|halloumi|paneer|yogurt|yoghurt|ghee|whey|mayonnaise|custard|condensed milk|evaporated milk)\b/i.test(text))
     return false;
   return true;
@@ -138,7 +149,7 @@ export function isVegan(recipe: Recipe): boolean {
 
 /** The ingredient list with lookalike names neutralised, for the allergen check. */
 function safeIngredients(recipe: Recipe): Recipe["ingredients"] {
-  return recipe.ingredients.map((i) => ({ ...i, name: withoutLookalikes(i.name) }));
+  return recipe.ingredients.map((i) => ({ ...i, name: withoutLookalikes(i.name), raw: i.name }));
 }
 
 export function isGlutenFree(recipe: Recipe): boolean {
