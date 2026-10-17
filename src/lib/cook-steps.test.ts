@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { polishSteps, scaleMethodSteps } from "./cook-steps.ts";
-import { formatQty } from "./format.ts";
+import { polishCatalog, polishRecipe, polishSteps, scaleMethodSteps } from "./cook-steps.ts";
+import { isCatalogFinal } from "./catalog-final.ts";
+import { DESSERT_RECIPES } from "./catalog-desserts.ts";
+import { HERITAGE_RECIPES } from "./catalog-heritage.ts";
+import { formatQty, prettyFrac } from "./format.ts";
+import { scaleQty } from "./cuisine.ts";
+import { CLASSIC_RECIPES } from "./catalog-classics.ts";
+import { dietFlags, isDairyFree, isGlutenFree, isVegan } from "./diet.ts";
+import { recipeAllergens, recipeSafe } from "./shield.ts";
 import type { Recipe } from "./types.ts";
 
 function fake(partial: Partial<Recipe> & Pick<Recipe, "id" | "name" | "ingredients" | "steps">): Recipe {
@@ -777,4 +784,97 @@ test("parboil is recognized as a cooking verb, not wrapped as a bare noun fragme
   ).join(" ");
   assert.equal(/^add the parboil/i.test(steps), false, steps);
   assert.match(steps, /^Parboil/i);
+});
+
+// ---- Book-polish bypass (Kitchen decision, Oct 9 2026) ----
+
+test("scaleMethodSteps is the identity at native servings for printed-book text; app recipes keep main's render path", () => {
+  const ings = [{ name: "butter", qty: 4, unit: "tbsp" }];
+  const steps = ["Melt 2 tablespoons of butter. Add the rest later."];
+  assert.equal(scaleMethodSteps(steps, ings, 4, 4, { catalogFinal: true }), steps);
+  // App recipes (no catalogFinal flag) are byte-for-byte what main renders: the named amount is rewritten from the list.
+  assert.deepEqual(scaleMethodSteps(steps, ings, 4, 4), ["Melt the 4 tablespoons of butter. Add the rest later."]);
+});
+
+test("catalog-final steps scale numbers only, never words", () => {
+  const ings = [{ name: "butter", qty: 4, unit: "tbsp" }, { name: "eggs", qty: 2, unit: "" }];
+  const steps = ["Melt 2 tablespoons of butter. Beat 2 eggs. Bake 20 minutes at 350°F in a 9-inch pan."];
+  const out = scaleMethodSteps(steps, ings, 8, 4, { catalogFinal: true });
+  assert.deepEqual(out, ["Melt 4 tablespoons of butter. Beat 4 eggs. Bake 20 minutes at 350°F in a 9-inch pan."]);
+  const words = (s: string) => s.replace(/\d+(?:\.\d+)?|[⅛¼⅓½⅔¾]/g, "#");
+  assert.equal(words(scaleMethodSteps(steps, ings, 2, 4, { catalogFinal: true })[0]!), words(steps[0]!));
+});
+
+test("printed-book recipes pass through polishRecipe and polishCatalog untouched", () => {
+  const saratoga = HERITAGE_RECIPES.find((r) => r.id === "vh-wh-saratoga")!;
+  assert.ok(isCatalogFinal(saratoga));
+  assert.equal(polishRecipe(saratoga), saratoga);
+  const [out] = polishCatalog([saratoga]);
+  assert.deepEqual(out!.steps, saratoga.steps);
+  assert.deepEqual(out!.ingredients, saratoga.ingredients);
+  assert.ok(!out!.ingredients.some((i) => /cornstarch/i.test(i.name)));
+});
+
+test("tiramisu keeps the polish but adds no line or row", () => {
+  const raw = DESSERT_RECIPES.find((r) => r.id === "tiramisu")!;
+  assert.ok(!isCatalogFinal(raw));
+  const out = polishRecipe(raw)!;
+  const sentences = (steps: string[]) => steps.flatMap((s) => s.trim().split(/(?<=[.!?])\s+/)).length;
+  assert.equal(out.steps.length, raw.steps.length);
+  assert.equal(sentences(out.steps), sentences(raw.steps));
+  assert.deepEqual(out.ingredients, raw.ingredients);
+});
+
+test("book recipes keep printed rows, but diet and allergy checks see what the row adder would add", () => {
+  // Printed rows: no bread. Steps: "Serve with bread or polenta." Main's row adder listed bread.
+  const cacciatora = HERITAGE_RECIPES.find((r) => r.id === "vh-gt-cacciatora")!;
+  const [c] = polishCatalog([cacciatora]);
+  assert.deepEqual(c!.ingredients, cacciatora.ingredients);
+  assert.deepEqual(c!.steps, cacciatora.steps);
+  assert.ok(c!.dietScreen!.foods.some((f) => f.name === "bread"));
+  assert.equal(isGlutenFree(c!), false);
+  assert.equal(recipeSafe(c!, ["gluten"]), false);
+  assert.ok(!dietFlags(c!).includes("gluten-free"));
+  // "a pinch of cayenne" in the method, not on the list: still blocked for spicy.
+  const rarebit = CLASSIC_RECIPES.find((r) => r.id === "ar-ff-welsh-rarebit")!;
+  const [w] = polishCatalog([rarebit]);
+  assert.deepEqual(w!.ingredients, rarebit.ingredients);
+  assert.ok(recipeAllergens(w!).includes("spicy"));
+  assert.equal(recipeSafe(w!, ["spicy"]), false);
+});
+
+test("a printed method that uses butter its list never names does not pass dairy-free", () => {
+  const book = fake({
+    id: "book-test-greens",
+    name: "Boiled Greens",
+    ingredients: [{ name: "turnip greens", qty: 1, unit: "lb", aisle: "Produce" }],
+    steps: ["Boil the greens soft. Drain, and dress with melted butter."],
+    source: { book: "Test Book", credit: "test", era: "1930s" },
+  });
+  assert.ok(isCatalogFinal(book));
+  const [out] = polishCatalog([book]);
+  assert.deepEqual(out!.ingredients, book.ingredients);
+  assert.deepEqual(out!.steps, book.steps);
+  assert.equal(isDairyFree(out!), false);
+  assert.equal(isVegan(out!), false);
+  assert.equal(recipeSafe(out!, ["dairy"]), false);
+  // The polisher rewrites this short method and drops the butter, so the old
+  // polish alone would not have caught it: the row adder also reads the printed
+  // method for the screen.
+  assert.ok(out!.dietScreen!.foods.some((f) => f.name === "butter"));
+  assert.ok(!polishSteps(book).join(" ").includes("butter"));
+});
+
+test("fractions: ⅞ and 1/16 display; thirds stay thirds when scaled", () => {
+  assert.equal(formatQty(0.875, "lb"), "⅞ lb"); // kleber-0093
+  assert.equal(formatQty(0.062, "tsp"), "1/16 tsp"); // ys-038
+  assert.equal(prettyFrac(1.875), "1⅞");
+  assert.equal(prettyFrac(2.0625), "2 1/16");
+  assert.equal(prettyFrac(scaleQty(0.33, 8, 4)), "⅔"); // ⅓ × 2, not ¾
+  assert.equal(prettyFrac(scaleQty(1 / 3, 12, 4)), "1");
+  assert.equal(prettyFrac(scaleQty(0.67, 8, 4)), "1⅓"); // not 1¼
+  assert.equal(prettyFrac(scaleQty(2.67, 8, 4)), "5⅓"); // ys-095 2⅔ × 2, not 5¼
+  assert.equal(prettyFrac(scaleQty(0.67, 6, 4)), "1"); // exact on both grids
+  assert.equal(scaleQty(1.5, 1, 4), 0.5); // non-thirds keep the quarter grid
+  assert.equal(scaleQty(0.33, 4, 4), 0.33); // native: the catalog amount
 });

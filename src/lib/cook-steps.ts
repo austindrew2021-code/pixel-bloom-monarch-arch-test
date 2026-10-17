@@ -2,7 +2,8 @@ import type { Recipe } from "./types";
 import { knownDishMethod, writeDishMethod, hasSpecialistMethod } from "./write-method.ts";
 import { scaleQty } from "./cuisine.ts";
 import { prettyFrac } from "./format.ts";
-import { alignListToCook } from "./list-align.ts";
+import { alignListToCook, alignRows } from "./list-align.ts";
+import { dietScreenFor, fixBookSteps, isCatalogFinal } from "./catalog-final.ts";
 
 type RecipeLike = Pick<Recipe, "name" | "minutes" | "protein" | "plate" | "tags" | "ingredients" | "steps"> & {
   id?: string;
@@ -25,8 +26,46 @@ function minutesWord(n: string | number, unit?: string): string {
   return num === 1 ? "minute" : "minutes";
 }
 
+/*
+ * Amount-echo wording. These used to be tidied by the render-time step rewrite
+ * (scaleMethodSteps at native servings), which is now the identity, so the
+ * polisher finishes them itself: "the 1½ lb of beef" -> "the 1½ pounds of
+ * beef", "the chopped 4 ounces of chocolate" -> "the 4 ounces of chopped
+ * chocolate", "the ½ cup coffee grounds" -> "the ½ cup of coffee grounds",
+ * "in the cooled the 1½ cups of espresso" -> "in the 1½ cups of cooled espresso".
+ * Polished (app) recipes only: catalog-final text never reaches the polisher.
+ */
+const ECHO_QTY = String.raw`\d+\s+\d+\/\d+|\d+\/\d+|\d+[⅛¼⅓½⅔¾⅞]|[⅛¼⅓½⅔¾⅞]|\d+(?:\.\d+)?`;
+const ECHO_UNIT = String.raw`tablespoons?|teaspoons?|cups?|ounces?|pounds?|cloves?|cans?|slices?`;
+const ECHO_ADJ = String.raw`soft|softened|melted|unsalted|salted|chopped|sliced|minced|diced|cubed|fresh|ground|grated|shredded|crushed|beaten|boiling|cold|cooled|chilled|warm|hot|toasted|roasted`;
+// Only after "the" or a preposition: "Warm the 2 cups of milk" is a verb.
+const ECHO_ADJ_BEFORE_AMOUNT = new RegExp(
+  String.raw`\b(the|in|into|with|over|onto|of)\s+(?:the\s+)?(${ECHO_ADJ})\s+(?:the\s+)?(${ECHO_QTY})\s+(${ECHO_UNIT})\s+of\s+`,
+  "gi",
+);
+const ECHO_ABBREV_OF = new RegExp(String.raw`\b(${ECHO_QTY})\s+(lb|oz)\s+of\b`, "gi");
+const ECHO_MISSING_OF = new RegExp(
+  String.raw`\bthe\s+(${ECHO_QTY})\s+(${ECHO_UNIT})\s+(?!of\b|or\b|and\b|to\b|more\b|each\b|at\b|in\b|for\b|per\b|at\b|total\b)(?=[a-z])`,
+  "gi",
+);
+function echoIsOne(q: string): boolean {
+  return /^1$|^1\.0+$|^[⅛¼⅓½⅔¾⅞]$|^\d+\/\d+$/.test(q.trim()) || (Number(q) > 0 && Number(q) <= 1);
+}
+function tidyAmountEcho(t: string): string {
+  return t
+    .replace(ECHO_ADJ_BEFORE_AMOUNT, (_m, lead: string, adj: string, qty: string, unit: string) =>
+      `${/^the$/i.test(lead) ? lead : `${lead} the`} ${qty} ${unit} of ${adj.toLowerCase()} `,
+    )
+    .replace(ECHO_ABBREV_OF, (_m, qty: string, u: string) => {
+      const one = echoIsOne(qty);
+      const word = u.toLowerCase() === "lb" ? (one ? "pound" : "pounds") : one ? "ounce" : "ounces";
+      return `${qty} ${word} of`;
+    })
+    .replace(ECHO_MISSING_OF, (_m, qty: string, unit: string) => `the ${qty} ${unit} of `);
+}
+
 function tidyCookText(s: string): string {
-  let t = s.replace(/\s+/g, " ").trim();
+  let t = tidyAmountEcho(s.replace(/\s+/g, " ").trim());
   t = t.replace(/\b1 minutes\b/gi, "1 minute");
   t = t.replace(/\b1 hours\b/gi, "1 hour");
   t = t.replace(/\b(so the mix is set)(?:[,.]?\s+\1)+\b/gi, "$1");
@@ -1731,13 +1770,14 @@ function alignCookToList(steps: string[], recipe: RecipeLike): string[] {
 }
 
 const FRAC_VAL: Record<string, number> = {
+  "⅙": 1 / 6, "⅚": 5 / 6,
   "⅛": 0.125, "¼": 0.25, "⅓": 1 / 3, "½": 0.5, "⅔": 2 / 3, "¾": 0.75,
 };
 
 function parseQtyToken(raw: string): number | null {
   const t = raw.trim().replace(/\s+/g, " ");
   if (FRAC_VAL[t] != null) return FRAC_VAL[t]!;
-  const mixedUni = t.match(/^(\d+)([⅛¼⅓½⅔¾])$/);
+  const mixedUni = t.match(/^(\d+)([⅛¼⅓½⅔¾⅙⅚])$/);
   if (mixedUni) return Number(mixedUni[1]) + (FRAC_VAL[mixedUni[2]!] ?? 0);
   const mixedAscii = t.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
   if (mixedAscii) return Number(mixedAscii[1]) + Number(mixedAscii[2]) / Number(mixedAscii[3]);
@@ -1750,7 +1790,7 @@ function parseQtyToken(raw: string): number | null {
 const STEP_UNIT =
   "tablespoons?|teaspoons?|cups?|ounces?|pounds?|tbsp|tsp|oz|lb|cloves?|cans?|pints?|quarts?|pinches?|dashes?|slices?|sprigs?|bunches?|sticks?|grams?|ml";
 
-const FRAC_GLYPHS = "⅛¼⅓½⅔¾";
+const FRAC_GLYPHS = "⅛¼⅓½⅔¾⅙⅚";
 const QTY_TOKEN = String.raw`\d+\s+\d+\s*/\s*\d+|\d+\s*/\s*\d+|\d+[${FRAC_GLYPHS}]|[${FRAC_GLYPHS}]|\d+(?:\.\d+)?`;
 
 function normCookUnit(u: string): string {
@@ -1771,13 +1811,60 @@ function closeQty(a: number, b: number): boolean {
  * Times, oven temps, and inch measures stay put. A written "½ cup of parmesan"
  * scales even when a "1½ cups of milk" in the same sentence already did.
  */
-export function scaleMethodSteps(
+/**
+ * Scales the amounts in catalog-final steps and changes nothing else: no unit
+ * words, no "the", no ingredient names, no added or dropped words. Only a
+ * digit amount directly followed by a measure word, or by a listed food, is
+ * scaled; times, temperatures, sizes and spelled-out numbers stay as printed.
+ */
+function scaleNumbersOnly(
   steps: string[],
   ingredients: { name: string; qty: number; unit: string }[],
   household: number,
   servings: number,
 ): string[] {
+  const names = [...ingredients]
+    .filter((i) => Number(i.qty) > 0 && i.name.trim())
+    .sort((a, b) => b.name.length - a.name.length)
+    .map((i) => namePattern(i.name));
+  const food = names.length ? `|(?:[a-z-]+\\s+){0,2}(?:${names.join("|")})\\b` : "";
+  const re = new RegExp(`(^|[^\\d/.,\\u0000${FRAC_GLYPHS}])(${QTY_TOKEN})(?=\\s+(?:(?:${STEP_UNIT})\\b${food}))`, "gi");
+  return steps.map((step) => {
+    const held: string[] = [];
+    const hold = (m: string) => {
+      held.push(m);
+      return `\u0000${held.length - 1}\u0000`;
+    };
+    let s = step
+      .replace(/\b\d+\s*(?:-|–|to)\s*\d+\s*(?:minutes?|mins?|hours?|seconds?)\b/gi, hold)
+      .replace(/\b\d+\s*(?:minutes?|mins?|hours?|seconds?)\b/gi, hold)
+      .replace(/\b\d{2,3}\s*°?\s*F\b/gi, hold)
+      .replace(/\b\d+\s*(?:-|–)?(?:inch(?:es)?|cm)\b/gi, hold)
+      .replace(/\b\d+\s*degrees\b/gi, hold)
+      .replace(/\bserves?\s+\d+\b/gi, hold);
+    s = s.replace(re, (m: string, lead: string, qtyTok: string) => {
+      const q = parseQtyToken(qtyTok);
+      if (q == null || q <= 0) return m;
+      return `${lead}${prettyFrac(scaleQty(q, household, servings))}`;
+    });
+    // eslint-disable-next-line no-control-regex -- the sentinel is deliberate
+    return s.replace(/\u0000(\d+)\u0000/g, (_m, i: string) => held[Number(i)] ?? "");
+  });
+}
+
+export function scaleMethodSteps(
+  steps: string[],
+  ingredients: { name: string; qty: number; unit: string }[],
+  household: number,
+  servings: number,
+  opts?: { catalogFinal?: boolean },
+): string[] {
   if (!steps.length) return steps;
+  // Printed-book text at the recipe's own servings: nothing to scale, shown as printed.
+  // App recipes keep main's render path at native servings (byte-identical to main).
+  if (household === servings && opts?.catalogFinal) return steps;
+  // Catalog-final (printed book / Spoonful Kitchen) text: only the numbers move.
+  if (opts?.catalogFinal) return scaleNumbersOnly(steps, ingredients, household, servings);
   const scale = household !== servings;
   const measured = [...ingredients]
     .filter((i) => Number(i.qty) > 0)
@@ -2034,17 +2121,323 @@ export function polishSteps(recipe: RecipeLike): string[] {
   return deduped;
 }
 
+const NUM_WORDS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12,
+  fifteen: 15, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, a: 1, an: 1,
+};
+const UNI_FRAC: Record<string, number> = { "½": 0.5, "¼": 0.25, "¾": 0.75, "⅓": 1 / 3, "⅔": 2 / 3 };
+const TIME_NUM = String.raw`(?:\d+\s?[½¼¾⅓⅔]|\d+\s\d\/\d|\d+\.\d+|\d+\/\d+|\d+|[½¼¾⅓⅔]|(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty)(?:[- ]?(?:one|two|three|four|five|six|seven|eight|nine|five))?|an?|half an?|one-half|half)`;
+const TIME_RE = new RegExp(
+  String.raw`(?<![\w/])(?:(${TIME_NUM})\s*(?:to|or|-|–)\s*)?(${TIME_NUM})\s*(minutes?|mins?\b|hours?|hrs?\b)`,
+  "gi",
+);
+// A duration that is a limit, a storage life or a make-ahead is not the time the recipe takes.
+const NOT_A_COOK_TIME = /(?:no longer than|not longer than|up to|at least|keeps?|keeping|ahead|in advance|within|longer than)\s*(?:about\s*)?$/i;
+
+const COOK_VERB = /\b(?:bake[sd]?|baking|boil(?:ed|ing)?|steam(?:ed|ing)?|simmer(?:ed|ing)?|cook(?:ed|ing)?|roast(?:ed|ing)?|stew(?:ed|ing)?|fry|fried|frying|broil(?:ed|ing)?|brown|toast|grill(?:ed)?|poach(?:ed)?|braise[d]?|saut[eé]|parboil|scald|heat|oven|slow|moderate|hot|degrees?)\b|°/i;
+const NOT_COOKING = /\b(?:chill\w*|cool\w*|stand|soak\w*|marinat\w*|press\w*|freez\w*|refrigerat\w*|rest|ris(?:e|es|en|ing)|rais\w*|ice|icebox|let it stand|set aside|keep|kept|ahead|overnight|dry|drain|steep\w*|infus\w*|ripen\w*|age|aged)\b/i;
+
+function timeNumber(tok: string): number | null {
+  const s = tok.trim().toLowerCase();
+  if (s === "half an" || s === "half a" || s === "half" || s === "one-half") return 0.5;
+  if (s in UNI_FRAC) return UNI_FRAC[s]!;
+  let m = /^(\d+)\s?([½¼¾⅓⅔])$/.exec(s);
+  if (m) return Number(m[1]) + UNI_FRAC[m[2]!]!;
+  m = /^(\d+)\s(\d)\/(\d)$/.exec(s);
+  if (m) return Number(m[1]) + Number(m[2]) / Number(m[3]);
+  m = /^(\d+)\/(\d+)$/.exec(s);
+  if (m) return Number(m[1]) / Number(m[2]);
+  if (/^\d+(?:\.\d+)?$/.test(s)) return Number(s);
+  const parts = s.split(/[- ]/).filter(Boolean);
+  if (parts.length && parts.every((p) => p in NUM_WORDS)) return parts.reduce((a, p) => a + NUM_WORDS[p]!, 0);
+  return null;
+}
+
+// "two and half hours", "three quarters of an hour", "quarter of an hour", "an hour and a half":
+// written out as minutes before the duration scan, so "an hour" inside "quarter of an hour" is never read as 60.
+const FRAC_HOUR_RE = new RegExp(
+  String.raw`(?<![\w/])(?:an?\s+)?(?:(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+and\s+(?:an?\s+)?)?(half|quarters?|three[- ]quarters?)(?:\s+of)?(?:\s+an?)?\s+(?:hours?|hrs?)\b`,
+  "gi",
+);
+const HOUR_AND_HALF_RE = /(?<![\w/])(an?|one|two|three|four|five|six|\d+)\s+(?:hours?|hrs?)\s+and\s+(?:a\s+)?half\b/gi;
+function hourWordNumber(w: string): number {
+  return /^\d+$/.test(w) ? Number(w) : /^an?$/i.test(w) ? 1 : (NUM_WORDS[w.toLowerCase()] ?? 0);
+}
+function normaliseFractionHours(text: string): string {
+  return text
+    .replace(FRAC_HOUR_RE, (_m, lead: string | undefined, frac: string) => {
+      const f = /^three/i.test(frac) ? 0.75 : /^half/i.test(frac) ? 0.5 : 0.25;
+      return `${Math.round(((lead ? hourWordNumber(lead) : 0) + f) * 60)} minutes`;
+    })
+    .replace(HOUR_AND_HALF_RE, (_m, n: string) => `${Math.round((hourWordNumber(n) + 0.5) * 60)} minutes`);
+}
+
+type Timed = { mins: number; sentence: string; clause: string; whole: string; tail: string; cooking: boolean };
+
+/** Every duration a catalog-final recipe prints in its method lines (the blurb is a generated summary, never read), one entry per distinct timed sentence. */
+function printedDurations(recipe: Recipe): Timed[] {
+  const out: Timed[] = [];
+  const seen = new Set<string>();
+  for (const raw of (recipe.steps ?? [])) {
+    const text = normaliseFractionHours(raw);
+    TIME_RE.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = TIME_RE.exec(text))) {
+      if (NOT_A_COOK_TIME.test(text.slice(Math.max(0, m.index - 24), m.index))) continue;
+      const n = timeNumber(m[2]!);
+      if (n === null || n <= 0) continue;
+      const mins = Math.round(n * (/^h/i.test(m[3]!) ? 60 : 1));
+      if (mins <= 1) continue; // a one-minute step time ("boil for one minute") is never a recipe time
+      // Only a duration the recipe spends cooking is a candidate: the clause before it names heat
+      // (a cooking verb, the oven, a temperature), is not a rest, rise, chill, soak, marinade or press
+      // ("1 hour in a press"), and it is not a rate ("to every pound", "each side", "every 5 minutes")
+      // or an age ("twelve hours old").
+      const before = text.slice(0, m.index);
+      const clause = before.split(/[.;!?]/).pop() ?? "";
+      const sentence = (before.split(/[.!?]/).pop() ?? "") + text.slice(m.index).split(/[.!?]/)[0];
+      const whole = clause + (text.slice(m.index).split(/[.;!?]/)[0] ?? "");
+      const after = text.slice(m.index + m[0].length, m.index + m[0].length + 24);
+      const cooking =
+        COOK_VERB.test(clause) &&
+        COOK_VERB.test(before.slice(-45)) && // the heat word is right at the time ("stir it for a quarter of an hour" is not a cook time)
+        !NOT_COOKING.test(clause) &&
+        !/\bevery\s*$/i.test(clause) &&
+        !/^\s*(?:to|for|per)?\s*(?:every|each|per|a|one)\s+(?:pound|lb|side)|^\s*(?:on|per)\s+(?:each|a|one)\s+side|^\s*a side|^\s*old\b|^\s*(?:of|in)\s+(?:the\s+)?(?:press|refrigerator|icebox|brine)/i.test(after);
+      const key = `${mins}|${sentence.toLowerCase().replace(/\s+/g, " ").trim()}`;
+      if (seen.has(key)) continue; // the blurb repeating a method line is one timed instruction
+      seen.add(key);
+      out.push({ mins, sentence: sentence.trim(), clause: clause.trim(), whole, tail: text.slice(m.index + m[0].length).split(/[.;!?]/)[0] ?? "", cooking });
+    }
+  }
+  return out;
+}
+
+// Another cook, bake or chill step (anywhere else in the printed text) means a lone time is not the whole recipe.
+const OTHER_STEP =
+  /\b(?:bake[sd]?|baking|roast\w*|broil\w*|boil(?:s|ing)?|simmer\w*|stew\w*|steam\w*|braise\w*|poach\w*|parboil\w*|scald\w*|grill\w*|chill\w*|refrigerat\w*|freez\w*|frozen|marinat\w*|stand|rise|raise|rest|overnight|set aside|cool\w*|congeal\w*|oven|preheat|(?:when|until|get|let it get) cold)\b/i;
+// A cook step that ends on doneness, not on a clock ("until the meat is tender", "till done", "saute until well browned"):
+// another cook step with no printed time, so a lone time elsewhere is one step among several, not the recipe's total.
+const UNTIMED_DONE = /\b(?:until|till)\s+(?:[a-z-]+[\s,]+){0,4}?(?:tender|done|browned|brown|golden|cooked|crisp)\b/i;
+const DRY_HEAT = /\b(?:bak\w+|roast\w*|broil\w*|grill\w*|oven)\b/i;
+const STATED_TOTAL = /\b(?:total|ready in|in all(?![\w-])|altogether|all told|start to finish)(?![\w-])/i;
+
+/**
+ * The time a catalog-final (printed-book) recipe prints as its TOTAL, in minutes, or null.
+ * `recipe.minutes` on these recipes is a catalog placeholder (45), so it is never read. N comes only
+ * from the recipe's own printed method or blurb. A range takes its printed upper end; fractions of an
+ * hour ("two and half hours" = 150, "three quarters of an hour" = 45, "quarter of an hour" = 15) are
+ * parsed whole; a one-minute time never counts.
+ *
+ * The blurb is never read (it is a generated or rewritten summary, so reading it would make the answer depend on
+ * how the card text was cut). Rule (when in doubt the minutes are dropped; "<Name> — homemade." is always safe). Minutes are kept only when
+ *  (a) the print states a total ("total", "ready in", "in all", "altogether", "all told", "start to
+ *      finish") beside one time, or
+ *  (b) the recipe has exactly ONE timed instruction, it is a cooking time (not a rise, chill, soak,
+ *      press, per-side or per-pound time, storage limit or age), no OTHER cook, bake, boil, simmer,
+ *      chill, rest or oven step is printed anywhere else in the method, and, for a bake/roast/
+ *      oven time, the method is no longer than two sentences (a bake time in a multi-step recipe is
+ *      the oven phase, not the total); in any case the method is at most five steps/sentences, prints no
+ *      time in seconds, and a time under 5 minutes is kept only in a method of at most two sentences.
+ * A second timed instruction, a second cook step, or a lone bake time in a multi-step method means no total.
+ */
+export function printedMinutes(recipe: Recipe): number | null {
+  const timed = printedDurations(recipe);
+  const stated = [...new Set(timed.filter((t) => STATED_TOTAL.test(t.sentence)).map((t) => t.mins))];
+  if (stated.length === 1) return stated[0]!;
+  if (timed.length !== 1 || !timed[0]!.cooking) return null;
+  const only = timed[0]!;
+  const steps = (recipe.steps ?? []).filter((x) => x.trim());
+  // Everything printed except the one timed clause itself (a clause is cut at . ; ! ?).
+  const others = normaliseFractionHours(steps.join(" . "))
+    .split(only.whole)
+    .join(" . ")
+    .split(/[.;!?]/)
+    .filter((c) => !NOT_A_COOK_TIME.test(c.replace(/\d.*$/, "").slice(-40)) && !/\b(?:no longer than|not longer than|up to|at least|keeps?|ahead|in advance)\b/i.test(c))
+    .join(" . ")
+    .replace(/\b(?:hard|soft)[- ]boiled\b/gi, "egg");
+  if (OTHER_STEP.test(others)) return null;
+  // "until tender" / "till done" / "until browned" elsewhere, or after a "then" in the timed sentence itself, is a cook step with no
+  // time. A doneness that belongs to the timed step ("simmer half an hour until tender", "simmer 20 minutes or until done") or to a
+  // thickening roux ("butter and flour cooked together until brown") is not another step.
+  const untimed = others.split(" . ").filter((c) => !/\bthicken\w*\b/i.test(c)).join(" . ");
+  if (UNTIMED_DONE.test(untimed) || /\b(?:then|afterwards?|after that)\b/i.test(only.tail) && UNTIMED_DONE.test(only.tail.replace(/^[^]*?\b(?:then|afterwards?|after that)\b/i, ""))) return null;
+  if (/\bseconds?\b/i.test(steps.join(" "))) return null; // a timed step in seconds: another timed instruction
+  const sentences = steps.join(" ").split(/[.!?]+(?:\s|$)/).filter((x) => x.trim());
+  const size = Math.max(steps.length, sentences.length);
+  if (DRY_HEAT.test(only.clause) && size > 2) return null;
+  if (size > 5) return null; // a long method with one timed step: that time is a step, not the total
+  if (only.mins < 5 && size > 2) return null;
+  return only.mins;
+}
+
+/** Stable duration parser for tests: every duration (minutes) found in one text, fractions of an hour included. */
+export function durationsInText(text: string): number[] {
+  const out: number[] = [];
+  const t = normaliseFractionHours(text);
+  TIME_RE.lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = TIME_RE.exec(t))) {
+    const n = timeNumber(m[2]!);
+    if (n !== null && n > 0) out.push(Math.round(n * (/^h/i.test(m[3]!) ? 60 : 1)));
+  }
+  return out;
+}
+
+/** 45 -> "45 minutes"; 120+ in whole quarter hours -> "2 hours", "2½ hours", "5 hours" (never "about 300 minutes"). */
+export function aboutDuration(n: number): string {
+  if (n < 120 || n % 15 !== 0) return `${n} minutes`;
+  const whole = Math.floor(n / 60);
+  const frac = ({ 0: "", 15: "¼", 30: "½", 45: "¾" } as Record<number, string>)[n % 60]!;
+  return `${whole}${frac} hours`;
+}
+
+/** "Name — homemade, about N minutes." with N only from the recipe's own printed time; else "Name — homemade." */
+function fallbackDescription(recipe: Recipe, name: string): string {
+  const n = isCatalogFinal(recipe) ? printedMinutes(recipe) : recipe.minutes > 0 ? recipe.minutes : null;
+  return n ? `${name} — homemade, about ${aboutDuration(n)}.` : `${name} — homemade.`;
+}
+
+// Printed-book blurbs that are not a description (a context-less sentence, the ingredient list, a parenthetical aside).
+const WEAK_BLURB_IDS = new Set(["pta-141", "kleber-0093", "kleber-0039"]);
+
 function cleanDescription(recipe: Recipe, name: string): string {
+  if (isCatalogFinal(recipe) && WEAK_BLURB_IDS.has(recipe.id)) return fallbackDescription(recipe, name);
   let d = (recipe.description ?? "").replace(/[="]+/g, " ").replace(/\s+/g, " ").trim();
   d = d.replace(/…\s*$/, "").trim();
-  if (d.length < 20 || JUNK_NAME.test(d) || /to obtain good broth/i.test(d)) {
-    return `${name} — homemade, about ${recipe.minutes} minutes.`;
+  if (isCatalogFinal(recipe)) {
+    d = d.replace(/\.{2,}$/, ".").replace(/\s*[:;,]$/, ".");
+    d = tidyBookBlurb(d, false);
   }
-  if (d.length > 180) d = `${d.slice(0, 177).replace(/\s+\S*$/, "")}.`;
+  if (d.length < 20 || JUNK_NAME.test(d) || /to obtain good broth/i.test(d)) {
+    return fallbackDescription(recipe, name);
+  }
+  if (d.length > 180) {
+    if (isCatalogFinal(recipe)) {
+      // Printed-book blurbs are only ever cut at a sentence end, never with an
+      // ellipsis. When no whole sentence fits, the plain one-line fallback is used.
+      const cut = clampAtSentence(d, 180);
+      if (!cut) return fallbackDescription(recipe, name);
+      d = cut;
+    } else d = clampBlurb(d, 180);
+  }
+  // A blurb ends on punctuation (the trailing "…" above is stripped).
+  if (isCatalogFinal(recipe)) d = tidyBookBlurb(d, true);
+  if (/[\p{L}\p{N}]$/u.test(d)) d = `${d}.`;
   return d;
 }
 
-export function polishRecipe(recipe: Recipe): Recipe | null {
+/**
+ * Runtime artifacts in a printed-book blurb (never the printed steps): "(page 317)"
+ * cross-references, _italic_ markers, a space before punctuation, a missing space before
+ * "(", a blurb wrapped whole in brackets, an unbalanced bracket, and no final punctuation.
+ */
+function tidyBookBlurb(text: string, balance: boolean): string {
+  let d = text
+    .replace(/\s*\((?:see\s+)?pages?\s+\d+(?:\s*[-–,]\s*\d+)*\)/gi, "")
+    .replace(/\.\)\.(?=\s|$)/g, ").")
+    .replace(/_([^_]+)_/g, "$1")
+    .replace(/_/g, "")
+    .replace(/([\p{L}\p{N}])\(/gu, "$1 (")
+    .replace(/\s+([.,;:!?])/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!balance) return d;
+  const opens = (d.match(/\(/g) ?? []).length;
+  const closes = (d.match(/\)/g) ?? []).length;
+  if (opens === 1 && closes === 1 && d.startsWith("(") && /\)[.]?$/.test(d)) {
+    d = d.slice(1).replace(/[.]?\)([.]?)$/, "$1").trim(); // "(Boil together 5 minutes.)" -> "Boil together 5 minutes."
+    if (/[\p{L}\p{N}]$/u.test(d)) d = `${d}.`;
+  } else if (closes > opens) {
+    d = d.replace(/\)(?=[.!?]?$)/, ""); // "pea-sized)." -> "pea-sized."
+  } else if (opens > closes) {
+    d = `${d})`; // "(Unless … Hash." -> "(Unless … Hash.)"
+  }
+  if (/\)$/.test(d) && !/[.!?]\)$/.test(d) && !/^\(/.test(d)) d = `${d}.`; // "cup (no metal)" -> "cup (no metal)."
+  return d;
+}
+
+// Words a cut blurb must not end on ("…and a.", "…a blade of.").
+const DANGLING =
+  /\s+(?:a|an|the|and|or|nor|but|of|with|into|onto|to|for|from|by|at|than|its|their|his|her|very|some|any|this|these|those|per|upon|each|half)$/i;
+
+/**
+ * Shortens a card blurb to at most `max` characters without breaking a phrase:
+ * at the last sentence end that fits; else at the last clause break (, ; : —)
+ * with an ellipsis; else at the last word with an ellipsis. Never ends on a
+ * dangling word ("and a", "of the") and never cuts inside a word.
+ */
+export function clampBlurb(text: string, max = 180): string {
+  const d = text.trim();
+  if (d.length <= max) return d;
+  const floor = Math.floor(max / 3);
+  const room = d.slice(0, max + 1);
+  // 1. Whole sentences.
+  let end = -1;
+  // A full stop ends a sentence only before a capital (or the end), and not
+  // after a period abbreviation ("4 tbsp. fat", "1 lb. sausage", "No. 2").
+  for (const m of room.matchAll(/[.!?](?=\s+["'(]?[A-Z0-9]|$)/g)) {
+    const before = room.slice(0, m.index!);
+    if (m[0] === "." && /\b(?:lb|lbs|tbsp|tsp|oz|pkg|pkgs|in|hr|hrs|min|qt|pt|no|sq|doz|etc|mrs|mr|dr|st|approx|ca|vol|pp?|[a-z])$/i.test(before)) continue;
+    if (m.index! + 1 <= max && m.index! + 1 >= floor) end = m.index! + 1;
+  }
+  if (end > 0) {
+    const cut = d.slice(0, end).trim();
+    if (!DANGLING.test(cut.replace(/[.!?]+$/, ""))) return cut;
+  }
+  const tidy = (t: string) => {
+    let x = t.replace(/[\s,;:—–-]+$/, "");
+    for (let i = 0; i < 6 && DANGLING.test(x); i++) x = x.replace(DANGLING, "").replace(/[\s,;:—–-]+$/, "");
+    return x;
+  };
+  // 2. Clause break, then 3. word break; both end in an ellipsis.
+  const roomE = d.slice(0, max); // leaves space for "…"
+  let clause = -1;
+  for (const m of roomE.matchAll(/[,;:](?=\s)|\s[—–-]\s/g)) if (m.index! >= floor) clause = m.index!;
+  const head = clause > 0 ? tidy(d.slice(0, clause)) : tidy(roomE.replace(/\s+\S*$/, ""));
+  return `${head.replace(/[.!?]+$/, "")}…`;
+}
+
+/**
+ * Longest run of whole sentences that fits in `max` characters (at least 20),
+ * or null when no sentence end fits. Same sentence-end rules as clampBlurb.
+ */
+export function clampAtSentence(text: string, max = 180): string | null {
+  const d = text.trim();
+  if (d.length <= max) return d;
+  const room = d.slice(0, max + 1);
+  let end = -1;
+  for (const m of room.matchAll(/[.!?](?=\s+["'(]?[A-Z0-9]|$)/g)) {
+    const before = room.slice(0, m.index!);
+    if (m[0] === "." && /\b(?:lb|lbs|tbsp|tsp|oz|pkg|pkgs|in|hr|hrs|min|qt|pt|no|sq|doz|etc|mrs|mr|dr|st|approx|ca|vol|pp?|[a-z])$/i.test(before)) continue;
+    if (m.index! + 1 <= max && m.index! + 1 >= 20) end = m.index! + 1;
+  }
+  if (end < 0) return null;
+  const cut = d.slice(0, end).trim();
+  return DANGLING.test(cut.replace(/[.!?]+$/, "")) ? null : cut;
+}
+
+export function polishRecipe(input: Recipe): Recipe | null {
+  const recipe = fixBookSteps(input);
+  // Printed-book and Spoonful Kitchen recipes: the catalog text (name, rows,
+  // steps) is final. Only the card blurb gets the old cleanup and length
+  // clamp: it is a generated summary, not printed text, and some catalog
+  // blurbs are scraps ("INGREDIENTS.", "No. 1.").
+  if (isCatalogFinal(recipe)) {
+    const description = cleanDescription(recipe, recipe.name);
+    return description === recipe.description ? recipe : { ...recipe, description };
+  }
+  return polishWith(recipe, alignListToCook);
+}
+
+/**
+ * The polish as it ran before the catalog-final bypass (row adder included),
+ * for the diet/allergy screen only. Its output is never displayed.
+ */
+export function screenRecipe(recipe: Recipe): Recipe | null {
+  return polishWith(recipe, alignRows);
+}
+
+function polishWith(recipe: Recipe, align: (r: Recipe) => Recipe): Recipe | null {
   const name = cleanRecipeName(recipe.name);
   if (!name) return null;
   const ingredients = recipe.ingredients.filter((i) => i.name && !JUNK_NAME.test(i.name.trim()));
@@ -2052,7 +2445,7 @@ export function polishRecipe(recipe: Recipe): Recipe | null {
   const next = { ...recipe, name, ingredients };
   // The list is aligned after the method is final so it also covers foods the
   // polisher itself names.
-  return alignListToCook({
+  return align({
     ...next,
     description: cleanDescription(next, name),
     steps: polishSteps(next),
@@ -2062,11 +2455,21 @@ export function polishRecipe(recipe: Recipe): Recipe | null {
 export function polishCatalog(list: Recipe[]): Recipe[] {
   const out: Recipe[] = [];
   const seen = new Set<string>();
-  for (const recipe of list) {
+  for (const printed of list) {
+    const recipe = fixBookSteps(printed);
     const polished = polishRecipe(recipe);
     if (!polished || seen.has(polished.id)) continue;
     seen.add(polished.id);
-    out.push(polished);
+    // Catalog-final: shown as printed, but the diet/allergy checks also see
+    // what the old polish would have added (catalog-final.ts, dietScreen).
+    const screen = isCatalogFinal(recipe)
+      ? dietScreenFor(polished, screenRecipe(recipe), alignRows(recipe))
+      : undefined;
+    // The card blurb may be cut at a sentence end or replaced by the plain fallback:
+    // the checks keep reading the printed blurb ("walnut" in a long blurb stays a nut).
+    const wholeBlurb = isCatalogFinal(recipe) && recipe.description && !polished.description.includes(recipe.description.replace(/[="\s…]+$/, "").replace(/\.+$/, "").replace(/[="]+/g, " ").replace(/\s+/g, " ").trim()) ? recipe.description : undefined;
+    const screened = wholeBlurb ? { ...(screen ?? { foods: [], steps: [] }), description: wholeBlurb } : screen;
+    out.push(screened ? { ...polished, dietScreen: screened } : polished);
   }
   return out;
 }

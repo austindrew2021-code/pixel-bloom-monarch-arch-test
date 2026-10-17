@@ -1,4 +1,5 @@
 import type { AllergyId, Nutrition, PlannedMeal, Protein, Recipe } from "./types";
+import { withDietScreen } from "./catalog-final.ts";
 
 export const ALLERGIES: { id: AllergyId; label: string; hint: string }[] = [
   { id: "gluten", label: "Gluten", hint: "Wheat, pasta, bread" },
@@ -299,7 +300,10 @@ const BEYOND_NAMES: Partial<Record<AllergyId, (recipe: Recipe) => boolean>> = {
     [SPICY_STEP, SPICY_INGREDIENT, SPICY_DESC].some((re) => re.test(descText(r))),
 };
 
-export function recipeAllergens(recipe: Recipe): AllergyId[] {
+export function recipeAllergens(input: Recipe): AllergyId[] {
+  // Catalog-final recipes: printed rows plus the foods the row adder would have
+  // listed (never shown), so the bypass cannot clear an allergen.
+  const recipe = withDietScreen(input);
   // Pipe-joined so a pattern cannot span two rows: "grated coconut" next to
   // "butter" is not coconut butter, and "short-grain rice" next to "milk" is
   // not rice milk.

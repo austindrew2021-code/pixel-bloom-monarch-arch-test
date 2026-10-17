@@ -3,7 +3,7 @@
 
 @theme {
   --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", serif;
-  --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Figtree", "Segoe UI", system-ui, "Noto Sans", sans-serif;
 
   --color-background: #f3e0c8;
   --color-foreground: #16110c;

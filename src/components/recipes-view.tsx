@@ -17,6 +17,7 @@ import { t, voiceFor } from "@/lib/i18n";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { scaleMethodSteps } from "@/lib/cook-steps";
+import { isCatalogFinal } from "@/lib/catalog-final";
 import { startAheadLabel } from "@/lib/ahead";
 import { formatMinutes, formatQty } from "@/lib/format";
 
@@ -711,7 +712,9 @@ function RecipeDetail({
     ...ing,
     shown: formatQty(scaleQty(ing.qty, serves, recipe.servings), ing.unit),
   }));
-  const shownSteps = scaleMethodSteps(recipe.steps, recipe.ingredients, serves, recipe.servings);
+  const shownSteps = scaleMethodSteps(recipe.steps, recipe.ingredients, serves, recipe.servings, {
+    catalogFinal: isCatalogFinal(recipe),
+  });
 
   return (
     <div>
