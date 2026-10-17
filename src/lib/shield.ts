@@ -145,6 +145,27 @@ function glutenText(r: Recipe, text: string): string {
   return t;
 }
 
+// Follow-up (Line's friction asks). A DESCRIPTION is not an ingredient list: "stuffed in pita",
+// "Tacos, bowls, sandwiches" and "Shawarma, roast chicken, bread" are serve-withs, so pita, sandwiches
+// and bread are not read from a description (rows and steps still count). A rice-noodle row clears
+// "noodles" in the description (a wheat noodle or pasta row still fails on its own), and two phrases that name a
+// dish whose rows hold no wheat: grated-potato dumplings and "sauce for pasta".
+const RICE_NOODLE_ROW = /\brice (?:noodles?|vermicelli|sticks?)\b/i;
+const DESC_SERVE_WITH = /\b(?:pita|sandwich(?:es)?|bread)\b/gi;
+const DESC_SAFE_PHRASES = /\b(?:grated[- ])?potato dumplings?\b|\bsauce for pasta\b/gi;
+// Held blocked for Line's call: a bare serve-with bread/sandwich in the description of a dish that is not a
+// sauce, rub or filling, which Line did not ask to clear (md-chickpea-stew "Bread.", wn-white-bean-skillet
+// "Bread.", bint-057 "cheese and bread", plnt-078 "make a sensational sandwich", vg-hummus-bowl "pita chips optional"
+// with a step that says "Eat with pita").
+const DESC_SERVE_WITH_HELD = new Set(["md-chickpea-stew", "wn-white-bean-skillet", "bint-057", "plnt-078", "vg-hummus-bowl"]);
+function glutenDescText(r: Recipe, desc: string): string {
+  if (DESC_SERVE_WITH_HELD.has(r.id)) return glutenText(r, desc);
+  const rows = r.ingredients.map((i) => (i as { raw?: string }).raw ?? i.name);
+  let t = glutenText(r, desc).replace(DESC_SERVE_WITH, " ").replace(DESC_SAFE_PHRASES, " ");
+  if (rows.some((n) => RICE_NOODLE_ROW.test(n))) t = t.replace(/\bnoodles?\b/gi, " ");
+  return t;
+}
+
 const GLUTEN_BY_ID = new Set(["ac-0024", "hill-0312", "hill-0197", "hill-0208", "hill-0210", "hill-0230"]);
 // Names of dishes that are wheat by construction.
 const GLUTEN_NAME = /\bsandwich(?:es)?\b/i;
@@ -170,7 +191,7 @@ function glutenBeyondNames(recipe: Recipe): boolean {
     steps.some((s) => { const t = glutenText(recipe, s); return GLUTEN_STEP.test(t) || FLOUR_STEP.test(t); }) ||
     // Steps that warm "the tortillas" when no row lists one (lettuce-cup and taco-bar templates).
     (steps.some((s) => TORTILLA_STEP.test(s)) && !recipe.ingredients.some((i) => /tortilla|\bgf\b|\bcorn\b|\bmasa\b/i.test(i.name))) ||
-    (!LABELLED_GF.test(desc) && !/^gf-/.test(recipe.id) && ((d) => GLUTEN_STEP.test(d) || FLOUR_STEP.test(d) || GLUTEN_DESC.test(d))(glutenText(recipe, desc)))
+    (!LABELLED_GF.test(desc) && !/^gf-/.test(recipe.id) && ((d) => GLUTEN_STEP.test(d) || FLOUR_STEP.test(d) || GLUTEN_DESC.test(d))(glutenDescText(recipe, desc)))
   );
 }
 
@@ -300,6 +321,38 @@ const BEYOND_NAMES: Partial<Record<AllergyId, (recipe: Recipe) => boolean>> = {
     [SPICY_STEP, SPICY_INGREDIENT, SPICY_DESC].some((re) => re.test(descText(r))),
 };
 
+// Follow-up. Rows the gluten check reads as gluten-free forms, for the shield as the badge already does:
+// a row that is exactly corn / masa / gluten-free tortillas or almond flour (flour tortillas, "tortillas",
+// "corn tortillas or flour tortillas", masa harina and everything else still fail), and, in the Crisco
+// book only, a row that is the title of the book's own gluten-free dressing / marinade recipe.
+const GF_FORM_ROW = /^(?:(?:corn|masa|gluten[- ]free|gf) tortillas?|(?:blanched |super[- ]?fine )?almond flour)$/i;
+export const CRIS_OWN_RECIPE_TITLES = new Set([
+  "poppy seed fruit salad dressing", // cris-047
+  "fruit salad dressing", // cris-025
+  "green goddess salad dressing", // cris-028
+  "italian dressing", // cris-036
+  "mild garlic marinade", // cris-043
+]);
+const isOwnTitleRow = (id: string, n: string) =>
+  id.startsWith("cris-") && n.trim().length > 0 && n.trim().toLowerCase().split(/ or /).every((p) => CRIS_OWN_RECIPE_TITLES.has(p.trim()));
+// A printed row that says rice noodle(s) clears the word "noodle" (only the one right after "rice": wheat, egg and bare
+// "noodles" rows, or "rice noodles or egg noodles", keep their noodle). Rice vermicelli is already cleared by "rice".
+const RICE_NOODLES = /\brice noodles?\b/gi;
+function glutenView(recipe: Recipe): Recipe {
+  let changed = false;
+  const ingredients = recipe.ingredients.map((i) => {
+    const printed = (i as { raw?: string }).raw ?? i.name;
+    if (/\brice noodles?\b/i.test(printed)) {
+      const name = /^noodles?$/i.test(i.name.trim()) ? "rice" : i.name.replace(RICE_NOODLES, "rice");
+      changed = true; return { ...i, name, raw: printed };
+    }
+    if (GF_FORM_ROW.test(i.name.trim()) || GF_FORM_ROW.test(printed.trim())) { changed = true; return { ...i, name: "gf", raw: printed }; }
+    if (isOwnTitleRow(recipe.id, printed)) { changed = true; return { ...i, name: "book recipe row", raw: printed }; }
+    return i;
+  });
+  return changed ? { ...recipe, ingredients } : recipe;
+}
+
 export function recipeAllergens(input: Recipe): AllergyId[] {
   // Catalog-final recipes: printed rows plus the foods the row adder would have
   // listed (never shown), so the bypass cannot clear an allergen.
@@ -307,8 +360,13 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   // Pipe-joined so a pattern cannot span two rows: "grated coconut" next to
   // "butter" is not coconut butter, and "short-grain rice" next to "milk" is
   // not rice milk.
-  const blob = [recipe.name, ...recipe.tags, ...recipe.ingredients.map((i) => i.name)].join(" | ");
-  return ALLERGIES.map((a) => a.id).filter((id) => PATTERNS[id].test(blob) || (BEYOND_NAMES[id]?.(recipe) ?? false));
+  const blobOf = (r: Recipe) => [r.name, ...r.tags, ...r.ingredients.map((i) => i.name)].join(" | ");
+  const blob = blobOf(recipe);
+  const gv = glutenView(recipe);
+  return ALLERGIES.map((a) => a.id).filter((id) => {
+    const r = id === "gluten" ? gv : recipe;
+    return PATTERNS[id].test(id === "gluten" ? blobOf(gv) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);
+  });
 }
 
 export function recipeSafe(recipe: Recipe, allergies: AllergyId[]): boolean {
