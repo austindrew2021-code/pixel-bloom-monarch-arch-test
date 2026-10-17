@@ -1,4 +1,5 @@
 import type { Aisle, Recipe } from "./types";
+import { isCatalogFinal } from "./catalog-final.ts";
 
 /**
  * Steps match the list.
@@ -126,7 +127,10 @@ const LIST_FIXES: readonly ListFix[] = [
   },
   {
     named: /\bcorn ?starch\b|\bpotato starch\b|\bstarch\b/i,
-    notNamed: /\bstarchy\b|\bstarch is how\b/i,
+    // "Soak in cold water to pull starch" (vh-wh-saratoga) is the potato's own
+    // starch going out, not a cornstarch the cook has to buy.
+    notNamed:
+      /\bstarchy\b|\bstarch is how\b|\b(?:pull|draw|remove|release|rinse|wash|soak|leach)(?:s|ed|ing)?\s+(?:(?:out|off|away)\s+)?(?:(?:the|some|its|their|excess|extra|surface|of)\s+)*starch\b/i,
     covered: /starch\b|\barrowroot\b|\btapioca\b|\bflour\b/i,
     add: { name: "cornstarch", qty: 1, unit: "tbsp", aisle: "Pantry" },
   },
@@ -266,6 +270,17 @@ function forbidden(recipe: Recipe, fix: ListFix): boolean {
  * the same object when the list already covers the method.
  */
 export function alignListToCook(recipe: Recipe): Recipe {
+  // Printed-book and Spoonful Kitchen rows are final: nothing is added. (What
+  // would have been added still reaches the diet/allergy checks: dietScreen.)
+  if (isCatalogFinal(recipe)) return recipe;
+  return alignRows(recipe);
+}
+
+/**
+ * The row adder itself, marker or not. Display paths use `alignListToCook`;
+ * this is for the diet/allergy screen of catalog-final recipes.
+ */
+export function alignRows(recipe: Recipe): Recipe {
   const steps = cookedText(recipe);
   const extra: Pantry[] = [];
   for (const fix of LIST_FIXES) {

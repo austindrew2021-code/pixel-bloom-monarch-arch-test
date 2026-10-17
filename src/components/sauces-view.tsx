@@ -9,6 +9,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { formatMinutes, formatQty } from "@/lib/format";
 import { scaleMethodSteps } from "@/lib/cook-steps";
+import { isCatalogFinal } from "@/lib/catalog-final";
 import { RECIPES } from "@/lib/recipes";
 import { SAUCE_MENUS, isSauceRecipe, saucesIn, type SauceMenuId } from "@/lib/sauce-menu";
 import { searchRecipes } from "@/lib/search";
@@ -121,7 +122,9 @@ export function SaucesView() {
                 ))}
               </ul>
               <ol className="mt-4 list-decimal space-y-2 pl-4 text-sm leading-relaxed">
-                {scaleMethodSteps(active.steps, active.ingredients, household, active.servings).map((s, i) => (
+                {scaleMethodSteps(active.steps, active.ingredients, household, active.servings, {
+                  catalogFinal: isCatalogFinal(active),
+                }).map((s, i) => (
                   <li key={`step-${i}`}>{s}</li>
                 ))}
               </ol>

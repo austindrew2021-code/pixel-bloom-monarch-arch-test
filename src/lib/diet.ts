@@ -1,4 +1,5 @@
 import { recipeAllergens } from "./shield.ts";
+import { withDietScreen } from "./catalog-final.ts";
 import type { Recipe } from "./types";
 
 export type MoodFilter =
@@ -56,7 +57,10 @@ export function isComfort(recipe: Recipe): boolean {
  * cannot be its own evidence — with them in, the tag "sugar-free" contains the
  * word sugar and every sugar-free dish failed its own check.
  */
-function blob(recipe: Recipe): string {
+function blob(input: Recipe): string {
+  // Catalog-final recipes are judged on their printed rows plus the foods the
+  // row adder would have listed (catalog-final.ts, dietScreen).
+  const recipe = withDietScreen(input);
   return [recipe.name, ...recipe.ingredients.map((i) => i.name)].join(" | ").toLowerCase();
 }
 
@@ -152,12 +156,14 @@ function safeIngredients(recipe: Recipe): Recipe["ingredients"] {
   return recipe.ingredients.map((i) => ({ ...i, name: withoutLookalikes(i.name), raw: i.name }));
 }
 
-export function isGlutenFree(recipe: Recipe): boolean {
+export function isGlutenFree(input: Recipe): boolean {
+  const recipe = withDietScreen(input);
   if ((recipe.tags ?? []).includes("gluten")) return false;
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("gluten");
 }
 
-export function isDairyFree(recipe: Recipe): boolean {
+export function isDairyFree(input: Recipe): boolean {
+  const recipe = withDietScreen(input);
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("dairy");
 }
 

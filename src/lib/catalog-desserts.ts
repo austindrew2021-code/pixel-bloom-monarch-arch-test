@@ -236,9 +236,9 @@ export const DESSERT_RECIPES: Recipe[] = [
       I("cocoa", 2, "tbsp", "Pantry"),
     ],
     steps: [
-      "Beat yolks with sugar. Fold in mascarpone. Whip whites and fold.",
-      "Dip biscuits in cooled espresso. Layer with cream. Repeat.",
-      "Cocoa on top. Chill 4 hours.",
+      "Separate the eggs. Beat the yolks with the sugar until pale, then fold in the mascarpone. Whip the whites to soft peaks and fold them in.",
+      "Dip the ladyfingers one at a time in the cooled espresso. Layer them in a dish with the mascarpone mixture. Repeat.",
+      "Dust the cocoa on top. Chill 4 hours before serving.",
     ],
     protein: "eggs",
     nutrition: { cal: 380, protein: 8, carbs: 32, fat: 24 },

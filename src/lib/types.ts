@@ -108,6 +108,11 @@ export type Recipe = {
   nutrition: Nutrition;
   photo?: string;
   source?: RecipeSource;
+  /**
+   * Catalog-final recipes only: foods the row adder / polisher would have added.
+   * Read by the diet and allergy checks, never displayed (see catalog-final.ts).
+   */
+  dietScreen?: import("./catalog-final.ts").DietScreen;
 };
 
 export type CustomMeal = {

@@ -10,6 +10,7 @@ import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { isDessert, isHealthy } from "@/lib/diet";
 import { formatMinutes, formatQty } from "@/lib/format";
 import { scaleMethodSteps } from "@/lib/cook-steps";
+import { isCatalogFinal } from "@/lib/catalog-final";
 import { strictestGoal } from "@/lib/goal-fit";
 import { t } from "@/lib/i18n";
 import { RECIPES } from "@/lib/recipes";
@@ -141,7 +142,9 @@ export function DessertsView() {
                 ))}
               </ul>
               <ol className="mt-4 list-decimal space-y-2 pl-4 text-sm leading-relaxed">
-                {scaleMethodSteps(active.steps, active.ingredients, household, active.servings).map((s, i) => (
+                {scaleMethodSteps(active.steps, active.ingredients, household, active.servings, {
+                  catalogFinal: isCatalogFinal(active),
+                }).map((s, i) => (
                   <li key={`step-${i}`}>{s}</li>
                 ))}
               </ol>

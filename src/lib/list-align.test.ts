@@ -3,6 +3,12 @@ import test from "node:test";
 import { alignListToCook, unlistedFoodsInSteps } from "./list-align.ts";
 import { RECIPES, recipeById } from "./recipes.ts";
 import type { Recipe } from "./types.ts";
+import { isCatalogFinal } from "./catalog-final.ts";
+
+// Printed-book / Spoonful Kitchen recipes are catalog-final (Kitchen decision,
+// Oct 9 2026): their rows are the book's, so the list invariants below cover the
+// app's own recipes. Book gaps are fixed in the catalog, not by the aligner.
+const APP_RECIPES = RECIPES.filter((r) => !isCatalogFinal(r));
 
 function fake(partial: Partial<Recipe> & Pick<Recipe, "id" | "name" | "ingredients" | "steps">): Recipe {
   return {
@@ -21,7 +27,7 @@ function fake(partial: Partial<Recipe> & Pick<Recipe, "id" | "name" | "ingredien
 const names = (r: Recipe) => r.ingredients.map((i) => i.name.toLowerCase());
 
 test("every wired title lists the food its steps cook", () => {
-  const bad = RECIPES.filter((r) => unlistedFoodsInSteps(r).length > 0).map(
+  const bad = APP_RECIPES.filter((r) => unlistedFoodsInSteps(r).length > 0).map(
     (r) => `${r.name} (${r.id}) misses ${unlistedFoodsInSteps(r).join(", ")}`,
   );
   assert.deepEqual(bad, [], bad.slice(0, 12).join("\n"));
@@ -56,7 +62,7 @@ test("the named leaveners are on the list, not only in the step", () => {
 test("a title whose step says rice either lists rice or stops saying it", () => {
   // "Rice the avocado" is the verb, and a rice noodle is not a bag of rice.
   const notTheGrain = /rice (?:noodles?|cakes?|flour|vinegar|wine|paper)|\brice\s+(?:the|them|it)\b|\briced\b/gi;
-  const bad = RECIPES.filter((r) => {
+  const bad = APP_RECIPES.filter((r) => {
     const saysRice = r.steps.some((s) => /\brice\b/i.test(s.replace(notTheGrain, " ")));
     return saysRice && !names(r).some((n) => /\brice\b/.test(n.replace(notTheGrain, " ")));
   }).map((r) => `${r.name} (${r.id})`);
@@ -150,4 +156,51 @@ test("a hand-tagged vegan plate is never handed a butter", () => {
     steps: ["Rub the butter into the oats."],
   });
   assert.equal(names(alignListToCook(recipe)).includes("butter"), false);
+});
+
+// ---- Saratoga starch false match (Oct 9 2026) ----
+
+test("'soak to pull starch' does not put cornstarch on the list", () => {
+  const r = fake({
+    id: "starch-soak",
+    name: "Fried potatoes",
+    ingredients: [
+      { name: "potatoes", qty: 2, unit: "lb", aisle: "Produce" },
+      { name: "lard or oil", qty: 4, unit: "cups", aisle: "Pantry" },
+    ],
+    steps: ["Soak in cold water 20 minutes to pull starch. Drain and dry thoroughly on cloth.", "Fry until crisp."],
+  });
+  assert.ok(!names(alignListToCook(r)).includes("cornstarch"));
+  for (const phrase of ["rinse off the starch", "to remove the excess starch", "to draw out the starch"]) {
+    const v = fake({ ...r, id: `starch-${phrase}`, steps: [`Wash the slices ${phrase}. Fry until crisp.`] });
+    assert.ok(!names(alignListToCook(v)).includes("cornstarch"), phrase);
+  }
+});
+
+test("a step that really calls for starch still lists it", () => {
+  const r = fake({
+    id: "starch-real",
+    name: "Stir-fry",
+    ingredients: [{ name: "chicken", qty: 1, unit: "lb", aisle: "Meat & Seafood" }],
+    steps: ["Toss the chicken in starch and fry until gold."],
+  });
+  assert.ok(names(alignListToCook(r)).includes("cornstarch"));
+});
+
+test("vh-wh-saratoga has no cornstarch row in the live catalog", () => {
+  const r = recipeById("vh-wh-saratoga")!;
+  assert.ok(r);
+  assert.ok(!names(r).includes("cornstarch"));
+  assert.ok(!r.steps.join(" ").includes("cornstarch"));
+});
+
+test("catalog-final recipes get no row from the list aligner", () => {
+  const r = fake({
+    id: "book-x",
+    name: "Book soup",
+    ingredients: [{ name: "beef", qty: 1, unit: "lb", aisle: "Meat & Seafood" }],
+    steps: ["Salt the beef and add a little baking soda."],
+    source: { book: "A Printed Book", credit: "x", era: "1900s" },
+  });
+  assert.equal(alignListToCook(r), r);
 });

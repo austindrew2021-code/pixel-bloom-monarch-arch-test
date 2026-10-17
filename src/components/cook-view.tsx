@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { foodsUsedInStep, scaleMethodSteps } from "@/lib/cook-steps";
+import { isCatalogFinal } from "@/lib/catalog-final";
 
 import { scaleQty } from "@/lib/cuisine";
 import { formatMinutes, formatQty } from "@/lib/format";
@@ -53,7 +54,9 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
   const rawSteps = recipe?.steps ?? resolved.custom?.steps ?? (resolved.custom?.notes ? [resolved.custom.notes] : ["Cook it how you like."]);
   const ingredients = recipe?.ingredients ?? resolved.custom?.ingredients ?? [];
   const servings = recipe?.servings ?? household;
-  const steps = scaleMethodSteps(rawSteps, ingredients, household, servings);
+  const steps = scaleMethodSteps(rawSteps, ingredients, household, servings, {
+    catalogFinal: isCatalogFinal(recipe),
+  });
 
   const [step, setStep] = useState(0);
   const [have, setHave] = useState<Record<string, boolean>>({});
