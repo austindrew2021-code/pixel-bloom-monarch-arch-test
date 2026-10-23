@@ -117,20 +117,7 @@ export function withDietScreen<R extends Recipe>(recipe: R): R {
  */
 const BOOK_STEP_FIXES: Record<string, [string, string, boolean?][]> = {
   "trp-040": [["in a slow cooker", "In a slow cooker"], ["ingredients. simmer, covered", "ingredients. Simmer, covered", true]],
-  "plnt-007": [
-    ["ard water cashews soaked in", "Discard water cashews soaked in"],
-    ["small bowl, place porcini", "In a small bowl, place porcini"],
-    ["porcini mushrooms, cremini mushrooms, white button", "Add porcini mushrooms, cremini mushrooms, white button"],
-    ["aze the pan with white wine", "Deglaze the pan with white wine"],
-  ],
-  "plnt-014": [["n separate shallow bowls", "In separate shallow bowls"], ["in a large fry pan", "In a large fry pan"]],
   "plnt-075": [["in a large frying pan", "In a large frying pan"]],
-  "plnt-076": [["in a large bowl, whisk together", "In a large bowl, whisk together"]],
-  "plnt-065": [
-    ["pan over medium-high heat, heat extra-virgin olive oil", "In a medium sauté pan over medium-high heat, heat extra-virgin olive oil"],
-    ["ture over beans, stir gently", "Pour vegetable mixture over beans, stir gently"],
-  ],
-  "plnt-091": [["speed, cream butter and confectioners", "Meanwhile, in a medium bowl and using an electric mixer on medium speed, cream butter and confectioners"]],
 };
 
 export function fixBookStep(step: string): string {

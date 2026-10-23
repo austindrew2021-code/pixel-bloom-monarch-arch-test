@@ -37,6 +37,7 @@ import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { KFYR_1969_RECIPES } from "./catalog-kfyr.ts";
 import { TROOP_2023_RECIPES } from "./catalog-troop.ts";
+import { PLANT_BASED_RECIPES } from "./catalog-plant-based.ts";
 import { polishCatalog } from "./cook-steps.ts";
 import { decorateDietTags } from "./diet.ts";
 
@@ -1745,6 +1746,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...SWEET_ERA_RECIPES,
     ...KFYR_1969_RECIPES,
     ...TROOP_2023_RECIPES,
+    ...PLANT_BASED_RECIPES,
   ].filter((r) => !ARCHIVE_HIDDEN_IDS.has(r.id)),
 ).map(decorateDietTags).map(swapSpoonfulKitchenCredit);
 
