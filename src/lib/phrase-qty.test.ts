@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { scaleQty } from "./cuisine.ts";
 import { formatQty } from "./format.ts";
-import { PRINTED_PHRASE_ENDINGS, extendedClass, ingredientDisplay, isPhraseRow, nameCarriesAmount, shopLineText } from "./phrase-qty.ts";
+import { PRINTED_PHRASE_ENDINGS, extendedClass, ingredientDisplay, isPhraseRow, nameCarriesAmount, prettyPrintedPhrase, shopLineText } from "./phrase-qty.ts";
 import { RECIPES } from "./recipes.ts";
 
 /*
@@ -157,6 +157,22 @@ test("printed no-count endings are exactly the ones the 365 Desserts print uses"
     "nearly a quart",
     "nearly 1/2 pint",
     "about 2 tablespoonfuls",
+    "a little more than a gill",
+    "sufficient",
+    "sufficient, about one cup",
+    "sufficient, about 1 1/2 cups",
+    "sufficient, about 1/2 cup",
+    "1 pt. or more if the melon will hold it",
+    "1/4 teaspoonful, or 10 drops",
+    "a teaspoonful or 2",
+    "from 1/2 to a pt.",
+    "say 1/2 a pt.",
+    "a 1/4",
+    "some",
+    "as little as possible",
+    "the same",
+    "the same weight",
+    "the same amount",
   ]);
   for (const e of PRINTED_PHRASE_ENDINGS) {
     assert.equal(ingredientDisplay({ name: `sugar (${e})`, qty: 1, unit: "" }, 1, formatQty, true).qty, "", e);
@@ -206,4 +222,51 @@ test("recipes users type in themselves keep their counts on printed endings", ()
   assert.match(store, /isPhraseRow\(ing, !!resolved\.recipe\)/);
   const cook = readFileSync(new URL("../components/cook-view.tsx", import.meta.url), "utf8");
   assert.match(cook, /ingredientDisplay\(ing, scaleQty\(ing\.qty, household, servings\), formatQty, !!recipe\)/);
+});
+
+test("or/to rows restored from print (Oct 23) are phrase rows", () => {
+  const ids = new Map<string, string[]>([
+    ["hill-0335", ["3 or 4 eggs"]], ["pta-021", ["3/4 to 1 cup jelly"]], ["kfyr-119", ["2-3 large onions", "3-4 lb. ground beef", "1/2 to 3/4 bottle Italian seasoning"]],
+    ["kfyr-098", ["About 3 1/2 to 4 # shredded cabbage (red)"]], ["mb-014", ["1 coffee cup of boiled rice"]], ["trp-013", ["16-24 chicken wings"]], ["trp-045", ["2-3 Soy Sauce packets, Chinese Rest. Supply"]],
+  ]);
+  for (const [id, names] of ids) {
+    const r = RECIPES.find((x) => x.id === id);
+    assert.ok(r, id);
+    for (const n of names) {
+      const ing = r.ingredients.find((i) => i.name === n);
+      assert.ok(ing && isPhraseRow(ing, true), `${id}: ${n}`);
+    }
+    assert.ok(!r.ingredients.some((i) => /^\s*(or|to)\b/i.test(i.name)), `${id} still has an or/to row`);
+  }
+  assert.equal(extendedClass("16-24 chicken wings"), "lead-count");
+  assert.equal(extendedClass("8-inch pie shell"), null);
+});
+
+test("printed phrase endings show vulgar fractions, scaling unchanged", () => {
+  assert.equal(prettyPrintedPhrase("milk (nearly 1/2 pint)"), "milk (nearly ½ pint)");
+  assert.equal(prettyPrintedPhrase("cerealine (sufficient, about 1 1/2 cups)"), "cerealine (sufficient, about 1½ cups)");
+  assert.equal(prettyPrintedPhrase("1/2 cup milk"), "1/2 cup milk");
+  for (const e of ["sufficient", "the same weight", "say 1/2 a pt.", "1/4 teaspoonful, or 10 drops"]) {
+    assert.ok(PRINTED_PHRASE_ENDINGS.includes(e as (typeof PRINTED_PHRASE_ENDINGS)[number]), e);
+    assert.ok(isPhraseRow({ name: `x (${e})`, qty: 1, unit: "" }, true), e);
+    assert.ok(!isPhraseRow({ name: `x (${e})`, qty: 1, unit: "" }, false), e);
+  }
+});
+
+test("printed alternative amounts are uncounted catalog phrase rows (jun-18, aug-25)", () => {
+  for (const name of ["One small pineapple or a pint and a half can", "1 vanilla bean, or 2 tablespoonfuls ext."]) {
+    const ing = { name, qty: 1, unit: "" };
+    assert.ok(isPhraseRow(ing, true), name);
+    assert.deepEqual(ingredientDisplay(ing, 1, formatQty, true), { qty: "", name });
+    assert.deepEqual(ingredientDisplay(ing, 2, formatQty, true), { qty: "", name: `${name} ×2` });
+    assert.deepEqual(ingredientDisplay(ing, 0.5, formatQty, true), { qty: "", name: `${name} ×½` });
+  }
+  assert.ok(!isPhraseRow({ name: "white or sweet potatoes", qty: 1, unit: "" }, true));
+  assert.ok(!isPhraseRow({ name: "cup lard or 1 1/2 cups crisco or shortening preferred", qty: 1, unit: "" }, true));
+});
+
+test("catalog bracket fractions show the glyph on counted rows too (dec-31)", () => {
+  const ing = { name: "carrot (weighing 1/4 of a lb.)", qty: 1, unit: "" };
+  assert.deepEqual(ingredientDisplay(ing, 1, formatQty, true), { qty: formatQty(1, ""), name: "carrot (weighing ¼ of a lb.)" });
+  assert.equal(ingredientDisplay(ing, 1, formatQty, false).name, "carrot (weighing 1/4 of a lb.)");
 });
