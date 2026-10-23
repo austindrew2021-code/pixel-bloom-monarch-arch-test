@@ -20,6 +20,7 @@ import { scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 import { startAheadLabel } from "@/lib/ahead";
 import { formatQty } from "@/lib/format";
+import { ingredientDisplay } from "@/lib/phrase-qty";
 import { dotJoin, timeLabel } from "@/lib/recipe-time";
 
 import { lookupDish } from "@/lib/kitchen-ai";
@@ -715,7 +716,10 @@ function RecipeDetail({
   const related = similarTo(recipe);
   const scaled = recipe.ingredients.map((ing) => ({
     ...ing,
-    shown: formatQty(scaleQty(ing.qty, serves, recipe.servings), ing.unit),
+    ...(() => {
+      const d = ingredientDisplay(ing, scaleQty(ing.qty, serves, recipe.servings), formatQty);
+      return { shown: d.qty, shownName: d.name };
+    })(),
   }));
   const shownSteps = scaleMethodSteps(recipe.steps, recipe.ingredients, serves, recipe.servings, {
     catalogFinal: isCatalogFinal(recipe),
@@ -815,7 +819,7 @@ function RecipeDetail({
       <ul className="mt-2 space-y-1.5 text-sm">
         {scaled.map((ing, i) => (
           <li key={`${ing.name}-${i}`} className="flex justify-between gap-3">
-            <span className="min-w-0">{ing.name}</span>
+            <span className="min-w-0">{ing.shownName}</span>
             <span className="shrink-0 tabular-nums text-muted-foreground">{ing.shown}</span>
           </li>
         ))}
@@ -836,7 +840,7 @@ function RecipeDetail({
           variant="secondary"
           className="w-full"
           onClick={async () => {
-            const lines = scaled.map((ing) => `${ing.shown} ${ing.name}`.trim()).join("\n");
+            const lines = scaled.map((ing) => `${ing.shown} ${ing.shownName}`.trim()).join("\n");
             try {
               await navigator.clipboard.writeText(`${recipe.name}\n${lines}`);
               toast("Copied");

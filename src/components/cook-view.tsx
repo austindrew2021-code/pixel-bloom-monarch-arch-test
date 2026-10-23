@@ -7,6 +7,7 @@ import { isCatalogFinal } from "@/lib/catalog-final";
 
 import { scaleQty } from "@/lib/cuisine";
 import { formatQty } from "@/lib/format";
+import { ingredientDisplay } from "@/lib/phrase-qty";
 import { resolvedTimeLabel } from "@/lib/recipe-time";
 import { localSubs } from "@/lib/substitutions";
 import { resolveMeal, useSpoonful } from "@/lib/spoonful-store";
@@ -260,9 +261,11 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
                 >
                   {on ? <Check className="size-3.5" /> : null}
                 </span>
-                <span className={cn("flex-1 text-base", on && "text-muted-foreground line-through")}>{ing.name}</span>
+                <span className={cn("flex-1 text-base", on && "text-muted-foreground line-through")}>
+                  {ingredientDisplay(ing, scaleQty(ing.qty, household, servings), formatQty).name}
+                </span>
                 <span className="text-sm tabular-nums text-muted-foreground">
-                  {formatQty(scaleQty(ing.qty, household, servings), ing.unit)}
+                  {ingredientDisplay(ing, scaleQty(ing.qty, household, servings), formatQty).qty}
                 </span>
               </button>
               {localSubs(ing.name)[0] ? (
