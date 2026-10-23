@@ -266,7 +266,7 @@ export const WARTIME_RECIPES: Recipe[] = [
     "veg",
     "bowl",
     30,
-    "Cornmeal and rye or all cornmeal. Goudiss wheat-saving muffins.",
+    "Corn muffins made with cornmeal, eggs, and molasses.",
     [
       I("cornmeal", 1.5, "cups", "Pantry"),
       I("eggs", 2, "", "Dairy & Eggs"),
@@ -292,7 +292,7 @@ export const WARTIME_RECIPES: Recipe[] = [
     "pork",
     "skillet",
     40,
-    "A little salt pork flavors a whole head of cabbage. Stretching meat the USDA way.",
+    "Cabbage cooks with salt pork and onion.",
     [
       I("green cabbage", 1, "head", "Produce"),
       I("salt pork", 4, "oz", "Meat & Seafood"),

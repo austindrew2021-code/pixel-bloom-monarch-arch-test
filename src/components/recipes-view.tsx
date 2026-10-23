@@ -532,11 +532,14 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
               </ul>
             </section>
           ) : null}
-          {COLLECTION_GROUPS.map((group) => (
+          {COLLECTION_GROUPS.map((group) => {
+            const visibleIds = group.ids.filter((id) => counts[id]);
+            if (visibleIds.length === 0) return null;
+            return (
             <section key={group.id}>
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">{t(locale, group.labelKey)}</p>
               <ul className="mt-2 grid grid-cols-2 gap-3">
-                {group.ids.map((id) => {
+                {visibleIds.map((id) => {
                   const c = collectionById(id);
                   if (!c) return null;
                   const cover = RECIPES.find((r) => c.match(r));
@@ -565,7 +568,8 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
                 })}
               </ul>
             </section>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <>
