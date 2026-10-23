@@ -717,7 +717,7 @@ function RecipeDetail({
   const scaled = recipe.ingredients.map((ing) => ({
     ...ing,
     ...(() => {
-      const d = ingredientDisplay(ing, scaleQty(ing.qty, serves, recipe.servings), formatQty);
+      const d = ingredientDisplay(ing, scaleQty(ing.qty, serves, recipe.servings), formatQty, true);
       return { shown: d.qty, shownName: d.name };
     })(),
   }));

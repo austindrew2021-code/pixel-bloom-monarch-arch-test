@@ -40,9 +40,35 @@ export function extendedClass(name: string): "lead-count" | "measure-range" | "m
   return null;
 }
 
-/** True when the name itself states how much food (the count of the food, not a size). */
-export function nameCarriesAmount(name: string): boolean {
-  return baseCarriesAmount(name) || extendedClass(name) !== null;
+/**
+ * Catalog-only: the trailing parentheticals the 365 Desserts print uses for a no-count amount
+ * ("salt (a little)", "almond (to flavor)", "rum (about 2 tablespoonfuls)"). Exactly this list;
+ * applied only to catalog recipe rows (isPhraseRow with catalog = true), never to recipes users
+ * type in themselves and never to items a user types into Shop.
+ */
+export const PRINTED_PHRASE_ENDINGS = [
+  "a little",
+  "a very little",
+  "a very little speck",
+  "to taste",
+  "to flavor",
+  "to color",
+  "a grating",
+  "a small quantity",
+  "as many as desired",
+  "a teacup full",
+  "rather more than a pint",
+  "a little cold",
+  "nearly a quart",
+  "nearly 1/2 pint",
+  "about 2 tablespoonfuls",
+] as const;
+
+const PRINTED_PHRASE = new RegExp(`\\((?:${PRINTED_PHRASE_ENDINGS.join("|")})\\)\\s*$`, "i");
+
+/** True when a catalog row's name ends in one of the book's printed no-count parentheticals. */
+export function catalogPrintedPhrase(name: string): boolean {
+  return PRINTED_PHRASE.test(name);
 }
 
 function baseCarriesAmount(name: string): boolean {
@@ -63,9 +89,15 @@ function baseCarriesAmount(name: string): boolean {
   return false;
 }
 
+/** True when the name itself states how much food (the count of the food, not a size). */
+export function nameCarriesAmount(name: string): boolean {
+  return baseCarriesAmount(name) || extendedClass(name) !== null;
+}
+
 /** Phrase rule applies only to unit-less rows with base qty 1. */
-export function isPhraseRow(ing: { name: string; qty: number; unit: string }): boolean {
-  return !(ing.unit || "").trim() && ing.qty === 1 && nameCarriesAmount(ing.name);
+/** Catalog recipe row: the printed name carries the amount, incl. the book's printed phrase endings. */
+export function isPhraseRow(ing: { name: string; qty: number; unit: string }, catalog = false): boolean {
+  return !(ing.unit || "").trim() && ing.qty === 1 && (nameCarriesAmount(ing.name) || (catalog && catalogPrintedPhrase(ing.name)));
 }
 
 export function isContainerRow(ing: { name: string; unit: string }): boolean {
@@ -94,8 +126,9 @@ export function ingredientDisplay(
   ing: { name: string; qty: number; unit: string },
   scaled: number,
   fmt: (q: number, u: string) => string,
+  catalog = false,
 ): { qty: string; name: string } {
-  if (isPhraseRow(ing)) return { qty: "", name: ing.name + multiplier(scaled) };
+  if (isPhraseRow(ing, catalog)) return { qty: "", name: ing.name + multiplier(scaled) };
   if (isContainerRow(ing)) return { qty: fmt(scaled, ing.unit), name: containerFor(ing.name, scaled) };
   return { qty: fmt(scaled, ing.unit), name: ing.name };
 }

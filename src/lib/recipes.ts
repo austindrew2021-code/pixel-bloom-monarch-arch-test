@@ -17,6 +17,10 @@ import { FOREIGN_365_RECIPES } from "./catalog-365-foreign.ts";
 import { FOREIGN_365_APR_JUN_RECIPES } from "./catalog-365-foreign-apr-jun.ts";
 import { FOREIGN_365_JUL_SEP_RECIPES } from "./catalog-365-foreign-jul-sep.ts";
 import { FOREIGN_365_OCT_DEC_RECIPES } from "./catalog-365-foreign-oct-dec.ts";
+import { DESSERTS_365_JAN_MAR_RECIPES } from "./catalog-365-desserts-jan-mar.ts";
+import { DESSERTS_365_APR_JUN_RECIPES } from "./catalog-365-desserts-apr-jun.ts";
+import { DESSERTS_365_JUL_SEP_RECIPES } from "./catalog-365-desserts-jul-sep.ts";
+import { DESSERTS_365_OCT_DEC_RECIPES } from "./catalog-365-desserts-oct-dec.ts";
 import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import { HILL_SALADS_RECIPES } from "./catalog-hill-salads.ts";
 import { AMERICAN_COOKERY_RECIPES } from "./catalog-american-cookery.ts";
@@ -1990,6 +1994,10 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...FOREIGN_365_APR_JUN_RECIPES,
     ...FOREIGN_365_JUL_SEP_RECIPES,
     ...FOREIGN_365_OCT_DEC_RECIPES,
+    ...DESSERTS_365_JAN_MAR_RECIPES,
+    ...DESSERTS_365_APR_JUN_RECIPES,
+    ...DESSERTS_365_JUL_SEP_RECIPES,
+    ...DESSERTS_365_OCT_DEC_RECIPES,
     ...HOW_TO_COOK_FISH_RECIPES,
     ...HILL_SALADS_RECIPES,
     ...AMERICAN_COOKERY_RECIPES,

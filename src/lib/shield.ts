@@ -1,3 +1,4 @@
+import { DS365_DOUBT_DAIRY, DS365_DOUBT_GLUTEN, DS365_DOUBT_NUTS } from "./ds-365-doubt.ts";
 import type { AllergyId, Nutrition, PlannedMeal, Protein, Recipe } from "./types";
 import { withDietScreen } from "./catalog-final.ts";
 
@@ -699,7 +700,10 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   const blobOf = (r: Recipe) => [r.name, ...r.tags, ...r.ingredients.map((i) => i.name)].join(" | ");
   const blob = blobOf(recipe);
   const gv = glutenView(gfPrintedRowRelease(recipe));
+  // 365 Desserts: where the printed text leaves an allergen in doubt, it counts as present.
+  const doubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: DS365_DOUBT_GLUTEN, dairy: DS365_DOUBT_DAIRY, nuts: DS365_DOUBT_NUTS };
   return ALLERGIES.map((a) => a.id).filter((id) => {
+    if (doubt[id]?.has(input.id)) return true;
     const r = id === "gluten" ? gv : recipe;
     return PATTERNS[id].test(id === "gluten" ? blobOf(gv) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);
   });
