@@ -17,6 +17,7 @@ import { FOREIGN_365_RECIPES } from "./catalog-365-foreign.ts";
 import { FOREIGN_365_APR_JUN_RECIPES } from "./catalog-365-foreign-apr-jun.ts";
 import { FOREIGN_365_JUL_SEP_RECIPES } from "./catalog-365-foreign-jul-sep.ts";
 import { FOREIGN_365_OCT_DEC_RECIPES } from "./catalog-365-foreign-oct-dec.ts";
+import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import { HILL_SALADS_RECIPES } from "./catalog-hill-salads.ts";
 import { AMERICAN_COOKERY_RECIPES } from "./catalog-american-cookery.ts";
 import { LADIES_AID_RECIPES } from "./catalog-ladies-aid.ts";
@@ -30,6 +31,8 @@ import { BETTY_BBQ_RECIPES } from "./catalog-betty-bbq.ts";
 import { CHEESECAKES_RECIPES } from "./catalog-cheesecakes.ts";
 import { TABLE_RECIPES } from "./catalog-table.ts";
 import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
+import { KFYR_1969_RECIPES } from "./catalog-kfyr.ts";
+import { TROOP_2023_RECIPES } from "./catalog-troop.ts";
 import { polishCatalog } from "./cook-steps.ts";
 import { decorateDietTags } from "./diet.ts";
 
@@ -1830,6 +1833,7 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...FOREIGN_365_APR_JUN_RECIPES,
     ...FOREIGN_365_JUL_SEP_RECIPES,
     ...FOREIGN_365_OCT_DEC_RECIPES,
+    ...HOW_TO_COOK_FISH_RECIPES,
     ...HILL_SALADS_RECIPES,
     ...AMERICAN_COOKERY_RECIPES,
     ...LADIES_AID_RECIPES,
@@ -1843,6 +1847,8 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...CHEESECAKES_RECIPES,
     ...TABLE_RECIPES,
     ...SWEET_ERA_RECIPES,
+    ...KFYR_1969_RECIPES,
+    ...TROOP_2023_RECIPES,
   ].filter((r) => !ARCHIVE_HIDDEN_IDS.has(r.id)),
 ).map(decorateDietTags);
 

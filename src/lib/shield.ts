@@ -183,6 +183,8 @@ function glutenBeyondNames(recipe: Recipe): boolean {
   const desc = descText(recipe);
   return (
     GLUTEN_BY_ID.has(recipe.id) ||
+    htcfSauceRow(recipe, "gluten") ||
+    htcfInheritedFail(recipe, "gluten") ||
     (recipe.tags ?? []).includes("gluten") ||
     (!LABELLED_GF.test(recipe.name) && GLUTEN_NAME.test(recipe.name)) ||
     // A row that labels itself gluten-free ("angel food cake (gluten-free)"; diet.ts
@@ -297,25 +299,341 @@ const strip = (re: RegExp, s: string) => s.replace(re, " ");
 // "Spicy vegetable relish"), so every allergen reads them with its method words.
 const NUT_WORDS = /\b(?:peanuts?|almonds?|walnuts?|pecans?|cashews?|pistachios?|hazelnuts?|macadamias?|pine nuts?)\b/i;
 const SPICY_DESC = /(?<!\b(?:not|non|no|never|less|mild)[- ])\bspicy\b/i;
+/*
+ * HTCF named sauces (Line's Oct 17 audit of the How to Cook Fish rebuild). The book's recipes say "serve with
+ * Egg Sauce" / "Hollandaise" / "Maitre d'Hotel Sauce" and the print gives the sauce itself in its own chapter ("One
+ * Hundred Simple Fish Sauces", Gutenberg #18542), so the row is the sauce's name with no components. The word lists above
+ * cannot see the butter, flour, cream, milk or egg in it. A printed row that names one of those sauces fails dairy
+ * (and gluten, where the printed sauce is thickened with flour, crumbs or a roux) unless the row itself says
+ * dairy-free / gluten-free. Read from the print: a sauce counts when ANY printed variant of it (Tartar Sauce I, II, III)
+ * has butter, cream, milk or cheese (flour, crumbs or bread for gluten), directly or through another named sauce it is
+ * made from (Egg Sauce -> Drawn-Butter Sauce); a row that names a sauce with no number could be any variant, so the
+ * safe side wins. Mayonnaise, Cold Ravigote, Vinaigrette, Persillade, Nicoise, Sardine, Livournaise and Quick Bearnaise
+ * are butter-free and flour-free in the print and are not listed. Only HTCF ids (htcf-*) are read, so no other book moves.
+ * This only ever takes a dairy-free or gluten-free pass away.
+ */
+// htcf-0180 "Codfish a la Bechamel": "Prepare according to directions given for Creamed Codfish, omitting the egg and using
+// white stock and milk in equal parts instead of cream." Creamed Codfish is "Mix with a Cream Sauce" and the printed Cream
+// Sauce (and Bechamel) is a butter-and-flour roux, but this row list carries only the stock and milk.
+const HTCF_GLUTEN_BY_ID = new Set(["htcf-0180"]);
+const SAUCE_DAIRY = ["admiral", "albert", "allemande", "anchovy", "anchovy butter", "aurora", "bearnaise", "bechamel", "bombay", "bordelaise", "brown", "brown italian", "butter", "caper", "claret", "colbert", "cream", "cucumber", "curry", "drawn butter", "dutch", "duxelles", "egg", "espagnole", "fine herb", "fine herbs", "flemish", "garlic", "geneva", "gooseberry", "hessian", "holandaise", "hollandaise", "horseradish", "italian", "japanese", "lemon", "lobster", "maitre dhotel", "milanaise", "mushroom", "nonpareil", "normandy", "olive", "oyster", "parsley", "parsley and lemon", "piquant", "poor mans", "portuguese", "poulette", "ravigote", "remoulade", "sauce a la gasconne", "shad roe", "shrimp", "sicilian", "spanish", "supreme", "tartar", "tomato", "veloute", "venetienne", "whipped cream", "white", "white bordelaise"];
+const SAUCE_GLUTEN = ["admiral", "albert", "allemande", "anchovy", "anchovy butter", "aurora", "bechamel", "bombay", "bordelaise", "brown", "brown italian", "caper", "claret", "colbert", "cream", "cucumber", "curry", "drawn butter", "dutch", "duxelles", "egg", "espagnole", "fine herb", "fine herbs", "flemish", "geneva", "gooseberry", "hessian", "holandaise", "hollandaise", "horseradish", "italian", "japanese", "lemon", "lobster", "milanaise", "mushroom", "nonpareil", "normandy", "olive", "oyster", "parsley", "parsley and lemon", "piquant", "poor mans", "poulette", "ravigote", "sauce a la gasconne", "shrimp", "sicilian", "spanish", "supreme", "tartar", "tomato", "veloute", "venetienne", "white", "white bordelaise"];
+const SAUCE_BARE = ["allemande", "aurora", "bearnaise", "bechamel", "bordelaise", "colbert", "duxelles", "espagnole", "holandaise", "hollandaise", "maitre dhotel", "milanaise", "nonpareil", "normandy", "piquant", "poulette", "ravigote", "remoulade", "sauce a la gasconne", "supreme", "veloute", "venetienne"];
+const sauceNorm = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/['\u2019`]/g, "").replace(/[-\u2013]/g, " ").replace(/\s+/g, " ").trim();
+const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const sauceRegex = (names: string[]) => {
+  const bare = names.filter((n) => SAUCE_BARE.includes(n));
+  return new RegExp(String.raw`(?<!\b(?:cold|quick) )(?:\b(?:${names.map(esc).join("|")}) sauce\b|\b(?:${bare.map(esc).join("|")})\b)`);
+};
+const SAUCE_DAIRY_RE = sauceRegex(SAUCE_DAIRY);
+const SAUCE_GLUTEN_RE = sauceRegex(SAUCE_GLUTEN);
+const SAUCE_LABELLED_FREE = { dairy: /\bdairy[- ]free\b|\bnon[- ]dairy\b|\bvegan\b/i, gluten: /\bgluten[- ]free\b|\bgf\b/i };
+/** True when an HTCF row names a printed butter / flour / cream / egg sauce the shield cannot read into. */
+export function htcfSauceRow(recipe: Recipe, allergen: "dairy" | "gluten"): boolean {
+  if (!recipe.id.startsWith("htcf-")) return false;
+  if (allergen === "gluten" && HTCF_GLUTEN_BY_ID.has(recipe.id)) return true;
+  const re = allergen === "dairy" ? SAUCE_DAIRY_RE : SAUCE_GLUTEN_RE;
+  return recipe.ingredients.some((i: Row) => {
+    const printed = (i as { raw?: string }).raw ?? i.name;
+    return !SAUCE_LABELLED_FREE[allergen].test(printed) && re.test(sauceNorm(printed));
+  });
+}
+
+/*
+ * HTCF cross-references (Line's audit of 2ed63fd2, Oct 17). A recipe that says "prepare according to directions (given)
+ * for X" is made like X, but its rows carry only the additions, so it inherits every allergen / diet failure of X
+ * (transitively). X is resolved to the book's own recipe(s) by title (any variant of a numbered title, the safe side
+ * wins); an X the book does not print (or that cannot be pinned down) fails everything. HTCF_XREF is the resolution
+ * (null = unresolved), HTCF_XREF_FAILS the generated fixed point (tools: final-oct23/gen_xref.ts); shield.test.ts checks
+ * both against the catalog. This only ever takes a pass away.
+ * Oct 23 (Line 608d audit): the same rule covers the unnamed back-references ("according to directions given above /
+ * previously given / elsewhere given / given in the preceding recipe", "as directed", "as for boiling/broiling", "the
+ * recipe for X"), each resolved by hand against the print (final-oct23b/README.md); 0965 ("in the same manner", inside
+ * its own recipe) and 1190 ("according to size") are not cross-references and map to [].
+ */
+export type HtcfTag = AllergyId | "sugar" | "meat";
+export const HTCF_ALL_TAGS: HtcfTag[] = ["gluten", "dairy", "nuts", "shellfish", "spicy", "sugar", "meat"];
+export const HTCF_XREF: Record<string, string[] | null> = {
+  "htcf-0038": ["htcf-0037"],
+  "htcf-0041": ["htcf-0037"],
+  "htcf-0055": ["htcf-0037"],
+  "htcf-0085": ["htcf-0079"],
+  "htcf-0086": ["htcf-0037"],
+  "htcf-0088": ["htcf-0087"],
+  "htcf-0090": ["htcf-0087",  "htcf-0088"],
+  "htcf-0091": ["htcf-0087",  "htcf-0088"],
+  "htcf-0092": ["htcf-0072"],
+  "htcf-0093": ["htcf-0035"],
+  "htcf-0097": ["htcf-0096"],
+  "htcf-0099": ["htcf-0077"],
+  "htcf-0106": ["htcf-0973",  "htcf-0974"],
+  "htcf-0132": ["htcf-0131"],
+  "htcf-0135": null,
+  "htcf-0138": ["htcf-0136"],
+  "htcf-0139": ["htcf-0148",  "htcf-0149"],
+  "htcf-0140": ["htcf-0165"],
+  "htcf-0150": ["htcf-0149"],
+  "htcf-0153": ["htcf-0148",  "htcf-0149"],
+  "htcf-0154": ["htcf-0152"],
+  "htcf-0157": ["htcf-0151"],
+  "htcf-0161": ["htcf-0160"],
+  "htcf-0166": ["htcf-0165"],
+  "htcf-0168": ["htcf-0148",  "htcf-0149"],
+  "htcf-0171": ["htcf-0165"],
+  "htcf-0175": ["htcf-0173"],
+  "htcf-0176": [],
+  "htcf-0180": ["htcf-0165"],
+  "htcf-0181": ["htcf-0180"],
+  "htcf-0182": ["htcf-0148",  "htcf-0149"],
+  "htcf-0186": ["htcf-0148",  "htcf-0149"],
+  "htcf-0188": ["htcf-0187"],
+  "htcf-0197": ["htcf-0196"],
+  "htcf-0198": ["htcf-0191",  "htcf-0199"],
+  "htcf-0201": ["htcf-0165"],
+  "htcf-0202": ["htcf-0165"],
+  "htcf-0207": ["htcf-0203"],
+  "htcf-0208": ["htcf-0203"],
+  "htcf-0209": null,
+  "htcf-0215": ["htcf-0203"],
+  "htcf-0221": ["htcf-0203"],
+  "htcf-0227": ["htcf-0226"],
+  "htcf-0231": ["htcf-0212"],
+  "htcf-0233": ["htcf-0203"],
+  "htcf-0247": ["htcf-0224",  "htcf-0225",  "htcf-0226"],
+  "htcf-0256": ["htcf-0255"],
+  "htcf-0260": ["htcf-0248",  "htcf-0249"],
+  "htcf-0264": ["htcf-0263"],
+  "htcf-0266": ["htcf-0291"],
+  "htcf-0275": ["htcf-0274"],
+  "htcf-0276": ["htcf-0275"],
+  "htcf-0278": ["htcf-0277"],
+  "htcf-0279": ["htcf-0278"],
+  "htcf-0282": ["htcf-0281"],
+  "htcf-0283": ["htcf-0281"],
+  "htcf-0284": ["htcf-0281"],
+  "htcf-0285": ["htcf-0281"],
+  "htcf-0286": ["htcf-0281"],
+  "htcf-0287": ["htcf-0281"],
+  "htcf-0288": ["htcf-0281"],
+  "htcf-0290": ["htcf-0281"],
+  "htcf-0343": ["htcf-0342"],
+  "htcf-0356": ["htcf-0357"],
+  "htcf-0361": ["htcf-0358"],
+  "htcf-0371": ["htcf-0368",  "htcf-0370"],
+  "htcf-0384": ["htcf-0383"],
+  "htcf-0396": ["htcf-0367",  "htcf-0394"],
+  "htcf-0397": ["htcf-0394"],
+  "htcf-0400": ["htcf-0367",  "htcf-0394"],
+  "htcf-0402": ["htcf-0390"],
+  "htcf-0405": ["htcf-0381"],
+  "htcf-0407": ["htcf-0354"],
+  "htcf-0415": ["htcf-0411",  "htcf-0412"],
+  "htcf-0453": ["htcf-0452"],
+  "htcf-0457": null,
+  "htcf-0470": ["htcf-0469"],
+  "htcf-0479": ["htcf-0478"],
+  "htcf-0487": ["htcf-0486"],
+  "htcf-0488": ["htcf-0487"],
+  "htcf-0514": ["htcf-0513"],
+  "htcf-0538": ["htcf-0526"],
+  "htcf-0570": ["htcf-0115"],
+  "htcf-0649": ["htcf-0653"],
+  "htcf-0655": ["htcf-0653"],
+  "htcf-0695": ["htcf-0687",  "htcf-0688",  "htcf-0689",  "htcf-0690",  "htcf-0691",  "htcf-0692"],
+  "htcf-0705": ["htcf-0706"],
+  "htcf-0707": ["htcf-0706"],
+  "htcf-0708": ["htcf-0706"],
+  "htcf-0710": ["htcf-0706"],
+  "htcf-0711": ["htcf-0706"],
+  "htcf-0715": ["htcf-0706"],
+  "htcf-0728": ["htcf-0676",  "htcf-0677",  "htcf-0678"],
+  "htcf-0763": ["htcf-0762"],
+  "htcf-0801": ["htcf-0778",  "htcf-0779"],
+  "htcf-0804": ["htcf-0778",  "htcf-0779"],
+  "htcf-0805": ["htcf-0766",  "htcf-0767",  "htcf-0768",  "htcf-0769",  "htcf-0770"],
+  "htcf-0836": ["htcf-0835"],
+  "htcf-0838": ["htcf-0837"],
+  "htcf-0860": ["htcf-0820",  "htcf-0821",  "htcf-0822",  "htcf-0823",  "htcf-0824",  "htcf-0825",  "htcf-0826"],
+  "htcf-0866": ["htcf-0862"],
+  "htcf-0898": ["htcf-0897"],
+  "htcf-0965": [],
+  "htcf-0973": ["htcf-0951"],
+  "htcf-1024": ["htcf-1037"],
+  "htcf-1044": ["htcf-1057"],
+  "htcf-1048": ["htcf-1050"],
+  "htcf-1089": ["htcf-1086",  "htcf-1087",  "htcf-1088"],
+  "htcf-1123": ["htcf-1122"],
+  "htcf-1167": ["htcf-1144"],
+  "htcf-1173": ["htcf-1172"],
+  "htcf-1190": [],
+};
+// htcf-0176 maps to [] on purpose: it takes only the boiling of the tongues from 0173, not its sauce (Kitchen ruling, confirmed
+// by Line Oct 17: 0176 passes gluten). Its own brown butter still fails dairy.
+// Explicit blocks from Line's audits (Oct 17, Oct 23), the plate and Kitchen's Oct 23 rulings (print evidence in final-oct23/README.md); "all" = every tag.
+export const HTCF_BLOCK_BY_ID: Record<string, HtcfTag[]> = {
+  "htcf-0092": ["dairy",  "gluten"],
+  "htcf-0093": ["dairy",  "gluten"],
+  "htcf-0106": ["gluten"],
+  "htcf-0138": ["dairy",  "gluten"],
+  "htcf-0161": ["gluten",  "meat"],
+  "htcf-0186": ["gluten"],
+  "htcf-0198": ["gluten"],
+  "htcf-0201": ["gluten"],
+  "htcf-0209": ["dairy",  "gluten",  "meat",  "nuts",  "shellfish",  "spicy",  "sugar"],
+  "htcf-0227": ["dairy",  "gluten"],
+  "htcf-0276": ["dairy"],
+  "htcf-0278": ["shellfish"],
+  "htcf-0279": ["meat"],
+  "htcf-0361": ["dairy"],
+  "htcf-0397": ["dairy",  "gluten"],
+  "htcf-0457": ["dairy",  "gluten",  "meat",  "nuts",  "shellfish",  "spicy",  "sugar"],
+  "htcf-0514": ["gluten"],
+  "htcf-0538": ["dairy",  "gluten"],
+  "htcf-0570": ["dairy",  "gluten"],
+  "htcf-0655": ["dairy",  "gluten"],
+  "htcf-0707": ["dairy",  "gluten"],
+  "htcf-0860": ["dairy",  "gluten"],
+  "htcf-0973": ["gluten"],
+  "htcf-1089": ["dairy",  "gluten",  "meat"],
+  "htcf-1132": ["dairy"],
+  "htcf-1173": ["dairy",  "gluten",  "spicy"],
+};
+export const HTCF_XREF_FAILS: Record<string, HtcfTag[]> = {
+  "htcf-0085": ["gluten",  "sugar"],
+  "htcf-0088": ["dairy"],
+  "htcf-0090": ["dairy"],
+  "htcf-0091": ["dairy"],
+  "htcf-0092": ["gluten",  "dairy",  "sugar"],
+  "htcf-0093": ["gluten",  "dairy",  "sugar",  "meat"],
+  "htcf-0097": ["gluten",  "dairy"],
+  "htcf-0099": ["gluten",  "dairy",  "meat"],
+  "htcf-0106": ["gluten",  "dairy"],
+  "htcf-0132": ["gluten"],
+  "htcf-0135": ["gluten",  "dairy",  "nuts",  "shellfish",  "spicy",  "sugar",  "meat"],
+  "htcf-0138": ["gluten",  "dairy"],
+  "htcf-0139": ["gluten",  "dairy"],
+  "htcf-0140": ["gluten",  "dairy"],
+  "htcf-0150": ["gluten",  "dairy"],
+  "htcf-0153": ["gluten",  "dairy"],
+  "htcf-0154": ["gluten",  "dairy"],
+  "htcf-0157": ["gluten",  "dairy",  "shellfish"],
+  "htcf-0161": ["gluten",  "meat"],
+  "htcf-0166": ["gluten",  "dairy"],
+  "htcf-0168": ["gluten",  "dairy"],
+  "htcf-0171": ["gluten",  "dairy"],
+  "htcf-0175": ["gluten",  "dairy"],
+  "htcf-0180": ["gluten",  "dairy"],
+  "htcf-0181": ["gluten",  "dairy"],
+  "htcf-0182": ["gluten",  "dairy"],
+  "htcf-0186": ["gluten",  "dairy"],
+  "htcf-0188": ["meat"],
+  "htcf-0197": ["dairy"],
+  "htcf-0198": ["gluten",  "dairy",  "meat"],
+  "htcf-0201": ["gluten",  "dairy"],
+  "htcf-0202": ["gluten",  "dairy"],
+  "htcf-0207": ["gluten",  "dairy"],
+  "htcf-0208": ["gluten",  "dairy"],
+  "htcf-0209": ["gluten",  "dairy",  "nuts",  "shellfish",  "spicy",  "sugar",  "meat"],
+  "htcf-0215": ["gluten",  "dairy"],
+  "htcf-0221": ["gluten",  "dairy"],
+  "htcf-0227": ["gluten",  "dairy"],
+  "htcf-0231": ["gluten",  "dairy",  "sugar"],
+  "htcf-0233": ["gluten",  "dairy"],
+  "htcf-0247": ["gluten",  "dairy"],
+  "htcf-0256": ["dairy"],
+  "htcf-0260": ["dairy",  "sugar"],
+  "htcf-0264": ["gluten",  "dairy"],
+  "htcf-0266": ["gluten",  "dairy",  "shellfish"],
+  "htcf-0275": ["gluten",  "dairy"],
+  "htcf-0276": ["gluten",  "dairy"],
+  "htcf-0278": ["gluten",  "shellfish"],
+  "htcf-0279": ["gluten",  "dairy",  "shellfish",  "meat"],
+  "htcf-0282": ["gluten",  "dairy"],
+  "htcf-0283": ["gluten",  "dairy"],
+  "htcf-0284": ["gluten",  "dairy"],
+  "htcf-0285": ["gluten",  "dairy"],
+  "htcf-0286": ["gluten",  "dairy"],
+  "htcf-0287": ["gluten",  "dairy"],
+  "htcf-0288": ["gluten",  "dairy"],
+  "htcf-0290": ["gluten",  "dairy"],
+  "htcf-0343": ["gluten",  "dairy"],
+  "htcf-0356": ["gluten",  "dairy"],
+  "htcf-0361": ["gluten",  "dairy",  "nuts",  "sugar"],
+  "htcf-0371": ["gluten",  "dairy"],
+  "htcf-0384": ["gluten",  "dairy"],
+  "htcf-0396": ["gluten",  "dairy"],
+  "htcf-0397": ["gluten",  "dairy"],
+  "htcf-0400": ["gluten",  "dairy"],
+  "htcf-0402": ["gluten",  "dairy"],
+  "htcf-0405": ["gluten",  "dairy",  "meat"],
+  "htcf-0415": ["gluten",  "dairy"],
+  "htcf-0453": ["gluten"],
+  "htcf-0457": ["gluten",  "dairy",  "nuts",  "shellfish",  "spicy",  "sugar",  "meat"],
+  "htcf-0470": ["dairy"],
+  "htcf-0479": ["gluten",  "dairy"],
+  "htcf-0487": ["gluten",  "dairy"],
+  "htcf-0488": ["gluten",  "dairy"],
+  "htcf-0514": ["gluten",  "dairy"],
+  "htcf-0538": ["dairy"],
+  "htcf-0570": ["gluten",  "dairy",  "meat"],
+  "htcf-0649": ["gluten",  "dairy",  "meat"],
+  "htcf-0655": ["gluten",  "dairy",  "meat"],
+  "htcf-0695": ["gluten",  "dairy"],
+  "htcf-0705": ["gluten",  "dairy"],
+  "htcf-0707": ["gluten",  "dairy"],
+  "htcf-0708": ["gluten",  "dairy"],
+  "htcf-0710": ["gluten",  "dairy"],
+  "htcf-0711": ["gluten",  "dairy"],
+  "htcf-0715": ["gluten",  "dairy"],
+  "htcf-0728": ["sugar"],
+  "htcf-0801": ["gluten",  "dairy"],
+  "htcf-0804": ["gluten",  "dairy"],
+  "htcf-0805": ["gluten",  "dairy",  "sugar"],
+  "htcf-0836": ["gluten",  "dairy"],
+  "htcf-0838": ["gluten",  "dairy",  "shellfish"],
+  "htcf-0860": ["gluten",  "dairy",  "sugar",  "meat"],
+  "htcf-0866": ["dairy"],
+  "htcf-0898": ["gluten",  "dairy"],
+  "htcf-0973": ["gluten",  "dairy"],
+  "htcf-1024": ["gluten",  "dairy",  "shellfish"],
+  "htcf-1044": ["gluten",  "dairy",  "shellfish"],
+  "htcf-1048": ["gluten",  "dairy"],
+  "htcf-1089": ["gluten",  "dairy",  "spicy",  "meat"],
+  "htcf-1123": ["gluten"],
+  "htcf-1167": ["gluten",  "dairy"],
+  "htcf-1173": ["gluten",  "dairy"],
+};
+/** True when an HTCF recipe fails `tag` through a cross-reference or an explicit block. */
+export function htcfInheritedFail(recipe: Recipe, tag: HtcfTag): boolean {
+  if (!recipe.id.startsWith("htcf-")) return false;
+  return (HTCF_BLOCK_BY_ID[recipe.id] ?? []).includes(tag) || (HTCF_XREF_FAILS[recipe.id] ?? []).includes(tag);
+}
+
 const HTCF_SHELLFISH_BY_ID = new Set(["htcf-1024"]); // "the sauce given for Baked Trout with Mushroom Sauce" (oyster liquor, oysters, shrimps)
 
 const BEYOND_NAMES: Partial<Record<AllergyId, (recipe: Recipe) => boolean>> = {
   gluten: glutenBeyondNames,
   dairy: (r) =>
+    htcfSauceRow(r, "dairy") ||
+    htcfInheritedFail(r, "dairy") ||
     r.ingredients.some((i: Row) => !/\b(?:dairy[- ]free|non[- ]dairy|vegan|plant[- ]based)\b/i.test(i.name) && DAIRY_INGREDIENT.test(strip(DAIRY_LOOKALIKE, i.name).trim())) ||
     (r.steps ?? []).some((s) => DAIRY_STEP.test(strip(DAIRY_STEP_LOOKALIKE, s))) ||
     (!/\b(?:dairy[- ]free|non[- ]dairy|vegan)\b/i.test(descText(r)) && DAIRY_STEP.test(strip(DAIRY_STEP_LOOKALIKE, descText(r)))),
   nuts: (r) =>
+    htcfInheritedFail(r, "nuts") ||
     r.ingredients.some((i: Row) => !NUT_FREE.test(i.name) && NUT_INGREDIENT.test(i.name)) ||
     (r.steps ?? []).some((s) => NUT_STEP.test(s)) ||
     (!NUT_FREE.test(descText(r)) && [NUT_WORDS, NUT_INGREDIENT, NUT_STEP].some((re) => re.test(descText(r)))),
   shellfish: (r) =>
     HTCF_SHELLFISH_BY_ID.has(r.id) ||
+    htcfInheritedFail(r, "shellfish") ||
     r.ingredients.some((i: Row) => !SHELLFISH_FREE.test(i.name) && SHELLFISH_INGREDIENT.test(i.name)) ||
     (r.steps ?? []).some((s) => SHELLFISH_STEP.test(strip(SHELLFISH_STEP_LOOKALIKE, s))) ||
     (!SHELLFISH_FREE.test(descText(r)) &&
       (SHELLFISH_STEP.test(strip(SHELLFISH_STEP_LOOKALIKE, descText(r))) || SHELLFISH_INGREDIENT.test(descText(r)))),
   spicy: (r) =>
+    htcfInheritedFail(r, "spicy") ||
     r.ingredients.some((i: Row) => SPICY_INGREDIENT.test(i.name) || (RED_PEPPER_ROW.test(i.name.trim()) && SPOON_UNIT.test((i.unit ?? "").trim()))) ||
     (r.steps ?? []).some((s) => SPICY_STEP.test(s)) ||
     [SPICY_STEP, SPICY_INGREDIENT, SPICY_DESC].some((re) => re.test(descText(r))),
