@@ -560,3 +560,20 @@ test("printedMinutes: an untimed doneness step ('until tender', 'till done', 'un
   assert.equal(p("Cover, and simmer about 20 minutes or until done.", "Season with salt."), 20);
   assert.equal(p("Cover with buttered paper and cook slowly for an hour.", "Thicken with butter and flour cooked together until brown.", "Serve."), 60);
 });
+
+test("printedMinutes: a compound number word is one number (twenty-five 25, forty-five 45, twenty five, thirty-five)", () => {
+  const p = (...steps: string[]) => printedMinutes(stub(steps));
+  assert.equal(p("Bake for twenty-five minutes in a hot oven."), 25);
+  assert.equal(p("Boil slowly for forty-five minutes."), 45);
+  assert.equal(p("Bake twenty five minutes."), 25);
+  assert.equal(p("Simmer thirty-five minutes."), 35);
+  assert.equal(p("Simmer Fifty-Five minutes."), 55);
+  assert.equal(p("Bake twenty to thirty minutes."), 30, "a word range still takes its upper end");
+  assert.equal(p("Bake twenty-five to thirty-five minutes."), 35, "a range of compound words");
+  assert.equal(p("Bake one hour and twenty minutes."), null, "unchanged: not a single parsed duration form");
+  assert.deepEqual(durationsInText("Bake for twenty-five minutes."), durationsInText("Bake for 25 minutes."));
+  for (const [id, mins] of [["htcf-0498", 25], ["htcf-1100", 25], ["htcf-0879", 45]] as const) {
+    const r = byId.get(id);
+    if (r) assert.equal(printedMinutes(r), mins, id);
+  }
+});

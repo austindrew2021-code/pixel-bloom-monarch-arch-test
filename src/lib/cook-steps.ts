@@ -2163,8 +2163,14 @@ const HOUR_AND_HALF_RE = /(?<![\w/])(an?|one|two|three|four|five|six|\d+)\s+(?:h
 function hourWordNumber(w: string): number {
   return /^\d+$/.test(w) ? Number(w) : /^an?$/i.test(w) ? 1 : (NUM_WORDS[w.toLowerCase()] ?? 0);
 }
+// "twenty-five", "forty five", "thirty-five": a compound number word is ONE number. Written as digits before the
+// duration scan, so the hyphen is never read as a range ("twenty-five minutes" is 25, not "twenty to five" = 5).
+const COMPOUND_NUM_RE = /(?<![\w-])(twenty|thirty|forty|fifty|sixty)(?:-|\s+)(one|two|three|four|five|six|seven|eight|nine)(?![\w-])/gi;
+function normaliseCompoundNumbers(text: string): string {
+  return text.replace(COMPOUND_NUM_RE, (_m, tens: string, unit: string) => String(NUM_WORDS[tens.toLowerCase()]! + NUM_WORDS[unit.toLowerCase()]!));
+}
 function normaliseFractionHours(text: string): string {
-  return text
+  return normaliseCompoundNumbers(text)
     .replace(FRAC_HOUR_RE, (_m, lead: string | undefined, frac: string) => {
       const f = /^three/i.test(frac) ? 0.75 : /^half/i.test(frac) ? 0.5 : 0.25;
       return `${Math.round(((lead ? hourWordNumber(lead) : 0) + f) * 60)} minutes`;
