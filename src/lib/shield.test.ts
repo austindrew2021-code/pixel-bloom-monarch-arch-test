@@ -3,6 +3,7 @@ import test from "node:test";
 import { isDairyFree, isGlutenFree, isPescatarian, isSugarFree, isVegan, isVegetarian } from "./diet.ts";
 import { type HtcfTag, HTCF_ALL_TAGS, HTCF_BLOCK_BY_ID, HTCF_XREF, HTCF_XREF_FAILS, htcfInheritedFail, mealSavings, plateCost, recipeAllergens, recipeSafe, takeoutCost } from "./shield.ts";
 import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
+import { RECIPES } from "./recipes.ts";
 import type { AllergyId, Protein, Recipe } from "./types.ts";
 
 const PROTEINS: Protein[] = ["chicken", "beef", "lamb", "pork", "fish", "seafood", "veg", "eggs", "turkey"];
@@ -432,7 +433,34 @@ test("htcf: a catsup / ketchup row fails sugar-free (store catsup has added suga
   assert.equal(isSugarFree(h(["smelts", "Ketchup"])), false);
   assert.equal(isSugarFree(h(["smelts", "currants"])), true);
   assert.equal(isSugarFree(h(["smelts", "lemon"])), true);
-  assert.equal(isSugarFree(h(["smelts", "catsup"], "hill-0001")), true, "outside the HTCF book: unchanged");
+  assert.equal(isSugarFree(h(["smelts", "catsup"], "hill-0001")), false, "Oct 23: every book, not only HTCF");
+  assert.equal(isSugarFree(h(["beef", "ketchup"], "meatloaf")), false);
+  assert.equal(isSugarFree(h(["cod", "panko"], "af-fish")), false, "ketchup dunk in the description");
+  assert.equal(isSugarFree(h(["chicken breasts", "panko"], "kd-chicken-nuggets")), false, "ketchup dunk in the description");
+});
+
+/* ---- Oct 23 allergens-small: printed-row GF releases, filter follows shield, held ids ---- */
+const HTCF_BY_ID_EARLY = new Map(HOW_TO_COOK_FISH_RECIPES.map((r) => [r.id, r]));
+test("allergens-small: printed-row GF releases pass both ways; held ids and filter-follows-shield ids fail", () => {
+  const byId = new Map(RECIPES.map((r) => [r.id, r]));
+  for (const id of ["md-chickpea-stew", "wn-white-bean-skillet", "bint-057"]) {
+    const r = byId.get(id)!;
+    const blocked = (x: Recipe) => !isGlutenFree(x) && !recipeSafe(x, ["gluten"]);
+    assert.equal(isGlutenFree(r), true, `${id} filter`);
+    assert.equal(recipeSafe(r, ["gluten"]), true, `${id} shield`);
+    assert.ok(blocked({ ...r, ingredients: [...r.ingredients, { ...r.ingredients[0], name: "flour" }] }), `${id} extra row re-blocks`);
+    assert.ok(blocked({ ...r, ingredients: [...r.ingredients].reverse() }), `${id} reordered rows re-block`);
+    assert.ok(blocked({ ...r, name: r.name + " " }), `${id} changed name re-blocks`);
+    assert.ok(blocked({ ...r, description: r.description + " " }), `${id} changed description re-blocks`);
+  }
+  for (const id of ["vg-hummus-bowl", "gf-socca", "fr-socca", "fs-sole-meuniere", "ac-shiro", "th-drunken-noodles", "gf-rice-noodle-pad", "gf-corn-tacos"]) {
+    const r = byId.get(id)!;
+    assert.equal(isGlutenFree(r), false, `${id} filter`);
+    assert.equal(recipeSafe(r, ["gluten"]), false, `${id} shield`);
+  }
+  const h = HTCF_BY_ID_EARLY.get("htcf-0292")!;
+  assert.equal(isDairyFree(h), false);
+  assert.equal(recipeSafe(h, ["dairy"]), false);
 });
 
 /* ---- Oct 23: HTCF "according to directions (given) for X" inherits X's failures (Line 2ed6 audit) ---- */
@@ -449,7 +477,7 @@ const ownFails = (r: Recipe) => {
 test("htcf xref: every 'according to directions (given) for X' recipe is in the resolution table", () => {
   const RE = /according to (?:the )?directions (?:elsewhere )?(?:given )?(?:in the (?:first part of the )?recipe )?for ([^,.;:]+)/i;
   // Oct 23: unnamed back-references ("given above", "previously given", "preceding recipe", "as directed", ...).
-  const BACK = /according to directions (?:given above|(?:previously|elsewhere) given|given in the preceding recipe)|according to (?:size)|\bas directed\b|\bas for (?:boiling|broiling)\b|in the same manner|given in the recipe for /i;
+  const BACK = /according to directions (?:given above|(?:previously|elsewhere) given|given in the preceding recipe)|according to (?:size)|\bas (?:previously )?directed\b|\bas for (?:boiling|broiling)\b|in the same manner|given in the recipe for /i;
   const NOT_A_REF = ["htcf-0965", "htcf-1190"]; // "in the same manner" (inside its own recipe), "according to size"
   const found = HOW_TO_COOK_FISH_RECIPES.filter((r) => RE.test((r.steps ?? []).join(" ")) || BACK.test((r.steps ?? []).join(" "))).map((r) => r.id).sort();
   assert.deepEqual(found, Object.keys(HTCF_XREF).sort());

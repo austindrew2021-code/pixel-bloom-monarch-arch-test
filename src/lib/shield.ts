@@ -417,6 +417,7 @@ export const HTCF_XREF: Record<string, string[] | null> = {
   "htcf-0287": ["htcf-0281"],
   "htcf-0288": ["htcf-0281"],
   "htcf-0290": ["htcf-0281"],
+  "htcf-0292": ["htcf-0281"],
   "htcf-0343": ["htcf-0342"],
   "htcf-0356": ["htcf-0357"],
   "htcf-0361": ["htcf-0358"],
@@ -557,6 +558,7 @@ export const HTCF_XREF_FAILS: Record<string, HtcfTag[]> = {
   "htcf-0287": ["gluten",  "dairy"],
   "htcf-0288": ["gluten",  "dairy"],
   "htcf-0290": ["gluten",  "dairy"],
+  "htcf-0292": ["gluten",  "dairy"],
   "htcf-0343": ["gluten",  "dairy"],
   "htcf-0356": ["gluten",  "dairy"],
   "htcf-0361": ["gluten",  "dairy",  "nuts",  "sugar"],
@@ -656,6 +658,22 @@ const isOwnTitleRow = (id: string, n: string) =>
 // A printed row that says rice noodle(s) clears the word "noodle" (only the one right after "rice": wheat, egg and bare
 // "noodles" rows, or "rice noodles or egg noodles", keep their noodle). Rice vermicelli is already cleared by "rice".
 const RICE_NOODLES = /\brice noodles?\b/gi;
+// Oct 23 (Line): gluten-free released for these ids on their printed rows alone. Every printed row is gluten-free
+// (listed here verbatim); the only gluten hit was a serve-with bread in the description. Pinned to the exact name,
+// description and ordered rows: any change to any of them turns the release off. Gluten only.
+const GF_PRINTED_ROW_RELEASE: Record<string, { name: string; description: string; rows: string[] }> = {
+  "md-chickpea-stew": { name: "Tomato chickpea stew", description: "Chickpeas, tomato, cumin, spinach. Bread.", rows: ["chickpeas", "crushed tomatoes", "spinach", "cumin", "garlic", "olive oil", "salt", "rice"] },
+  "wn-white-bean-skillet": { name: "White bean skillet", description: "Beans, garlic, kale, lemon. Bread.", rows: ["cannellini beans", "kale", "garlic", "lemon", "olive oil", "red pepper flakes"] },
+  "bint-057": { name: "Yogurt Salad", description: "During the hot summer months, the Turks often lunch on a light, nutritious salad, rounding out the meal with cheese and bread.", rows: ["unflavored yogurt", "finely snipped fresh mint or 1/2 teaspoon dried mint flakes", "lemon juice", "clove garlic, finely chopped", "Dash of white pepper", "medium cucumber, thinly sliced"] },
+};
+function gfPrintedRowRelease(recipe: Recipe): Recipe {
+  const rel = GF_PRINTED_ROW_RELEASE[recipe.id];
+  if (!rel || recipe.name !== rel.name || (recipe.description ?? "") !== rel.description) return recipe;
+  const rows = recipe.ingredients.map((i) => (i as { raw?: string }).raw ?? i.name);
+  if (rows.length !== rel.rows.length || rows.some((n, k) => n !== rel.rows[k])) return recipe;
+  return { ...recipe, description: "" };
+}
+
 function glutenView(recipe: Recipe): Recipe {
   let changed = false;
   const ingredients = recipe.ingredients.map((i) => {
@@ -680,7 +698,7 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   // not rice milk.
   const blobOf = (r: Recipe) => [r.name, ...r.tags, ...r.ingredients.map((i) => i.name)].join(" | ");
   const blob = blobOf(recipe);
-  const gv = glutenView(recipe);
+  const gv = glutenView(gfPrintedRowRelease(recipe));
   return ALLERGIES.map((a) => a.id).filter((id) => {
     const r = id === "gluten" ? gv : recipe;
     return PATTERNS[id].test(id === "gluten" ? blobOf(gv) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);

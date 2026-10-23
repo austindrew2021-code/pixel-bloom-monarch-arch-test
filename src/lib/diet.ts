@@ -157,9 +157,13 @@ function safeIngredients(recipe: Recipe): Recipe["ingredients"] {
   return recipe.ingredients.map((i) => ({ ...i, name: withoutLookalikes(i.name), raw: i.name }));
 }
 
+// Oct 23 (Line): filter/badge must agree with the shield; where they disagreed the stricter (fail) wins.
+const GF_FILTER_FOLLOWS_SHIELD = new Set(["gf-socca", "fr-socca", "fs-sole-meuniere", "ac-shiro"]);
+
 export function isGlutenFree(input: Recipe): boolean {
   const recipe = withDietScreen(input);
   if ((recipe.tags ?? []).includes("gluten")) return false;
+  if (GF_FILTER_FOLLOWS_SHIELD.has(recipe.id) && recipeAllergens(input).includes("gluten")) return false;
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("gluten");
 }
 
@@ -172,8 +176,12 @@ export function isDairyFree(input: Recipe): boolean {
 // so an HTCF recipe with a catsup/ketchup row is never sugar-free. (Currants stay as they are.)
 const HTCF_CATSUP = /\b(?:cat-?sup|ketchup)\b/i;
 
+// Ketchup served in the description, not a row (Line, Oct 23). tourtiere / mi-pasty ("serve with ketchup" steps) left as is.
+const KETCHUP_DUNK_DESC = new Set(["af-fish", "kd-chicken-nuggets"]);
+
 export function isSugarFree(recipe: Recipe): boolean {
-  if (recipe.id.startsWith("htcf-") && (recipe.ingredients ?? []).some((i) => HTCF_CATSUP.test(i.name))) return false;
+  if ((recipe.ingredients ?? []).some((i) => HTCF_CATSUP.test(i.name))) return false; // Oct 23: every book, not only HTCF
+  if (KETCHUP_DUNK_DESC.has(recipe.id)) return false; // Oct 23 (Line): "a ketchup dunk" in the description
   if (htcfInheritedFail(recipe, "sugar")) return false;
   return !SUGAR.test(withoutLookalikes(blob(recipe)));
 }
