@@ -2379,7 +2379,7 @@ export function groceryForWeek(
     const ingredients = resolved.recipe?.ingredients ?? resolved.custom?.ingredients ?? [];
     const servings = resolved.recipe?.servings ?? 4;
     for (const ing of ingredients) {
-      add(ing.name, scaleQty(ing.qty, household, servings), ing.unit, ing.aisle, resolved.title, isPhraseRow(ing));
+      add(ing.name, scaleQty(ing.qty, household, servings), ing.unit, ing.aisle, resolved.title, isPhraseRow(ing, !!resolved.recipe));
     }
   }
 

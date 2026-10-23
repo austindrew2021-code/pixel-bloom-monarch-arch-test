@@ -262,10 +262,10 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
                   {on ? <Check className="size-3.5" /> : null}
                 </span>
                 <span className={cn("flex-1 text-base", on && "text-muted-foreground line-through")}>
-                  {ingredientDisplay(ing, scaleQty(ing.qty, household, servings), formatQty).name}
+                  {ingredientDisplay(ing, scaleQty(ing.qty, household, servings), formatQty, !!recipe).name}
                 </span>
                 <span className="text-sm tabular-nums text-muted-foreground">
-                  {ingredientDisplay(ing, scaleQty(ing.qty, household, servings), formatQty).qty}
+                  {ingredientDisplay(ing, scaleQty(ing.qty, household, servings), formatQty, !!recipe).qty}
                 </span>
               </button>
               {localSubs(ing.name)[0] ? (
