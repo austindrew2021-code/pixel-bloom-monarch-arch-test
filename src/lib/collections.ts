@@ -427,7 +427,8 @@ export const COLLECTIONS: Collection[] = [
     id: "indian",
     label: "Indian",
     hint: "Dal, tikka, chana",
-    match: (r) => has(r, "indian") || (r.cuisine ?? "") === "Indian",
+    // "Chocolate Indians" (Southern Cook Book brownies) is a 1930s name for a chocolate bar cookie, not Indian cuisine.
+    match: (r) => has({ ...r, name: r.name.replace(/\bindians\b/gi, "") }, "indian") || (r.cuisine ?? "") === "Indian",
   },
   {
     id: "chinese",
