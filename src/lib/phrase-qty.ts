@@ -17,11 +17,13 @@ const MEASURE =
 // tomatoes", "14 or 16 pound round of beef"); a single count must not be followed by a
 // measuring unit ("2 cups flour" is a measure, not a phrase).
 const LEAD_COUNT = new RegExp(`^(${NUM})\\s+(?!(?:${MEASURE})(?![a-z]))[a-z]`, "i");
-const LEAD_COUNT_RANGE = new RegExp(`^${NUM}\\s+(?:[a-z]+\\s+)?(?:or|to)\\s+${NUM}\\s+(?!(?:cups?|c\\.|tbsps?|tsps?|tablespoons?|teaspoons?|oz|ounces?|inch)(?![a-z]))[a-z]`, "i");
+// Count ranges also print hyphenated ("16-24 chicken wings", troop/kfyr).
+const LEAD_COUNT_RANGE = new RegExp(`^${NUM}(?:\\s+(?:[a-z]+\\s+)?(?:or|to)\\s+|\\s*-\\s*)${NUM}\\s+(?!(?:cups?|c\\.|tbsps?|tsps?|tablespoons?|teaspoons?|oz|ounces?|inch)(?![a-z]))[a-z]`, "i");
 // Measure ranges ("1 to 2 teaspoons curry powder") and "N tablespoons plus …".
+// A printed leading "About" is kept (kfyr-098 "About 3 1/2 to 4 # shredded cabbage (red)").
 // "1 to 2 teaspoons", "1-3 cup" (no spaces) and "1 1/2-2# flank steak" ('#' = pounds).
 const MEASURE_RANGE = new RegExp(
-  `^${NUM}(?:\\s+(?:or|to)\\s+|\\s*-\\s*)${NUM}(?:\\s*#|\\s+(?:${MEASURE})(?![a-z]))`,
+  `^(?:about\\s+)?${NUM}(?:\\s+(?:or|to)\\s+|\\s*-\\s*)${NUM}(?:\\s*#|\\s+(?:${MEASURE})(?![a-z]))`,
   "i",
 );
 const MEASURE_PLUS = new RegExp(`^${NUM}\\s+(?:${MEASURE})(?![a-z])[^,]*?\\bplus\\b`, "i");
@@ -62,13 +64,52 @@ export const PRINTED_PHRASE_ENDINGS = [
   "nearly a quart",
   "nearly 1/2 pint",
   "about 2 tablespoonfuls",
+  "a little more than a gill",
+  "sufficient",
+  "sufficient, about one cup",
+  "sufficient, about 1 1/2 cups",
+  "sufficient, about 1/2 cup",
+  "1 pt. or more if the melon will hold it",
+  "1/4 teaspoonful, or 10 drops",
+  "a teaspoonful or 2",
+  "from 1/2 to a pt.",
+  "say 1/2 a pt.",
+  "a 1/4",
+  "some",
+  "as little as possible",
+  "the same",
+  "the same weight",
+  "the same amount",
 ] as const;
 
-const PRINTED_PHRASE = new RegExp(`\\((?:${PRINTED_PHRASE_ENDINGS.join("|")})\\)\\s*$`, "i");
+const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const PRINTED_PHRASE = new RegExp(`\\((?:${PRINTED_PHRASE_ENDINGS.map(esc).join("|")})\\)\\s*$`, "i");
+
+const VULGAR: Record<string, string> = { "1/2": "½", "1/4": "¼", "3/4": "¾", "1/3": "⅓", "2/3": "⅔", "1/8": "⅛" };
+/** Display only: the printed fractions inside a catalog row's trailing phrase read as ½, ¼, … ("milk (nearly ½ pint)"). */
+export function prettyPrintedPhrase(name: string): string {
+  if (!catalogPrintedPhrase(name)) return name;
+  return name.replace(/\(([^()]*)\)\s*$/, (_m, inner: string) =>
+    `(${inner.replace(/(\d+)\s+(\d\/\d)\b/g, (x, w: string, f: string) => (VULGAR[f] ? w + VULGAR[f] : x)).replace(/(?<![\d/])(\d\/\d)(?![\d/])/g, (f) => VULGAR[f] ?? f)})`,
+  );
+}
+
+/** Display only, catalog rows: every fraction inside a bracket reads as its glyph ("carrot (weighing ¼ of a lb.)"). */
+export function prettyBrackets(name: string): string {
+  return name.replace(/\(([^()]*)\)/g, (_m, inner: string) =>
+    `(${inner.replace(/(\d+)\s+(\d\/\d)\b/g, (x, w: string, f: string) => (VULGAR[f] ? w + VULGAR[f] : x)).replace(/(?<![\d/])(\d\/\d)(?![\d/])/g, (f) => VULGAR[f] ?? f)})`,
+  );
+}
+
+/**
+ * Catalog-only: a printed alternative amount ("small pineapple or a pint and a half can") is
+ * uncounted: the row keeps the print's words without its leading count and scales by suffix.
+ */
+export const ALT_AMOUNT = /^(?!(?:to|cups?|batch)\b)(?:(?:one|\d+)\s+)?[a-z][^(),]*?(?:,\s*|\s+)or\s+(?:a|an|one|\d+(?:\s+\d\/\d|\/\d)?)\s+(?:pint|quart|cup|gill|pound|lb|ounce|oz|can|box|glass|tumbler|tablespoon(?:ful)?|teaspoon(?:ful)?|spoonful)s?\b/i;
 
 /** True when a catalog row's name ends in one of the book's printed no-count parentheticals. */
 export function catalogPrintedPhrase(name: string): boolean {
-  return PRINTED_PHRASE.test(name);
+  return PRINTED_PHRASE.test(name) || ALT_AMOUNT.test(name);
 }
 
 function baseCarriesAmount(name: string): boolean {
@@ -128,9 +169,10 @@ export function ingredientDisplay(
   fmt: (q: number, u: string) => string,
   catalog = false,
 ): { qty: string; name: string } {
-  if (isPhraseRow(ing, catalog)) return { qty: "", name: ing.name + multiplier(scaled) };
-  if (isContainerRow(ing)) return { qty: fmt(scaled, ing.unit), name: containerFor(ing.name, scaled) };
-  return { qty: fmt(scaled, ing.unit), name: ing.name };
+  const pretty = (n: string) => (catalog ? prettyBrackets(n) : n);
+  if (isPhraseRow(ing, catalog)) return { qty: "", name: pretty(ing.name) + multiplier(scaled) };
+  if (isContainerRow(ing)) return { qty: fmt(scaled, ing.unit), name: pretty(containerFor(ing.name, scaled)) };
+  return { qty: fmt(scaled, ing.unit), name: pretty(ing.name) };
 }
 
 /** Display for a Shop line; phrase lines carry their multiplier in qty. */

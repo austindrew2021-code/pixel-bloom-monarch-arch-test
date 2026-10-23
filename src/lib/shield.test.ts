@@ -4,6 +4,7 @@ import { isDairyFree, isGlutenFree, isPescatarian, isSugarFree, isVegan, isVeget
 import { type HtcfTag, HTCF_ALL_TAGS, HTCF_BLOCK_BY_ID, HTCF_XREF, HTCF_XREF_FAILS, htcfInheritedFail, mealSavings, plateCost, recipeAllergens, recipeSafe, takeoutCost } from "./shield.ts";
 import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import { RECIPES } from "./recipes.ts";
+import { DS365_XREF } from "./ds-365-doubt.ts";
 import type { AllergyId, Protein, Recipe } from "./types.ts";
 
 const PROTEINS: Protein[] = ["chicken", "beef", "lamb", "pork", "fish", "seafood", "veg", "eggs", "turkey"];
@@ -536,5 +537,23 @@ test("htcf xref (Oct 23): Line's 608d HARD ids and Kitchen's rulings fail; nothi
       else if (t === "meat") assert.equal(isPescatarian(r), false, `${id} pescatarian`);
       else assert.equal(recipeSafe(r, [t as "shellfish" | "spicy"]), false, `${id} ${t} shield`);
     }
+  }
+});
+
+test("365 Desserts xref (Oct 23): each cross-reference is wired, its targets are wired, and it fails every tag (covering its targets)", () => {
+  const byId = new Map(RECIPES.map((r) => [r.id, r]));
+  assert.deepEqual(Object.keys(DS365_XREF).sort(), [
+    "ds-feb-16-mock-mince-pie", "ds-jul-05-strawberry-dumpling", "ds-jun-04-strawberry-pie",
+    "ds-oct-09-orange-roley-poley", "ds-sep-26-baked-apple-dumpling", "ds-sep-29-dick-s-delight",
+  ]);
+  for (const [id, targets] of Object.entries(DS365_XREF)) {
+    const r = byId.get(id);
+    assert.ok(r, `${id} is live`);
+    for (const t of targets ?? []) assert.ok(byId.has(t), `${id} -> ${t} is live`);
+    const own = new Set(recipeAllergens(r!));
+    for (const tag of ["gluten", "dairy", "nuts"] as AllergyId[]) assert.ok(own.has(tag), `${id} ${tag}`);
+    for (const t of targets ?? []) for (const a of recipeAllergens(byId.get(t)!)) assert.ok(own.has(a), `${id} inherits ${a} from ${t}`);
+    assert.equal(isGlutenFree(r!), false); assert.equal(isDairyFree(r!), false); assert.equal(isSugarFree(r!), false);
+    assert.equal(isVegan(r!), false); assert.equal(isVegetarian(r!), false);
   }
 });
