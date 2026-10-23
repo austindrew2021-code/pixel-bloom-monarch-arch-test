@@ -2221,9 +2221,9 @@ function printedDurations(recipe: Recipe): Timed[] {
 // Another cook, bake or chill step (anywhere else in the printed text) means a lone time is not the whole recipe.
 const OTHER_STEP =
   /\b(?:bake[sd]?|baking|roast\w*|broil\w*|boil(?:s|ing)?|simmer\w*|stew\w*|steam\w*|braise\w*|poach\w*|parboil\w*|scald\w*|grill\w*|chill\w*|refrigerat\w*|freez\w*|frozen|marinat\w*|stand|rise|raise|rest|overnight|set aside|cool\w*|congeal\w*|oven|preheat|(?:when|until|get|let it get) cold)\b/i;
-// A cook step that ends on doneness, not on a clock ("until the meat is tender", "till done", "saute until well browned"):
+// A cook step that ends on doneness, not on a clock ("until the meat is tender", "till done", "saute until well browned", "cook until thick"):
 // another cook step with no printed time, so a lone time elsewhere is one step among several, not the recipe's total.
-const UNTIMED_DONE = /\b(?:until|till)\s+(?:[a-z-]+[\s,]+){0,4}?(?:tender|done|browned|brown|golden|cooked|crisp)\b/i;
+const UNTIMED_DONE = /\b(?:until|till)\s+(?:[a-z-]+[\s,]+){0,4}?(?:tender|done|browned|brown|golden|cooked|crisp|soft|set|thick|thickened|flaky|fragrant)\b/i;
 const DRY_HEAT = /\b(?:bak\w+|roast\w*|broil\w*|grill\w*|oven)\b/i;
 const STATED_TOTAL = /\b(?:total|ready in|in all(?![\w-])|altogether|all told|start to finish)(?![\w-])/i;
 
@@ -2265,7 +2265,14 @@ export function printedMinutes(recipe: Recipe): number | null {
   // "until tender" / "till done" / "until browned" elsewhere, or after a "then" in the timed sentence itself, is a cook step with no
   // time. A doneness that belongs to the timed step ("simmer half an hour until tender", "simmer 20 minutes or until done") or to a
   // thickening roux ("butter and flour cooked together until brown") is not another step.
-  const untimed = others.split(" . ").filter((c) => !/\bthicken\w*\b/i.test(c)).join(" . ");
+  // (a clause counts as thickening only when "thicken" comes before its "until/till": "thicken with flour ... cook until brown" is the roux, "cook until thickened" is a doneness step)
+  const untimed = others
+    .split(" . ")
+    .filter((c) => {
+      const u = c.search(/\b(?:until|till)\b/i);
+      return !/\bthicken\w*\b/i.test(u >= 0 ? c.slice(0, u) : c);
+    })
+    .join(" . ");
   if (UNTIMED_DONE.test(untimed) || /\b(?:then|afterwards?|after that)\b/i.test(only.tail) && UNTIMED_DONE.test(only.tail.replace(/^[^]*?\b(?:then|afterwards?|after that)\b/i, ""))) return null;
   if (/\bseconds?\b/i.test(steps.join(" "))) return null; // a timed step in seconds: another timed instruction
   const sentences = steps.join(" ").split(/[.!?]+(?:\s|$)/).filter((x) => x.trim());

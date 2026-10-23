@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
-import { formatMinutes, formatQty } from "@/lib/format";
+import { formatQty } from "@/lib/format";
+import { dotJoin, timeLabel } from "@/lib/recipe-time";
 import { scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 import { RECIPES } from "@/lib/recipes";
@@ -109,7 +110,7 @@ export function SaucesView() {
                 <p className="mt-2 text-xs text-muted-foreground">Contains: {recipeAllergens(active).join(", ")}</p>
               ) : null}
               <p className="mt-3 text-sm tabular-nums">
-                {formatMinutes(active.minutes)} · {active.nutrition.cal} kcal / serving
+                {dotJoin(timeLabel(active), `${active.nutrition.cal} kcal / serving`)}
               </p>
               <ul className="mt-4 space-y-1 text-sm">
                 {active.ingredients.map((ing, i) => (

@@ -11,7 +11,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { isUnlocked } from "@/lib/access";
 import { cuisineBar } from "@/lib/cuisine";
 import { dayFuel, isoDate } from "@/lib/fuel";
-import { formatMinutes } from "@/lib/format";
+import { dotJoin, resolvedTimeLabel } from "@/lib/recipe-time";
 import { t } from "@/lib/i18n";
 import { whenLabel } from "@/lib/kitchen-log";
 import { mealsFromPantry } from "@/lib/pantry-match";
@@ -323,10 +323,12 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
               <div>
                 <h2 className="mt-2 break-words font-display text-3xl leading-tight">{resolveMeal(tonight).title}</h2>
                 <p className="mt-1 text-sm opacity-90">
-                  {formatMinutes(resolveMeal(tonight).minutes)}
-                  {nextGen && resolveMeal(tonight).recipe
-                    ? ` · ${tonightSync?.nutrition.protein ?? resolveMeal(tonight).recipe?.nutrition.protein}g protein`
-                    : ""}
+                  {dotJoin(
+                    resolvedTimeLabel(resolveMeal(tonight)),
+                    nextGen && resolveMeal(tonight).recipe
+                      ? `${tonightSync?.nutrition.protein ?? resolveMeal(tonight).recipe?.nutrition.protein}g protein`
+                      : null,
+                  )}
                 </p>
                 {nextGen && programWeek?.sessions.find((s) => s.date === todayDate) ? (
                   <p className="mt-2 text-xs opacity-80">
@@ -928,7 +930,7 @@ function DaySlot({
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{resolved.title}</p>
         <p className="text-xs text-muted-foreground">
-          {label} · {formatMinutes(resolved.minutes)}
+          {dotJoin(label, resolvedTimeLabel(resolved))}
         </p>
       </div>
     </button>
@@ -970,8 +972,7 @@ function MealActions({
             <div className="mt-4 min-w-0">
               <h2 className="font-display text-3xl leading-tight">{resolved.title}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {formatMinutes(resolved.minutes)}
-                {recipe ? ` · ${recipe.servings} servings` : null}
+                {dotJoin(resolvedTimeLabel(resolved), recipe ? `${recipe.servings} servings` : null)}
               </p>
               {(nutritionOn || nextGen) && recipe ? (
                 <p className="mt-2 text-sm tabular-nums">

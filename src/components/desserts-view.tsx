@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { isDessert, isHealthy } from "@/lib/diet";
-import { formatMinutes, formatQty } from "@/lib/format";
+import { formatQty } from "@/lib/format";
+import { dotJoin, timeLabel } from "@/lib/recipe-time";
 import { scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 import { strictestGoal } from "@/lib/goal-fit";
@@ -129,7 +130,7 @@ export function DessertsView() {
                 <p className="mt-2 text-xs text-muted-foreground">Contains: {recipeAllergens(active).join(", ")}</p>
               ) : null}
               <p className="mt-3 text-sm tabular-nums">
-                {formatMinutes(active.minutes)} · {active.nutrition.cal} kcal / serving · {active.nutrition.protein}g protein
+                {dotJoin(timeLabel(active), `${active.nutrition.cal} kcal / serving`, `${active.nutrition.protein}g protein`)}
               </p>
               <ul className="mt-4 space-y-1 text-sm">
                 {active.ingredients.map((ing, i) => (

@@ -19,7 +19,8 @@ import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 import { startAheadLabel } from "@/lib/ahead";
-import { formatMinutes, formatQty } from "@/lib/format";
+import { formatQty } from "@/lib/format";
+import { dotJoin, timeLabel } from "@/lib/recipe-time";
 
 import { lookupDish } from "@/lib/kitchen-ai";
 import { packLabel, RECIPES, recipeById } from "@/lib/recipes";
@@ -733,8 +734,7 @@ function RecipeDetail({
           </button>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          {formatMinutes(recipe.minutes)}
-          {recipe.cuisine ? ` · ${recipe.cuisine}` : ""}
+          {dotJoin(timeLabel(recipe), recipe.cuisine)}
         </p>
         {/*
           * The stated time is hands-on, which is right for the 15/30/45 filters
