@@ -107,9 +107,17 @@ export function prettyBrackets(name: string): string {
  */
 export const ALT_AMOUNT = /^(?!(?:to|cups?|batch)\b)(?:(?:one|\d+)\s+)?[a-z][^(),]*?(?:,\s*|\s+)or\s+(?:a|an|one|\d+(?:\s+\d\/\d|\/\d)?)\s+(?:pint|quart|cup|gill|pound|lb|ounce|oz|can|box|glass|tumbler|tablespoon(?:ful)?|teaspoon(?:ful)?|spoonful)s?\b/i;
 
+/**
+ * Catalog-only: an old-book row printed as words that already say how much ("a dash of black or
+ * white pepper, or a few grains of cayenne", "the yolks of two eggs") or a trailing word amount
+ * ("green parsley (a handful)"). Shown without a count.
+ */
+const PRINTED_LEAD = /^(?:(?:a|an|the|some|few|several|half|one|two|three|four|five|six|seven|eight|nine|ten|twelve|quarters\s+of|(?:one|two|three)-(?:half|third|thirds|fourth|fourths|eighth))\s|about\s+\d|\d+(?:\s+\d\/\d|\/\d)?(?:,|-|\s+(?:to|or|\d|an?\s|level|heaping|scant|tbsp|cups?|tablespoons?|teaspoons?)))/i;
+const PRINTED_TAIL = /\((?:a|an|some|a few|half)\s[^()]*\)\s*$/i;
+
 /** True when a catalog row's name ends in one of the book's printed no-count parentheticals. */
 export function catalogPrintedPhrase(name: string): boolean {
-  return PRINTED_PHRASE.test(name) || ALT_AMOUNT.test(name);
+  return PRINTED_PHRASE.test(name) || ALT_AMOUNT.test(name) || PRINTED_LEAD.test(name) || PRINTED_TAIL.test(name);
 }
 
 function baseCarriesAmount(name: string): boolean {
@@ -137,8 +145,8 @@ export function nameCarriesAmount(name: string): boolean {
 
 /** Phrase rule applies only to unit-less rows with base qty 1. */
 /** Catalog recipe row: the printed name carries the amount, incl. the book's printed phrase endings. */
-export function isPhraseRow(ing: { name: string; qty: number; unit: string }, catalog = false): boolean {
-  return !(ing.unit || "").trim() && ing.qty === 1 && (nameCarriesAmount(ing.name) || (catalog && catalogPrintedPhrase(ing.name)));
+export function isPhraseRow(ing: { name: string; qty: number; unit: string; noCount?: true }, catalog = false): boolean {
+  return !(ing.unit || "").trim() && ing.qty === 1 && ((catalog && ing.noCount === true) || nameCarriesAmount(ing.name) || (catalog && catalogPrintedPhrase(ing.name)));
 }
 
 export function isContainerRow(ing: { name: string; unit: string }): boolean {
@@ -164,7 +172,7 @@ export function multiplier(n: number): string {
  * `fmt` is formatQty. Returns the qty-span text and the name text.
  */
 export function ingredientDisplay(
-  ing: { name: string; qty: number; unit: string },
+  ing: { name: string; qty: number; unit: string; noCount?: true },
   scaled: number,
   fmt: (q: number, u: string) => string,
   catalog = false,

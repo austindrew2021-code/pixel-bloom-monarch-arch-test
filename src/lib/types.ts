@@ -73,6 +73,8 @@ export type Ingredient = {
   qty: number;
   unit: string;
   aisle: Aisle;
+  /** Older-book row printed with no amount: shown without a count. */
+  noCount?: true;
 };
 
 export type Nutrition = {
