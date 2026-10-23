@@ -15,6 +15,7 @@ import { hasNativeHealth, requestNativeHealth } from "./native-health.ts";
 import { mealsFromPantry } from "./pantry-match.ts";
 import { isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
 import { scaleQty } from "./cuisine.ts";
+import { isPhraseRow, nameCarriesAmount } from "./phrase-qty.ts";
 import { portionSyncFor } from "./portion-sync.ts";
 import { ADDONS, RECIPES, recipeById } from "./recipes.ts";
 import {
@@ -99,6 +100,8 @@ export type GroceryLine = {
   aisle: Aisle;
   fromPantry: boolean;
   dishes: string[];
+  /** Name already carries the printed amount; qty is the display multiplier. */
+  phrase?: boolean;
 };
 
 export { BASIC_STAPLES, DEFAULT_ALWAYS_HAVE, isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
@@ -2348,8 +2351,10 @@ export function groceryForWeek(
   const dates = scope === "tonight" ? new Set([tonight]) : new Set(weekDates(weekStart));
   const map = new Map<string, GroceryLine>();
 
-  const add = (name: string, qty: number, unit: string, aisle: Aisle, dish?: string) => {
-    const key = `${aisle}::${name.toLowerCase()}::${unit}`;
+  let phraseSeq = 0;
+  const add = (name: string, qty: number, unit: string, aisle: Aisle, dish?: string, phrase = false) => {
+    // Phrase rows ("six or eight slices of tender bacon") are never summed into one number.
+    const key = phrase ? `${aisle}::${name.toLowerCase()}::phrase#${phraseSeq++}` : `${aisle}::${name.toLowerCase()}::${unit}`;
     const existing = map.get(key);
     if (existing) {
       existing.qty += qty;
@@ -2364,6 +2369,7 @@ export function groceryForWeek(
       aisle,
       fromPantry: pantryHit(name, pantry) || isAlwaysHave(name, opts?.alwaysHave ?? []),
       dishes: dish ? [dish] : [],
+      ...(phrase ? { phrase: true } : {}),
     });
   };
 
@@ -2373,13 +2379,13 @@ export function groceryForWeek(
     const ingredients = resolved.recipe?.ingredients ?? resolved.custom?.ingredients ?? [];
     const servings = resolved.recipe?.servings ?? 4;
     for (const ing of ingredients) {
-      add(ing.name, scaleQty(ing.qty, household, servings), ing.unit, ing.aisle, resolved.title);
+      add(ing.name, scaleQty(ing.qty, household, servings), ing.unit, ing.aisle, resolved.title, isPhraseRow(ing));
     }
   }
 
   for (const item of extra) {
     if (item.weekStart !== weekStart) continue;
-    add(item.name, 1, "", item.aisle);
+    add(item.name, 1, "", item.aisle, undefined, nameCarriesAmount(item.name));
   }
 
   return Array.from(map.values());

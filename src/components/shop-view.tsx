@@ -5,6 +5,7 @@ import { GroceryNearCard } from "@/components/grocery-near";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatQty } from "@/lib/format";
+import { shopLineDisplay, shopLineText } from "@/lib/phrase-qty";
 import {
   AISLE_ORDER,
   groceryForWeek,
@@ -301,7 +302,7 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
                 .map(
                   (g) =>
                     `${g.aisle}\n${g.items
-                      .map((i) => `- ${i.name}${i.unit || i.qty ? ` (${formatQty(i.qty, i.unit)})` : ""}`)
+                      .map((i) => shopLineText(i, formatQty))
                       .join("\n")}`,
                 )
                 .join("\n\n");
@@ -334,7 +335,7 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
                 .map(
                   (g) =>
                     `${g.aisle}\n${g.items
-                      .map((i) => `- ${i.name}${i.unit || i.qty ? ` (${formatQty(i.qty, i.unit)})` : ""}`)
+                      .map((i) => shopLineText(i, formatQty))
                       .join("\n")}`,
                 )
                 .join("\n\n");
@@ -454,7 +455,7 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
                           {on ? <Check className="size-3.5" /> : null}
                         </span>
                         <span className={cn("flex-1 text-sm", on && "text-muted-foreground line-through")}>
-                          {line.name}
+                          {shopLineDisplay(line, formatQty).name}
                           {line.fromPantry ? (
                             <span className="ml-2 text-xs text-muted-foreground">pantry</span>
                           ) : null}
@@ -466,7 +467,7 @@ export function ShopView({ onOpenStore }: { onOpenStore: () => void }) {
                           ) : null}
                         </span>
                         <span className="text-xs tabular-nums text-muted-foreground">
-                          {formatQty(line.qty, line.unit)}
+                          {shopLineDisplay(line, formatQty).qty}
                         </span>
                       </button>
                     </li>
