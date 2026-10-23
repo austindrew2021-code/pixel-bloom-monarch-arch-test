@@ -1,4 +1,5 @@
 import { DS365_DOUBT_DAIRY, DS365_DOUBT_GLUTEN, DS365_DOUBT_NUTS } from "./ds-365-doubt.ts";
+import { PB_DOUBT_DAIRY, PB_DOUBT_GLUTEN, PB_DOUBT_NUTS, PB_DOUBT_SHELLFISH, PB_DOUBT_SPICY } from "./pb-plant-based-doubt.ts";
 import { OB_DOUBT_DAIRY, OB_DOUBT_GLUTEN, OB_DOUBT_NUTS, OB_DOUBT_SHELLFISH, OB_DOUBT_SPICY } from "./ob-oldbooks-doubt.ts";
 import { SO_DOUBT_DAIRY, SO_DOUBT_GLUTEN, SO_DOUBT_NUTS, SO_DOUBT_SHELLFISH, SO_DOUBT_SPICY } from "./so-southern-doubt.ts";
 import type { AllergyId, Nutrition, PlannedMeal, Protein, Recipe } from "./types";
@@ -708,8 +709,10 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   const soDoubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: SO_DOUBT_GLUTEN, dairy: SO_DOUBT_DAIRY, nuts: SO_DOUBT_NUTS, shellfish: SO_DOUBT_SHELLFISH, spicy: SO_DOUBT_SPICY };
   // Older public-domain books: same rule.
   const obDoubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: OB_DOUBT_GLUTEN, dairy: OB_DOUBT_DAIRY, nuts: OB_DOUBT_NUTS, shellfish: OB_DOUBT_SHELLFISH, spicy: OB_DOUBT_SPICY };
+  // Plant-Based Cookbook: same rule.
+  const pbDoubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: PB_DOUBT_GLUTEN, dairy: PB_DOUBT_DAIRY, nuts: PB_DOUBT_NUTS, shellfish: PB_DOUBT_SHELLFISH, spicy: PB_DOUBT_SPICY };
   return ALLERGIES.map((a) => a.id).filter((id) => {
-    if (doubt[id]?.has(input.id) || soDoubt[id]?.has(input.id) || obDoubt[id]?.has(input.id)) return true;
+    if (doubt[id]?.has(input.id) || soDoubt[id]?.has(input.id) || obDoubt[id]?.has(input.id) || pbDoubt[id]?.has(input.id)) return true;
     const r = id === "gluten" ? gv : recipe;
     return PATTERNS[id].test(id === "gluten" ? blobOf(gv) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);
   });
