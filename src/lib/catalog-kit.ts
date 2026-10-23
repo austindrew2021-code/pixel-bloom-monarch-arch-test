@@ -7,6 +7,14 @@ export const I = (
   aisle: Recipe["ingredients"][number]["aisle"],
 ) => ({ name, qty, unit, aisle });
 
+/** Older-book row printed with no amount ("slices of lemon"): shown without a count. */
+export const IN = (
+  name: string,
+  qty: number,
+  unit: string,
+  aisle: Recipe["ingredients"][number]["aisle"],
+) => ({ name, qty, unit, aisle, noCount: true as const });
+
 export function dish(
   partial: Omit<Recipe, "nutrition" | "pack" | "servings"> & {
     nutrition?: Recipe["nutrition"];

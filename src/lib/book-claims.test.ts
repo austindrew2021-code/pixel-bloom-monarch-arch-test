@@ -442,7 +442,8 @@ test("FRICTION: no '.).' ending, no one-letter 'C. rice' split and no lowercase-
   for (const r of BOOKS) {
     r.steps.forEach((s, n) => {
       assert.doesNotMatch(s, /\.\)\./, `${r.id} step ${n + 1}: ${s}`);
-      assert.doesNotMatch(s, /(?:^|\s)[A-Za-z]\. [a-z]/, `${r.id} step ${n + 1}: ${s}`);
+      // "q. f." (quantum sufficit) is printed verbatim in American Cookery (ac-0027-2); see the fixBookStep test below.
+      assert.doesNotMatch(s.replace(/\bq\. f\. /g, ""), /(?:^|\s)[A-Za-z]\. [a-z]/, `${r.id} step ${n + 1}: ${s}`);
       assert.doesNotMatch(s, /^[a-z]/, `${r.id} step ${n + 1}: ${s}`);
     });
   }
