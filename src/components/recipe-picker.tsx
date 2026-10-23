@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { dietFlags } from "@/lib/diet";
-import { formatMinutes } from "@/lib/format";
+import { dotJoin, timeLabel } from "@/lib/recipe-time";
 import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
 import { packLabel, RECIPES } from "@/lib/recipes";
 import { searchRecipes } from "@/lib/search";
@@ -180,7 +180,7 @@ function RecipeRow({
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{recipe.name}</p>
         <p className="text-xs text-muted-foreground">
-          {formatMinutes(recipe.minutes)} · {packLabel(recipe.pack)}
+          {dotJoin(timeLabel(recipe), packLabel(recipe.pack))}
           {offGoal ? " · off your goal" : ""}
         </p>
       </div>
@@ -331,7 +331,7 @@ export function RecipeCard({
         </div>
         <p className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{recipe.description}</p>
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-          <Badge variant="outline">{formatMinutes(recipe.minutes)}</Badge>
+          {timeLabel(recipe) ? <Badge variant="outline">{timeLabel(recipe)}</Badge> : null}
           {recipe.cuisine ? <Badge variant="outline" className="max-w-[8.5rem]">{recipe.cuisine}</Badge> : null}
           {recipe.source?.year ? <Badge variant="outline">{recipe.source.year}</Badge> : null}
           {dietFlags(recipe).slice(0, 2).map((f) => (

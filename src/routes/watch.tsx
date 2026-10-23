@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Plate } from "@/components/plate";
 import { TesterGate } from "@/components/tester-gate";
 import { dayFuel, isoDate } from "@/lib/fuel";
-import { formatMinutes } from "@/lib/format";
+import { resolvedTimeLabel } from "@/lib/recipe-time";
 import { nutritionForDate, resolveMeal, useSpoonful } from "@/lib/spoonful-store";
 import { rankProgress } from "@/lib/ranks";
 import { isTesterUnlocked } from "@/lib/tester";
@@ -59,7 +59,7 @@ function WatchFace() {
         <>
           <Plate kind={resolved.recipe?.plate ?? "bowl"} size="lg" className="mt-4" />
           <h1 className="mt-3 text-center font-display text-3xl leading-tight">{resolved.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{formatMinutes(resolved.minutes)}</p>
+          {resolvedTimeLabel(resolved) ? <p className="mt-1 text-sm text-muted-foreground">{resolvedTimeLabel(resolved)}</p> : null}
         </>
       ) : (
         <h1 className="mt-4 text-center font-display text-3xl">Nothing plated</h1>

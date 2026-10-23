@@ -6,7 +6,8 @@ import { foodsUsedInStep, scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 
 import { scaleQty } from "@/lib/cuisine";
-import { formatMinutes, formatQty } from "@/lib/format";
+import { formatQty } from "@/lib/format";
+import { resolvedTimeLabel } from "@/lib/recipe-time";
 import { localSubs } from "@/lib/substitutions";
 import { resolveMeal, useSpoonful } from "@/lib/spoonful-store";
 import { postKitchenEvent } from "@/lib/family";
@@ -291,7 +292,7 @@ export function CookView({ meal, onClose }: { meal: PlannedMeal; onClose: () => 
         </Button>
         <div className="min-w-0 text-center">
           <p className="truncate text-base font-medium">{resolved.title}</p>
-          <p className="text-xs text-muted-foreground">{formatMinutes(resolved.minutes)}</p>
+          {resolvedTimeLabel(resolved) ? <p className="text-xs text-muted-foreground">{resolvedTimeLabel(resolved)}</p> : null}
         </div>
         <span className="inline-flex size-11 items-center justify-center text-sm tabular-nums text-muted-foreground">
           {step + 1}/{steps.length}
