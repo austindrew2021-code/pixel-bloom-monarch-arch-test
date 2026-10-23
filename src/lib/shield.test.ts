@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isDairyFree, isGlutenFree, isVegan, isVegetarian } from "./diet.ts";
-import { mealSavings, plateCost, recipeAllergens, recipeSafe, takeoutCost } from "./shield.ts";
+import { isDairyFree, isGlutenFree, isPescatarian, isSugarFree, isVegan, isVegetarian } from "./diet.ts";
+import { type HtcfTag, HTCF_ALL_TAGS, HTCF_BLOCK_BY_ID, HTCF_XREF, HTCF_XREF_FAILS, htcfInheritedFail, mealSavings, plateCost, recipeAllergens, recipeSafe, takeoutCost } from "./shield.ts";
+import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import type { AllergyId, Protein, Recipe } from "./types.ts";
 
 const PROTEINS: Protein[] = ["chicken", "beef", "lamb", "pork", "fish", "seafood", "veg", "eggs", "turkey"];
@@ -366,4 +367,146 @@ test("shield: a printed rice noodle row clears 'noodle' (as the badge does); whe
   const bare = { ...withRows(["shrimp"]) };
   bare.ingredients = [{ name: "noodles", raw: "rice noodles", qty: 1, unit: "", aisle: "Pantry" } as Recipe["ingredients"][number]];
   assert.equal(glutenSafe(bare), true);
+});
+
+/* ---- Oct 17: HTCF named sauces (the row is the sauce's name; the print gives the sauce in its own chapter) ---- */
+const htcf = (rows: string[], id = "htcf-0001"): Recipe => ({ ...withRows(rows), id });
+const dairySafe = (r: Recipe) => recipeSafe(r, ["dairy"]);
+
+test("htcf: a printed butter / flour / cream / egg sauce row fails dairy-free and the dairy shield", () => {
+  for (const row of ["Egg Sauce", "Caper Sauce", "Poulette Sauce", "Maitre d'Hotel Sauce", "Maître d'Hôtel Sauce", "Maitre d'Hotel", "Anchovy Sauce", "Hollandaise", "Hollandaise Sauce", "Holandaise Sauce", "Tartar Sauce", "Ravigote Sauce", "Ravigote", "White Sauce", "Cream Sauce", "Bechamel Sauce", "Béchamel", "Veloute Sauce", "Butter Sauce", "Parsley Sauce", "Oyster Sauce", "Shrimp Sauce", "Allemande Sauce", "Egg or Hollandaise Sauce", "Mayonnaise or Tartar Sauce", "butter or Maitre d'Hotel Sauce", "parsley, or Tomato Sauce", "very thick Cream Sauce"]) {
+    const r = htcf(["codfish", row]);
+    assert.equal(dairySafe(r), false, `${row}: dairy shield fails`);
+    assert.equal(isDairyFree(r), false, `${row}: dairy-free fails`);
+    assert.ok(recipeAllergens(r).includes("dairy"));
+  }
+});
+
+test("htcf: a flour- or roux-thickened printed sauce also fails gluten-free; a butter-only one does not", () => {
+  for (const row of ["Egg Sauce", "Caper Sauce", "Poulette Sauce", "Anchovy Sauce", "Hollandaise Sauce", "Tartar Sauce", "Ravigote Sauce", "White Sauce", "Cream Sauce", "Bechamel Sauce", "Veloute Sauce", "Italian Sauce", "Fine Herb Sauce", "Sauce a la Gasconne", "Shrimp Sauce", "Milanaise Sauce", "Spanish Sauce", "Aurora Sauce"]) {
+    const r = htcf(["codfish", row]);
+    assert.equal(glutenSafe(r), false, `${row}: gluten shield fails`);
+    assert.equal(isGlutenFree(r), false, `${row}: gluten-free fails`);
+  }
+  // Maitre d'Hotel is butter, lemon and parsley in the print: no flour.
+  const m = htcf(["codfish", "Maitre d'Hotel Sauce"]);
+  assert.equal(glutenSafe(m), true);
+  assert.equal(dairySafe(m), false);
+});
+
+test("htcf: butter-free sauces (Mayonnaise, Cold Ravigote, Vinaigrette, Persillade) and non-sauce rows keep their pass", () => {
+  for (const row of ["Mayonnaise", "stiff Mayonnaise", "Cold Ravigote Sauce", "Vinaigrette Sauce", "Persillade Sauce", "Nicoise Sauce", "Sardine Sauce", "Worcestershire sauce", "tomato catsup", "parsley", "egg", "capers", "white wine"]) {
+    assert.equal(dairySafe(htcf(["codfish", row])), true, `${row}: dairy still passes`);
+  }
+  assert.equal(glutenSafe(htcf(["codfish", "Mayonnaise"])), true);
+  assert.equal(glutenSafe(htcf(["codfish", "Cold Ravigote Sauce"])), true);
+});
+
+test("htcf: a row that labels the sauce dairy-free / gluten-free is taken at its word; other books are not read by this rule", () => {
+  assert.equal(dairySafe(htcf(["codfish", "dairy-free Egg Sauce"])), true);
+  assert.equal(glutenSafe(htcf(["codfish", "gluten-free Egg Sauce"])), true);
+  for (const row of ["Egg Sauce", "Caper Sauce", "Parsley Sauce", "Tartar Sauce"]) {
+    assert.equal(dairySafe(htcf(["fish", row], "hill-0001")), true, `${row} outside the HTCF book: unchanged`);
+  }
+});
+
+test("htcf-0180 (Codfish a la Bechamel, made like Creamed Codfish) fails gluten by id; milk already fails dairy", () => {
+  const r = { ...htcf(["codfish", "white stock", "milk"], "htcf-0180") };
+  assert.equal(glutenSafe(r), false);
+  assert.equal(dairySafe(r), false);
+  assert.equal(glutenSafe({ ...r, id: "htcf-0176" }), true);
+});
+
+test("htcf: restored cooked meat / beef stock rows fail pescatarian; shellfish meat does not", () => {
+  const p = (rows: string[]) => ({ ...withRows(rows), protein: "fish" as Protein });
+  assert.equal(isPescatarian(p(["salted herrings", "cooked meat"])), false);
+  assert.equal(isPescatarian(p(["sea-bass", "well-seasoned beef stock"])), false);
+  assert.equal(isPescatarian(p(["salted herrings", "cooked crab meat"])), true);
+  assert.equal(isPescatarian(p(["herrings", "lobster meat"])), true);
+});
+
+test("htcf: a catsup / ketchup row fails sugar-free (store catsup has added sugar); currants and other books are unchanged", () => {
+  const h = (rows: string[], id = "htcf-0001") => ({ ...withRows(rows), id });
+  assert.equal(isSugarFree(h(["smelts", "catsup"])), false);
+  assert.equal(isSugarFree(h(["smelts", "tomato catsup"])), false);
+  assert.equal(isSugarFree(h(["smelts", "Ketchup"])), false);
+  assert.equal(isSugarFree(h(["smelts", "currants"])), true);
+  assert.equal(isSugarFree(h(["smelts", "lemon"])), true);
+  assert.equal(isSugarFree(h(["smelts", "catsup"], "hill-0001")), true, "outside the HTCF book: unchanged");
+});
+
+/* ---- Oct 23: HTCF "according to directions (given) for X" inherits X's failures (Line 2ed6 audit) ---- */
+const HTCF_BY_ID = new Map(HOW_TO_COOK_FISH_RECIPES.map((r) => [r.id, r]));
+const ownFails = (r: Recipe) => {
+  const a = new Set<string>(recipeAllergens(r));
+  if (!isGlutenFree(r)) a.add("gluten");
+  if (!isDairyFree(r)) a.add("dairy");
+  if (!isSugarFree(r)) a.add("sugar");
+  if (!isPescatarian(r)) a.add("meat");
+  return a;
+};
+
+test("htcf xref: every 'according to directions (given) for X' recipe is in the resolution table", () => {
+  const RE = /according to (?:the )?directions (?:elsewhere )?(?:given )?(?:in the (?:first part of the )?recipe )?for ([^,.;:]+)/i;
+  // Oct 23: unnamed back-references ("given above", "previously given", "preceding recipe", "as directed", ...).
+  const BACK = /according to directions (?:given above|(?:previously|elsewhere) given|given in the preceding recipe)|according to (?:size)|\bas directed\b|\bas for (?:boiling|broiling)\b|in the same manner|given in the recipe for /i;
+  const NOT_A_REF = ["htcf-0965", "htcf-1190"]; // "in the same manner" (inside its own recipe), "according to size"
+  const found = HOW_TO_COOK_FISH_RECIPES.filter((r) => RE.test((r.steps ?? []).join(" ")) || BACK.test((r.steps ?? []).join(" "))).map((r) => r.id).sort();
+  assert.deepEqual(found, Object.keys(HTCF_XREF).sort());
+  for (const id of NOT_A_REF) assert.deepEqual(HTCF_XREF[id], [], id);
+  for (const [id, t] of Object.entries(HTCF_XREF)) for (const tid of t ?? []) assert.ok(HTCF_BY_ID.has(tid), `${id} -> ${tid} is a book recipe`);
+});
+
+test("htcf xref: the inherited failures are the fixed point of the targets' failures (unresolved X fails everything)", () => {
+  for (const [id, t] of Object.entries(HTCF_XREF)) {
+    const want = new Set<string>();
+    if (t === null) HTCF_ALL_TAGS.forEach((x) => want.add(x));
+    else for (const tid of t) ownFails(HTCF_BY_ID.get(tid)!).forEach((x) => want.add(x));
+    assert.deepEqual([...(HTCF_XREF_FAILS[id] ?? [])].sort(), [...want].sort(), id);
+  }
+  assert.deepEqual(Object.keys(HTCF_XREF_FAILS).filter((id) => !(id in HTCF_XREF)), []);
+});
+
+test("htcf xref: Line's 12 cross-reference ids and the plate's blocks fail; 0209 / 0457 fail every tag", () => {
+  const fail = (id: string, tag: "gluten" | "dairy") => {
+    const r = HTCF_BY_ID.get(id)!;
+    assert.equal(recipeSafe(r, [tag]), false, `${id} ${tag} shield`);
+    assert.equal(tag === "gluten" ? isGlutenFree(r) : isDairyFree(r), false, `${id} ${tag}-free`);
+  };
+  for (const n of ["0092", "0093", "0138", "0397", "0655", "0707"]) { fail(`htcf-${n}`, "dairy"); fail(`htcf-${n}`, "gluten"); }
+  for (const n of ["0106", "0570", "0973", "0538", "0198", "0186"]) fail(`htcf-${n}`, "gluten");
+  for (const n of ["0361", "0538", "1132", "0209", "0570"]) fail(`htcf-${n}`, "dairy");
+  for (const id of ["htcf-0209", "htcf-0457"]) {
+    const r = HTCF_BY_ID.get(id)!;
+    assert.equal(HTCF_XREF[id], null);
+    assert.deepEqual(recipeAllergens(r).sort(), ["dairy", "gluten", "nuts", "shellfish", "spicy"]);
+    assert.equal(isSugarFree(r), false);
+    assert.equal(isPescatarian(r), false);
+  }
+});
+
+test("htcf xref: other books are never read; a row list alone does not trigger it", () => {
+  for (const id of [...Object.keys(HTCF_XREF_FAILS), ...Object.keys(HTCF_BLOCK_BY_ID)]) {
+    const r = { ...HTCF_BY_ID.get(id)!, id: id.replace("htcf-", "hill-") };
+    for (const t of HTCF_ALL_TAGS) assert.equal(htcfInheritedFail(r, t), false);
+  }
+  assert.equal(htcfInheritedFail(withRows(["codfish"]), "dairy"), false);
+});
+
+test("htcf xref (Oct 23): Line's 608d HARD ids and Kitchen's rulings fail; nothing else in the book is read", () => {
+  const want: Record<string, HtcfTag[]> = {
+    "htcf-0227": ["gluten", "dairy"], "htcf-0514": ["gluten"], "htcf-1173": ["gluten", "dairy", "spicy"],
+    "htcf-1089": ["gluten", "dairy", "meat"], "htcf-0201": ["gluten"],
+    "htcf-0276": ["dairy"], "htcf-0161": ["gluten", "meat"], "htcf-0279": ["meat"], "htcf-0278": ["shellfish"], "htcf-0860": ["gluten", "dairy"],
+  };
+  for (const [id, tags] of Object.entries(want)) {
+    const r = HTCF_BY_ID.get(id)!;
+    for (const t of tags) {
+      assert.equal(htcfInheritedFail(r, t), true, `${id} ${t}`);
+      if (t === "gluten") assert.equal(isGlutenFree(r), false, `${id} gluten-free`);
+      else if (t === "dairy") assert.equal(isDairyFree(r), false, `${id} dairy-free`);
+      else if (t === "meat") assert.equal(isPescatarian(r), false, `${id} pescatarian`);
+      else assert.equal(recipeSafe(r, [t as "shellfish" | "spicy"]), false, `${id} ${t} shield`);
+    }
+  }
 });

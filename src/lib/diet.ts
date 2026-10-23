@@ -1,4 +1,4 @@
-import { recipeAllergens } from "./shield.ts";
+import { htcfInheritedFail, recipeAllergens } from "./shield.ts";
 import { withDietScreen } from "./catalog-final.ts";
 import type { Recipe } from "./types";
 
@@ -117,8 +117,9 @@ const HONEY_GEL = /\b(honey|gelatine?)\b/i;
 /** Fish and shellfish are fine; nothing else that had a face is. */
 export function isPescatarian(recipe: Recipe): boolean {
   if (["chicken", "beef", "lamb", "pork", "turkey"].includes(recipe.protein)) return false;
+  if (htcfInheritedFail(recipe, "meat")) return false; // HTCF "according to directions for X": X's meat
   const text = withoutLookalikes(blob(recipe));
-  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|gelatine?|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth))\b/i.test(
+  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|gelatine?|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth)|(?:cooked|cold|minced|chopped|boiled|roasted?|ground|corned) meats?)\b/i.test(
     text,
   );
 }
@@ -167,7 +168,13 @@ export function isDairyFree(input: Recipe): boolean {
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("dairy");
 }
 
+// How to Cook Fish prints "catsup" rows; the store product carries added sugar,
+// so an HTCF recipe with a catsup/ketchup row is never sugar-free. (Currants stay as they are.)
+const HTCF_CATSUP = /\b(?:cat-?sup|ketchup)\b/i;
+
 export function isSugarFree(recipe: Recipe): boolean {
+  if (recipe.id.startsWith("htcf-") && (recipe.ingredients ?? []).some((i) => HTCF_CATSUP.test(i.name))) return false;
+  if (htcfInheritedFail(recipe, "sugar")) return false;
   return !SUGAR.test(withoutLookalikes(blob(recipe)));
 }
 
