@@ -1,4 +1,5 @@
 import { DS365_DOUBT_DAIRY, DS365_DOUBT_GLUTEN, DS365_DOUBT_NUTS } from "./ds-365-doubt.ts";
+import { SO_DOUBT_DAIRY, SO_DOUBT_GLUTEN, SO_DOUBT_NUTS, SO_DOUBT_SHELLFISH, SO_DOUBT_SPICY } from "./so-southern-doubt.ts";
 import type { AllergyId, Nutrition, PlannedMeal, Protein, Recipe } from "./types";
 import { withDietScreen } from "./catalog-final.ts";
 
@@ -702,8 +703,10 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   const gv = glutenView(gfPrintedRowRelease(recipe));
   // 365 Desserts: where the printed text leaves an allergen in doubt, it counts as present.
   const doubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: DS365_DOUBT_GLUTEN, dairy: DS365_DOUBT_DAIRY, nuts: DS365_DOUBT_NUTS };
+  // Southern Cook Book (1935): same rule (bought/unspecified base or cross-reference fails every tag).
+  const soDoubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: SO_DOUBT_GLUTEN, dairy: SO_DOUBT_DAIRY, nuts: SO_DOUBT_NUTS, shellfish: SO_DOUBT_SHELLFISH, spicy: SO_DOUBT_SPICY };
   return ALLERGIES.map((a) => a.id).filter((id) => {
-    if (doubt[id]?.has(input.id)) return true;
+    if (doubt[id]?.has(input.id) || soDoubt[id]?.has(input.id)) return true;
     const r = id === "gluten" ? gv : recipe;
     return PATTERNS[id].test(id === "gluten" ? blobOf(gv) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);
   });

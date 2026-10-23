@@ -120,7 +120,8 @@ test("book cards show the printed rows: no screened food is displayed", () => {
       assert.ok(!r.ingredients.includes(f), r.id);
     }
   }
-  assert.ok(!get("so-salsify").ingredients.some((i) => i.name === "butter"));
+  // butter is a printed row for salsify in the 1935 print, so it shows and dairy-free fails
+  assert.ok(get("so-salsify").ingredients.some((i) => i.name === "butter"));
 });
 // Scraps the book scans left in the blurb slot: "INGREDIENTS.", "No. 1.",
 // "(MRS. E.", "(_Sweet.", "(See cut facing page 58.", "following directions on page 10".
@@ -409,7 +410,7 @@ test("FRICTION: runtime echoes ('the 2 cups of flour') and a lowercase step star
     for (const s of r.steps) assert.doesNotMatch(s, echo, `${r.id}: ${s}`);
   }
   assert.ok(n >= 50);
-  assert.match(get("so-crab-croquettes").steps[1]!, /^Mix with white sauce/);
+  assert.match(get("so-crab-croquettes").steps[1]!, /^When well mixed, add to the white sauce\./);
 });
 
 test("POLISH: blurbs strip (page N), _italics_, stray spaces, unbalanced brackets; end on punctuation", () => {

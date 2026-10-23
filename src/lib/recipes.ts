@@ -1495,7 +1495,7 @@ const SOUTHERN_SOURCE = {
 	year: 1935,
 	era: "1930s",
 	archiveId: "southerncookbook00lustrich",
-	credit: "The Southern Cook Book of Fine Old Recipes (Culinary Arts Press, 1935), compiled by Lillie S. Lustig, S. Claire Sondheim and Sarah Rensel. From the Prelinger Library / Internet Archive (southerncookbook00lustrich)."
+	credit: "The Southern Cook Book of Fine Old Recipes (Culinary Arts Press, 1935), compiled by Lillie S. Lustig, S. Claire Sondheim and Sarah Rensel. Internet Archive southerncookbook00lustrich. Public domain."
 };
 function withSource(list: Recipe[], source: Recipe["source"], extraTags: string[]) {
 	return list.map((recipe) => ({
