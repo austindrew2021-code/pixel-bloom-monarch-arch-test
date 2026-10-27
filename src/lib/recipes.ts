@@ -38,6 +38,10 @@ import { SWEET_ERA_RECIPES } from "./catalog-sweet.ts";
 import { KFYR_1969_RECIPES } from "./catalog-kfyr.ts";
 import { TROOP_2023_RECIPES } from "./catalog-troop.ts";
 import { PLANT_BASED_RECIPES } from "./catalog-plant-based.ts";
+import { LFO_RECIPES } from "./catalog-lfo.ts";
+import { PP_RECIPES } from "./catalog-pp.ts";
+import { BCX_RECIPES } from "./catalog-bcx.ts";
+import { KM_RECIPES } from "./catalog-km.ts";
 import { polishCatalog } from "./cook-steps.ts";
 import { decorateDietTags } from "./diet.ts";
 
@@ -1747,6 +1751,10 @@ export const RECIPES: Recipe[] = polishCatalog(
     ...KFYR_1969_RECIPES,
     ...TROOP_2023_RECIPES,
     ...PLANT_BASED_RECIPES,
+    ...LFO_RECIPES,
+    ...PP_RECIPES,
+    ...BCX_RECIPES,
+    ...KM_RECIPES,
   ].filter((r) => !ARCHIVE_HIDDEN_IDS.has(r.id)),
 ).map(decorateDietTags).map(swapSpoonfulKitchenCredit);
 

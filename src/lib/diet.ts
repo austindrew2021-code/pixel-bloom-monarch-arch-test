@@ -1,5 +1,6 @@
 import { DS365_DOUBT_DAIRY, DS365_DOUBT_GLUTEN, DS365_DOUBT_SUGAR, DS365_DOUBT_VEGAN, DS365_DOUBT_VEGETARIAN } from "./ds-365-doubt.ts";
 import { PB_DOUBT_DAIRY, PB_DOUBT_GLUTEN, PB_DOUBT_SUGAR, PB_DOUBT_VEGAN, PB_DOUBT_VEGETARIAN } from "./pb-plant-based-doubt.ts";
+import { IA4_DOUBT_DAIRY, IA4_DOUBT_GLUTEN, IA4_DOUBT_SUGAR, IA4_DOUBT_VEGAN, IA4_DOUBT_VEGETARIAN } from "./ia4-doubt.ts";
 import { OB_DOUBT_DAIRY, OB_DOUBT_GLUTEN, OB_DOUBT_SUGAR, OB_DOUBT_VEGAN, OB_DOUBT_VEGETARIAN } from "./ob-oldbooks-doubt.ts";
 import { SO_DOUBT_DAIRY, SO_DOUBT_GLUTEN, SO_DOUBT_SUGAR, SO_DOUBT_VEGAN, SO_DOUBT_VEGETARIAN } from "./so-southern-doubt.ts";
 import { htcfInheritedFail, recipeAllergens } from "./shield.ts";
@@ -134,6 +135,7 @@ export function isVegetarian(recipe: Recipe): boolean {
   if (SO_DOUBT_VEGETARIAN.has(recipe.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_VEGETARIAN.has(recipe.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (PB_DOUBT_VEGETARIAN.has(recipe.id)) return false; // Plant-Based Cookbook: bought/unspecified base or cross-reference, fail
+  if (IA4_DOUBT_VEGETARIAN.has(recipe.id)) return false; // IA4 exact pack: bought/unspecified base or cross-reference, fail
   if (["chicken", "beef", "lamb", "pork", "fish", "seafood", "turkey"].includes(recipe.protein)) return false;
   if (!["veg", "eggs"].includes(recipe.protein)) return false;
   const text = withoutLookalikes(blob(recipe));
@@ -148,6 +150,7 @@ export function isVegan(recipe: Recipe): boolean {
   if (SO_DOUBT_VEGAN.has(recipe.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_VEGAN.has(recipe.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (PB_DOUBT_VEGAN.has(recipe.id)) return false; // Plant-Based Cookbook: bought/unspecified base or cross-reference, fail
+  if (IA4_DOUBT_VEGAN.has(recipe.id)) return false; // IA4 exact pack: bought/unspecified base or cross-reference, fail
   if (!isVegetarian(recipe)) return false;
   const text = withoutLookalikes(blob(recipe));
   if (EGG.test(text) || HONEY_GEL.test(text)) return false;
@@ -179,6 +182,7 @@ export function isGlutenFree(input: Recipe): boolean {
   if (SO_DOUBT_GLUTEN.has(input.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_GLUTEN.has(input.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (PB_DOUBT_GLUTEN.has(input.id)) return false; // Plant-Based Cookbook: bought/unspecified base or cross-reference, fail
+  if (IA4_DOUBT_GLUTEN.has(input.id)) return false; // IA4 exact pack: bought/unspecified base or cross-reference, fail
   if (GF_FILTER_FOLLOWS_SHIELD.has(recipe.id) && recipeAllergens(input).includes("gluten")) return false;
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("gluten");
 }
@@ -188,6 +192,7 @@ export function isDairyFree(input: Recipe): boolean {
   if (SO_DOUBT_DAIRY.has(input.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_DAIRY.has(input.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (PB_DOUBT_DAIRY.has(input.id)) return false; // Plant-Based Cookbook: bought/unspecified base or cross-reference, fail
+  if (IA4_DOUBT_DAIRY.has(input.id)) return false; // IA4 exact pack: bought/unspecified base or cross-reference, fail
   const recipe = withDietScreen(input);
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("dairy");
 }
@@ -204,6 +209,7 @@ export function isSugarFree(recipe: Recipe): boolean {
   if (SO_DOUBT_SUGAR.has(recipe.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_SUGAR.has(recipe.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (PB_DOUBT_SUGAR.has(recipe.id)) return false; // Plant-Based Cookbook: bought/unspecified base or cross-reference, fail
+  if (IA4_DOUBT_SUGAR.has(recipe.id)) return false; // IA4 exact pack: bought/unspecified base or cross-reference, fail
   if ((recipe.ingredients ?? []).some((i) => HTCF_CATSUP.test(i.name))) return false; // Oct 23: every book, not only HTCF
   if (KETCHUP_DUNK_DESC.has(recipe.id)) return false; // Oct 23 (Line): "a ketchup dunk" in the description
   if (htcfInheritedFail(recipe, "sugar")) return false;
