@@ -115,7 +115,7 @@ function withoutLookalikes(text: string): string {
 }
 
 const SUGAR =
-  /\b(brown sugar|powdered sugar|confectioners|icing sugar|granulated sugar|caster sugar|white sugar|cane sugar|coconut sugar|maple syrup|molasses|corn syrups?|agave|sweetened condensed|chocolate chips?|semi-sweet|milk chocolate|dark chocolate|caramels?|fudge|marshmallows?|honey|jelly|jam|preserves)\b|\bsugars?\b/i;
+  /\b(brown sugar|powdered sugar|confectioners|icing sugar|granulated sugar|caster sugar|white sugar|cane sugar|coconut sugar|maple syrup|molasses|corn syrups?|agave|sweetened condensed|chocolate chips?|semi-sweet|milk chocolate|dark chocolate|caramels?|fudge|marshmallows?|honey|jelly|jam|preserves|marmalades?|candied|crystalli[sz]ed|glac[eé]|maraschino|jell-?o|syrups?|grenadine|sweetened)\b|\bsugars?\b/i;
 const EGG = /\b(eggs?|egg white|egg yolk|mayonnaise)\b/i;
 const HONEY_GEL = /\b(honey|gelatine?)\b/i;
 
@@ -127,6 +127,25 @@ export function isPescatarian(recipe: Recipe): boolean {
   return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|gelatine?|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth)|(?:cooked|cold|minced|chopped|boiled|roasted?|ground|corned) meats?)\b/i.test(
     text,
   );
+}
+
+/*
+ * Nov 2 (Line, B1): bare "meat", drippings and unnamed fat, Jello, and plain
+ * stock or broth all come from an animal unless the row names a plant form.
+ * "Nut meats" and "coconut meat" are kernels; "low-fat"/"fat-free" describe a
+ * food; vegetable or mushroom stock is a plant stock. Only these are cleared,
+ * and only for this test (the nut allergen still sees the row unchanged).
+ */
+// Rows only: a title such as "Peanut Butter Broth" names the dish, not a stock.
+function rowBlob(input: Recipe): string {
+  return withDietScreen(input).ingredients.map((i) => i.name).join(" | ").toLowerCase();
+}
+const ANIMAL_UNNAMED = /\b(meats?|drippings?|fat|jell-?o|stock|broth|bouillon|consomm[eé])\b/i;
+function withoutPlantForms(text: string): string {
+  return text
+    .replace(/\b(nut|nuts|walnut|pecan|hickory|hickory ?nut|almond|butternut|coconut|kernel)[- ]?meats?\b/gi, " ")
+    .replace(/\b(low|non|reduced|no|half)[- ]?fat\b|\bfat[- ]free\b/gi, " ")
+    .replace(/\b(vegetable|veggie|mushroom|vegetarian|vegan|kombu|seaweed)\s+(fat|shortening|stock|broth|bouillon|consomm[eé])\b/gi, " ");
 }
 
 export function isVegetarian(recipe: Recipe): boolean {
@@ -141,7 +160,7 @@ export function isVegetarian(recipe: Recipe): boolean {
   const text = withoutLookalikes(blob(recipe));
   return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov(y|ies)|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatine?|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth))\b/i.test(
     text,
-  );
+  ) && !ANIMAL_UNNAMED.test(withoutPlantForms(rowBlob(recipe)));
 }
 
 export function isVegan(recipe: Recipe): boolean {

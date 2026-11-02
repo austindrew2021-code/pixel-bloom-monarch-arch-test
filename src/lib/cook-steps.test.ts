@@ -877,4 +877,8 @@ test("fractions: ⅞ and 1/16 display; thirds stay thirds when scaled", () => {
   assert.equal(prettyFrac(scaleQty(0.67, 6, 4)), "1"); // exact on both grids
   assert.equal(scaleQty(1.5, 1, 4), 0.5); // non-thirds keep the quarter grid
   assert.equal(scaleQty(0.33, 4, 4), 0.33); // native: the catalog amount
+  assert.equal(prettyFrac(scaleQty(1 / 6, 8, 4)), "⅓"); // so-idle-hour-cocktail ⅙ × 2, not ¼
+  assert.equal(prettyFrac(scaleQty(0.66, 2, 4)), "⅓"); // printed 0.66 (⅔) at 0.5x stays a third, not ¼
+  assert.equal(prettyFrac(scaleQty(0.66, 8, 4)), "1⅓"); // printed 0.66 (⅔) at 2x is 1⅓, not 1¼
+  assert.equal(prettyFrac(scaleQty(5 / 6, 8, 4)), "1⅔"); // ⅚ × 2
 });

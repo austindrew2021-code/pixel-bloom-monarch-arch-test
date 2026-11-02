@@ -4,6 +4,7 @@
  * seasoning mixes…) or a cross-reference is in every set. */
 
 export const IA4_DOUBT_GLUTEN: ReadonlySet<string> = new Set([
+  "km-073", // bought: Special K cereal (malt), Line Nov 2
   "lfo-011", // bought:broth,
   "lfo-012", // bought:broth,
   "lfo-013", // bought:broth,
@@ -39,6 +40,7 @@ export const IA4_DOUBT_GLUTEN: ReadonlySet<string> = new Set([
 ]);
 
 export const IA4_DOUBT_DAIRY: ReadonlySet<string> = new Set([
+  "km-064", // oleo: margarine may hold whey or milk, Line Nov 2
   "lfo-011", // bought:broth,
   "lfo-012", // bought:broth,
   "lfo-013", // bought:broth,
@@ -144,6 +146,7 @@ export const IA4_DOUBT_SUGAR: ReadonlySet<string> = new Set([
 ]);
 
 export const IA4_DOUBT_VEGAN: ReadonlySet<string> = new Set([
+  "km-064", // oleo: margarine may hold whey or milk, Line Nov 2
   "lfo-011", // bought:broth,
   "lfo-012", // bought:broth,
   "lfo-013", // bought:broth,
