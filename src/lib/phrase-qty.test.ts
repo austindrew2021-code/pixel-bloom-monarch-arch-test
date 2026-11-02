@@ -272,3 +272,10 @@ test("catalog bracket fractions show the glyph on counted rows too (dec-31)", ()
   assert.deepEqual(ingredientDisplay(ing, 1, formatQty, true), { qty: formatQty(1, ""), name: "carrot (weighing ¼ of a lb.)" });
   assert.equal(ingredientDisplay(ing, 1, formatQty, false).name, "carrot (weighing 1/4 of a lb.)");
 });
+
+test("quarts: more than one quart displays plural; one quart and below stay singular", () => {
+  assert.equal(formatQty(2, "quart"), "2 quarts");
+  assert.equal(formatQty(3, "quart"), "3 quarts");
+  assert.equal(formatQty(1, "quart"), "1 quart");
+  assert.equal(formatQty(0.5, "quart"), "½ quart");
+});
