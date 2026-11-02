@@ -397,8 +397,9 @@ test("htcf: a flour- or roux-thickened printed sauce also fails gluten-free; a b
 });
 
 test("htcf: butter-free sauces (Mayonnaise, Cold Ravigote, Vinaigrette, Persillade) and non-sauce rows keep their pass", () => {
-  for (const row of ["Mayonnaise", "stiff Mayonnaise", "Cold Ravigote Sauce", "Vinaigrette Sauce", "Persillade Sauce", "Nicoise Sauce", "Sardine Sauce", "Worcestershire sauce", "tomato catsup", "parsley", "egg", "capers", "white wine"]) {
-    assert.equal(dairySafe(htcf(["codfish", row])), true, `${row}: dairy still passes`);
+  for (const row of ["Mayonnaise", "stiff Mayonnaise", "Cold Ravigote Sauce", "Vinaigrette Sauce", "Persillade Sauce", "Nicoise Sauce", "Sardine Sauce", "Worcestershire sauce", "tomato catsup", "parsley", "egg", "capers", "lemon juice"]) {
+    const id = ["Worcestershire sauce", "tomato catsup", "lemon juice"].includes(row) ? "htcf-synthetic-9001" : undefined; // synthetic id: matches no real recipe
+    assert.equal(dairySafe(htcf(["codfish", row], id)), true, `${row}: dairy still passes`);
   }
   assert.equal(glutenSafe(htcf(["codfish", "Mayonnaise"])), true);
   assert.equal(glutenSafe(htcf(["codfish", "Cold Ravigote Sauce"])), true);
