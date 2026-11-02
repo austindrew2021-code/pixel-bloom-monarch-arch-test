@@ -3572,6 +3572,10 @@ export const APPWIDE_BOUGHT_ROWS: Readonly<Record<string, readonly string[]>> = 
   "km-085": ["Ritz crackers"],
   "km-086": ["Bisquick", "margarine"],
   "km-087": ["shortening"],
+  "hd-prime-rib": ["horseradish"],
+  "cris-035": ["horseradish"],
+  "ys-060": ["horseradish"],
+  "htcf-1214": ["grated horse-radish"],
 };
 
 /** True when the recipe still prints one of its bought-product rows. */
