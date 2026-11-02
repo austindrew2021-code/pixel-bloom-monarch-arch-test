@@ -46,7 +46,8 @@ export function formatQty(qty: number, unit: string): string {
   const pretty = prettyFrac(q, !/^(g|kg|ml|l|mg)$/i.test(raw));
   if (!raw) return pretty;
   const keepAbbrev = /^(tbsp|tsp|oz|lb|ml|g)$/i.test(raw);
-  if (q > 1.02) return `${pretty} ${raw}`;
+  // "2 quart" reads as "2 quarts", like the other units (display only).
+  if (q > 1.02) return `${pretty} ${/^quart$/i.test(raw) ? `${raw}s` : raw}`;
   if (keepAbbrev) return `${pretty} ${raw}`;
   const singular = /ies$/i.test(raw)
     ? raw.replace(/ies$/i, "y")
