@@ -187,15 +187,17 @@ test("catalog rows with a printed ending show no count; oct-10 rum has no double
     ["ds-may-05-chocolate-mance", "sugar (to taste)"],
     ["ds-jan-30-queen-pudding", "sugar (to taste)"],
     ["ds-apr-19-arrowroot-pudding", "new milk (a teacup full)"],
-    ["ds-apr-19-arrowroot-pudding", "milk (nearly a quart)"],
     ["ds-feb-08-boiled-rice-pudding", "milk (rather more than a pint)"],
     ["ds-feb-08-boiled-rice-pudding", "milk (a little cold)"],
-    ["ds-may-15-swiss-tart", "milk (nearly 1/2 pint)"],
   ] as const) {
     const ing = RECIPES.find((r) => r.id === id)!.ingredients.find((i) => i.name === name)!;
     assert.ok(ing, `${id} ${name}`);
     assert.ok(isPhraseRow(ing, true), `${id} ${name}`);
     assert.equal(ingredientDisplay(ing, 1, formatQty, true).qty, "");
+  }
+  for (const [id, q, u] of [["ds-apr-19-arrowroot-pudding", 1, "quart"], ["ds-may-15-swiss-tart", 0.5, "pint"]] as const) {
+    const m = RECIPES.find((r) => r.id === id)!.ingredients.find((i) => i.name === "milk (nearly)")!;
+    assert.ok(m && m.qty === q && m.unit === u && !isPhraseRow(m, true), `${id} nearly milk scales`);
   }
   const jan30 = RECIPES.find((r) => r.id === "ds-jan-30-queen-pudding")!.ingredients;
   assert.ok(!RECIPES.find((r) => r.id === "ds-may-01-lemon-pudding")!.ingredients.some((i) => i.name === "jelly"), "may-01 jelly cake pans is equipment");

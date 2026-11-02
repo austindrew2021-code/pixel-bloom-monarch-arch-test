@@ -33,7 +33,12 @@ export function scaleQty(qty: number, household: number, servings: number): numb
   // thirds) and quarter grids (ties to the quarter). Every other amount keeps
   // the quarter grid.
   const quarter = Math.round(scaled * 4) / 4;
-  const inThirds = Math.abs(qty * 3 - Math.round(qty * 3)) < 0.04 && Math.abs(qty * 4 - Math.round(qty * 4)) > 0.04;
+  // Thirds are checked first with their own tolerance (0.66 is a printed ⅔),
+  // then sixths (⅙, ⅚ ride the same grid: ⅙ × 2 = ⅓, not ¼), then quarters (Line, Nov 2).
+  const notQuarter = Math.abs(qty * 4 - Math.round(qty * 4)) > 0.04;
+  const onThirds = Math.abs(qty * 3 - Math.round(qty * 3)) < 0.04;
+  const onSixths = Math.abs(qty * 6 - Math.round(qty * 6)) < 0.04;
+  const inThirds = notQuarter && (onThirds || onSixths);
   const third = Math.round(scaled * 6) / 6;
   // A catalog eighth (⅛, ⅜, ⅝, ⅞) keeps the eighth grid: ⅛ never turns into a quarter on its own.
   const inEighths = !inThirds && Math.abs(qty * 8 - Math.round(qty * 8)) < 0.02 && Math.abs(qty * 4 - Math.round(qty * 4)) > 0.04;
