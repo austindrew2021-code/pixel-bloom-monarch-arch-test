@@ -100,9 +100,10 @@ export function ExerciseSheet({
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-32">
         <div className="flex flex-col items-center rounded-3xl bg-card p-3 shadow-[var(--shadow-border)]">
           <img
+            key={exercise.gif}
             src={exercise.gif}
             alt={`${exercise.name} demonstration`}
-            className="aspect-square w-full max-w-xs rounded-2xl bg-muted object-cover"
+            className="aspect-square w-full max-w-xs rounded-2xl bg-muted object-contain"
             onError={(e) => {
               const el = e.currentTarget;
               if (el.dataset.fallback === "1") return;
@@ -110,6 +111,7 @@ export function ExerciseSheet({
               el.src = exercise.image;
             }}
           />
+          <p className="mt-2 text-center text-xs text-muted-foreground">This clip is the movement in the name.</p>
           <p className="mt-3 text-center text-sm text-muted-foreground">
             {exercise.primary.map((id) => MUSCLE_LABEL[id]).join(", ")}
             {exercise.secondary.length ? ` · ${exercise.secondary.map((id) => MUSCLE_LABEL[id]).join(", ")}` : ""}

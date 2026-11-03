@@ -40,6 +40,7 @@ export default defineConfig({
       { find: "@tanstack/react-start/server", replacement: stub },
       { find: "@tanstack/react-start", replacement: startStub },
       { find: "@/lib/community", replacement: resolve("src/apk-stubs/community.ts") },
+      { find: "@/lib/social", replacement: resolve("src/apk-stubs/social.ts") },
       { find: "@/lib/family", replacement: resolve("src/apk-stubs/family.ts") },
       { find: "@/lib/kitchen-ai", replacement: resolve("src/apk-stubs/kitchen-ai.ts") },
       { find: "@/lib/ai-chef", replacement: resolve("src/apk-stubs/ai-chef.ts") },

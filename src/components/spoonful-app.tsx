@@ -1,11 +1,12 @@
 import { BookOpen, CalendarDays, Camera, Droplets, Dumbbell, Palette, Pencil, ShoppingBasket } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CelebrateOverlay } from "@/components/celebrate";
 import { DessertsView } from "@/components/desserts-view";
 import { FitView } from "@/components/fit-view";
 import { Wordmark } from "@/components/kitchen-hero";
 import { Onboarding } from "@/components/onboarding";
 import { PeopleView } from "@/components/people-view";
+import { SocialApp } from "@/components/social-app";
 import { PlanView } from "@/components/plan-view";
 import { RecipesView } from "@/components/recipes-view";
 import { SaucesView } from "@/components/sauces-view";
@@ -59,6 +60,8 @@ export function SpoonfulApp() {
   const walkthroughOpen = useSpoonful((s) => s.walkthroughOpen);
   const tab = useSpoonful((s) => s.tab);
   const setTab = useSpoonful((s) => s.setTab);
+  const returnTab = useRef<TabId>("plan");
+  const [social, setSocial] = useState(false);
   const theme = useSpoonful((s) => s.theme);
   const setTheme = useSpoonful((s) => s.setTheme);
   const nextGen = useSpoonful((s) => s.nextGen);
@@ -171,6 +174,11 @@ export function SpoonfulApp() {
       window.clearTimeout(timer);
     };
   }, [user?.id]);
+
+  useEffect(() => {
+    if (tab === "people") setSocial(true);
+    else returnTab.current = tab;
+  }, [tab]);
 
   useEffect(() => {
     return listenNativeHealth((day) => {
@@ -300,6 +308,11 @@ export function SpoonfulApp() {
   }
 
   function goPin(id: NavPinId) {
+    if (id === "people") {
+      if (tab !== "people") returnTab.current = tab;
+      setSocial(true);
+      return;
+    }
     if (id === "extras") {
       setExtras(true);
       return;
@@ -311,6 +324,11 @@ export function SpoonfulApp() {
     }
     setExtras(false);
     setTab(id);
+  }
+
+  function closeSocial() {
+    setSocial(false);
+    if (tab === "people") setTab(returnTab.current === "people" ? "plan" : returnTab.current);
   }
 
   return (
@@ -382,7 +400,7 @@ export function SpoonfulApp() {
                 const menu = menuById(id);
                 if (!menu) return null;
                 const Icon = menu.icon;
-                const on = id === "extras" ? extras : id === "sky" ? skyOpen : tab === id;
+                const on = id === "people" ? social : id === "extras" ? extras : id === "sky" ? skyOpen : tab === id;
                 return (
                   <button
                     key={id}
@@ -497,6 +515,7 @@ export function SpoonfulApp() {
       ) : null}
 
       {walkthroughOpen ? <Walkthrough onExtras={setExtras} /> : null}
+      {social ? <SocialApp onClose={closeSocial} /> : null}
 
       <nav
         className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-border bg-card/95 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-md"

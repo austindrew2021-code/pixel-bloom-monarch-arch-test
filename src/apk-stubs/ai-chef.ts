@@ -1,3 +1,5 @@
+import { chefJoke, classifyChefAsk, localAppAnswer } from "@/lib/chef-scope";
+
 type CatalogItem = {
   id: string;
   name: string;
@@ -34,6 +36,9 @@ function score(prompt: string, r: CatalogItem) {
 
 export async function planWeekWithChef(arg: Call) {
   const data = arg.data;
+  if (classifyChefAsk(data.prompt ?? "") === "other") {
+    return { ok: false as const, scope: "joke" as const, error: chefJoke(data.prompt ?? "") };
+  }
   const catalog = data.recipes ?? [];
   if (!catalog.length || !data.days?.length) {
     return { ok: false as const, error: "No recipes to plate from." };
@@ -51,6 +56,14 @@ export async function planWeekWithChef(arg: Call) {
     days,
     note: "Plated from your library on this test phone — no extra credits spent.",
   };
+}
+
+export async function askSpoonful(arg: { data: { question: string } }) {
+  const question = arg.data.question;
+  if (classifyChefAsk(question) !== "app") {
+    return { ok: true as const, kind: "joke" as const, text: chefJoke(question) };
+  }
+  return { ok: true as const, kind: "app" as const, text: localAppAnswer(question) };
 }
 
 export type ChefDish = {

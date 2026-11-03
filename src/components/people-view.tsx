@@ -5,21 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { ChatPane } from "@/components/chat-pane";
 import {
-  createGroupChat,
   feedRecipes,
   followedLeaderboard,
   getMyProfile,
-  listConversations,
   listFollowing,
-  listMessages,
   listMyRecipes,
   listNotifications,
   markNotificationsRead,
   openDirectChat,
   saveCommunityRecipe,
   searchPeople,
-  sendMessage,
   setNotifyPref,
   toggleFollow,
 } from "@/lib/community";
@@ -414,227 +411,6 @@ function RecipeForm({
   );
 }
 
-function ChatPane({
-  activeId,
-  onActiveId,
-}: {
-  activeId: string | null;
-  onActiveId: (id: string | null) => void;
-}) {
-  const { user } = useCurrentUserState();
-  const locale = useSpoonful((s) => s.locale);
-  const [convos, setConvos] = useState<Awaited<ReturnType<typeof listConversations>>>([]);
-  const active = activeId;
-  const setActive = onActiveId;
-  const [messages, setMessages] = useState<Awaited<ReturnType<typeof listMessages>>>([]);
-  const [body, setBody] = useState("");
-  const [following, setFollowing] = useState<Awaited<ReturnType<typeof listFollowing>>>([]);
-  const [groupTitle, setGroupTitle] = useState("Kitchen crew");
-  const [picked, setPicked] = useState<string[]>([]);
-  const [find, setFind] = useState("");
-  const [hits, setHits] = useState<Awaited<ReturnType<typeof searchPeople>>>([]);
-  const [sending, setSending] = useState(false);
-
-  async function loadConvos() {
-    setConvos(await listConversations());
-    setFollowing(await listFollowing());
-  }
-
-  useEffect(() => {
-    void loadConvos();
-  }, []);
-
-  useEffect(() => {
-    if (!active) return;
-    let live = true;
-    const tick = async () => {
-      try {
-        const rows = await listMessages({ data: { conversationId: active } });
-        if (live) setMessages(rows);
-      } catch {
-        /* keep last */
-      }
-    };
-    void tick();
-    const id = window.setInterval(() => void tick(), 3000);
-    return () => {
-      live = false;
-      window.clearInterval(id);
-    };
-  }, [active]);
-
-  if (active) {
-    const title = convos.find((c) => c.id === active)?.title ?? "Direct";
-    return (
-      <div className="mt-4">
-        <div className="flex items-center justify-between gap-2">
-          <Button variant="ghost" onClick={() => setActive(null)}>
-            Back
-          </Button>
-          <p className="min-w-0 truncate text-sm font-medium">
-            {t(locale, "privateChat")} · {title.startsWith("@") || !title ? title : `@${title}`}
-          </p>
-        </div>
-        <ul className="mt-3 max-h-[50vh] space-y-2 overflow-y-auto">
-          {messages.length === 0 ? (
-            <li className="rounded-2xl bg-card px-3 py-3 text-sm text-muted-foreground">
-              Private. Only people in this chat can read it.
-            </li>
-          ) : null}
-          {messages.map((m) => {
-            const mine = user && m.user_id === user.id;
-            return (
-              <li
-                key={m.id}
-                className={cn(
-                  "max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-[var(--shadow-border)]",
-                  mine ? "ml-auto bg-spark text-spark-foreground" : "bg-card",
-                )}
-              >
-                <p className={cn("text-xs", mine ? "opacity-80" : "text-muted-foreground")}>@{m.username ?? "cook"}</p>
-                <p className="mt-0.5 break-words">{m.body}</p>
-              </li>
-            );
-          })}
-        </ul>
-        <form
-          className="mt-3 flex min-w-0 items-center gap-2"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!body.trim() || sending) return;
-            setSending(true);
-            try {
-              const res = await sendMessage({ data: { conversationId: active, body: body.trim() } });
-              if (!res.ok) {
-                toast(res.error);
-                return;
-              }
-              setBody("");
-              setMessages(await listMessages({ data: { conversationId: active } }));
-              await loadConvos();
-            } catch {
-              toast("Message did not send. Try again.");
-            } finally {
-              setSending(false);
-            }
-          }}
-        >
-          <Input
-            className="min-w-0 flex-1"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={t(locale, "writeNote")}
-            maxLength={1000}
-          />
-          <Button type="submit" className="shrink-0" disabled={sending}>
-            {t(locale, "send")}
-          </Button>
-        </form>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mt-5">
-      <h2 className="font-display text-xl">{t(locale, "privateChat")}</h2>
-      <form
-        className="mt-3 flex min-w-0 gap-2"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setHits(await searchPeople({ data: { q: find } }));
-        }}
-      >
-        <Input
-          className="min-w-0 flex-1"
-          value={find}
-          onChange={(e) => setFind(e.target.value)}
-          placeholder={t(locale, "findCook")}
-        />
-        <Button type="submit" variant="secondary" className="shrink-0">
-          Search
-        </Button>
-      </form>
-      <ul className="mt-2 space-y-2">
-        {hits.map((p) => (
-          <li key={p.user_id} className="flex min-w-0 items-center justify-between gap-2 rounded-2xl bg-card p-3">
-            <p className="min-w-0 truncate font-medium">@{p.username}</p>
-            <Button
-              size="sm"
-              className="shrink-0"
-              onClick={async () => {
-                const res = await openDirectChat({ data: { userId: p.user_id } });
-                if (res.ok) setActive(res.id);
-                else toast("Could not open a private chat");
-              }}
-            >
-              {t(locale, "message")}
-            </Button>
-          </li>
-        ))}
-      </ul>
-
-      <h2 className="mt-8 font-display text-xl">{t(locale, "chats")}</h2>
-      {convos.length === 0 ? (
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(locale, "noChats")}</p>
-      ) : (
-        <ul className="mt-3 space-y-2">
-          {convos.map((c) => (
-            <li key={c.id}>
-              <button
-                type="button"
-                onClick={() => setActive(c.id)}
-                className="w-full rounded-2xl bg-card p-3 text-left shadow-[var(--shadow-border)]"
-              >
-                <p className="truncate font-medium">
-                  {c.is_group ? c.title || "Group" : c.title ? `@${c.title}` : "Direct"}
-                </p>
-                <p className="truncate text-xs text-muted-foreground">{c.last_body ?? "No messages yet"}</p>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <h2 className="mt-8 font-display text-xl">New group</h2>
-      <Input className="mt-2" value={groupTitle} onChange={(e) => setGroupTitle(e.target.value)} />
-      <div className="mt-2 flex flex-wrap gap-2">
-        {following.map((p) => {
-          const on = picked.includes(p.user_id);
-          return (
-            <button
-              key={p.user_id}
-              type="button"
-              onClick={() =>
-                setPicked((list) => (on ? list.filter((id) => id !== p.user_id) : [...list, p.user_id]))
-              }
-              className={
-                on
-                  ? "h-11 rounded-full bg-primary px-3 text-sm text-primary-foreground"
-                  : "h-11 rounded-full bg-card px-3 text-sm shadow-[var(--shadow-border)]"
-              }
-            >
-              @{p.username}
-            </button>
-          );
-        })}
-      </div>
-      <Button
-        className="mt-3 w-full"
-        variant="secondary"
-        disabled={picked.length === 0}
-        onClick={async () => {
-          const res = await createGroupChat({ data: { title: groupTitle, memberIds: picked } });
-          if (res.ok) {
-            setActive(res.id);
-            await loadConvos();
-          } else toast("Could not start the group");
-        }}
-      >
-        Start group chat
-      </Button>
-    </div>
-  );
-}
-
 function AlertsPane() {
   const [rows, setRows] = useState<Awaited<ReturnType<typeof listNotifications>>>([]);
   useEffect(() => {
@@ -974,6 +750,16 @@ function FamilyPane() {
           </form>
         </div>
       )}
+    </div>
+  );
+}
+
+export function FamilyTable() {
+  return (
+    <div className="px-3 pb-8">
+      <HouseholdStrip />
+      <SeatsPane />
+      <FamilyPane />
     </div>
   );
 }

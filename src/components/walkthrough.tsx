@@ -27,7 +27,7 @@ const STEPS: TourStep[] = [
     tab: "plan",
     target: "theme",
     title: "Pick your look",
-    body: "Seventeen kitchens — paper, Aether, worlds, seasons. Tap Watch this look to sit in the sky. Pin Look in shortcuts if you want it one tap away.",
+    body: "Eighteen kitchens — paper, Aether, worlds, seasons. Tap Watch this look to sit in the sky. Pin Look in shortcuts if you want it one tap away.",
   },
   {
     id: "tonight",
@@ -42,6 +42,13 @@ const STEPS: TourStep[] = [
     target: "cook",
     title: "Cook now",
     body: "When you are at the stove, this walks the method one step at a time. Each step names the food, the pan, and how long.",
+  },
+  {
+    id: "chef",
+    tab: "plan",
+    target: "chef",
+    title: "The chef",
+    body: "Ask for a plate, or how a button works. Trivia gets a joke — this chef is not an information toy. A dinner uses a plate. A question about the app does not.",
   },
   {
     id: "recipes",
@@ -76,7 +83,7 @@ const STEPS: TourStep[] = [
     tab: "snap",
     target: "barcode-scan",
     title: "Scan a barcode",
-    body: "Point the camera at a grocery barcode, or type the numbers. Spoonful looks up the food and logs it.",
+    body: "Any grocery store. Point the camera at the bars, or type the numbers if the phone blocks the camera. Spoonful checks the code, and the same code with a leading zero, so UPC and EAN both hit.",
   },
   {
     id: "shop",
@@ -90,14 +97,14 @@ const STEPS: TourStep[] = [
     tab: "shop",
     target: "shop-head",
     title: "Check things off",
-    body: "Tap a line when it is in the basket. Hide what is already in the pantry so the list stays short in the aisle.",
+    body: "Tap a line when it is in the basket. Under What's in the cupboard, tap a staple you already own — it goes into the pantry. Tap it again when you run out and it returns to the list.",
   },
   {
     id: "people",
     tab: "people",
     target: "people-head",
     title: "People",
-    body: "Find other cooks, add family, and send private messages. Family members can keep their own goals.",
+    body: "People opens on its own, framed in your kitchen color. Inside is a separate feed: stories, reels, posts, likes, comments, saves, and messages. Back in the corner returns you to the screen you left. Family seats are under Table.",
   },
   {
     id: "desserts",
@@ -111,7 +118,7 @@ const STEPS: TourStep[] = [
     extras: true,
     target: "extras-head",
     title: "Extras",
-    body: "Ranks, add-ons, language, and Replay the walkthrough live here. Close it when you are done.",
+    body: "Ranks, prices, language, and Replay the walkthrough. Privacy, Terms, Health, Data, and Support are the links stores ask for. Close it when you are done.",
   },
   {
     id: "fuel",
@@ -132,7 +139,7 @@ const STEPS: TourStep[] = [
   {
     id: "train",
     tab: "fit",
-    target: "train-pane",
+    target: "train-hud",
     title: "Train or Body",
     body: "Train is this week's workouts. Body is your height, weight, and the goal that writes the week.",
     nextGen: true,
@@ -158,7 +165,7 @@ const STEPS: TourStep[] = [
     tab: "fit",
     target: "library",
     title: "Form clips",
-    body: "The library is looping form videos. The name is the movement in the clip — tap a card to see cues and last loads.",
+    body: "Open the library, then tap a move. The clip plays that movement — a squat is a squat, not a still photo. Cues and last loads sit under it.",
     nextGen: true,
   },
   {

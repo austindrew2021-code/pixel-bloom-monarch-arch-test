@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { lookupBarcode, normalizeBarcode, nutritionFromOff, scaleNutrition } from "./barcode.ts";
+import { barcodeCandidates, lookupBarcode, normalizeBarcode, nutritionFromOff, scaleNutrition } from "./barcode.ts";
 
 test("normalizeBarcode keeps digits only", () => {
   assert.equal(normalizeBarcode(" 0000-0000-0001 "), "000000000001");
@@ -50,4 +50,34 @@ test("nutritionFromOff falls back to 100g", () => {
 test("scaleNutrition doubles a serving", () => {
   const got = scaleNutrition({ cal: 150, protein: 15, carbs: 8, fat: 4 }, 2);
   assert.deepEqual(got, { cal: 300, protein: 30, carbs: 16, fat: 8 });
+});
+
+test("barcodeCandidates adds the EAN-13 form of a 12-digit UPC", () => {
+  const codes = barcodeCandidates("049000042566");
+  assert.ok(codes.includes("049000042566"));
+  assert.ok(codes.includes("0049000042566"));
+});
+
+test("lookup tries the leading-zero code when the raw UPC misses", async () => {
+  const res = await lookupBarcode("049000042566", async (input) => {
+    const url = String(input);
+    if (url.includes("/0049000042566") && url.includes("world.openfoodfacts.org")) {
+      return new Response(
+        JSON.stringify({
+          status: 1,
+          product: { product_name: "Coca-Cola", brands: "Coca-Cola", nutriments: {} },
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    }
+    if (url.includes("nal.usda.gov")) {
+      return new Response(JSON.stringify({ foods: [] }), { status: 200 });
+    }
+    return new Response(JSON.stringify({ status: 0 }), { status: 200 });
+  });
+  assert.equal(res.ok, true);
+  if (res.ok) {
+    assert.equal(res.product.name, "Coca-Cola");
+    assert.equal(res.product.macrosKnown, false);
+  }
 });

@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Check, Copy, CreditCard, Download, Play, Share, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -82,6 +83,21 @@ export function StoreView() {
       <p className="mt-2 max-w-md text-sm leading-relaxed text-foreground/80">
         The main kitchen is free — recipes, tonight, shopping, leftover lunches, and Fill cart. You only pay for extra chef plates, a family table, a gift, or a team. Watch a short for a plate. Interac memo is on every paid extra so Atlantic kitchens can pay without a store cut.
       </p>
+      <nav className="mt-4 flex flex-wrap gap-2" data-tour="legal" aria-label="Store policies">
+        {(
+          [
+            ["/privacy", "Privacy"],
+            ["/terms", "Terms"],
+            ["/health", "Health"],
+            ["/data", "Data"],
+            ["/support", "Support"],
+          ] as const
+        ).map(([to, label]) => (
+          <Link key={to} to={to} className="rounded-full bg-card px-3 py-2 text-xs shadow-[var(--shadow-border)]">
+            {label}
+          </Link>
+        ))}
+      </nav>
 
       <section className="mt-6 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
         <p className="text-xs font-medium uppercase tracking-[0.14em] text-spark">Earn a plate</p>

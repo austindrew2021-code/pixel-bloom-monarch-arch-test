@@ -7,6 +7,8 @@ export type BarcodeProduct = {
   serving: string;
   per: "serving" | "100g";
   nutrition: Nutrition;
+  /** False when a package was found but the database had no calories. */
+  macrosKnown?: boolean;
 };
 
 function num(value: unknown): number | null {
@@ -70,6 +72,28 @@ export function localProduct(code: string): BarcodeProduct | undefined {
   return DEMO_PRODUCTS[normalizeBarcode(code)];
 }
 
+/** UPC-A, EAN-13, and the same digits with or without a leading zero. */
+export function barcodeCandidates(raw: string): string[] {
+  const barcode = normalizeBarcode(raw);
+  if (barcode.length < 6 || barcode.length > 14) return [];
+  const out: string[] = [];
+  const add = (code: string) => {
+    if (code.length >= 6 && code.length <= 14 && !out.includes(code)) out.push(code);
+  };
+  add(barcode);
+  if (barcode.length === 12) add(`0${barcode}`);
+  if (barcode.length === 13 && barcode.startsWith("0")) add(barcode.slice(1));
+  if (barcode.length >= 8 && barcode.length < 13) add(barcode.padStart(13, "0"));
+  if (barcode.length >= 8 && barcode.length < 12) add(barcode.padStart(12, "0"));
+  return out;
+}
+
+function sameCode(a: string, b: string): boolean {
+  const x = a.replace(/\D/g, "").replace(/^0+/, "");
+  const y = b.replace(/\D/g, "").replace(/^0+/, "");
+  return x.length >= 6 && x === y;
+}
+
 export function nutritionFromOff(
   nutriments: Record<string, unknown>,
   servingSize?: string,
@@ -117,6 +141,7 @@ type OffJson = {
   product?: {
     product_name?: string;
     product_name_en?: string;
+    product_name_fr?: string;
     generic_name?: string;
     brands?: string;
     serving_size?: string;
@@ -124,43 +149,144 @@ type OffJson = {
   };
 };
 
+const OFF_HOSTS = [
+  "https://world.openfoodfacts.org",
+  "https://ca.openfoodfacts.org",
+  "https://us.openfoodfacts.org",
+];
+
+function productFromOff(barcode: string, product: NonNullable<OffJson["product"]>): BarcodeProduct | null {
+  const name = (
+    product.product_name ||
+    product.product_name_en ||
+    product.product_name_fr ||
+    product.generic_name ||
+    ""
+  ).trim();
+  if (!name) return null;
+  const macros = nutritionFromOff(product.nutriments ?? {}, product.serving_size);
+  const nutrition = macros.nutrition;
+  const source = product.nutriments ?? {};
+  const listed = [
+    "energy-kcal_serving",
+    "energy-kcal_100g",
+    "energy-kcal",
+    "proteins_serving",
+    "proteins_100g",
+    "proteins",
+    "carbohydrates_serving",
+    "carbohydrates_100g",
+    "fat_serving",
+    "fat_100g",
+  ].some((key) => num(source[key]) !== null);
+  return {
+    barcode,
+    name: name.slice(0, 80),
+    brand: product.brands?.split(",")[0]?.trim().slice(0, 40),
+    ...macros,
+    macrosKnown: listed || nutrition.cal > 0 || nutrition.protein > 0 || nutrition.carbs > 0 || nutrition.fat > 0,
+  };
+}
+
+async function readOff(
+  host: string,
+  barcode: string,
+  fetchImpl: typeof fetch,
+): Promise<BarcodeProduct | null> {
+  const res = await fetchImpl(`${host}/api/v2/product/${barcode}.json`, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "Spoonful/1.0 (meal planner; barcode lookup)",
+    },
+  });
+  if (!res.ok) return null;
+  const json = (await res.json()) as OffJson;
+  if (json.status !== 1 || !json.product) return null;
+  return productFromOff(barcode, json.product);
+}
+
+type UsdaFood = {
+  description?: string;
+  brandOwner?: string;
+  brandName?: string;
+  gtinUpc?: string;
+  servingSize?: number;
+  servingSizeUnit?: string;
+  labelNutrients?: {
+    calories?: { value?: number };
+    protein?: { value?: number };
+    carbohydrates?: { value?: number };
+    fat?: { value?: number };
+  };
+};
+
+/** USDA's public demo key. Branded-food fallback when Open Food Facts has no row. */
+const USDA_DEMO_KEY = "DEMO_KEY";
+
+async function readUsda(codes: string[], fetchImpl: typeof fetch): Promise<BarcodeProduct | null> {
+  const query = codes[0];
+  if (!query) return null;
+  const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(query)}&dataType=Branded&pageSize=8&api_key=${USDA_DEMO_KEY}`;
+  const res = await fetchImpl(url, { headers: { Accept: "application/json" } });
+  if (!res.ok) return null;
+  const json = (await res.json()) as { foods?: UsdaFood[] };
+  const hit = (json.foods ?? []).find((food) => food.gtinUpc && codes.some((code) => sameCode(code, food.gtinUpc!)));
+  if (!hit?.description) return null;
+  const label = hit.labelNutrients;
+  const nutrition = {
+    cal: roundMacro(label?.calories?.value ?? 0),
+    protein: roundMacro(label?.protein?.value ?? 0),
+    carbs: roundMacro(label?.carbohydrates?.value ?? 0),
+    fat: roundMacro(label?.fat?.value ?? 0),
+  };
+  const serving =
+    hit.servingSize && hit.servingSizeUnit
+      ? `${hit.servingSize} ${hit.servingSizeUnit}`
+      : "1 serving";
+  return {
+    barcode: normalizeBarcode(hit.gtinUpc || query),
+    name: hit.description.slice(0, 80),
+    brand: (hit.brandName || hit.brandOwner || "").slice(0, 40) || undefined,
+    serving,
+    per: "serving",
+    nutrition,
+    macrosKnown: nutrition.cal > 0 || nutrition.protein > 0 || nutrition.carbs > 0 || nutrition.fat > 0,
+  };
+}
+
 export async function lookupBarcode(
   code: string,
   fetchImpl: typeof fetch = fetch,
 ): Promise<{ ok: true; product: BarcodeProduct } | { ok: false; error: string }> {
-  const barcode = normalizeBarcode(code);
-  if (barcode.length < 6) {
+  const codes = barcodeCandidates(code);
+  if (codes.length === 0) {
     return { ok: false, error: "Type the numbers printed under the barcode." };
   }
-  const demo = localProduct(barcode);
-  if (demo) return { ok: true, product: demo };
+  for (const barcode of codes) {
+    const demo = localProduct(barcode);
+    if (demo) return { ok: true, product: { ...demo, macrosKnown: true } };
+  }
+  let reached = false;
+  for (const barcode of codes) {
+    for (const host of OFF_HOSTS) {
+      try {
+        const product = await readOff(host, barcode, fetchImpl);
+        reached = true;
+        if (product) return { ok: true, product };
+      } catch {
+        /* next host */
+      }
+    }
+  }
   try {
-    const res = await fetchImpl(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`, {
-      headers: { Accept: "application/json" },
-    });
-    if (!res.ok) {
-      return { ok: false, error: "Couldn't look that up. Check the numbers, or type the name of the food." };
-    }
-    const json = (await res.json()) as OffJson;
-    const product = json.product;
-    if (json.status !== 1 || !product) {
-      return { ok: false, error: "No food found for that barcode. You can still type the name." };
-    }
-    const name = (product.product_name_en || product.product_name || product.generic_name || "").trim();
-    if (!name) {
-      return { ok: false, error: "That barcode has no name. Type what the package says." };
-    }
-    const macros = nutritionFromOff(product.nutriments ?? {}, product.serving_size);
-    return {
-      ok: true,
-      product: {
-        barcode,
-        name: name.slice(0, 80),
-        brand: product.brands?.split(",")[0]?.trim().slice(0, 40),
-        ...macros,
-      },
-    };
+    const usda = await readUsda(codes, fetchImpl);
+    if (usda) return { ok: true, product: usda };
+    reached = true;
   } catch {
+    /* offline */
+  }
+  if (!reached) {
     return { ok: false, error: "Couldn't reach the food database. Check the numbers, or type the food name." };
   }
+  return { ok: false, error: "No food found for that barcode. You can still type the name." };
 }

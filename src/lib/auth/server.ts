@@ -184,6 +184,12 @@ export const auth = betterAuth({
   // local loopback variants, or clients get "Invalid origin".
   trustedOrigins,
 
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
+
   // Encrypt broker-issued OAuth tokens at rest, and treat the broker's upstreams
   // as trusted first-party identities. The broker owns identity and X emails are
   // synthetic/unverified, so WITHOUT this a login can fail with

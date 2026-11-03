@@ -5,6 +5,7 @@
  */
 
 import EXERCISE_DB from "./generated/exercise-db.json" with { type: "json" };
+import GIF_URLS from "./generated/exercise-gif-urls.json" with { type: "json" };
 import { LIFT_MOVES, type LiftMove, type LiftSession, type Muscle } from "./lift.ts";
 
 export type MuscleId =
@@ -111,6 +112,7 @@ type RawExercise = {
 };
 
 const META = new Map<string, RawExercise>((EXERCISE_DB as RawExercise[]).map((e) => [e.id, e]));
+const GIFS = GIF_URLS as Record<string, string>;
 
 export const EXERCISES: Exercise[] = LIFT_MOVES.map((move) => {
   const meta = META.get(move.id)!;
@@ -123,7 +125,7 @@ export const EXERCISES: Exercise[] = LIFT_MOVES.map((move) => {
     equipment: meta.equipment,
     steps: meta.steps,
     image: meta.image,
-    gif: meta.gif,
+    gif: GIFS[move.id] || meta.gif,
     defaultSets: meta.defaultSets,
     defaultReps: meta.defaultReps,
     restSec: meta.restSec,

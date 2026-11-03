@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
+import { chefJoke, classifyChefAsk, localAppAnswer } from "./chef-scope.ts";
 import { isBannedDishName, polishSteps } from "./cook-steps.ts";
 import { chefGoalRules, fitsInventedGoal } from "./goal-fit.ts";
 import type { PlateKind, Protein, Recipe } from "./types";
@@ -154,6 +155,18 @@ export const planWeekWithChef = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
+    const ask = classifyChefAsk(data.prompt);
+    if (ask === "other") {
+      return { ok: false as const, scope: "joke" as const, error: chefJoke(data.prompt) };
+    }
+    if (ask === "app") {
+      return {
+        ok: false as const,
+        scope: "app" as const,
+        error: "Ask that as a question about the kitchen — I won't spend a plate on it.",
+      };
+    }
+
     const { kitchenJson } = await import("./kitchen-llm.server");
 
     const key = cacheKey(data);
@@ -263,4 +276,33 @@ export const planWeekWithChef = createServerFn({ method: "POST" })
     } catch {
       return { ok: false as const, error: "The chef's notes were scrambled. Try again." };
     }
+  });
+
+const APP_SYSTEM = `You are Spoonful's chef. You ONLY explain how the Spoonful app works, or you refuse. You are not a general assistant. Never answer news, code, math, trivia, medical diagnosis, or anything outside cooking-with-this-app and the app's own buttons. If the question is off-topic, JSON only: {"kind":"joke","text":"I'm a chef, not an information toy. Ask me for a plate, or how this kitchen works."}. If it is about the app, JSON only: {"kind":"app","text":"a plain answer under 90 words"}. Facts: Snap scans any store barcode (type the digits if the camera is blocked). Shop lists dinner and cupboard staples you check into the pantry. People is private chat after sign-in. Next Gen plays the real form clip for a move. Extras holds prices. Free: dinner, recipes, cook, Snap, barcode, Fuel, Shop. Paid, shown before purchase: Kitchen Table $7.99/mo or $69.99/year, Kitchen+ $5.99/mo, Family $4.99/mo, founder $49 once, gift table $7.99, trainer $19/mo, team kitchen $29 once, Weeknight SOS $2.99, plate packs $2.99 or $5.99. This test kitchen does not charge when you tap. Nutrition and workouts are estimates, not medical advice. Do not invent features.`;
+
+export const askSpoonful = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((input: unknown) => z.object({ question: z.string().min(1).max(500) }).parse(input))
+  .handler(async ({ data }) => {
+    if (classifyChefAsk(data.question) !== "app") {
+      return { ok: true as const, kind: "joke" as const, text: chefJoke(data.question) };
+    }
+    const fallback = localAppAnswer(data.question);
+    try {
+      const { kitchenJson } = await import("./kitchen-llm.server");
+      const result = await kitchenJson(APP_SYSTEM, data.question, 400, 0.3);
+      if (result.ok && result.json && typeof result.json === "object") {
+        const parsed = result.json as { kind?: string; text?: string };
+        const text = typeof parsed.text === "string" ? parsed.text.trim().slice(0, 700) : "";
+        if (parsed.kind === "joke") {
+          return { ok: true as const, kind: "joke" as const, text: text || chefJoke(data.question) };
+        }
+        if (parsed.kind === "app" && text) {
+          return { ok: true as const, kind: "app" as const, text };
+        }
+      }
+    } catch {
+      /* local answer still works */
+    }
+    return { ok: true as const, kind: "app" as const, text: fallback };
   });

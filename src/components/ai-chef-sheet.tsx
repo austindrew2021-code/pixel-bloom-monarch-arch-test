@@ -3,7 +3,8 @@ import { toast } from "sonner";
 import { ChefPlateLine } from "@/components/chef-plate-line";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { planWeekWithChef } from "@/lib/ai-chef";
+import { askSpoonful, planWeekWithChef } from "@/lib/ai-chef";
+import { chefJoke, classifyChefAsk } from "@/lib/chef-scope";
 import { goalLabel, leanMassKg } from "@/lib/body";
 import { CHEF_FREE_WEEK } from "@/lib/ranks";
 import { dayFuel, isoDate } from "@/lib/fuel";
@@ -81,6 +82,7 @@ export function AiChefSheet({
   const [busy, setBusy] = useState(false);
   const [scope, setScope] = useState<"tonight" | "week">("tonight");
   const [tip, setTip] = useState(0);
+  const [reply, setReply] = useState<{ kind: "joke" | "app"; text: string } | null>(null);
   const today = isoDate();
   const remaining = dayFuel({
     goal,
@@ -100,7 +102,7 @@ export function AiChefSheet({
   }, [busy]);
 
   async function run() {
-    if (chefRemaining() <= 0) {
+    if (chefRemaining() <= 0 && classifyChefAsk(prompt) === "recipe") {
       toast(
         hasPlus
           ? "Chef is resting this week. Extra plate packs are in Extras."
@@ -109,6 +111,24 @@ export function AiChefSheet({
       return;
     }
     setBusy(true);
+    setReply(null);
+    const kind = classifyChefAsk(prompt);
+    if (kind === "other") {
+      setReply({ kind: "joke", text: chefJoke(prompt) });
+      setBusy(false);
+      return;
+    }
+    if (kind === "app") {
+      try {
+        const answer = await askSpoonful({ data: { question: prompt } });
+        setReply({ kind: answer.kind, text: answer.text });
+      } catch {
+        setReply({ kind: "app", text: "I can still talk you through the kitchen. Open Snap to scan, Shop for the list, People to chat, and Extras for prices and privacy." });
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     try {
       const tableGoal = strictestGoal([body.goalKind, ...seats.map((s) => s.goalKind)]);
       const recipes = unlockedRecipes(unlocked)
@@ -143,6 +163,10 @@ export function AiChefSheet({
         },
       });
       if (!result.ok) {
+        if ("scope" in result && result.scope === "joke") {
+          setReply({ kind: "joke", text: result.error });
+          return;
+        }
         toast(result.error);
         return;
       }
@@ -187,8 +211,8 @@ export function AiChefSheet({
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {hasPlus
-            ? `The chef invents dishes that are not in the catalog — fitted to your ${goalLabel(body.goalKind)} goal, remaining protein, allergies, and what you lifted. Nutrition is per serving from typical USDA values.`
-            : "Free kitchens get 3 plates a week from the library, already filtered to your body goal. Kitchen Table or Kitchen+ lets the chef cook anything imaginable, 40 times a week."}{" "}
+            ? `Ask for a plate, or how this kitchen works. I invent dishes fitted to your ${goalLabel(body.goalKind)} goal. I am a chef, not an information toy.`
+            : "Ask for dinner, or how a button works. Free kitchens get 3 plates a week from the library. Anything else gets a joke, not a lecture."}{" "}
           {chefRemaining()} left this week.
         </p>
         <ChefPlateLine onOpenStore={onOpenStore} className="mt-3" />
@@ -227,6 +251,21 @@ export function AiChefSheet({
           maxLength={500}
           className="mt-4 w-full rounded-2xl bg-background p-3 text-sm leading-relaxed shadow-[var(--shadow-border)] outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
+        {reply ? (
+          <div
+            className={
+              reply.kind === "joke"
+                ? "mt-3 rounded-2xl bg-accent px-4 py-3 text-sm leading-relaxed text-accent-foreground"
+                : "mt-3 rounded-2xl bg-card px-4 py-3 text-sm leading-relaxed shadow-[var(--shadow-border)]"
+            }
+            data-testid="chef-reply"
+          >
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-spark">
+              {reply.kind === "joke" ? "Not my station" : "From the pass"}
+            </p>
+            <p className="mt-1">{reply.text}</p>
+          </div>
+        ) : null}
         <div className="mt-3 flex flex-col gap-2">
           {SUGGESTIONS.map((s) => (
             <button
@@ -240,7 +279,7 @@ export function AiChefSheet({
           ))}
         </div>
         <Button className="mt-5 w-full" disabled={busy || !prompt.trim()} onClick={() => void run()}>
-          {busy ? "Chef is cooking…" : hasPlus ? (scope === "tonight" ? "Invent tonight" : "Cook the world") : "Plan my dinners"}
+          {busy ? "Chef is cooking…" : "Ask the chef"}
         </Button>
         {busy ? (
           <p className="mt-4 min-h-[4.5rem] rounded-2xl bg-background px-3 py-3 text-sm leading-relaxed text-muted-foreground">

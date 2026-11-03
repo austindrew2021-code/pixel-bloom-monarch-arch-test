@@ -2201,3 +2201,62 @@
 .tap {
   padding-block: 0.625rem;
 }
+@keyframes social-drift {
+  from { transform: scale(1.04); }
+  to { transform: scale(1.14) translate3d(-2%, -2%, 0); }
+}
+.social-reel-still {
+  animation: social-drift 14s ease-in-out infinite alternate;
+}
+@keyframes social-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  35% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+.social-heart {
+  animation: social-pop 0.55s ease forwards;
+}
+.social-stage {
+  --color-background: #000000;
+  --color-foreground: #f5f5f5;
+  --color-card: #000000;
+  --color-card-foreground: #f5f5f5;
+  --color-popover: #121212;
+  --color-popover-foreground: #f5f5f5;
+  --color-muted: #1c1c1c;
+  --color-muted-foreground: #a8a8a8;
+  --color-primary: #0095f6;
+  --color-primary-foreground: #ffffff;
+  --color-spark: #ff2d55;
+  --color-spark-foreground: #ffffff;
+  --color-border: #262626;
+  --color-input: #262626;
+  --color-ring: #a8a8a8;
+  --font-display: "Figtree", "Segoe UI", system-ui, sans-serif;
+  background: #000000;
+  color: #f5f5f5;
+  font-family: var(--font-sans);
+}
+.social-ring {
+  background: conic-gradient(from 210deg, #f9ce34, #ee2a7b 42%, #6228d7 72%, #f9ce34);
+}
+.social-ring-seen {
+  background: #3a3a3a;
+}
+.social-avatar {
+  background: #262626;
+  color: #f5f5f5;
+}
+.social-like {
+  color: #ff2d55;
+}
+.social-scrim {
+  background: linear-gradient(to top, rgb(12 8 6 / 0.78), rgb(12 8 6 / 0) 46%);
+}
+.social-on-media {
+  color: #fff7ef;
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-reel-still,
+  .social-heart { animation: none; }
+}

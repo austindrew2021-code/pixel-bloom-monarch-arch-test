@@ -80,7 +80,19 @@ export function BarcodeScanCard({ className }: { className?: string }) {
     let stop = false;
     let raf = 0;
     let attached = false;
+    let controls: { stop: () => void } | null = null;
     const detector = getDetector();
+
+    const onCode = (value: string) => {
+      const digitsOnly = value.replace(/\D/g, "");
+      if (stop || digitsOnly.length < 6) return;
+      stop = true;
+      controls?.stop();
+      setDigits(digitsOnly);
+      setCamera(false);
+      void lookup(digitsOnly);
+    };
+
     const tick = async (video: HTMLVideoElement) => {
       if (stop) return;
       try {
@@ -88,9 +100,7 @@ export function BarcodeScanCard({ className }: { className?: string }) {
           const codes = await detector.detect(video);
           const value = codes[0]?.rawValue;
           if (value) {
-            stop = true;
-            setCamera(false);
-            await lookup(value);
+            onCode(value);
             return;
           }
         }
@@ -99,6 +109,23 @@ export function BarcodeScanCard({ className }: { className?: string }) {
       }
       raf = window.requestAnimationFrame(() => void tick(video));
     };
+
+    const arm = async (video: HTMLVideoElement) => {
+      if (detector) void tick(video);
+      try {
+        const { BrowserMultiFormatReader } = await import("@zxing/browser");
+        if (stop) return;
+        const reader = new BrowserMultiFormatReader();
+        controls = await reader.decodeFromVideoElement(video, (result) => {
+          if (result) onCode(result.getText());
+        });
+      } catch {
+        if (!detector && !stop) {
+          setError("This browser can't read the bars. Type the numbers underneath.");
+        }
+      }
+    };
+
     const wait = window.setInterval(() => {
       if (stop || attached) return;
       const video = videoRef.current;
@@ -108,11 +135,11 @@ export function BarcodeScanCard({ className }: { className?: string }) {
       video.srcObject = stream;
       video.setAttribute("playsinline", "true");
       video.muted = true;
-      void video.play().catch(() => {});
-      void tick(video);
+      void video.play().then(() => arm(video)).catch(() => arm(video));
     }, 50);
     return () => {
       stop = true;
+      controls?.stop();
       window.clearInterval(wait);
       window.cancelAnimationFrame(raf);
     };
@@ -152,18 +179,15 @@ export function BarcodeScanCard({ className }: { className?: string }) {
       const res = await lookupBarcode(code);
       if (!res.ok) {
         setError(res.error);
-        setDraftName(`Food ${code.replace(/\D/g, "")}`);
-        return;
-      }
-      if (isSilentZeroNutrition(res.product.nutrition)) {
-        setProduct(null);
-        setError("That barcode has no calories listed. You can still save the name.");
-        setDraftName(res.product.name);
+        setDraftName("");
         return;
       }
       setProduct(res.product);
       setServings(1);
       setDraftName(res.product.name);
+      if (res.product.macrosKnown === false) {
+        setError("");
+      }
     } finally {
       setBusy(false);
     }
@@ -216,7 +240,7 @@ export function BarcodeScanCard({ className }: { className?: string }) {
       <p className="text-xs font-medium uppercase tracking-[0.16em] text-spark">Scan</p>
       <h2 className="mt-1 font-display text-2xl leading-tight">Scan a barcode</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Point the camera at a grocery barcode, or type the numbers. We look up the food and log it.
+        Point the camera at a grocery barcode in any store, or type the numbers. UPC and EAN both count.
       </p>
       <Button className="mt-4 w-full" variant="spark" onClick={() => void startCamera()} data-testid="barcode-scan-open">
         <ScanBarcode />
@@ -305,41 +329,56 @@ export function BarcodeScanCard({ className }: { className?: string }) {
               <p className="mt-2 text-sm text-muted-foreground">
                 {product.serving}
                 {product.per === "100g" ? " · listed per 100 g" : " · per serving"}
+                {product.macrosKnown === false ? " · calories not on file" : ""}
               </p>
-              <div className="mt-3 grid grid-cols-4 gap-2 text-center">
-                <Macro label="Cal" value={nutrition.cal} />
-                <Macro label="Protein" value={`${nutrition.protein}g`} />
-                <Macro label="Carbs" value={`${nutrition.carbs}g`} />
-                <Macro label="Fat" value={`${nutrition.fat}g`} />
-              </div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <p className="text-sm">How many servings?</p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="secondary"
-                    aria-label="Fewer servings"
-                    onClick={() => setServings((n) => Math.max(0.5, n - 0.5))}
-                  >
-                    <Minus />
-                  </Button>
-                  <span className="w-8 text-center text-sm tabular-nums">{servings}</span>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="secondary"
-                    aria-label="More servings"
-                    onClick={() => setServings((n) => Math.min(6, n + 0.5))}
-                  >
-                    <Plus />
-                  </Button>
+              {product.macrosKnown === false ? (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  The package is real. The database just didn't list calories. Log the name, or skip it.
+                </p>
+              ) : (
+                <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+                  <Macro label="Cal" value={nutrition.cal} />
+                  <Macro label="Protein" value={`${nutrition.protein}g`} />
+                  <Macro label="Carbs" value={`${nutrition.carbs}g`} />
+                  <Macro label="Fat" value={`${nutrition.fat}g`} />
                 </div>
-              </div>
-              <Button className="mt-4 w-full" variant="spark" onClick={logEaten} data-testid="barcode-log">
-                <Check />
-                Log as eaten
-              </Button>
+              )}
+              {product.macrosKnown !== false ? (
+                <>
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <p className="text-sm">How many servings?</p>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="secondary"
+                        aria-label="Fewer servings"
+                        onClick={() => setServings((n) => Math.max(0.5, n - 0.5))}
+                      >
+                        <Minus />
+                      </Button>
+                      <span className="w-8 text-center text-sm tabular-nums">{servings}</span>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="secondary"
+                        aria-label="More servings"
+                        onClick={() => setServings((n) => Math.min(6, n + 0.5))}
+                      >
+                        <Plus />
+                      </Button>
+                    </div>
+                  </div>
+                  <Button className="mt-4 w-full" variant="spark" onClick={logEaten} data-testid="barcode-log">
+                    <Check />
+                    Log as eaten
+                  </Button>
+                </>
+              ) : (
+                <Button className="mt-4 w-full" variant="spark" onClick={logAnyway} data-testid="barcode-anyway">
+                  Log the name
+                </Button>
+              )}
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <Button
                   variant="secondary"

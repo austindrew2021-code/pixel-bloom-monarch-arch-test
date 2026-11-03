@@ -18,7 +18,7 @@ import { mealsFromPantry } from "@/lib/pantry-match";
 import { portionSyncFor } from "@/lib/portion-sync";
 import { expectedWorkoutsForDate, resolveStatus } from "@/lib/program";
 import { recipeById } from "@/lib/recipes";
-import { CHEF_FREE_WEEK, rankForXp } from "@/lib/ranks";
+import { rankForXp } from "@/lib/ranks";
 import { proteinDot, skipTitle } from "@/lib/shield";
 import {
   nutritionForDate,
@@ -72,8 +72,6 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
   const allergies = useSpoonful((s) => s.allergies);
   const hidden = useSpoonful((s) => s.hidden);
   const xp = useSpoonful((s) => s.xp);
-  const chefRemaining = useSpoonful((s) => s.chefRemaining);
-  const hasPlus = useSpoonful((s) => s.hasAddon("chef-plus"));
   const body = useSpoonful((s) => s.body);
   const locale = useSpoonful((s) => s.locale);
   const theme = useSpoonful((s) => s.theme);
@@ -98,7 +96,6 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
   const dates = weekDates(weekStart);
   const pulse = weekPulse(meals, weekStart, cookedDates, household);
   const nutritionOn = isUnlocked(unlocked, "nutrition") || nextGen;
-  const chefOn = isUnlocked(unlocked, "ai-chef");
   const rank = rankForXp(xp);
   const today = isoDate();
   const todayDate = dates.find((d) => dayLabel(d).today);
@@ -637,23 +634,8 @@ export function PlanView({ onOpenStore }: { onOpenStore: () => void }) {
         <Button
           variant="spark"
           className="flex-1"
-          onClick={() => {
-            if (chefRemaining() <= 0) {
-              onOpenStore();
-              toast(
-                hasPlus
-                  ? "Chef is spent this week"
-                  : `${CHEF_FREE_WEEK} free Chef plates this week. More plates are extra.`,
-              );
-              return;
-            }
-            if (!chefOn) {
-              onOpenStore();
-              toast("AI Chef is an add-on");
-              return;
-            }
-            setChefOpen(true);
-          }}
+          data-tour="chef"
+          onClick={() => setChefOpen(true)}
         >
           <Sparkles />
           AI Chef

@@ -10,7 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DataRouteImport } from './routes/data'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as ApiGroceryCartRouteImport } from './routes/api/grocery-cart'
 import { Route as ApiGrocerySearchRouteImport } from './routes/api/grocery-search'
@@ -22,9 +27,34 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DataRoute = DataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WatchRoute = WatchRouteImport.update({
@@ -55,7 +85,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/data': typeof DataRoute
+  '/health': typeof HealthRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/watch': typeof WatchRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
@@ -64,7 +99,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/data': typeof DataRoute
+  '/health': typeof HealthRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/watch': typeof WatchRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
@@ -74,7 +114,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/data': typeof DataRoute
+  '/health': typeof HealthRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/watch': typeof WatchRoute
   '/api/grocery-cart': typeof ApiGroceryCartRoute
   '/api/grocery-search': typeof ApiGrocerySearchRoute
@@ -85,7 +130,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/data'
+    | '/health'
     | '/login'
+    | '/privacy'
+    | '/support'
+    | '/terms'
     | '/watch'
     | '/api/grocery-cart'
     | '/api/grocery-search'
@@ -94,7 +144,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/data'
+    | '/health'
     | '/login'
+    | '/privacy'
+    | '/support'
+    | '/terms'
     | '/watch'
     | '/api/grocery-cart'
     | '/api/grocery-search'
@@ -103,7 +158,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/data'
+    | '/health'
     | '/login'
+    | '/privacy'
+    | '/support'
+    | '/terms'
     | '/watch'
     | '/api/grocery-cart'
     | '/api/grocery-search'
@@ -113,7 +173,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DataRoute: typeof DataRoute
+  HealthRoute: typeof HealthRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
   WatchRoute: typeof WatchRoute
   ApiGroceryCartRoute: typeof ApiGroceryCartRoute
   ApiGrocerySearchRoute: typeof ApiGrocerySearchRoute
@@ -130,11 +195,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/data': {
+      id: '/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof DataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/watch': {
@@ -177,7 +277,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DataRoute: DataRoute,
+  HealthRoute: HealthRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
+  SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
   WatchRoute: WatchRoute,
   ApiGroceryCartRoute: ApiGroceryCartRoute,
   ApiGrocerySearchRoute: ApiGrocerySearchRoute,
