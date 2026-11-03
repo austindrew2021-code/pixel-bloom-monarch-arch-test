@@ -15,7 +15,6 @@ export type Protein =
   | "beef"
   | "lamb"
   | "pork"
-  | "lamb"
   | "fish"
   | "seafood"
   | "veg"

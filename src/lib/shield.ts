@@ -742,8 +742,6 @@ export function proteinDot(protein?: Protein): string {
       return "bg-food-char";
     case "pork":
       return "bg-food-salmon";
-    case "lamb":
-      return "bg-food-tomato";
     case "fish":
       return "bg-food-leaf";
     case "seafood":
@@ -770,7 +768,6 @@ const COST: Record<Protein, number> = {
   beef: 20,
   lamb: 24,
   pork: 13,
-  lamb: 22,
   fish: 18,
   seafood: 22,
   veg: 9,
@@ -790,7 +787,6 @@ const TAKEOUT_COST: Record<Protein, number> = {
   beef: 42,
   lamb: 50,
   pork: 28,
-  lamb: 44,
   fish: 38,
   seafood: 46,
   veg: 20,
