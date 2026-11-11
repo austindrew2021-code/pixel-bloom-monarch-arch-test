@@ -1,11 +1,12 @@
 import { Heart, Lock, Search } from "lucide-react";
+import { LabelNote } from "@/components/label-note";
 import { useEffect, useMemo, useState } from "react";
 import { MealPhoto } from "@/components/meal-photo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { dietFlags } from "@/lib/diet";
+import { passBadges } from "@/lib/badges";
 import { dotJoin, timeLabel } from "@/lib/recipe-time";
 import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
 import { packLabel, RECIPES } from "@/lib/recipes";
@@ -101,6 +102,7 @@ export function RecipePicker({
             <p className="mt-1 text-sm text-muted-foreground">
               Saved plates stay on top even after you change a preference. Off-goal plates stay hidden unless you search.
             </p>
+            <LabelNote />
             {onSurprise || onSkip ? (
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {onSurprise ? (
@@ -334,9 +336,9 @@ export function RecipeCard({
           {timeLabel(recipe) ? <Badge variant="outline">{timeLabel(recipe)}</Badge> : null}
           {recipe.cuisine ? <Badge variant="outline" className="max-w-[8.5rem]">{recipe.cuisine}</Badge> : null}
           {recipe.source?.year ? <Badge variant="outline">{recipe.source.year}</Badge> : null}
-          {dietFlags(recipe).slice(0, 2).map((f) => (
-            <Badge key={f} variant="outline">
-              {f === "gluten-free" ? "GF" : f === "sugar-free" ? "SF" : f === "dairy-free" ? "DF" : f}
+          {passBadges(recipe).slice(0, 3).map((b) => (
+            <Badge key={b} variant="outline">
+              {b}
             </Badge>
           ))}
           {(nutritionOn || nextGen) && !locked ? (

@@ -6,7 +6,14 @@ import { OB_DOUBT_DAIRY, OB_DOUBT_GLUTEN, OB_DOUBT_SUGAR, OB_DOUBT_VEGAN, OB_DOU
 import { SO_DOUBT_DAIRY, SO_DOUBT_GLUTEN, SO_DOUBT_SUGAR, SO_DOUBT_VEGAN, SO_DOUBT_VEGETARIAN } from "./so-southern-doubt.ts";
 import { htcfInheritedFail, recipeAllergens } from "./shield.ts";
 import { withDietScreen } from "./catalog-final.ts";
+import { failsInDoubt } from "./safety-doubt.ts";
+import { withoutLookalikes } from "./lookalikes.ts";
+import { XREF_OLD_INHERITED } from "./shields4-xref.ts";
+import { PESC_DOUBT, PESC_DOUBT_R6, PESC_STOCK_NAMED } from "./pescatarian-doubt.ts";
 import type { Recipe } from "./types";
+
+/** Nov 7 r4 (Line 03B5 #3): a cross-reference inherits its base's diet failures, every book (shields4-xref.ts). */
+const xrefFails = (id: string, tag: string): boolean => XREF_OLD_INHERITED[id]?.includes(tag) ?? false;
 
 export type MoodFilter =
   | "all"
@@ -87,34 +94,6 @@ function blob(input: Recipe): string {
  * the patterns about those forms rather than to let a tag wave them through.
  */
 
-/** Flours, milks and sauces that carry the trigger word but not the thing. */
-function withoutLookalikes(text: string): string {
-  return text
-    .replace(
-      /\b(almond|coconut|chickpea|rice|corn|cassava|tapioca|buckwheat|oat|gluten[- ]free|masa|potato|nut)\s+(flour|meal|pasta|noodles?|tortillas?|wrappers?)\b/gi,
-      // "gf", not a blank: what is left ("rice bread crumbs" -> "gf crumbs")
-      // still reads as a gluten-free form to the gluten check in shield.ts.
-      "gf",
-    )
-    // Bread and crumbs: only a plainly gluten-free form clears them. Corn, nut and potato bread
-    // (and corn muffins, see shield.ts) are wheat by default.
-    .replace(/\b(almond|coconut|chickpea|rice|cassava|tapioca|buckwheat|gluten[- ]free|masa)\s+(bread|crumbs?)\b/gi, "gf")
-    .replace(/\bcorn(starch|meal|flour)\b/gi, " ")
-    .replace(/\bgluten[- ]free\b/gi, "gf")
-    .replace(/\brice (noodles?|paper|vermicelli|wine)\b/gi, " ")
-    .replace(/\b(tamari|coconut aminos)\b/gi, " ")
-    .replace(
-      /\b(coconut|almond|soy|oat|cashew|rice|hemp|nut)\s+(milk|cream|butter|yogurt|yoghurt)\b/gi,
-      " ",
-    )
-    .replace(/\b(peanut|nut|apple|cocoa|shea|sun)\s*butter\b/gi, " ")
-    .replace(/\bbutter(nut|milk squash|head)\b/gi, " ")
-    .replace(/\bcream of tartar\b/gi, " ")
-    .replace(/\bnutritional yeast\b/gi, " ")
-    .replace(/\b(oyster|chicken of the woods|lion's mane)\s+mushrooms?\b/gi, " ")
-    .replace(/\bscallop(ed|ini)?\s+(squash|potatoes)\b/gi, " ");
-}
-
 const SUGAR =
   /\b(brown sugar|powdered sugar|confectioners|icing sugar|granulated sugar|caster sugar|white sugar|cane sugar|coconut sugar|maple syrup|molasses|corn syrups?|agave|sweetened condensed|chocolate chips?|semi-sweet|milk chocolate|dark chocolate|caramels?|fudge|marshmallows?|honey|jelly|jam|preserves|marmalades?|candied|crystalli[sz]ed|glac[eé]|maraschino|jell-?o|syrups?|grenadine|sweetened)\b|\bsugars?\b/i;
 const EGG = /\b(eggs?|egg white|egg yolk|mayonnaise)\b/i;
@@ -123,11 +102,52 @@ const HONEY_GEL = /\b(honey|gelatine?)\b/i;
 /** Fish and shellfish are fine; nothing else that had a face is. */
 export function isPescatarian(recipe: Recipe): boolean {
   if (["chicken", "beef", "lamb", "pork", "turkey"].includes(recipe.protein)) return false;
+  if (xrefFails(recipe.id, "pescatarian")) return false; // r4: cross-reference to a base with meat
+  if (recipe.id in PESC_DOUBT) return false; // r5 (Line FA0D #5): the print cooks it in the bird
+  if (recipe.id in PESC_DOUBT_R6) return false; // r6 (Line 7624): the steps name meat, frog, an unnamed stock or drippings
   if (htcfInheritedFail(recipe, "meat")) return false; // HTCF "according to directions for X": X's meat
-  const text = withoutLookalikes(blob(recipe));
-  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|gelatine?|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth)|(?:cooked|cold|minced|chopped|boiled|roasted?|ground|corned) meats?)\b/i.test(
-    text,
-  );
+  if (PESC_MEAT.test(withoutPescForms(withoutLookalikes(pescBlob(recipe))))) return false;
+  // r6 (Line 7624 #3): an unnamed stock, broth, bouillon, consomme, drippings or fat row is animal unless the row names
+  // a fish, shellfish or plant form (the vegetarian B1 rule, with the fish forms cleared). "Deep fat" / "hot fat" too.
+  // Hand-read HTCF (PESC_STOCK_NAMED): the recipe's own steps make its stock or broth from the fish, so that row is named.
+  let rows = withoutFishStock(withoutPlantForms(rowBlob(recipe)).replace(/\bfull[- ]fat\b/gi, " "));
+  if (recipe.id in PESC_STOCK_NAMED) rows = rows.replace(/\b(?:stock|broth)\b/gi, " ");
+  return !PESC_UNNAMED.test(rows);
+}
+
+/*
+ * r6 (Line 7624 #2): the list lacked bare meat, steak, andouille, kielbasa, poultry, rennet, junket, bouillon cubes,
+ * larding and frog. Bare "meat"/"steak" fail unless the text makes it a kernel, a sweet or a fish or shellfish cut.
+ */
+const PESC_MEAT =
+  /\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|moose|elk|bison|scrunchions|squabs?|sweetbreads?|terrapins?|(?:cornish|game) hens?|gelatine?|aspic|jell-?o|wieners?|frankfurters?|calf[’']?s?[- ](?:feet|foot)|foie gras|schmaltz|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth)|(?:cooked|cold|minced|chopped|boiled|roasted?|ground|corned) meats?|meats?|steaks?|andouille|kielbasa|poultry|rennet|junket|bouillon (?:cubes?|capsules?)|lard(?:ed|ing)|frogs?|frog[’']s)\b/i;
+const FISHY =
+  "fish|lobsters?|crabs?|clams?|shrimps?|prawns?|crayfish|crawfish|oysters?|scallops?|mussels?|salmon|halibut|cod|codfish|swordfish|tuna|sturgeon|haddock|shark|trout|bass|pike|whitefish|mackerel|eels?|anchov(?:y|ies)";
+const FISH_CUT = new RegExp(`\\b(?:${FISHY})[- ]?(?:meats?|steaks?)\\b|\\bmeats? (?:of|from) (?:[\\w-]+ ){0,4}(?:${FISHY})\\b`, "gi");
+function withoutPescForms(text: string): string {
+  return withoutPlantForms(text)
+    .replace(FISH_CUT, " ")
+    .replace(/\bsweet[- ]?meats?\b/gi, " ")
+    .replace(/\bsteak (?:sauce|spice|seasoning)\b/gi, " ")
+    .replace(/\b(?:cauliflower|cabbage|mushroom|portobello|tofu|celeriac|eggplant|squash|beet|tomato) steaks?\b/gi, " ")
+    .replace(/\bpoultry seasoning\b/gi, " ");
+}
+/** A bare "meat" row is the fish's own meat when every "meat" in the steps is a fish or shellfish cut (hill lobster). */
+function pescBlob(input: Recipe): string {
+  const recipe = withDietScreen(input);
+  const steps = (input.steps ?? []).join(" | "); // the printed steps, not the diet screen
+  const cuts = steps.match(FISH_CUT)?.length ?? 0;
+  const fishMeat = cuts > 0 && !/\bmeats?\b/i.test(steps.replace(FISH_CUT, " "));
+  const rows = recipe.ingredients.map((i) => (fishMeat && /^\s*meats?\s*$/i.test(i.name) ? " " : i.name));
+  return [recipe.name, ...rows].join(" | ").toLowerCase();
+}
+const PESC_UNNAMED = /\b(drippings?|fat|(?:white|brown|soup)?stock|broth|bouillon|consomm[eé])\b/i;
+const FISH_STOCK = new RegExp(
+  `\\b(?:${FISHY}|dashi|bonito)(?:[- ](?:liquor|liquid|juice))?[- ](?:stock|broth|bouillon|consomm[eé])\\b|\\bdripping[- ]pans?\\b|\\bstocks? of celery\\b`,
+  "gi",
+);
+function withoutFishStock(text: string): string {
+  return text.replace(FISH_STOCK, " ").replace(/\b(?:dashima|kelp)\s+(?:stock|broth)\b/gi, " ");
 }
 
 /*
@@ -141,7 +161,7 @@ export function isPescatarian(recipe: Recipe): boolean {
 function rowBlob(input: Recipe): string {
   return withDietScreen(input).ingredients.map((i) => i.name).join(" | ").toLowerCase();
 }
-const ANIMAL_UNNAMED = /\b(meats?|drippings?|fat|jell-?o|stock|broth|bouillon|consomm[eé])\b/i;
+const ANIMAL_UNNAMED = /\b(meats?|drippings?|fat|jell-?o|(?:white|brown|soup)?stock|broth|bouillon|consomm[eé])\b/i;
 function withoutPlantForms(text: string): string {
   return text
     .replace(/\b(nut|nuts|walnut|pecan|hickory|hickory ?nut|almond|butternut|coconut|kernel)[- ]?meats?\b/gi, " ")
@@ -149,7 +169,7 @@ function withoutPlantForms(text: string): string {
     .replace(/\b(vegetable|veggie|mushroom|vegetarian|vegan|kombu|seaweed)\s+(fat|shortening|stock|broth|bouillon|consomm[eé])\b/gi, " ");
 }
 
-export function isVegetarian(recipe: Recipe): boolean {
+function vegetarianBase(recipe: Recipe): boolean {
   const tags = recipe.tags ?? [];
   if (DS365_DOUBT_VEGETARIAN.has(recipe.id)) return false; // 365 Desserts: in doubt (bought base, calf's feet), fail
   if (SO_DOUBT_VEGETARIAN.has(recipe.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
@@ -159,12 +179,12 @@ export function isVegetarian(recipe: Recipe): boolean {
   if (["chicken", "beef", "lamb", "pork", "fish", "seafood", "turkey"].includes(recipe.protein)) return false;
   if (!["veg", "eggs"].includes(recipe.protein)) return false;
   const text = withoutLookalikes(blob(recipe));
-  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov(y|ies)|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatine?|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth))\b/i.test(
+  return !/\b(chicken|turkey|duck|goose|beef|pork|ham|bacon|sausage|salami|pepperoni|prosciutto|pancetta|chorizo|lard|suet|tallow|lamb|veal|venison|anchov(y|ies)|fish sauce|fish stock|fish cakes?|fish balls?|dashi|bonito|oyster sauce|worcestershire|gelatine?|shrimp|prawn|crab|clam|salmon|tuna|cod|moose|elk|bison|scrunchions|bone broth|beef (stock|broth)|chicken (stock|broth)|meat (stock|broth)|caviare?s?|roes?|fish[- ]eggs?|herrings?|sardines?|kippers?|kippered|bottarga|tarama(?:salata)?|ikura|tobiko|masago|lumpfish)\b/i.test(
     text,
   ) && !ANIMAL_UNNAMED.test(withoutPlantForms(rowBlob(recipe)));
 }
 
-export function isVegan(recipe: Recipe): boolean {
+function veganBase(recipe: Recipe): boolean {
   if (recipe.protein !== "veg") return false;
   if (DS365_DOUBT_VEGAN.has(recipe.id)) return false; // 365 Desserts: in doubt, fail
   if (SO_DOUBT_VEGAN.has(recipe.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
@@ -195,7 +215,7 @@ function safeIngredients(recipe: Recipe): Recipe["ingredients"] {
 // Oct 23 (Line): filter/badge must agree with the shield; where they disagreed the stricter (fail) wins.
 const GF_FILTER_FOLLOWS_SHIELD = new Set(["gf-socca", "fr-socca", "fs-sole-meuniere", "ac-shiro"]);
 
-export function isGlutenFree(input: Recipe): boolean {
+function glutenFreeBase(input: Recipe): boolean {
   const recipe = withDietScreen(input);
   if ((recipe.tags ?? []).includes("gluten")) return false;
   if (DS365_DOUBT_GLUTEN.has(input.id)) return false; // 365 Desserts: in doubt, fail
@@ -207,7 +227,7 @@ export function isGlutenFree(input: Recipe): boolean {
   return !recipeAllergens({ ...recipe, ingredients: safeIngredients(recipe) }).includes("gluten");
 }
 
-export function isDairyFree(input: Recipe): boolean {
+function dairyFreeBase(input: Recipe): boolean {
   if (DS365_DOUBT_DAIRY.has(input.id)) return false; // 365 Desserts: in doubt, fail
   if (SO_DOUBT_DAIRY.has(input.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_DAIRY.has(input.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
@@ -224,7 +244,7 @@ const HTCF_CATSUP = /\b(?:cat-?sup|ketchup)\b/i;
 // Ketchup served in the description, not a row (Line, Oct 23). tourtiere / mi-pasty ("serve with ketchup" steps) left as is.
 const KETCHUP_DUNK_DESC = new Set(["af-fish", "kd-chicken-nuggets"]);
 
-export function isSugarFree(recipe: Recipe): boolean {
+function sugarFreeBase(recipe: Recipe): boolean {
   if (DS365_DOUBT_SUGAR.has(recipe.id)) return false; // 365 Desserts: in doubt, fail
   if (SO_DOUBT_SUGAR.has(recipe.id)) return false; // Southern Cook Book: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
   if (OB_DOUBT_SUGAR.has(recipe.id)) return false; // older public-domain books: in doubt (bought/unspecified base, cross-reference, or the print names it), fail
@@ -236,7 +256,7 @@ export function isSugarFree(recipe: Recipe): boolean {
   return !SUGAR.test(withoutLookalikes(blob(recipe)));
 }
 
-export function isKeto(recipe: Recipe): boolean {
+function ketoBase(recipe: Recipe): boolean {
   const tags = recipe.tags ?? [];
   if (tags.includes("keto") || tags.includes("low-carb")) return true;
   if (isDessert(recipe)) return false;
@@ -310,4 +330,33 @@ export function matchesMood(recipe: Recipe, mood: MoodFilter): boolean {
   if (mood === "dessert") return isDessert(recipe);
   if (mood === "breakfast") return isBreakfast(recipe);
   return true;
+}
+
+/*
+ * The badges and the shield read one source (Nov 2): every diet pass goes through
+ * the safety gate (safety-doubt.ts), gluten-free and dairy-free also need the
+ * shield's pass, and vegan needs vegetarian and dairy-free. Losses only.
+ */
+export function isVegetarian(recipe: Recipe): boolean {
+  return !failsInDoubt(recipe.id, "vegetarian") && !xrefFails(recipe.id, "vegetarian") && vegetarianBase(recipe);
+}
+
+export function isVegan(recipe: Recipe): boolean {
+  return !failsInDoubt(recipe.id, "vegan") && !xrefFails(recipe.id, "vegan") && veganBase(recipe) && isVegetarian(recipe) && isDairyFree(recipe);
+}
+
+export function isGlutenFree(recipe: Recipe): boolean {
+  return !failsInDoubt(recipe.id, "gluten-free") && !xrefFails(recipe.id, "gluten-free") && glutenFreeBase(recipe) && !recipeAllergens(recipe).includes("gluten");
+}
+
+export function isDairyFree(recipe: Recipe): boolean {
+  return !failsInDoubt(recipe.id, "dairy-free") && !xrefFails(recipe.id, "dairy-free") && dairyFreeBase(recipe) && !recipeAllergens(recipe).includes("dairy");
+}
+
+export function isSugarFree(recipe: Recipe): boolean {
+  return !failsInDoubt(recipe.id, "sugar-free") && !xrefFails(recipe.id, "sugar-free") && sugarFreeBase(recipe);
+}
+
+export function isKeto(recipe: Recipe): boolean {
+  return !failsInDoubt(recipe.id, "keto") && !xrefFails(recipe.id, "keto") && ketoBase(recipe);
 }

@@ -1,3 +1,4 @@
+import type { AllergyId } from "./types";
 import type { Nutrition } from "./types";
 
 /**
@@ -33,6 +34,23 @@ export type GymFood = {
   /** Diets this food is fine for. Absent means it suits everyone. */
   vegetarian?: boolean;
   vegan?: boolean;
+  /**
+   * Shield tags, failed in doubt (Nov 2): a plain food carries the allergen when
+   * any common store version does (oats and tempeh are often milled or blended
+   * with wheat; whey and protein products may carry nuts or soy-dairy blends).
+   */
+  contains?: readonly AllergyId[];
+  /** Commonly sold with added sugar (flavoured whey, bagels, peanut butter). */
+  addedSugar?: boolean;
+};
+
+export type PlateDiet = {
+  vegetarian?: boolean;
+  vegan?: boolean;
+  pescatarian?: boolean;
+  glutenFree?: boolean;
+  sugarFree?: boolean;
+  allergies?: readonly AllergyId[];
 };
 
 const F = (
@@ -45,6 +63,7 @@ const F = (
   maxG: number,
   diet: { vegetarian?: boolean; vegan?: boolean } = {},
 ): GymFood => ({
+  ...(TAGS[id] ?? {}),
   id,
   name,
   role,
@@ -54,6 +73,28 @@ const F = (
   maxG,
   ...diet,
 });
+
+const FISH = new Set(["salmon", "white-fish"]);
+/** Fail-in-doubt tags per static food (Nov 2, item 3). */
+const TAGS: Record<string, { contains?: AllergyId[]; addedSugar?: boolean }> = {
+  salmon: { contains: ["fish"] },
+  "white-fish": { contains: ["shellfish", "fish"] }, // unnamed fish counter: shared with shellfish
+  eggs: { contains: ["egg"] },
+  "egg-whites": { contains: ["egg"] },
+  "greek-yogurt": { contains: ["dairy"] },
+  "cottage-cheese": { contains: ["dairy"] },
+  whey: { contains: ["dairy", "nuts", "gluten", "soy"], addedSugar: true }, // blends often carry soy lecithin
+  tofu: { contains: ["soy"] },
+  tempeh: { contains: ["gluten", "soy"] },
+  oats: { contains: ["gluten"] },
+  pasta: { contains: ["gluten", "egg"] }, // fresh and egg pasta
+  bagel: { contains: ["gluten", "dairy", "egg", "sesame", "soy"], addedSugar: true }, // seeded and egg bagels share lines
+  tortilla: { contains: ["gluten", "dairy", "soy"], addedSugar: true }, // shortening or soy flour
+  "lean-beef": {},
+  almonds: { contains: ["nuts"] },
+  "peanut-butter": { contains: ["nuts"], addedSugar: true },
+  cheese: { contains: ["dairy"] },
+};
 
 export const GYM_FOODS: readonly GymFood[] = [
   // --- protein ---------------------------------------------------------
@@ -99,13 +140,31 @@ export const GYM_FOODS: readonly GymFood[] = [
 
 export const GYM_FOOD_BY_ID = new Map(GYM_FOODS.map((f) => [f.id, f]));
 
-export function foodsInRole(role: FoodRole, diet?: { vegetarian?: boolean; vegan?: boolean }): GymFood[] {
-  return GYM_FOODS.filter((f) => {
-    if (f.role !== role) return false;
-    if (diet?.vegan) return Boolean(f.vegan);
-    if (diet?.vegetarian) return Boolean(f.vegetarian || f.vegan);
-    return true;
-  });
+export function foodsInRole(role: FoodRole, diet?: PlateDiet): GymFood[] {
+  return GYM_FOODS.filter((f) => f.role === role && gymFoodAllowed(f, diet));
+}
+
+/** The same prefs and allergies the catalog honours, for a plain gym food. */
+export function gymFoodAllowed(f: GymFood, diet?: PlateDiet): boolean {
+  if (diet?.vegan && !f.vegan) return false;
+  if (diet?.vegetarian && !(f.vegetarian || f.vegan)) return false;
+  if (diet?.pescatarian && !(f.vegetarian || f.vegan || FISH.has(f.id))) return false;
+  const has = new Set(f.contains ?? []);
+  if (diet?.glutenFree && has.has("gluten")) return false;
+  if (diet?.sugarFree && f.addedSugar) return false;
+  return !(diet?.allergies ?? []).some((a) => has.has(a));
+}
+
+/** Saved picks a pref or allergy now rules out fall back to the first allowed food. */
+export function allowedPlateFoods(
+  picks: { protein: string; carb: string; veg: string; fat: string },
+  diet?: PlateDiet,
+): { protein: string; carb: string; veg: string; fat: string } {
+  const pick = (role: FoodRole, id: string) => {
+    const options = foodsInRole(role, diet);
+    return options.some((f) => f.id === id) ? id : (options[0]?.id ?? id);
+  };
+  return { protein: pick("protein", picks.protein), carb: pick("carb", picks.carb), veg: pick("veg", picks.veg), fat: pick("fat", picks.fat) };
 }
 
 export type PlateItem = { food: GymFood; grams: number };
@@ -251,7 +310,7 @@ export function buildGymPlate(input: {
 }
 
 /** A sensible starting four, honouring a vegetarian or vegan kitchen. */
-export function defaultPlateFoods(diet?: { vegetarian?: boolean; vegan?: boolean }): {
+export function defaultPlateFoods(diet?: PlateDiet): {
   protein: string;
   carb: string;
   veg: string;

@@ -2,7 +2,7 @@
 // amount ("six or eight slices of tender bacon", "juice of half a lemon", "Meat of 2
 // lobsters") and for unit-less container rows ("glass of brandy"). Catalog data is
 // never changed; only the rendered qty/name strings on card, Cook and Shop.
-import { prettyFrac } from "./format.ts";
+import { prettyFrac, VESSEL_START } from "./format.ts";
 
 const NUM_WORDS = "one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|half|quarter|dozen";
 const SIZE = "inch(?:es)?|in\\b|-inch|oz|ounces?|lbs?\\b|pounds?|qt|quarts?|pints?|cm|mm|%|cans?\\b|packages?|pkgs?|jars?|boxe?s?\\b|bottles?|envelopes?|sticks?|cups?\\b|coffee|tbsp|tsp|tablespoons?|teaspoons?|tablespoonfuls?|teaspoonfuls?";
@@ -180,7 +180,57 @@ export function ingredientDisplay(
   const pretty = (n: string) => (catalog ? prettyBrackets(n) : n);
   if (isPhraseRow(ing, catalog)) return { qty: "", name: pretty(ing.name) + multiplier(scaled) };
   if (isContainerRow(ing)) return { qty: fmt(scaled, ing.unit), name: pretty(containerFor(ing.name, scaled)) };
-  return { qty: fmt(scaled, ing.unit), name: pretty(ing.name) };
+  return { qty: vesselFmt(fmt, scaled, ing.unit, ing.name), name: pretty(scaleStickNote(ing.name, ing.qty, scaled)) };
+}
+
+/** "2 gallon crocks", "1 pound package": a measure that sizes a vessel stays singular. */
+function vesselFmt(fmt: (q: number, u: string) => string, q: number, unit: string, name: string): string {
+  const out = fmt(q, unit);
+  return VESSEL_START.test(name) ? out.replace(/\b(quart|pint|gallon|cup|ounce|pound)s$/i, "$1") : out;
+}
+
+const STICK_NOTE = /\((\d+\s+\d+\s*\/\s*\d+|\d+\s*\/\s*\d+|\d*[½¼¾⅓⅔⅛]|\d+(?:\.\d+)?)\s+sticks?\)/i;
+
+function parseCount(tok: string): number | null {
+  const t = tok.trim();
+  const glyph: Record<string, number> = { "½": 0.5, "¼": 0.25, "¾": 0.75, "⅓": 1 / 3, "⅔": 2 / 3, "⅛": 0.125 };
+  const g = t.match(/^(\d*)([½¼¾⅓⅔⅛])$/);
+  if (g) return (g[1] ? Number(g[1]) : 0) + glyph[g[2]!]!;
+  const mixed = t.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+  if (mixed) return Number(mixed[1]) + Number(mixed[2]) / Number(mixed[3]);
+  const frac = t.match(/^(\d+)\s*\/\s*(\d+)$/);
+  if (frac) return Number(frac[1]) / Number(frac[2]);
+  const n = Number(t);
+  return Number.isFinite(n) ? n : null;
+}
+
+// Nov 7 r4 (Line 03B5 #4): an ounce note is an amount too ("(3 ounces) cream cheese", 1 pkg at 0.5x reads
+// "(1½ ounces) cream cheese, ½ pkg"). Hyphenated sizes ("(8-ounce) package") and ranges are not matched.
+const OUNCE_NOTE = /\((about\s+)?(\d+\s+\d+\s*\/\s*\d+|\d+\s*\/\s*\d+|\d*[½¼¾⅓⅔⅛]|\d+(?:\.\d+)?)\s+(ounces?|oz\.?)\)/i;
+
+/** True when a row name carries a stick or ounce note ("butter (1 stick)", "(3 ounces) cream cheese"). */
+export function hasStickNote(name: string): boolean {
+  return STICK_NOTE.test(name) || OUNCE_NOTE.test(name);
+}
+
+/** A container note scales with its row: "½ cup (1 stick)" at 1.5x reads "¾ cup (1½ sticks)"; ounce notes too (r4). */
+export function scaleStickNote(name: string, qty: number, scaled: number): string {
+  if (!(qty > 0) || !(scaled > 0) || Math.abs(scaled - qty) < 1e-9) return name;
+  let out = name;
+  const m = out.match(STICK_NOTE);
+  const n = m ? parseCount(m[1]!) : null;
+  if (m && n) {
+    const c = Math.max(0.25, Math.round(((n * scaled) / qty) * 4) / 4);
+    out = out.replace(STICK_NOTE, `(${prettyFrac(c)} ${c > 1.02 ? "sticks" : "stick"})`);
+  }
+  const o = out.match(OUNCE_NOTE);
+  const oz = o ? parseCount(o[2]!) : null;
+  if (o && oz) {
+    const c = Math.max(0.25, Math.round(((oz * scaled) / qty) * 4) / 4);
+    const unit = /^oz/i.test(o[3]!) ? o[3]! : c > 1.02 ? "ounces" : "ounce";
+    out = out.replace(OUNCE_NOTE, `(${o[1] ?? ""}${prettyFrac(c)} ${unit})`);
+  }
+  return out;
 }
 
 /** Display for a Shop line; phrase lines carry their multiplier in qty. */
@@ -190,7 +240,7 @@ export function shopLineDisplay(
 ): { qty: string; name: string } {
   if (line.phrase) return { qty: "", name: line.name + multiplier(line.qty) };
   if (isContainerRow(line)) return { qty: fmt(line.qty, line.unit), name: containerFor(line.name, line.qty) };
-  return { qty: fmt(line.qty, line.unit), name: line.name };
+  return { qty: vesselFmt(fmt, line.qty, line.unit, line.name), name: line.name };
 }
 
 /** Share/copy text for a Shop line: "- name (qty)" or "- phrase ×N". */

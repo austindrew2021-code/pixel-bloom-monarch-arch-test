@@ -1,4 +1,5 @@
 import { Camera, Check, Leaf, X } from "lucide-react";
+import { LabelNote } from "@/components/label-note";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { BarcodeScanCard } from "@/components/barcode-scan";
@@ -9,11 +10,17 @@ import { Input } from "@/components/ui/input";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { scanPantryPhoto, suggestMealsFromPantry, suggestSubstitutes } from "@/lib/kitchen-ai";
 import { isoDate } from "@/lib/fuel";
-import { mealsFromPantry, type PantryIdea } from "@/lib/pantry-match";
+import { Badge } from "@/components/ui/badge";
+import { passBadges } from "@/lib/badges";
+import { ideasAllowed, mealsFromPantry, type PantryIdea } from "@/lib/pantry-match";
 import { RECIPES } from "@/lib/recipes";
 import { recipeAllowed, unlockedRecipes, useSpoonful } from "@/lib/spoonful-store";
 
 type Idea = PantryIdea;
+
+const RECIPE_BY_ID = new Map(RECIPES.map((r) => [r.id, r]));
+
+const DIET_PREFS: readonly string[] = ["vegetarian", "pescatarian", "vegan", "gluten-free", "sugar-free"];
 
 type NeedCheck =
   | { kind: "need"; index: number }
@@ -117,7 +124,15 @@ function SnapFlow() {
         const res = await suggestMealsFromPantry({ data: { items, catalog } });
         if (res.ok) {
           const seen = new Set(local.map((i) => i.title.toLowerCase()));
-          const extra = res.ideas.filter((i) => !seen.has(i.title.toLowerCase()));
+          const filtersOn = allergies.length > 0 || prefs.some((p) => DIET_PREFS.includes(p));
+          const extra = ideasAllowed(
+            res.ideas.filter((i) => !seen.has(i.title.toLowerCase())),
+            (id) => {
+              const r = RECIPE_BY_ID.get(id);
+              return r ? recipeAllowed(r, prefs, allergies, hidden) : false;
+            },
+            filtersOn,
+          );
           setIdeas([...local, ...extra].slice(0, 8));
         }
       }
@@ -254,6 +269,7 @@ function SnapFlow() {
       {ideas.length > 0 && !active ? (
         <section className="mt-8">
           <h2 className="font-display text-xl">Ideas from what you have</h2>
+          <LabelNote />
           <ul className="mt-3 space-y-3">
             {ideas.map((idea) => (
               <li key={idea.title}>
@@ -264,6 +280,15 @@ function SnapFlow() {
                 >
                   <p className="font-medium">{idea.title}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{idea.why}</p>
+                  {idea.recipeId && RECIPE_BY_ID.get(idea.recipeId) ? (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {passBadges(RECIPE_BY_ID.get(idea.recipeId)!).map((b) => (
+                        <Badge key={b} variant="outline">
+                          {b}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : null}
                   <p className="mt-2 text-xs tabular-nums text-muted-foreground">
                     {idea.minutes} min · {idea.need.length === 0 ? "you have it all" : `${idea.need.length} to check`}
                   </p>

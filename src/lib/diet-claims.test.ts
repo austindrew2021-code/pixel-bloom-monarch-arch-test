@@ -95,6 +95,10 @@ test("two ingredient rows never fuse into a third ingredient", () => {
     id: "t-oat",
     name: "Test oats",
     tags: [],
+    // Nov 2: vegan now also needs the dairy shield, which reads the method too;
+    // the borrowed recipe's own steps are not part of this oatmeal.
+    steps: ["Stir everything together and serve."],
+    description: "Test oats.",
     ingredients: [
       { name: "rolled oats", qty: 1, unit: "cup", aisle: "Pantry" as const },
       { name: "oat milk", qty: 1, unit: "cup", aisle: "Dairy & Eggs" as const },

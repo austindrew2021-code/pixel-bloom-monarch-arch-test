@@ -54,3 +54,16 @@ export function mealsFromPantry(items: string[], pool: Recipe[] = RECIPES, limit
       recipeId: row.recipe.id,
     }));
 }
+
+/**
+ * Nov 2 (item 3): Snap ideas obey the same shields and diet filters as the
+ * catalog. A catalog idea is judged on its recipe; an AI extra has no printed
+ * list to check, so with any allergy or diet filter on it fails in doubt.
+ */
+export function ideasAllowed<T extends PantryIdea>(
+  ideas: T[],
+  allowed: (recipeId: string) => boolean,
+  filtersOn: boolean,
+): T[] {
+  return ideas.filter((idea) => (idea.recipeId ? allowed(idea.recipeId) : !filtersOn));
+}

@@ -1,3 +1,4 @@
+import { ARCHIVE_HIDDEN_IDS } from "./recipes.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
@@ -37,6 +38,8 @@ function loosened(r: (typeof RECIPES)[number], flags: string[], tags: string[], 
 // The book set is whatever carries source.book (1,539 on 161cd0b; 2,764 with
 // How to Cook Fish wired), never a fixed number.
 const BOOKS = RECIPES.filter(isCatalogFinal);
+// Held ids come from the code (recipes.ts ARCHIVE_HIDDEN_IDS), never a typed list.
+const NOV2_HELD: ReadonlySet<string> = ARCHIVE_HIDDEN_IDS;
 
 test("every book recipe in main's fixture: diet tags and allergens equal main's or stricter", () => {
   const fixtureIds = Object.keys(MAIN.recipes);
@@ -44,6 +47,8 @@ test("every book recipe in main's fixture: diet tags and allergens equal main's 
   const bad: string[] = [];
   for (const id of fixtureIds) {
     const r = byId.get(id);
+    // Nov 2: held for hand review / unverifiable text (HELD_ALL.txt) - off the shelf, nothing to compare.
+    if (!r && NOV2_HELD.has(id)) continue;
     assert.ok(r && isCatalogFinal(r), `${id} is no longer a live book recipe`);
     const [flags, tags, allergens] = MAIN.recipes[id]!.split("|").map(split);
     const gained = loosened(r!, flags!, tags!, allergens!);
@@ -52,7 +57,8 @@ test("every book recipe in main's fixture: diet tags and allergens equal main's 
   assert.deepEqual(bad, []);
 });
 
-test("every book recipe (any book, fixture or not): equal to or stricter than the old polish", () => {
+// Polishes all ~2,900 book recipes twice (~5 s alone, slower in the full run): 30 s budget for this one test only.
+test("every book recipe (any book, fixture or not): equal to or stricter than the old polish", { timeout: 30_000 }, () => {
   // The old pipeline, rebuilt here: polish with the row adder, then decorateDietTags.
   const bad: string[] = [];
   for (const r of BOOKS) {
@@ -423,7 +429,8 @@ test("POLISH: blurbs strip (page N), _italics_, stray spaces, unbalanced bracket
   assert.equal(b("Empty soup mix into a plain coffee cup(no metallic decorations)"), "Empty soup mix into a plain coffee cup (no metallic decorations).");
   assert.equal(b("(For 8-in. sq. cake) Mix in saucepan 1 cup raisins, ground. Cook and stir until thick (5 min.)."), "(For 8-in. sq. cake) Mix in saucepan 1 cup raisins, ground. Cook and stir until thick (5 min).");
   assert.equal(b("(Boil the preceding together for five minutes.)"), "Boil the preceding together for five minutes.");
-  for (const id of ["hill-0006", "hill-0076", "hill-0203", "hill-0204", "hill-0248", "hill-0098", "kleber-0039", "kleber-0093"]) {
+  for (const id of ["hill-0006", "hill-0076", "hill-0203", "hill-0204", "hill-0248", "hill-0098"]) {
+    // kleber-0039 / kleber-0093 are held (Nov 2, hand review E).
     const d = get(id).description;
     assert.ok(!/_/.test(d) && (d.match(/\(/g) ?? []).length === (d.match(/\)/g) ?? []).length && !/\(_i\.$/.test(d), `${id}: ${d}`);
     assert.ok(d.length >= 20 && d.length <= 180 && /[.!?)]$/.test(d), id);

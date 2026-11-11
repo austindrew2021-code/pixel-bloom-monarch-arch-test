@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Check, Copy, CreditCard, Download, Play, Share, Smartphone } from "lucide-react";
+import { LabelNote } from "@/components/label-note";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import { enablePush } from "@/lib/notify";
 import { ADDONS, RECIPES } from "@/lib/recipes";
 import { MILESTONES, RANKS, rankProgress } from "@/lib/ranks";
 import { ALLERGIES } from "@/lib/shield";
+import { NO_ORGANIC, NO_ORGANIC_TOGGLE, noOrganicOn } from "@/lib/grocery-prefs";
 import { useSpoonful } from "@/lib/spoonful-store";
 import { TESTER_KEY } from "@/lib/tester";
 import type { Addon } from "@/lib/types";
@@ -34,6 +36,9 @@ export function StoreView() {
   const setPortionSync = useSpoonful((s) => s.setPortionSync);
   const allergies = useSpoonful((s) => s.allergies);
   const toggleAllergy = useSpoonful((s) => s.toggleAllergy);
+  const prefs = useSpoonful((s) => s.prefs);
+  const togglePref = useSpoonful((s) => s.togglePref);
+  const noOrganic = noOrganicOn(prefs);
   const hidden = useSpoonful((s) => s.hidden);
   const unhideRecipe = useSpoonful((s) => s.unhideRecipe);
   const undoFill = useSpoonful((s) => s.undoFill);
@@ -529,6 +534,7 @@ export function StoreView() {
         <p className="mt-1 text-sm text-muted-foreground">
           We'll hide matching recipes from dinner picks and the recipe list.
         </p>
+        <LabelNote />
         <div className="mt-3 grid grid-cols-2 gap-2">
           {ALLERGIES.map((a) => {
             const on = allergies.includes(a.id);
@@ -548,6 +554,25 @@ export function StoreView() {
             );
           })}
         </div>
+      </section>
+
+      <section className="mt-6 rounded-3xl bg-card p-4 shadow-[var(--shadow-border)]">
+        <h2 className="font-display text-xl">Groceries</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Store picks still follow your allergies and diet.</p>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={noOrganic}
+          data-testid="no-organic-toggle"
+          onClick={() => togglePref(NO_ORGANIC)}
+          className={cn(
+            "mt-3 min-h-14 w-full rounded-2xl px-3 py-3 text-left",
+            noOrganic ? "bg-primary text-primary-foreground" : "bg-background shadow-[var(--shadow-border)]",
+          )}
+        >
+          <p className="text-sm font-medium">{NO_ORGANIC_TOGGLE.label}</p>
+          <p className={cn("mt-0.5 text-xs", noOrganic ? "opacity-80" : "text-muted-foreground")}>{NO_ORGANIC_TOGGLE.hint}</p>
+        </button>
       </section>
 
       {hidden.length > 0 ? (

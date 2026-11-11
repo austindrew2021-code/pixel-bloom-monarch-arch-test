@@ -932,7 +932,8 @@ function soupMethod(recipe: MethodRecipe): string[] {
       : `Add the ${meat}${liquidBit ? `, then the ${liquidBit}` : ""}. Bring to a simmer. Cook ${simmerN} minutes, skimming any foam.`,
     lastAdd
       ? `Add the ${lastAdd} and cook ${lastN} minutes, until tender. Season with salt.`
-      : `Simmer ${lastN} minutes more, until everything is tender and the broth tastes full. Season with salt and pepper.`,
+      : // Nov 2 (TEXT_DEFECTS): no broth is listed, so the step does not invent one.
+        `Simmer ${lastN} minutes more, until everything is tender. Season with salt and pepper.`,
     `${endPlate(recipe, `Ladle into warm bowls.`)}`,
   ];
 }

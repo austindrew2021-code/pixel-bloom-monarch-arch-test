@@ -43,7 +43,12 @@ export function scaleQty(qty: number, household: number, servings: number): numb
   // A catalog eighth (⅛, ⅜, ⅝, ⅞) keeps the eighth grid: ⅛ never turns into a quarter on its own.
   const inEighths = !inThirds && Math.abs(qty * 8 - Math.round(qty * 8)) < 0.02 && Math.abs(qty * 4 - Math.round(qty * 4)) > 0.04;
   const eighth = Math.round(scaled * 8) / 8;
-  const rounded = inEighths && eighth > 0
+  // A small quarter-grid amount (¼ cup peanut butter) has no quarter between it
+  // and nothing: ¼ × ½ = ⅛ rounded half-up back to ¼, and ¼ × 5/4 also landed
+  // on ¼, so the row read ¼ cup at 2, 4 and 5 servings. When a printed ¼ would
+  // come back unchanged at another scale, the eighth grid is used for that row only; the quarter/sixth grids are unchanged.
+  const smallQuarter = !inThirds && !inEighths && Math.abs(qty - 0.25) < 1e-9 && quarter === qty;
+  const rounded = (inEighths || smallQuarter) && eighth > 0
     ? eighth
     : inThirds && third > 0 && Math.abs(scaled - third) < Math.abs(scaled - quarter) - 1e-9 ? third : quarter;
   if (rounded === 0 && scaled > 0) return scaled <= 0.125 ? 0.125 : 0.25;

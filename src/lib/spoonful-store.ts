@@ -1,9 +1,10 @@
 import { toast } from "sonner";
+import { toggleIn } from "./grocery-prefs.ts";
 import { addDays, parseISO } from "date-fns";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { DEFAULT_BODY, lbFromKg, macrosFromBody, normalizeBody, seatAvoidsName, type BodyProfile, type FamilySeat, type GoalKind } from "./body.ts";
-import { isComfort, isDinnerMain, isGlutenFree, isHighProtein, isSugarFree, isVegan } from "./diet.ts";
+import { isComfort, isDinnerMain, isGlutenFree, isHighProtein, isSugarFree, isVegan, isVegetarian } from "./diet.ts";
 import { fitsGoal, strictestGoal } from "./goal-fit.ts";
 import { isUnlocked, seatCap } from "./access.ts";
 import { giftUntilFrom, isGiftCode, mintGiftCode, normalizeGiftCode } from "./gift.ts";
@@ -15,7 +16,7 @@ import { hasNativeHealth, requestNativeHealth } from "./native-health.ts";
 import { mealsFromPantry } from "./pantry-match.ts";
 import { isAlwaysHave, isBasicStaple } from "./grocery-always.ts";
 import { scaleQty } from "./cuisine.ts";
-import { isPhraseRow, nameCarriesAmount } from "./phrase-qty.ts";
+import { hasStickNote, isPhraseRow, nameCarriesAmount, scaleStickNote } from "./phrase-qty.ts";
 import { portionSyncFor } from "./portion-sync.ts";
 import { ADDONS, RECIPES, recipeById } from "./recipes.ts";
 import {
@@ -253,7 +254,11 @@ type SpoonfulState = {
   undoFill: () => boolean;
   addPantry: (name: string) => void;
   removePantry: (id: string) => void;
-  addExtraGrocery: (name: string, aisle: Aisle) => void;
+  addExtraGrocery: (
+    name: string,
+    aisle: Aisle,
+    amount?: { qty: number; unit: string; phrase?: boolean; dish?: string },
+  ) => void;
   removeExtraGrocery: (id: string) => void;
   toggleChecked: (key: string) => void;
   clearChecked: () => void;
@@ -404,7 +409,8 @@ export function recipeMatchesPrefs(recipe: Recipe, prefs: PrefId[]): boolean {
   if (vegan) {
     if (!isVegan(recipe)) return false;
   } else if (veg) {
-    if (!["veg", "eggs"].includes(recipe.protein)) return false;
+    // The filter and the Vegetarian badge read the same check (Nov 2).
+    if (!["veg", "eggs"].includes(recipe.protein) || !isVegetarian(recipe)) return false;
   } else if (pesc) {
     if (!["veg", "eggs", "fish", "seafood"].includes(recipe.protein)) return false;
   }
@@ -610,7 +616,7 @@ export const useSpoonful = create<SpoonfulState>()(
       setHousehold: (household) => set({ household }),
       togglePref: (pref) =>
         set((s) => ({
-          prefs: s.prefs.includes(pref) ? s.prefs.filter((p) => p !== pref) : [...s.prefs, pref],
+          prefs: toggleIn(s.prefs, pref),
         })),
       toggleAllergy: (id) =>
         set((s) => ({
@@ -1113,12 +1119,22 @@ export const useSpoonful = create<SpoonfulState>()(
         });
       },
       removePantry: (id) => set((s) => ({ pantry: s.pantry.filter((p) => p.id !== id) })),
-      addExtraGrocery: (name, aisle) => {
+      addExtraGrocery: (name, aisle, amount) => {
         const trimmed = name.trim();
         if (!trimmed) return;
         const { weekStart } = get();
+        // A recipe's amount rides along (scaled to the servings on screen); never a 0.
+        const extra =
+          amount && Number(amount.qty) > 0
+            ? {
+                qty: Number(amount.qty),
+                unit: amount.unit ?? "",
+                ...(amount.phrase ? { phrase: true } : {}),
+                ...(amount.dish ? { dish: amount.dish } : {}),
+              }
+            : {};
         set((s) => ({
-          extraGrocery: [...s.extraGrocery, { id: uid(), name: trimmed, aisle, weekStart }],
+          extraGrocery: [...s.extraGrocery, { id: uid(), name: trimmed, aisle, weekStart, ...extra }],
         }));
       },
       removeExtraGrocery: (id) => set((s) => ({ extraGrocery: s.extraGrocery.filter((e) => e.id !== id) })),
@@ -2352,6 +2368,10 @@ export function groceryForWeek(
   const map = new Map<string, GroceryLine>();
 
   let phraseSeq = 0;
+  // Nov 7 r3 (Line BEB2 #5): a "(N sticks)" note follows the line's total, as on the recipe's own "Add to Shop".
+  // The first row under a key fixes the sticks-per-unit ratio (its printed note over its printed qty).
+  const stickBase = new Map<string, { name: string; qty: number }>();
+  let printedQty: number | undefined; // the recipe row's own qty while its scaled line is added
   const add = (name: string, qty: number, unit: string, aisle: Aisle, dish?: string, phrase = false) => {
     // Phrase rows ("six or eight slices of tender bacon") are never summed into one number.
     const key = phrase ? `${aisle}::${name.toLowerCase()}::phrase#${phraseSeq++}` : `${aisle}::${name.toLowerCase()}::${unit}`;
@@ -2371,6 +2391,8 @@ export function groceryForWeek(
       dishes: dish ? [dish] : [],
       ...(phrase ? { phrase: true } : {}),
     });
+    const base = printedQty ?? qty;
+    if (!phrase && base > 0 && hasStickNote(name)) stickBase.set(key, { name, qty: base });
   };
 
   for (const meal of meals) {
@@ -2379,15 +2401,25 @@ export function groceryForWeek(
     const ingredients = resolved.recipe?.ingredients ?? resolved.custom?.ingredients ?? [];
     const servings = resolved.recipe?.servings ?? 4;
     for (const ing of ingredients) {
+      printedQty = ing.qty;
       add(ing.name, scaleQty(ing.qty, household, servings), ing.unit, ing.aisle, resolved.title, isPhraseRow(ing, !!resolved.recipe));
+      printedQty = undefined;
     }
   }
 
   for (const item of extra) {
     if (item.weekStart !== weekStart) continue;
-    add(item.name, 1, "", item.aisle, undefined, nameCarriesAmount(item.name));
+    if (item.qty && item.qty > 0) {
+      add(item.name, item.qty, item.unit ?? "", item.aisle, item.dish, item.phrase ?? nameCarriesAmount(item.name));
+    } else {
+      add(item.name, 1, "", item.aisle, undefined, nameCarriesAmount(item.name));
+    }
   }
 
+  for (const [key, base] of stickBase) {
+    const line = map.get(key);
+    if (line && line.qty > 0) line.name = scaleStickNote(base.name, base.qty, line.qty);
+  }
   return Array.from(map.values());
 }
 

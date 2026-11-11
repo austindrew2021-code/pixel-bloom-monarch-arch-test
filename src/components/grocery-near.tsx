@@ -1,4 +1,5 @@
 import { Check, ChevronLeft, Heart, MapPin, ShoppingBag } from "lucide-react";
+import { groceryProfile } from "@/lib/grocery-prefs";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import {
   type GroceryPick,
   type StoreOption,
 } from "@/lib/grocery-pick";
-import { addToStoreCart, storeCanHoldCart, storeCartOpenUrl } from "@/lib/grocery-cart";
+import { addToStoreCart, storeCanHoldCart, storeCartOff, storeCartOpenUrl } from "@/lib/grocery-cart";
 import {
   FALLBACK_COORDS,
   fetchNearbyStores,
@@ -163,11 +164,20 @@ function OrderSheet({
   lines: GroceryLine[];
   onClose: () => void;
 }) {
-  const cart = useMemo(() => (store ? matchCart(store, lines) : { items: [], totalCad: 0 }), [store, lines]);
+  const allergies = useSpoonful((s) => s.allergies);
+  const prefs = useSpoonful((s) => s.prefs);
+  // The cook's allergy and diet settings reach every pick (catalog and live store).
+  const profile = useMemo(() => groceryProfile(allergies, prefs), [allergies, prefs]);
+  const cart = useMemo(
+    () => (store ? matchCart(store, lines, profile) : { items: [], totalCad: 0 }),
+    [store, lines, profile],
+  );
   const [sent, setSent] = useState<Set<string>>(new Set());
   const [chosen, setChosen] = useState<Record<string, StoreOption>>({});
   const [viewing, setViewing] = useState<GroceryPick | null>(null);
   const [options, setOptions] = useState<StoreOption[]>([]);
+  const [choices, setChoices] = useState<StoreOption[]>([]);
+  const [askReason, setAskReason] = useState("");
   const [live, setLive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addingAll, setAddingAll] = useState(false);
@@ -272,12 +282,17 @@ function OrderSheet({
     setViewing(item);
     setLoading(true);
     setOptions([]);
+    setChoices([]);
+    setAskReason("");
     try {
-      const result = await loadStoreOptions(picked, item);
+      const result = await loadStoreOptions(picked, item, profile);
       setOptions(result.options);
+      setChoices(result.choices);
+      setAskReason(result.status === "pick" ? "" : result.reason);
       setLive(result.live);
     } catch {
       setOptions([]);
+      setChoices([]);
       setLive(false);
     } finally {
       setLoading(false);
@@ -296,9 +311,11 @@ function OrderSheet({
           ? left > 0
             ? `In the ${picked.name} cart. ${left} left.`
             : `In the ${picked.name} cart. Checkout when you’re ready.`
-          : left > 0
-            ? `Saved ${option.name}. ${left} left.`
-            : `Saved ${option.name}.`,
+          : storeCartOff()
+            ? `Saved ${option.name}. The ${picked.name} cart isn’t available in Spoonful yet.${left > 0 ? ` ${left} left.` : ""}`
+            : left > 0
+              ? `Saved ${option.name}. ${left} left.`
+              : `Saved ${option.name}.`,
       );
     });
   }
@@ -326,9 +343,15 @@ function OrderSheet({
     try {
       const nextChosen: Record<string, StoreOption> = {};
       const mem = useSpoonful.getState().bagMemory;
+      const unsure: GroceryPick[] = [];
       await Promise.all(
         leftover.map(async (item) => {
-          const result = await loadStoreOptions(picked, item);
+          const result = await loadStoreOptions(picked, item, profile);
+          // No silent substitution: only an exact match is added without a tap.
+          if (result.status !== "pick" || result.options.length === 0) {
+            unsure.push(item);
+            return;
+          }
           const remembered = mem[item.name.trim().toLowerCase()];
           const top =
             (remembered ? result.options.find((o) => o.name === remembered.pickName) : undefined) ?? result.options[0];
@@ -336,7 +359,7 @@ function OrderSheet({
         }),
       );
       setChosen((prev) => ({ ...prev, ...nextChosen }));
-      markMany(leftover);
+      markMany(leftover.filter((item) => nextChosen[pickKey(item)]));
       const merged = { ...chosen, ...nextChosen };
       const packed = leftover
         .map((item) => nextChosen[pickKey(item)])
@@ -355,10 +378,18 @@ function OrderSheet({
           };
         }),
       );
+      const askNote = unsure.length
+        ? ` ${unsure.length} ${unsure.length === 1 ? "item needs" : "items need"} your pick (no exact match): ${unsure
+            .map((item) => item.name)
+            .slice(0, 3)
+            .join(", ")}${unsure.length > 3 ? "…" : ""}.`
+        : "";
       toast(
-        ok
+        (ok
           ? `${packed.length} packs are in the ${picked.name} cart.`
-          : `List packed for ${picked.name}. Pay keeps it on the store screen.`,
+          : storeCartOff()
+            ? `List packed for ${picked.name}. Store carts aren’t available in Spoonful yet — your list is saved.`
+            : `List packed for ${picked.name}. Pay keeps it on the store screen.`) + askNote,
       );
     } finally {
       setAddingAll(false);
@@ -436,6 +467,8 @@ function OrderSheet({
             storeName={store.name}
             item={viewing}
             options={options}
+            choices={choices}
+            askReason={askReason}
             live={live}
             loading={loading}
             apk={apk}
@@ -608,6 +641,8 @@ function OptionsPane({
   storeName,
   item,
   options,
+  choices,
+  askReason,
   live,
   loading,
   apk,
@@ -617,6 +652,8 @@ function OptionsPane({
   storeName: string;
   item: GroceryPick;
   options: StoreOption[];
+  choices: StoreOption[];
+  askReason: string;
   live: boolean;
   loading: boolean;
   apk: boolean;
@@ -634,8 +671,16 @@ function OptionsPane({
       </p>
       <h2 className="mt-1 font-display text-2xl leading-tight">{item.name}</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Need {formatQty(item.qty, item.unit)}. Five cheapest packs of this ingredient that still cover the meal.
+        Need {formatQty(item.qty, item.unit)}.{" "}
+        {options.length
+          ? "Exact matches only, cheapest total first."
+          : "No exact match, so nothing was picked. Choose one below or search the store."}
       </p>
+      {askReason ? (
+        <p className="mt-2 text-sm" data-testid="grocery-ask-reason">
+          {askReason}
+        </p>
+      ) : null}
       {loading ? <p className="mt-4 text-sm text-muted-foreground">Checking the store shelf…</p> : null}
       <ul className="mt-4 space-y-2">
         {options.map((option, index) => (
@@ -664,7 +709,7 @@ function OptionsPane({
                 <p className="truncate font-medium">{option.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {option.packs}× {option.sizeLabel} · ${option.totalCad.toFixed(2)}
-                  {option.unitHint ? ` · ${option.unitHint}` : ""}
+                  {option.unitPrice ? ` · ${option.unitPrice}` : option.unitHint ? ` · ${option.unitHint}` : ""}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {option.inStock ? "In stock" : "May be low"} · {option.why}
@@ -683,8 +728,35 @@ function OptionsPane({
           </li>
         ))}
       </ul>
-      {!loading && options.length === 0 ? (
-        <p className="mt-4 text-sm">The store did not return packs. Use the list search instead.</p>
+      {choices.length ? (
+        <ul className="mt-4 space-y-2" data-testid="grocery-choices">
+          {choices.map((choice, index) => (
+            <li key={`${choice.id}:${index}`} className="rounded-3xl bg-background p-3" data-testid="grocery-choice">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                Choice {index + 1} · {choice.choiceLabel || "check the pack"}
+              </p>
+              <p className="truncate font-medium">{choice.name}</p>
+              <p className="text-xs text-muted-foreground">
+                {choice.packs}× {choice.sizeLabel} · ${choice.totalCad.toFixed(2)}
+                {choice.unitPrice ? ` · ${choice.unitPrice}` : ""}
+              </p>
+              <Button
+                className="mt-3 w-full"
+                variant="secondary"
+                size="sm"
+                data-testid="grocery-choice-add"
+                onClick={() => onChoose(choice)}
+              >
+                Use this one
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {!loading && options.length === 0 && choices.length === 0 ? (
+        <p className="mt-4 text-sm">
+          No exact match{askReason ? "" : " at this store"}. Nothing was picked. Use the list search to choose a pack.
+        </p>
       ) : null}
     </div>
   );

@@ -61,7 +61,7 @@ test("the named leaveners are on the list, not only in the step", () => {
 
 test("a title whose step says rice either lists rice or stops saying it", () => {
   // "Rice the avocado" is the verb, and a rice noodle is not a bag of rice.
-  const notTheGrain = /rice (?:noodles?|cakes?|flour|vinegar|wine|paper)|\brice\s+(?:the|them|it)\b|\briced\b/gi;
+  const notTheGrain = /rice (?:noodles?|cakes?|flour|vinegar|wine|paper)|\brice\s+(?:the|them|it|and squeeze)\b|\briced\b/gi;
   const bad = APP_RECIPES.filter((r) => {
     const saysRice = r.steps.some((s) => /\brice\b/i.test(s.replace(notTheGrain, " ")));
     return saysRice && !names(r).some((n) => /\brice\b/.test(n.replace(notTheGrain, " ")));

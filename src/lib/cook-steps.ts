@@ -1,7 +1,7 @@
 import type { Recipe } from "./types";
 import { knownDishMethod, writeDishMethod, hasSpecialistMethod } from "./write-method.ts";
 import { scaleQty } from "./cuisine.ts";
-import { prettyFrac } from "./format.ts";
+import { prettyFrac, pluralUnitWord, VESSEL_SIZE, DIMENSIONS } from "./format.ts";
 import { alignListToCook, alignRows } from "./list-align.ts";
 import { dietScreenFor, fixBookSteps, isCatalogFinal } from "./catalog-final.ts";
 
@@ -1817,6 +1817,17 @@ function closeQty(a: number, b: number): boolean {
  * digit amount directly followed by a measure word, or by a listed food, is
  * scaled; times, temperatures, sizes and spelled-out numbers stay as printed.
  */
+// Nov 7 r3 (Line BEB2 #3): a ratio sentence ("1 quart of cranberries is enough for 1 pint mould") and a yield sentence
+// that names a vessel size ("Makes about 3 quart jars (or 6 pints or 12 half-pints)") are printed as is at every serving
+// size: count and size cannot be told apart there, and scaling one number would contradict the rest. Other yields scale.
+const SENTENCE = /(?:^|(?<=[.!?;]\s))[^.!?;]*(?:[.!?;]|$)/g;
+const RATIO_WORDS = /\b(?:is|are) enough for\b|\benough to fill\b|\bsufficient for\b|\bwill fill\b/i;
+const YIELD_LEAD = /^\s*\(?\s*(?:this recipe\s+)?(?:makes|yields?)\b/i;
+function holdYieldRatio(step: string, hold: (m: string) => string): string {
+  const vessel = new RegExp(VESSEL_SIZE.source, VESSEL_SIZE.flags.replace("g", ""));
+  return step.replace(SENTENCE, (sent: string) => (sent && (RATIO_WORDS.test(sent) || (YIELD_LEAD.test(sent) && vessel.test(sent))) ? hold(sent) : sent));
+}
+
 function scaleNumbersOnly(
   steps: string[],
   ingredients: { name: string; qty: number; unit: string }[],
@@ -1835,18 +1846,26 @@ function scaleNumbersOnly(
       held.push(m);
       return `\u0000${held.length - 1}\u0000`;
     };
-    let s = step
+    let s = holdYieldRatio(step, hold)
       .replace(/\b\d+\s*(?:-|–|to)\s*\d+\s*(?:minutes?|mins?|hours?|seconds?)\b/gi, hold)
       .replace(/\b\d+\s*(?:minutes?|mins?|hours?|seconds?)\b/gi, hold)
       .replace(/\b\d{2,3}\s*°?\s*F\b/gi, hold)
       .replace(/\b\d+\s*(?:-|–)?(?:inch(?:es)?|cm)\b/gi, hold)
       .replace(/\b\d+\s*degrees\b/gi, hold)
-      .replace(/\bserves?\s+\d+\b/gi, hold);
+      .replace(/\bserves?\s+\d+\b/gi, hold)
+      .replace(VESSEL_SIZE, hold)
+      .replace(DIMENSIONS, hold);
     s = s.replace(re, (m: string, lead: string, qtyTok: string) => {
       const q = parseQtyToken(qtyTok);
       if (q == null || q <= 0) return m;
-      return `${lead}${prettyFrac(scaleQty(q, household, servings))}`;
+      const scaled = scaleQty(q, household, servings);
+      return `${lead}${prettyFrac(scaled)}${scaled > 1.02 ? "\u0001" : ""}`;
     });
+    // A number that moved above one carries its measure word along: "1 quart" x2 -> "2 quarts".
+    // eslint-disable-next-line no-control-regex -- the marker is deliberate
+    s = s.replace(/\u0001(\s+)(quart|pint|gallon|cup|ounce|pound)\b/gi, (_m, ws: string, w: string) => `${ws}${pluralUnitWord(w, 2)}`);
+    // eslint-disable-next-line no-control-regex -- the marker is deliberate
+    s = s.replace(/\u0001/g, "");
     // eslint-disable-next-line no-control-regex -- the sentinel is deliberate
     return s.replace(/\u0000(\d+)\u0000/g, (_m, i: string) => held[Number(i)] ?? "");
   });
@@ -1883,7 +1902,9 @@ export function scaleMethodSteps(
       .replace(/\b\d+\s*(?:-|–)?(?:inch(?:es)?|cm)\b/gi, hold)
       .replace(/\b\d+\s*degrees\b/gi, hold)
       .replace(/\bserves?\s+\d+\b/gi, hold)
-      .replace(/\b\d+-pound mold\b/gi, hold);
+      .replace(/\b\d+-pound mold\b/gi, hold)
+      .replace(VESSEL_SIZE, hold)
+      .replace(DIMENSIONS, hold);
 
     if (scale) {
       s = s.replace(
@@ -2099,8 +2120,13 @@ export function polishSteps(recipe: RecipeLike): string[] {
       }
     }
   }
-  out = foldShortSteps(out, recipe);
-  if (out.filter(isUsableCookStep).length < 3) {
+  // Nov 2 (hand review B): a rewrite may not drop a printed temperature or time
+  // (hd-prime-rib lost "500°F" and its minutes). Then the printed steps stand,
+  // and no card is added to reach three.
+  const keepPrinted = original.length > 0 && dropsPrintedNumbers(original, out);
+  if (keepPrinted) out = original.slice(0, MAX_STEPS);
+  else out = foldShortSteps(out, recipe);
+  if (!keepPrinted && out.filter(isUsableCookStep).length < 3) {
     const keepableSource = isKeepableMethod(original, recipe) || isKeepableMethod(out, recipe);
     if (keepableSource) {
       out = expandToMinCards(out, recipe);
@@ -2112,7 +2138,9 @@ export function polishSteps(recipe: RecipeLike): string[] {
       out = expandToMinCards(out, recipe);
     }
   }
-  const aligned = alignCookToList(out, recipe).map(tidyCookText);
+  // Kept printed steps are not aligned either: alignment appends "Stir in the …" for
+  // unmentioned rows, which is text the recipe never printed (hd-prime-rib).
+  const aligned = (keepPrinted ? out : alignCookToList(out, recipe)).map(tidyCookText);
   const deduped: string[] = [];
   for (const s of aligned) {
     if (deduped.length && deduped[deduped.length - 1]!.toLowerCase() === s.toLowerCase()) continue;
@@ -2463,6 +2491,18 @@ function polishWith(recipe: Recipe, align: (r: Recipe) => Recipe): Recipe | null
     description: cleanDescription(next, name),
     steps: polishSteps(next),
   });
+}
+
+const STEP_NUMBERS = /\d+(?:\s*(?:to|–|-)\s*\d+)?\s*°\s*F?|\b\d+(?:\s*(?:to|–|-)\s*\d+)?\s*(?:minutes?|mins?|hours?|hrs?)\b/gi;
+function stepNumbers(steps: string[]): string[] {
+  return (steps.join(" ").match(STEP_NUMBERS) ?? []).map((t) =>
+    t.toLowerCase().replace(/\s+/g, "").replace(/to|–/g, "-").replace(/°f?/, "°").replace(/minutes?|mins?/, "min").replace(/hours?|hrs?/, "h"),
+  );
+}
+export function dropsPrintedNumbers(printed: string[], polished: string[]): boolean {
+  if (!printed.length) return false;
+  const have = new Set(stepNumbers(polished));
+  return stepNumbers(printed).some((t) => !have.has(t));
 }
 
 export function polishCatalog(list: Recipe[]): Recipe[] {

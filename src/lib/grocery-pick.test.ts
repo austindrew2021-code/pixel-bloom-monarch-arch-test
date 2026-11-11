@@ -85,9 +85,12 @@ test("matchCart skips pantry and totals the cheap packs", () => {
   assert.match(panko?.pickName ?? "", /No Name/i);
 });
 
-test("a generic cheese line does not steal parmesan", () => {
+test("a generic cheese line does not steal parmesan, and asks instead of guessing cheddar", () => {
   const line = pickForLine(store, { name: "cheese", qty: 1, unit: "cup", aisle: "Dairy & Eggs" });
-  assert.match(line.pickName, /Cheddar/i);
+  assert.equal(line.matched, false);
+  assert.equal(line.status, "ask");
+  assert.doesNotMatch(line.pickName, /Parmesan/i);
+  assert.match(line.choices?.[0]?.label ?? "", /Cheddar/);
 });
 
 test("package size 227 g with a unit price still parses as grams", () => {
@@ -223,41 +226,39 @@ test("overlay fill searches the ingredient, not a Superstore catalog name", () =
   assert.equal(overlaySearchQuery("large eggs"), "eggs");
 });
 
-test("a per-kg chicken tray covers 3/4 lb with one pack", () => {
-  const pick = pickCheapestEnough(
-    { name: "chicken breasts", qty: 0.75, unit: "lb", aisle: "Meat & Seafood" },
-    [
-      { brand: "superstore", name: "Chicken Breast Club Pack", sizeLabel: "per kg", priceCad: 15.73, each: 1 },
-      {
-        brand: "superstore",
-        name: "Boneless Skinless Chicken Breasts",
-        sizeLabel: "1.1 kg",
-        priceCad: 21,
-        grams: 1100,
-      },
-    ],
+test("a per-kg chicken tray covers 3/4 lb by its weight, not as 'one pack covers any amount'", () => {
+  const tray = { brand: "superstore" as const, name: "Chicken Breast Club Pack", sizeLabel: "per kg", priceCad: 7.5, perKgCad: 15 };
+  // ~500 g tray (7.50 / 15.00 per kg) against 340 g: one tray.
+  assert.deepEqual(
+    pick(coverWith(tray as never, { name: "chicken breasts", qty: 0.75, unit: "lb", aisle: "Meat & Seafood" })),
+    { packs: 1, totalCad: 7.5 },
   );
-  assert.ok(pick);
-  assert.equal(pick!.cover.packs, 1);
-  assert.equal(pick!.product.sizeLabel, "per kg");
-  assert.equal(pick!.cover.totalCad, 15.73);
+  // Same tray against 1.5 kg: three trays, never one.
+  assert.deepEqual(
+    pick(coverWith(tray as never, { name: "chicken breasts", qty: 1.5, unit: "kg", aisle: "Meat & Seafood" })),
+    { packs: 3, totalCad: 22.5 },
+  );
 });
 
-test("a 1-ea chicken tray still covers a weighed meal", () => {
+test("a 1-ea tray with no weight can't be shown to cover a weighed meal", () => {
   const cover = coverWith(
     { brand: "superstore", name: "PC Blue Menu Chicken Breasts", sizeLabel: "1 ea", priceCad: 13, each: 1 },
     { name: "chicken breasts", qty: 0.75, unit: "lb", aisle: "Meat & Seafood" },
   );
-  assert.ok(cover);
-  assert.equal(cover!.packs, 1);
-  assert.equal(cover!.totalCad, 13);
+  assert.equal(cover, null);
 });
 
-test("package size priced per kg stays per kg, not per lb", () => {
+test("package size priced per kg keeps the per-kg rate, not one 'each'", () => {
   const parsed = parsePackageSizing("$15.23/1kg $6.91/1lb");
   assert.equal(parsed.sizeLabel, "per kg");
-  assert.equal(parsed.each, 1);
+  assert.equal(parsed.each, undefined);
+  assert.equal(parsed.perKgCad, 15.23);
+  assert.deepEqual(parsed.unitPrice, { cad: 15.23, per: "kg" });
 });
+
+function pick(cover: { packs: number; totalCad: number } | null) {
+  return cover ? { packs: cover.packs, totalCad: cover.totalCad } : null;
+}
 
 test("eggs is eggs, not egg noodles or eggplant", () => {
   assert.equal(isRelevantProduct("No Name Large Size Eggs 12 Pack", "eggs"), true);

@@ -1675,7 +1675,13 @@ function swapSpoonfulKitchenCredit(recipe: Recipe): Recipe {
  * hard defects + wrong protein tags in Idaho, Your Share, American Cookery, Ladies Aid, Hill's.
  * Catalog files stay untouched; an id leaves this list only after its rebuild passes Line's re-sweep.
  */
-const ARCHIVE_HIDDEN_IDS = new Set<string>([
+export const ARCHIVE_HIDDEN_IDS = new Set<string>([
+  // Nov 2 (hand review E): held, not wired.
+  "kleber-0039",
+  "kleber-0093",
+  // Nov 2 (TEXT_DEFECTS): the printed source cannot be verified for the defect, so held rather than guessed.
+  "idah-037", // butter quantity is unreadable in the scan ("# G.")
+  "ds-jan-22-yankee-puffs", // vanilla reads "ij4" in the OCR; 1¼ vs 1½ cannot be confirmed
   "ys-004",
   "ys-005",
   "ys-006",
