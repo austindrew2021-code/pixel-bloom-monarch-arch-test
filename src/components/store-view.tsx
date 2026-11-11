@@ -780,7 +780,7 @@ function Checkout({
         <div className="mt-4 rounded-2xl bg-background p-3 shadow-[var(--shadow-border)]">
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-spark">Interac e-Transfer</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Send {formatPrice(addon.price)} to the Interac email that came with your kitchen key. Paste this memo so we know it's you.
+            Send {formatPrice(addon.price)} to the Interac email that came with your kitchen key. Paste this memo so we know which add-on this is for.
           </p>
           <button
             type="button"
