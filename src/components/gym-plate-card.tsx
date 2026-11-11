@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { isoDate } from "@/lib/fuel";
-import { buildGymPlate, foodsInRole, type FoodRole } from "@/lib/gym-plate";
+import { allowedPlateFoods, buildGymPlate, foodsInRole, type FoodRole, type PlateDiet } from "@/lib/gym-plate";
 import { useSpoonful } from "@/lib/spoonful-store";
 import type { Nutrition } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -32,11 +32,21 @@ export function GymPlateCard({
   const setGymPlate = useSpoonful((s) => s.setGymPlate);
   const addSnack = useSpoonful((s) => s.addSnack);
   const prefs = useSpoonful((s) => s.prefs);
+  const allergies = useSpoonful((s) => s.allergies);
 
-  const diet = useMemo(
-    () => ({ vegetarian: prefs.includes("vegetarian"), vegan: prefs.includes("vegan") }),
-    [prefs],
+  // Nov 2 (item 3): the same prefs and allergy shields as every catalog suggestion.
+  const diet = useMemo<PlateDiet>(
+    () => ({
+      vegetarian: prefs.includes("vegetarian"),
+      vegan: prefs.includes("vegan"),
+      pescatarian: prefs.includes("pescatarian"),
+      glutenFree: prefs.includes("gluten-free"),
+      sugarFree: prefs.includes("sugar-free"),
+      allergies,
+    }),
+    [prefs, allergies],
   );
+  const foods = useMemo(() => allowedPlateFoods(gymPlate, diet), [gymPlate, diet]);
 
   // What one meal of the rest of the day looks like.
   const target = useMemo<Nutrition>(() => {
@@ -50,8 +60,8 @@ export function GymPlateCard({
   }, [remaining, gymPlate.meals]);
 
   const plate = useMemo(
-    () => buildGymPlate({ target, protein: gymPlate.protein, carb: gymPlate.carb, veg: gymPlate.veg, fat: gymPlate.fat }),
-    [target, gymPlate],
+    () => buildGymPlate({ target, ...foods }),
+    [target, foods],
   );
 
   const nothingLeft = target.protein <= 5 && target.cal <= 80;
@@ -163,7 +173,7 @@ function FoodPick({
   role: FoodRole;
   label: string;
   value: string;
-  diet: { vegetarian: boolean; vegan: boolean };
+  diet: PlateDiet;
   onPick: (id: string) => void;
 }) {
   const options = useMemo(() => foodsInRole(role, diet), [role, diet]);

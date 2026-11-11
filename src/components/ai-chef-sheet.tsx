@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ChefPlateLine } from "@/components/chef-plate-line";
+import { LabelNote } from "@/components/label-note";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { askSpoonful, planWeekWithChef } from "@/lib/ai-chef";
@@ -215,6 +216,7 @@ export function AiChefSheet({
             : "Ask for dinner, or how a button works. Free kitchens get 3 plates a week from the library. Anything else gets a joke, not a lecture."}{" "}
           {chefRemaining()} left this week.
         </p>
+        <LabelNote />
         <ChefPlateLine onOpenStore={onOpenStore} className="mt-3" />
         <div className="mt-3 flex gap-1.5">
           {(["tonight", "week"] as const).map((id) => (

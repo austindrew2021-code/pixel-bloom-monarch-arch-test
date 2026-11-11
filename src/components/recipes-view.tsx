@@ -1,4 +1,5 @@
 import { ChevronLeft, Clock3, Copy, Dices, Heart, Mic, Minus, Plus, Search, ShoppingBag } from "lucide-react";
+import { LabelNote } from "@/components/label-note";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CookView } from "@/components/cook-view";
@@ -11,7 +12,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { isUnlocked } from "@/lib/access";
 import { COLLECTION_GROUPS, COLLECTIONS, collectionById, recipesInCollection } from "@/lib/collections";
 import { goalLabel } from "@/lib/body";
-import { dietFlags, isHealthy, isComfort, isBreakfast, isDessert, isSauceLike, isHighProtein, isVegetarian, matchesDiet, type DietFlag } from "@/lib/diet";
+import { isHealthy, isComfort, isBreakfast, isDessert, isSauceLike, isHighProtein, isVegetarian, matchesDiet, type DietFlag } from "@/lib/diet";
 import { fitsGoal, strictestGoal } from "@/lib/goal-fit";
 import { t, voiceFor } from "@/lib/i18n";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
@@ -19,15 +20,16 @@ import { cuisineBar, scaleQty } from "@/lib/cuisine";
 import { scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 import { startAheadLabel } from "@/lib/ahead";
+import { passBadges } from "@/lib/badges";
 import { formatQty } from "@/lib/format";
-import { ingredientDisplay } from "@/lib/phrase-qty";
+import { ingredientDisplay, isPhraseRow, scaleStickNote } from "@/lib/phrase-qty";
 import { dotJoin, timeLabel } from "@/lib/recipe-time";
 
 import { lookupDish } from "@/lib/kitchen-ai";
 import { packLabel, RECIPES, recipeById } from "@/lib/recipes";
 import { mealsFromPantry } from "@/lib/pantry-match";
 import { recipesByCuisine, searchRecipes } from "@/lib/search";
-import { recipeAllergens, recipeSafe } from "@/lib/shield";
+import { recipeSafe } from "@/lib/shield";
 import { unlockedRecipes, useSpoonful } from "@/lib/spoonful-store";
 import type { PlannedMeal, Protein, Recipe } from "@/lib/types";
 import { isoDate } from "@/lib/fuel";
@@ -485,6 +487,7 @@ export function RecipesView({ onOpenStore }: { onOpenStore: () => void }) {
           {showBlocked ? "Hide allergy dishes" : "Show dishes your allergies hid"}
         </button>
       ) : null}
+      <LabelNote />
 
       {browsingShelves ? (
         <div className="mt-5 space-y-7">
@@ -711,8 +714,6 @@ function RecipeDetail({
   const addExtraGrocery = useSpoonful((s) => s.addExtraGrocery);
   const loved = favorites.includes(recipe.id);
   const [serves, setServes] = useState(household);
-  const flags = recipeAllergens(recipe);
-  const diets = dietFlags(recipe);
   const related = similarTo(recipe);
   const scaled = recipe.ingredients.map((ing) => ({
     ...ing,
@@ -759,17 +760,13 @@ function RecipeDetail({
         ) : null}
         <div className="mt-2 flex flex-wrap gap-1.5">
           <Badge>{packLabel(recipe.pack)}</Badge>
-          {diets.map((f) => (
-            <Badge key={f} variant="outline">
-              {f === "gluten-free" ? "GF" : f === "sugar-free" ? "SF" : f === "dairy-free" ? "DF" : f}
-            </Badge>
-          ))}
-          {flags.map((f) => (
-            <Badge key={f} variant="outline">
-              {f}
+          {passBadges(recipe).map((b) => (
+            <Badge key={b} variant="outline">
+              {b}
             </Badge>
           ))}
         </div>
+        <LabelNote />
       </div>
       <p className="mt-4 text-base leading-relaxed text-foreground/80">{recipe.description}</p>
       {recipe.source ? (
@@ -829,7 +826,16 @@ function RecipeDetail({
           variant="secondary"
           className="w-full"
           onClick={() => {
-            for (const ing of recipe.ingredients) addExtraGrocery(ing.name, ing.aisle);
+            for (const ing of recipe.ingredients) {
+              // The Shop gets what the card shows at these servings, not 1 of each.
+              const qty = scaleQty(ing.qty, serves, recipe.servings);
+              addExtraGrocery(scaleStickNote(ing.name, ing.qty, qty), ing.aisle, {
+                qty,
+                unit: ing.unit,
+                phrase: isPhraseRow(ing, true),
+                dish: recipe.name,
+              });
+            }
             toast("On the grocery list");
           }}
         >

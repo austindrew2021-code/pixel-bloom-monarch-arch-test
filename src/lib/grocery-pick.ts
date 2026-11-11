@@ -1,6 +1,7 @@
 import type { Aisle } from "./types.ts";
 import { productSearchUrl, type StoreBrand } from "./grocery-stores.ts";
 import { STAPLES, type StapleProduct } from "./grocery-staples.ts";
+import { coverNeed, pickExact, unitLabel, unitPriceOf, type MatchProduct, type PickChoice, type ShieldProfile } from "./grocery-match.ts";
 
 export type CartNeed = {
   name: string;
@@ -23,6 +24,10 @@ export type GroceryPick = {
   addUrl: string;
   why: string;
   matched: boolean;
+  /** "pick" = exact match chosen; "ask" = the cook chooses, nothing was picked. */
+  status?: "pick" | "ask";
+  /** Up to 3 labelled choices when status is "ask". */
+  choices?: { label: string; name: string; sizeLabel: string; totalCad: number }[];
 };
 
 export type StoreOption = {
@@ -39,6 +44,12 @@ export type StoreOption = {
   inStock: boolean;
   why: string;
   live: boolean;
+  /** "$12.34/kg", "$2.10/L" or "$0.40/each". */
+  unitPrice?: string;
+  /** Barcode of the exact product, for an Instacart line item later. */
+  pinnedUpc?: string;
+  /** Set on a labelled choice (status "ask"): what differs from the recipe. */
+  choiceLabel?: string;
 };
 
 const OZ_G = 28.35;
@@ -109,40 +120,18 @@ export function needEach(qty: number, unit: string): number | null {
   return null;
 }
 
-type Cover = { packs: number; totalCad: number; leftover: number };
+type Cover = { packs: number; totalCad: number; leftover: number; leftoverShare?: number; byWeight?: boolean };
 
+/**
+ * Packs of one product that cover the recipe amount, or null when that can't be
+ * confirmed. Per-kg trays use their weight (stated, or price ÷ $/kg), never
+ * "one tray covers any amount"; a "1 ea" pack with no weight can't cover a weighed amount.
+ */
 export function coverWith(product: StapleProduct, need: CartNeed, gramsPerCup?: number): Cover | null {
-  const price = product.priceCad;
-  const needG = needMassG(need.qty, need.unit, gramsPerCup);
-  const needMl = needVolumeMl(need.qty, need.unit);
-  const count = needEach(need.qty, need.unit);
-  if (product.grams && needG != null && needG > 0) {
-    const packs = Math.max(1, Math.ceil(needG / product.grams));
-    return { packs, totalCad: roundMoney(packs * price), leftover: packs * product.grams - needG };
-  }
-  if (product.ml && needMl != null && needMl > 0) {
-    const packs = Math.max(1, Math.ceil(needMl / product.ml));
-    return { packs, totalCad: roundMoney(packs * price), leftover: packs * product.ml - needMl };
-  }
-  if (product.ml && count != null) {
-    return { packs: count, totalCad: roundMoney(count * price), leftover: 0 };
-  }
-  if (product.each && count != null) {
-    const packs = Math.max(1, Math.ceil(count / product.each));
-    return { packs, totalCad: roundMoney(packs * price), leftover: packs * product.each - count };
-  }
-  // Fresh meat sold as 1 tray or per kg still covers a weighed recipe amount.
-  if (product.each && needG != null && needG > 0) {
-    return { packs: 1, totalCad: roundMoney(price), leftover: 0 };
-  }
-  // Extra-list items have no unit — one pack of the ingredient is enough.
-  if (product.grams && count != null) {
-    return { packs: 1, totalCad: roundMoney(price), leftover: 0 };
-  }
-  if (product.grams || product.ml) return null;
-  return { packs: 1, totalCad: roundMoney(price), leftover: 0 };
+  return coverNeed(product as MatchProduct, need, gramsPerCup);
 }
 
+/** Lowest total cost first; ties go to the lower unit price, then the smaller leftover. */
 export function rankEnough(
   need: CartNeed,
   products: StapleProduct[],
@@ -157,8 +146,13 @@ export function rankEnough(
     .filter((row): row is { product: StapleProduct; cover: Cover } => Boolean(row));
   scored.sort((a, b) => {
     if (a.cover.totalCad !== b.cover.totalCad) return a.cover.totalCad - b.cover.totalCad;
-    if (a.cover.packs !== b.cover.packs) return a.cover.packs - b.cover.packs;
-    return a.product.priceCad - b.product.priceCad;
+    const ua = unitPriceOf(a.product as MatchProduct);
+    const ub = unitPriceOf(b.product as MatchProduct);
+    if (ua && ub && ua.per === ub.per && ua.cad !== ub.cad) return ua.cad - ub.cad;
+    const la = a.cover.leftoverShare ?? 0;
+    const lb = b.cover.leftoverShare ?? 0;
+    if (la !== lb) return la - lb;
+    return a.cover.packs - b.cover.packs;
   });
   return scored.slice(0, Math.max(1, limit));
 }
@@ -177,29 +171,58 @@ export function parsePackageSizing(raw: string): {
   grams?: number;
   ml?: number;
   each?: number;
+  /** Shelf rate for meat and produce sold by weight. */
+  perKgCad?: number;
+  /** Store-printed unit price, normalised to $/kg, $/L or $/each. */
+  unitPrice?: { cad: number; per: "kg" | "L" | "each" };
 } {
   const text = raw.replace(/\s+/g, " ").trim();
   const [sizePart, hintPart] = text.split(",").map((s) => s.trim());
   const sizeLabel = sizePart || text;
   const unitHint = hintPart || "";
   const lower = sizeLabel.toLowerCase();
-  const perKg = /\/\s*[\d.]*\s*kg\b/.test(lower) || lower.includes("/kg");
-  const perLb = /\/\s*[\d.]*\s*lb\b/.test(lower) || lower.includes("/lb");
-  if (perKg || perLb || /^\$/.test(sizeLabel)) {
-    const per = perKg ? "per kg" : perLb ? "per lb" : sizeLabel;
-    return { sizeLabel: per, unitHint: text, each: 1 };
+  const unitPrice = parseUnitPrice(text);
+  const perKgMatch = text.toLowerCase().match(/\$\s*([\d.]+)\s*\/\s*1?\s*kg\b/);
+  const perLbMatch = text.toLowerCase().match(/\$\s*([\d.]+)\s*\/\s*1?\s*lb\b/);
+  if (/^\$/.test(sizeLabel) || (perKgMatch && !/^[\d.]+\s*(g|kg|ml|l)\b/.test(lower))) {
+    const perKgCad = perKgMatch
+      ? Number(perKgMatch[1])
+      : perLbMatch
+        ? Math.round((Number(perLbMatch[1]) / 0.4536) * 100) / 100
+        : undefined;
+    const per = perKgMatch ? "per kg" : perLbMatch ? "per lb" : sizeLabel;
+    return { sizeLabel: per, unitHint: text, perKgCad, unitPrice: perKgCad ? { cad: perKgCad, per: "kg" } : undefined };
   }
   const kg = lower.match(/^([\d.]+)\s*kg\b/);
-  if (kg) return { sizeLabel, unitHint, grams: Number(kg[1]) * 1000 };
+  if (kg) return { sizeLabel, unitHint, grams: Number(kg[1]) * 1000, unitPrice };
   const g = lower.match(/^([\d.]+)\s*g\b/);
-  if (g) return { sizeLabel, unitHint, grams: Number(g[1]) };
+  if (g) return { sizeLabel, unitHint, grams: Number(g[1]), unitPrice };
+  const lb = lower.match(/^([\d.]+)\s*lbs?\b/);
+  if (lb) return { sizeLabel, unitHint, grams: Math.round(Number(lb[1]) * 453.6), unitPrice };
   const l = lower.match(/^([\d.]+)\s*l\b/);
-  if (l) return { sizeLabel, unitHint, ml: Number(l[1]) * 1000 };
+  if (l) return { sizeLabel, unitHint, ml: Number(l[1]) * 1000, unitPrice };
   const ml = lower.match(/^([\d.]+)\s*ml\b/);
-  if (ml) return { sizeLabel, unitHint, ml: Number(ml[1]) };
+  if (ml) return { sizeLabel, unitHint, ml: Number(ml[1]), unitPrice };
   const each = lower.match(/^([\d.]+)\s*(ea|ct|count|pk|pack)\b/);
-  if (each) return { sizeLabel, unitHint, each: Math.max(1, Math.round(Number(each[1]))) };
-  return { sizeLabel, unitHint };
+  if (each) return { sizeLabel, unitHint, each: Math.max(1, Math.round(Number(each[1]))), unitPrice };
+  return { sizeLabel, unitHint, unitPrice };
+}
+
+/** "$2.17/100g", "$15.41/1kg", "$0.22/100ml", "$1.50/1ea" -> $/kg, $/L or $/each. */
+export function parseUnitPrice(text: string): { cad: number; per: "kg" | "L" | "each" } | undefined {
+  const m = text.toLowerCase().match(/\$\s*([\d.]+)\s*\/\s*([\d.]*)\s*(kg|g|ml|l|lb|ea)\b/);
+  if (!m) return undefined;
+  const cad = Number(m[1]);
+  const qty = Number(m[2] || 1) || 1;
+  const unit = m[3];
+  if (!Number.isFinite(cad) || cad <= 0) return undefined;
+  const r = (n: number) => Math.round(n * 100) / 100;
+  if (unit === "kg") return { cad: r(cad / qty), per: "kg" };
+  if (unit === "g") return { cad: r((cad / qty) * 1000), per: "kg" };
+  if (unit === "lb") return { cad: r(cad / qty / 0.4536), per: "kg" };
+  if (unit === "l") return { cad: r(cad / qty), per: "L" };
+  if (unit === "ml") return { cad: r((cad / qty) * 1000), per: "L" };
+  return { cad: r(cad / qty), per: "each" };
 }
 
 export function matchStaple(name: string) {
@@ -686,7 +709,9 @@ export function overlaySearchQuery(ingredientName: string): string {
 }
 
 /** True when the shelf name is a stand-in (plant butter, oat milk) for a real ingredient. */
-export function isOffFood(productName: string, query: string): boolean {
+export function isOffFood(productName: string, query: string, opts: { plantOk?: boolean } = {}): boolean {
+  // A vegan / plant-based line asks for exactly the plant products this check screens out.
+  if (opts.plantOk) return false;
   const q = normalizeKey(query);
   const p = normalizeKey(productName);
   const qButter = /\bbutter\b/.test(q) && !/\b(peanut|almond|cashew|seed|cocoa|apple)\b/.test(q);
@@ -702,8 +727,8 @@ export function isOffFood(productName: string, query: string): boolean {
   return false;
 }
 
-export function isRelevantProduct(productName: string, query: string): boolean {
-  if (isOffFood(productName, query)) return false;
+export function isRelevantProduct(productName: string, query: string, opts: { plantOk?: boolean } = {}): boolean {
+  if (isOffFood(productName, query, opts)) return false;
   const need = requiredStems(query);
   if (need.length === 0) return true;
   const hay = productStems(productName);
@@ -711,6 +736,7 @@ export function isRelevantProduct(productName: string, query: string): boolean {
   const queryGroups = preparedGroups(query);
   const productGroups = preparedGroups(productName);
   for (const group of productGroups) {
+    if (opts.plantOk && group === "plant") continue;
     if (!queryGroups.has(group)) return false;
   }
   if (!headsMatch(productName, query)) return false;
@@ -827,17 +853,29 @@ function hasOtherFood(productName: string, query: string): boolean {
 export function matchCart(
   store: { brand: StoreBrand; name: string },
   lines: CartNeed[],
+  profile?: ShieldProfile,
 ): { items: GroceryPick[]; totalCad: number } {
-  const items = lines.filter((line) => !line.fromPantry).map((line) => pickForLine(store, line));
+  const items = lines.filter((line) => !line.fromPantry).map((line) => pickForLine(store, line, profile));
   const totalCad = roundMoney(items.reduce((sum, i) => sum + i.pickCad, 0));
   return { items, totalCad };
 }
 
-export function pickForLine(store: { brand: StoreBrand; name: string }, line: CartNeed): GroceryPick {
-  const ranked = catalogRanked(store, line, 1);
-  const top = ranked[0];
+/** Catalog pick: the same exact-match rules as the live store search. */
+export function pickForLine(
+  store: { brand: StoreBrand; name: string },
+  line: CartNeed,
+  profile?: ShieldProfile,
+): GroceryPick {
+  const result = catalogPick(store, line, profile);
+  const top = result.pick;
   if (!top) {
-    const query = line.name;
+    const query = overlaySearchQuery(line.name) || line.name;
+    const choices = result.choices.map((c) => ({
+      label: c.label,
+      name: c.product.name,
+      sizeLabel: c.product.sizeLabel,
+      totalCad: c.cover.totalCad,
+    }));
     return {
       name: line.name,
       qty: line.qty,
@@ -849,8 +887,12 @@ export function pickForLine(store: { brand: StoreBrand; name: string }, line: Ca
       packs: 1,
       pickCad: 0,
       addUrl: productSearchUrl(store, query),
-      why: "No listed size yet. Store search is this name — pick a pack that covers the meal.",
+      why: choices.length
+        ? `${result.reason} ${choices.map((c) => c.label).join(" ")}`
+        : `${result.reason} Tap View options to see this store's live choices.`,
       matched: false,
+      status: "ask",
+      choices,
     };
   }
   const { product, cover } = top;
@@ -866,8 +908,9 @@ export function pickForLine(store: { brand: StoreBrand; name: string }, line: Ca
     packs: cover.packs,
     pickCad: cover.totalCad,
     addUrl: product.url || productSearchUrl(store, query),
-    why: whyLine(line, product, cover),
+    why: result.reason,
     matched: true,
+    status: "pick",
   };
 }
 
@@ -875,14 +918,28 @@ export function catalogOptions(
   store: { brand: StoreBrand; name: string },
   line: CartNeed,
   limit = 5,
+  profile?: ShieldProfile,
 ): StoreOption[] {
-  return catalogRanked(store, line, limit).map((row, index) => optionFromRank(store, line, row, index, false));
+  const result = catalogPick(store, line, profile);
+  if (result.status === "pick") {
+    return result.ranked.slice(0, limit).map((row, index) => optionFromRank(store, line, row, index, false, index === 0 ? result.reason : undefined));
+  }
+  return [];
 }
 
-function catalogRanked(store: { brand: StoreBrand; name: string }, line: CartNeed, limit: number) {
+export function catalogChoices(
+  store: { brand: StoreBrand; name: string },
+  line: CartNeed,
+  profile?: ShieldProfile,
+): StoreOption[] {
+  const result = catalogPick(store, line, profile);
+  return result.choices.map((c, index) => choiceOption(store, line, c, index, false));
+}
+
+export function catalogPick(store: { brand: StoreBrand; name: string }, line: CartNeed, profile?: ShieldProfile) {
   const staple = matchStaple(line.name);
-  const products = staple?.products.filter((p) => p.brand === store.brand) ?? [];
-  return rankEnough(line, products, staple?.gramsPerCup, limit);
+  const products = (staple?.products.filter((p) => p.brand === store.brand) ?? []) as MatchProduct[];
+  return pickExact({ line, products, profile, gramsPerCup: staple?.gramsPerCup });
 }
 
 export function optionFromRank(
@@ -891,9 +948,12 @@ export function optionFromRank(
   row: { product: StapleProduct; cover: Cover },
   index: number,
   live: boolean,
+  reason?: string,
 ): StoreOption {
   const { product, cover } = row;
   const brandLabel = product.name.split(" ")[0] ?? "";
+  const unit = unitPriceOf(product as MatchProduct);
+  const gtin = (product as MatchProduct).gtin;
   return {
     id: product.productId || `${product.name}:${product.sizeLabel}:${index}`,
     name: product.name,
@@ -906,17 +966,32 @@ export function optionFromRank(
     imageUrl: product.imageUrl || "",
     addUrl: product.url || productSearchUrl(store, `${product.name} ${product.sizeLabel}`.trim()),
     inStock: product.inStock !== false,
-    why: index === 0 ? whyLine(line, product, cover) : `${cover.packs}× ${product.sizeLabel} covers the meal.`,
+    why: reason ?? (index === 0 ? whyLine(line, product, cover) : `Exact match. ${cover.packs}× ${product.sizeLabel}${unit ? ` · ${unitLabel(unit)}` : ""} covers the meal.`),
     live,
+    unitPrice: unit ? unitLabel(unit) : undefined,
+    pinnedUpc: gtin ? gtin : undefined,
   };
+}
+
+export function choiceOption(
+  store: { brand: StoreBrand; name: string },
+  line: CartNeed,
+  choice: PickChoice,
+  index: number,
+  live: boolean,
+): StoreOption {
+  const base = optionFromRank(store, line, choice, index, live, choice.label);
+  return { ...base, choiceLabel: choice.differs.join("; ") || "closest match" };
 }
 
 function whyLine(need: CartNeed, product: StapleProduct, cover: Cover): string {
   const meal = [need.qty, need.unit].filter(Boolean).join(" ").trim() || "the meal";
+  const unit = unitPriceOf(product as MatchProduct);
+  const u = unit ? ` (${unitLabel(unit)})` : "";
   if (cover.packs === 1) {
-    return `Cheapest ${product.sizeLabel} that covers ${meal}.`;
+    return `Cheapest exact match: ${product.sizeLabel}${u} covers ${meal}.`;
   }
-  return `${cover.packs}× ${product.sizeLabel} — cheapest way to cover ${meal}.`;
+  return `${cover.packs}× ${product.sizeLabel}${u} — cheapest exact way to cover ${meal}.`;
 }
 
 function roundMoney(n: number): number {

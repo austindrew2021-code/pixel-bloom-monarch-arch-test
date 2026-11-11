@@ -62,9 +62,10 @@ export type AddonId =
   | "team-kitchen"
   | "sos-3";
 
-export type PrefId = "vegetarian" | "pescatarian" | "vegan" | "gluten-free" | "sugar-free" | "quick" | "budget";
+/** "no-organic" is a grocery setting: the store picker never picks organic. Recipes ignore it. */
+export type PrefId = "vegetarian" | "pescatarian" | "vegan" | "gluten-free" | "sugar-free" | "quick" | "budget" | "no-organic";
 
-export type AllergyId = "gluten" | "dairy" | "nuts" | "shellfish" | "spicy";
+export type AllergyId = "gluten" | "dairy" | "nuts" | "shellfish" | "spicy" | "egg" | "soy" | "sesame" | "fish";
 
 export type MealSlotKind = "breakfast" | "lunch" | "dinner";
 
@@ -149,6 +150,12 @@ export type ExtraGroceryItem = {
   name: string;
   aisle: Aisle;
   weekStart: string;
+  /** Amount from a recipe at the servings shown when it was added (never 0; absent reads as 1). */
+  qty?: number;
+  unit?: string;
+  /** Name carries the printed amount; qty is the multiplier. */
+  phrase?: boolean;
+  dish?: string;
 };
 
 export type Addon = {

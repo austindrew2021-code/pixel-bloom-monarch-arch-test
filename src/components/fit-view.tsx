@@ -1,4 +1,5 @@
 import { Dumbbell, Droplets, Flame, Footprints, HeartPulse, Plus, Trash2 } from "lucide-react";
+import { LabelNote } from "@/components/label-note";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DeviceSyncCard } from "@/components/device-sync-card";
@@ -51,6 +52,8 @@ import { sessionVolumeKg } from "@/lib/lift";
 import { expectedWorkoutsForDate } from "@/lib/program";
 import { rankProgress } from "@/lib/ranks";
 import { SNACKS } from "@/lib/shield";
+import { passBadges } from "@/lib/badges";
+import { Badge } from "@/components/ui/badge";
 import {
   nutritionForDate,
   recipeAllowed,
@@ -772,6 +775,7 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
           <div>
             <h2 className="font-display text-2xl">Fuel me</h2>
             <p className="mt-1 text-sm text-muted-foreground">Ranked for remaining calories and protein after that work{synced && health ? " and tonight’s recovery" : ""}.</p>
+            <LabelNote />
           </div>
           <Flame className="size-5 text-spark" />
         </div>
@@ -791,6 +795,13 @@ export function FitView({ onOpenStore }: { onOpenStore?: () => void }) {
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{hit.recipe.name}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{hit.why}</p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {passBadges(hit.recipe).map((b) => (
+                      <Badge key={b} variant="outline">
+                        {b}
+                      </Badge>
+                    ))}
+                  </div>
                   <p className="mt-1 text-xs tabular-nums text-muted-foreground">
                     {hit.recipe.nutrition.protein}g protein · {hit.recipe.nutrition.cal} kcal · {formatMinutes(hit.recipe.minutes)}
                   </p>

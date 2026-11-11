@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { LabelNote } from "@/components/label-note";
 import { KitchenHero } from "@/components/kitchen-hero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -279,6 +280,7 @@ export function Onboarding() {
       <section className="mt-8">
         <h2 className="text-base font-medium">Allergies to skip</h2>
         <p className="mt-1 text-sm text-muted-foreground">We'll hide recipes that use these.</p>
+        <LabelNote />
         <div className="mt-3 grid grid-cols-2 gap-2">
           {ALLERGIES.map((a) => {
             const on = allergies.includes(a.id);

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { LabelNote } from "@/components/label-note";
 import { toast } from "sonner";
 import { CookView } from "@/components/cook-view";
 import { MealPhoto } from "@/components/meal-photo";
@@ -7,14 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cuisineBar, scaleQty } from "@/lib/cuisine";
+import { passBadges } from "@/lib/badges";
 import { formatQty } from "@/lib/format";
+import { ingredientDisplay } from "@/lib/phrase-qty";
 import { dotJoin, timeLabel } from "@/lib/recipe-time";
 import { scaleMethodSteps } from "@/lib/cook-steps";
 import { isCatalogFinal } from "@/lib/catalog-final";
 import { RECIPES } from "@/lib/recipes";
 import { SAUCE_MENUS, isSauceRecipe, saucesIn, type SauceMenuId } from "@/lib/sauce-menu";
 import { searchRecipes } from "@/lib/search";
-import { recipeAllergens, recipeSafe } from "@/lib/shield";
+import { Badge } from "@/components/ui/badge";
+import { recipeSafe } from "@/lib/shield";
 import { useSpoonful } from "@/lib/spoonful-store";
 import { mondayOf } from "@/lib/week";
 import type { PlannedMeal, Recipe } from "@/lib/types";
@@ -91,7 +95,8 @@ export function SaucesView() {
         ))}
       </div>
 
-      <ul className="mt-5 space-y-3">
+      <LabelNote className="mt-4" />
+      <ul className="mt-3 space-y-3">
         {list.map((recipe) => (
           <li key={recipe.id}>
             <RecipeCard recipe={recipe} locked={false} nutritionOn onOpen={() => setActive(recipe)} />
@@ -106,18 +111,25 @@ export function SaucesView() {
               <MealPhoto recipe={active} className="h-44 rounded-2xl" />
               <div className={cn("mt-4 h-2 w-16 rounded-full", cuisineBar(active.cuisine))} />
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{active.description}</p>
-              {recipeAllergens(active).length > 0 ? (
-                <p className="mt-2 text-xs text-muted-foreground">Contains: {recipeAllergens(active).join(", ")}</p>
-              ) : null}
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {passBadges(active).map((b) => (
+                  <Badge key={b} variant="outline">
+                    {b}
+                  </Badge>
+                ))}
+              </div>
+              <LabelNote />
               <p className="mt-3 text-sm tabular-nums">
                 {dotJoin(timeLabel(active), `${active.nutrition.cal} kcal / serving`)}
               </p>
               <ul className="mt-4 space-y-1 text-sm">
                 {active.ingredients.map((ing, i) => (
                   <li key={`${ing.name}-${i}`} className="flex justify-between gap-3">
-                    <span className="min-w-0">{ing.name}</span>
+                    <span className="min-w-0">
+                      {ingredientDisplay(ing, scaleQty(ing.qty, household, active.servings), formatQty, true).name}
+                    </span>
                     <span className="shrink-0 tabular-nums text-muted-foreground">
-                      {formatQty(scaleQty(ing.qty, household, active.servings), ing.unit)}
+                      {ingredientDisplay(ing, scaleQty(ing.qty, household, active.servings), formatQty, true).qty}
                     </span>
                   </li>
                 ))}

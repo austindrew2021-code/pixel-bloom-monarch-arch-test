@@ -4,8 +4,14 @@ import { IA4_DOUBT_DAIRY, IA4_DOUBT_GLUTEN, IA4_DOUBT_NUTS, IA4_DOUBT_SHELLFISH,
 import { APPWIDE_XREF_DAIRY, APPWIDE_XREF_GLUTEN, APPWIDE_XREF_NUTS, APPWIDE_XREF_SHELLFISH, APPWIDE_XREF_SPICY, appwideBought } from "./appwide-doubt.ts";
 import { OB_DOUBT_DAIRY, OB_DOUBT_GLUTEN, OB_DOUBT_NUTS, OB_DOUBT_SHELLFISH, OB_DOUBT_SPICY } from "./ob-oldbooks-doubt.ts";
 import { SO_DOUBT_DAIRY, SO_DOUBT_GLUTEN, SO_DOUBT_NUTS, SO_DOUBT_SHELLFISH, SO_DOUBT_SPICY } from "./so-southern-doubt.ts";
+import { shield4TermFails, type Shield4Id } from "./shields4.ts";
+import { SHIELD4_BOUGHT_ALL, XREF4_EGG, XREF4_FISH, XREF4_SESAME, XREF4_SOY } from "./shields4-doubt.ts";
+import { SHIELD4_HANDREVIEW_FAIL } from "./shields4-handreview.ts";
+import { XREF4_INHERITED, XREF_OLD_INHERITED } from "./shields4-xref.ts";
 import type { AllergyId, Nutrition, PlannedMeal, Protein, Recipe } from "./types";
 import { withDietScreen } from "./catalog-final.ts";
+import { failsInDoubt, notMild } from "./safety-doubt.ts";
+import { withoutLookalikes } from "./lookalikes.ts";
 
 export const ALLERGIES: { id: AllergyId; label: string; hint: string }[] = [
   { id: "gluten", label: "Gluten", hint: "Wheat, pasta, bread" },
@@ -13,13 +19,21 @@ export const ALLERGIES: { id: AllergyId; label: string; hint: string }[] = [
   { id: "nuts", label: "Nuts", hint: "Peanut to pecan" },
   { id: "shellfish", label: "Shellfish", hint: "Shrimp, crab, mussels" },
   { id: "spicy", label: "Spicy", hint: "Chili, cayenne, hot sauce" },
+  { id: "egg", label: "Egg", hint: "Eggs, mayo, custard, baked goods" },
+  { id: "soy", label: "Soy", hint: "Soy sauce, tofu, miso, lecithin" },
+  { id: "sesame", label: "Sesame", hint: "Seeds, oil, tahini, hummus" },
+  { id: "fish", label: "Fish", hint: "Fish, anchovy, fish sauce, roe" },
 ];
 
-const PATTERNS: Record<AllergyId, RegExp> = {
+/** The four strict shields (egg, soy, sesame, fish): printed terms, bought bases and cross-references (shields4.ts). */
+const SHIELD4_XREF: Record<Shield4Id, ReadonlySet<string>> = { egg: XREF4_EGG, soy: XREF4_SOY, sesame: XREF4_SESAME, fish: XREF4_FISH };
+const isShield4 = (id: AllergyId): id is Shield4Id => id === "egg" || id === "soy" || id === "sesame" || id === "fish";
+
+const PATTERNS: Record<Exclude<AllergyId, Shield4Id>, RegExp> = {
   // pastry, bulgur, biscuit and semolina were missing, which is how a tourtière
   // and a baked kibbeh came to sit behind a gluten-free filter.
   gluten:
-    /flour|pasta|spaghetti|penne|macaroni|lasagna|noodle|ramen|udon|bread|breadcrumb|panko|tortilla|wheat|bun|bagel|naan|pita|dumpling|couscous|orzo|soy sauce|pie crust|pastry|puff pastry|phyllo|filo|dough|cracker|seitan|barley|bulgur|semolina|rye|farro|spelt|wraps?|crouton|biscuit|cake flour|pretzel/i,
+    /flour|pasta|spaghetti|penne|macaroni|lasagna|noodle|ramen|udon|bread|breadcrumb|panko|tortilla|wheat|bun|bagel|naan|pita|dumpling|couscous|orzo|soy sauce|pie crust|pastry|puff pastry|phyllo|filo|dough|cracker|seitan|barley|bulgur|semolina|\brye\b|farro|spelt|wraps?|crouton|biscuit|cake flour|pretzel/i,
   dairy:
     /milk|butter|cream|cheese|parmesan|mozzarella|cheddar|yogurt|yoghurt|ricotta|feta|halloumi|paneer|sour cream|mascarpone|whey|ghee|brie|ice cream/i,
   nuts: /peanut|almond|walnut|pecan|cashew|pistachio|hazelnut|macadamia|pine nut/i,
@@ -270,9 +284,9 @@ const NUT_STEP = new RegExp(
 );
 
 const SHELLFISH_FREE = /\bshellfish[- ]free\b|\bshrimp[- ]free\b|\b(?:vegan|vegetarian)\b|\b(?:no|without) (?:shrimp|shellfish)\b/i;
-const SHELLFISH_INGREDIENT =
+export const SHELLFISH_INGREDIENT =
   /(?<!\b(?:imitation|vegan|mock) )\b(?:langoustines?|langostinos?|scampi|squid|calamari|octopus|cuttlefish|cockles?|whelks?|abalone|conch|periwinkles?|sea urchins?|krill|crawdads?|[ée]crevisses?|frutti di mare|shellfish|quahogs?|geoducks?|xo sauce|razor clams?)\b|\bcurry paste\b|\b(?:massaman|panang|penang|laksa|khao soi|rendang|tom yum) paste\b|\b(?:kimchi|kimchee)\b/i;
-const SHELLFISH_STEP = new RegExp(
+export const SHELLFISH_STEP = new RegExp(
   String.raw`(?<!\b(?:imitation|vegan|mock) )\b(?:shrimps?|prawns?|crab ?meat|crabs?|lobsters?|clams?|mussels?|scallops?|oysters?|crawfish|crayfish|squid|calamari|octopus|shellfish)\b` +
     String.raw`(?![- ](?:sized|shaped|mushrooms?|sauce|plant|crackers|apples?|shell)\b)`,
   "i",
@@ -616,7 +630,25 @@ export const HTCF_XREF_FAILS: Record<string, HtcfTag[]> = {
 /** True when an HTCF recipe fails `tag` through a cross-reference or an explicit block. */
 export function htcfInheritedFail(recipe: Recipe, tag: HtcfTag): boolean {
   if (!recipe.id.startsWith("htcf-")) return false;
-  return (HTCF_BLOCK_BY_ID[recipe.id] ?? []).includes(tag) || (HTCF_XREF_FAILS[recipe.id] ?? []).includes(tag);
+  return (HTCF_BLOCK_BY_ID[recipe.id] ?? []).includes(tag) || (HTCF_XREF_FAILS[recipe.id] ?? []).includes(tag) || xrefDoubt(recipe.id, tag, new Set());
+}
+
+// Nov 2: a cross-reference also fails what the hand review took from its base (safety-doubt.ts).
+const HTCF_DOUBT_TAGS: Record<HtcfTag, string[]> = {
+  gluten: ["shield-gluten", "gluten-free"], dairy: ["shield-dairy", "dairy-free"], nuts: ["shield-nuts"],
+  shellfish: ["shield-shellfish"], spicy: ["shield-spicy"], sugar: ["sugar-free"], meat: [],
+  // The four Nov 7 shields read their own cross-reference table (shields4-doubt.ts).
+  egg: [], soy: [], sesame: [], fish: [],
+};
+function xrefDoubt(id: string, tag: HtcfTag, seen: Set<string>): boolean {
+  if (seen.has(id)) return false;
+  seen.add(id);
+  for (const t of HTCF_XREF[id] ?? []) {
+    if (HTCF_DOUBT_TAGS[tag].some((d) => failsInDoubt(t, d))) return true;
+    if ((HTCF_XREF_FAILS[t] ?? []).includes(tag) || (HTCF_BLOCK_BY_ID[t] ?? []).includes(tag)) return true;
+    if (xrefDoubt(t, tag, seen)) return true;
+  }
+  return false;
 }
 
 const HTCF_SHELLFISH_BY_ID = new Set(["htcf-1024"]); // "the sauce given for Baked Trout with Mushroom Sauce" (oyster liquor, oysters, shrimps)
@@ -705,7 +737,6 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   // not rice milk.
   const blobOf = (r: Recipe) => [r.name, ...r.tags, ...r.ingredients.map((i) => i.name)].join(" | ");
   const blob = blobOf(recipe);
-  const gv = glutenView(gfPrintedRowRelease(recipe));
   // 365 Desserts: where the printed text leaves an allergen in doubt, it counts as present.
   const doubt: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: DS365_DOUBT_GLUTEN, dairy: DS365_DOUBT_DAIRY, nuts: DS365_DOUBT_NUTS };
   // Southern Cook Book (1935): same rule (bought/unspecified base or cross-reference fails every tag).
@@ -719,10 +750,33 @@ export function recipeAllergens(input: Recipe): AllergyId[] {
   // App-wide bought-product pack (Nov 2): a printed bought row fails every allergen; a same-book cross-reference fails what its base fails.
   const awXref: Partial<Record<AllergyId, ReadonlySet<string>>> = { gluten: APPWIDE_XREF_GLUTEN, dairy: APPWIDE_XREF_DAIRY, nuts: APPWIDE_XREF_NUTS, shellfish: APPWIDE_XREF_SHELLFISH, spicy: APPWIDE_XREF_SPICY };
   const awBought = appwideBought(input);
+  // Nov 2: gluten and dairy read the rows through the same lookalike list as the
+  // badges (lookalikes.ts), so "coconut milk" is not dairy here either.
+  const clean = { ...recipe, ingredients: recipe.ingredients.map((i) => ({ ...i, name: withoutLookalikes(i.name), raw: (i as { raw?: string }).raw ?? i.name })) };
+  const gvClean = glutenView(gfPrintedRowRelease(clean));
+  let termFails: ReadonlySet<Shield4Id> | undefined;
   return ALLERGIES.map((a) => a.id).filter((id) => {
+    if (isShield4(id))
+      return (
+        awBought ||
+        SHIELD4_BOUGHT_ALL.has(input.id) ||
+        SHIELD4_XREF[id].has(input.id) ||
+        // Nov 7: Line's hand review of fd5a4de7 (shields4-handreview.ts), and every HTCF / Hill / Crisco / same-book
+        // cross-reference inherits its base's new-shield failures (shields4-xref.ts), same rule as the 7 old tags.
+        (SHIELD4_HANDREVIEW_FAIL[input.id]?.includes(id) ?? false) ||
+        failsInDoubt(input.id, `shield-${id}`) ||
+        (XREF4_INHERITED[input.id]?.includes(id) ?? false) ||
+        (termFails ??= shield4TermFails(recipe)).has(id)
+      );
+    // One gate with the badges: Line's hand-review losses and the no-gain pins (safety-doubt.ts).
+    if (failsInDoubt(input.id, `shield-${id}`)) return true;
+    // Nov 7 r4 (Line 03B5 #3): every book's cross-reference inherits its base's older-shield failures (shields4-xref.ts).
+    if (XREF_OLD_INHERITED[input.id]?.includes(`shield-${id}`)) return true;
+    // Mild fails in doubt on any heat word, the title included (Nov 2).
+    if (id === "spicy" && (notMild(input) || notMild(recipe))) return true;
     if (doubt[id]?.has(input.id) || soDoubt[id]?.has(input.id) || obDoubt[id]?.has(input.id) || pbDoubt[id]?.has(input.id) || ia4Doubt[id]?.has(input.id) || awBought || awXref[id]?.has(input.id)) return true;
-    const r = id === "gluten" ? gv : recipe;
-    return PATTERNS[id].test(id === "gluten" ? blobOf(gv) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);
+    const r = id === "gluten" ? gvClean : id === "dairy" ? clean : recipe;
+    return PATTERNS[id].test(id === "gluten" ? blobOf(gvClean) : id === "dairy" ? blobOf(clean) : blob) || (BEYOND_NAMES[id]?.(r) ?? false);
   });
 }
 

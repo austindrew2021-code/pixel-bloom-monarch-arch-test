@@ -4,6 +4,7 @@ import { isDairyFree, isGlutenFree, isPescatarian, isSugarFree, isVegan, isVeget
 import { type HtcfTag, HTCF_ALL_TAGS, HTCF_BLOCK_BY_ID, HTCF_XREF, HTCF_XREF_FAILS, htcfInheritedFail, mealSavings, plateCost, recipeAllergens, recipeSafe, takeoutCost } from "./shield.ts";
 import { HOW_TO_COOK_FISH_RECIPES } from "./catalog-how-to-cook-fish.ts";
 import { RECIPES } from "./recipes.ts";
+import { failsInDoubt } from "./safety-doubt.ts";
 import { DS365_XREF } from "./ds-365-doubt.ts";
 import type { AllergyId, Protein, Recipe } from "./types.ts";
 
@@ -139,13 +140,34 @@ test("spicy: curry pastes, Tabasco, Korean chili, Cajun, peri-peri, horseradish 
   assert.ok(has(withRows(["fish"], ["Serve cold with horseradish."]), "spicy"));
 });
 
-test("spicy: bell peppers, sweet paprika, pimiento, serrano ham and mild curry stay as they were", () => {
-  for (const row of ["red pepper", "red bell pepper", "roasted red peppers", "sweet paprika", "smoked paprika", "paprika", "pimiento", "serrano ham", "Japanese curry roux", "curry powder", "white kimchi", "Dijon mustard", "fresh ginger"]) {
+test("spicy: bell peppers, sweet paprika, pimiento and serrano ham stay mild", () => {
+  for (const row of ["red bell pepper", "green pepper", "sweet paprika", "smoked paprika", "paprika", "pimiento", "serrano ham", "white kimchi", "Dijon mustard", "fresh ginger"]) {
     assert.equal(has(withRows([row]), "spicy"), false, row);
   }
-  assert.equal(has(withRows([["red pepper", "tbsp"]]), "spicy"), false, "a tablespoon of red pepper is chopped pepper");
-  for (const step of ["Add the sliced red pepper.", "Serve with hot sauce.", "Chill well.", "Sprinkle with sweet paprika."]) {
+  for (const step of ["Chill well.", "Sprinkle with sweet paprika.", "Add the sliced red bell pepper."]) {
     assert.equal(has(withRows(["salt"], [step]), "spicy"), false, step);
+  }
+});
+
+// Nov 2 (item 2): Mild fails in doubt. Curry in any form, red pepper by any unit, hot sauce
+// and the title all count. These used to stay mild (the old :142 test).
+test("spicy: curry roux, curry powder, red pepper by any unit, hot sauce and the title fail Mild", () => {
+  for (const row of ["red pepper", "roasted red peppers", "Japanese curry roux", "curry powder", "chiles", "cayenne"]) {
+    assert.ok(has(withRows([row]), "spicy"), row);
+  }
+  assert.ok(has(withRows([["red pepper", "tbsp"]]), "spicy"), "red pepper by any unit fails in doubt");
+  for (const step of ["Add the sliced red pepper.", "Serve with hot sauce."]) {
+    assert.ok(has(withRows(["salt"], [step]), "spicy"), step);
+  }
+  assert.ok(has({ ...withRows(["chicken", "rice"]), name: "Pepper Pot" }, "spicy"), "the title counts");
+  assert.ok(has({ ...withRows(["beef", "onion"]), name: "India Beef Curry" }, "spicy"), "the title counts");
+});
+
+test("spicy: the named curries and kleber-0034 fail Mild in the catalog", () => {
+  for (const id of ["jp-katsu-curry", "fd-oct-29-india-beef-curry", "pk-curry", "hill-0286", "kleber-0034"]) {
+    const r = RECIPES.find((x) => x.id === id);
+    assert.ok(r, id);
+    assert.ok(recipeAllergens(r!).includes("spicy"), id);
   }
 });
 
@@ -346,7 +368,9 @@ test("description: pita, sandwiches and bread are serve-withs, rows and steps st
 
 test("crisco: a row that is the book's own gluten-free dressing or marinade title is exempt; elsewhere it is not", () => {
   for (const row of ["Italian Dressing", "Mild Garlic Marinade", "Green Goddess Salad Dressing", "Fruit Salad Dressing or Poppy Seed Fruit Salad Dressing"]) {
-    assert.equal(gf({ ...withRows(["lettuce", row]), id: "cris-031" }), true, `${row} (cris) passes`);
+    // Nov 2: cris-031 itself is a hand-review loss (cross-reference); the exemption is tested on cris-002.
+    assert.equal(gf({ ...withRows(["lettuce", row]), id: "cris-002" }), true, `${row} (cris) passes`);
+    assert.equal(gf({ ...withRows(["lettuce", row]), id: "cris-031" }), false, `${row} cris-031 hand-review loss`);
     assert.equal(gf({ ...withRows(["lettuce", row]), id: "pta-154" }), false, `${row} elsewhere still fails`);
   }
   assert.equal(gf({ ...withRows(["lettuce", "Italian Dressing", "croutons"]), id: "cris-031" }), false);
@@ -417,7 +441,8 @@ test("htcf-0180 (Codfish a la Bechamel, made like Creamed Codfish) fails gluten 
   const r = { ...htcf(["codfish", "white stock", "milk"], "htcf-0180") };
   assert.equal(glutenSafe(r), false);
   assert.equal(dairySafe(r), false);
-  assert.equal(glutenSafe({ ...r, id: "htcf-0176" }), true);
+  // Nov 2: htcf-0176 is a hand-review gluten loss; the by-id check is tested on htcf-0170.
+  assert.equal(glutenSafe({ ...r, id: "htcf-0170" }), true);
 });
 
 test("htcf: restored cooked meat / beef stock rows fail pescatarian; shellfish meat does not", () => {
@@ -445,7 +470,10 @@ test("htcf: a catsup / ketchup row fails sugar-free (store catsup has added suga
 const HTCF_BY_ID_EARLY = new Map(HOW_TO_COOK_FISH_RECIPES.map((r) => [r.id, r]));
 test("allergens-small: printed-row GF releases pass both ways; held ids and filter-follows-shield ids fail", () => {
   const byId = new Map(RECIPES.map((r) => [r.id, r]));
-  for (const id of ["md-chickpea-stew", "wn-white-bean-skillet", "bint-057"]) {
+  // Nov 2: md-chickpea-stew is a hand-review gluten loss and now fails both ways.
+  assert.equal(isGlutenFree(byId.get("md-chickpea-stew")!), false);
+  assert.equal(recipeSafe(byId.get("md-chickpea-stew")!, ["gluten"]), false);
+  for (const id of ["wn-white-bean-skillet", "bint-057"].filter((x) => !failsInDoubt(x, "gluten-free"))) {
     const r = byId.get(id)!;
     const blocked = (x: Recipe) => !isGlutenFree(x) && !recipeSafe(x, ["gluten"]);
     assert.equal(isGlutenFree(r), true, `${id} filter`);
@@ -468,6 +496,7 @@ test("allergens-small: printed-row GF releases pass both ways; held ids and filt
 /* ---- Oct 23: HTCF "according to directions (given) for X" inherits X's failures (Line 2ed6 audit) ---- */
 const HTCF_BY_ID = new Map(HOW_TO_COOK_FISH_RECIPES.map((r) => [r.id, r]));
 const ownFails = (r: Recipe) => {
+  // Nov 7 r3: every shield, the four new ones included (Line fd5a4de7: the cross-reference check covers them again).
   const a = new Set<string>(recipeAllergens(r));
   if (!isGlutenFree(r)) a.add("gluten");
   if (!isDairyFree(r)) a.add("dairy");
@@ -492,7 +521,12 @@ test("htcf xref: the inherited failures are the fixed point of the targets' fail
     const want = new Set<string>();
     if (t === null) HTCF_ALL_TAGS.forEach((x) => want.add(x));
     else for (const tid of t) ownFails(HTCF_BY_ID.get(tid)!).forEach((x) => want.add(x));
-    assert.deepEqual([...(HTCF_XREF_FAILS[id] ?? [])].sort(), [...want].sort(), id);
+    // Nov 2: the hand-review losses on a base carry to its cross-references (htcfInheritedFail).
+    const r = HTCF_BY_ID.get(id)!;
+    const got = HTCF_ALL_TAGS.filter((x) => htcfInheritedFail(r, x));
+    for (const x of HTCF_XREF_FAILS[id] ?? []) assert.ok(got.includes(x), `${id} keeps ${x}`);
+    // Nov 7 r3: no tag is skipped (spicy and meat restored; egg/soy/sesame/fish read through recipeAllergens).
+    for (const x of want) assert.ok(got.includes(x as HtcfTag) || ownFails(r).has(x as HtcfTag), `${id} inherits ${x}`);
   }
   assert.deepEqual(Object.keys(HTCF_XREF_FAILS).filter((id) => !(id in HTCF_XREF)), []);
 });
@@ -509,7 +543,7 @@ test("htcf xref: Line's 12 cross-reference ids and the plate's blocks fail; 0209
   for (const id of ["htcf-0209", "htcf-0457"]) {
     const r = HTCF_BY_ID.get(id)!;
     assert.equal(HTCF_XREF[id], null);
-    assert.deepEqual(recipeAllergens(r).sort(), ["dairy", "gluten", "nuts", "shellfish", "spicy"]);
+    assert.deepEqual(recipeAllergens(r).sort(), ["dairy", "egg", "fish", "gluten", "nuts", "sesame", "shellfish", "soy", "spicy"]);
     assert.equal(isSugarFree(r), false);
     assert.equal(isPescatarian(r), false);
   }

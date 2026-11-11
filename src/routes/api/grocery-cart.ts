@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { pcxBannerFor } from "@/lib/grocery-pcx-banner.ts";
 import { addPcxCartEntries, createPcxCart, getPcxCart, resolvePcxStoreId } from "@/lib/grocery-pcx.server";
+import { cartOwnerToken, cartSigningReady, isShopperId, ownsCart } from "@/lib/grocery-owner.server";
 import { isPcxCartId, pcxProductId } from "@/lib/grocery-stores.ts";
 
 export const Route = createFileRoute("/api/grocery-cart")({
@@ -14,10 +15,17 @@ export const Route = createFileRoute("/api/grocery-cart")({
             storeName?: string;
             storeId?: string;
             cartId?: string;
+            cartToken?: string;
+            shopper?: string;
             lat?: number;
             lon?: number;
             items?: { id?: string; packs?: number }[];
           };
+          // Every cart belongs to one shopper: no shopper id, no cart.
+          const shopper = body.shopper;
+          if (!isShopperId(shopper)) return Response.json({ ok: false, error: "shopper" });
+          // No cart signing secret on the server: no carts at all (fail closed).
+          if (!cartSigningReady()) return Response.json({ ok: false, error: "cart-disabled" });
           const store = {
             brand: (body.brand === "independent" || body.brand === "sobeys" || body.brand === "walmart"
               ? body.brand
@@ -33,10 +41,14 @@ export const Route = createFileRoute("/api/grocery-cart")({
           const action = String(body.action ?? "");
           if (action === "create") {
             const cartId = await createPcxCart({ banner, storeId });
-            return Response.json({ ok: Boolean(cartId), cartId, storeId });
+            const cartToken = cartId ? cartOwnerToken(shopper, cartId) : null;
+            if (!cartId || !cartToken) return Response.json({ ok: false, error: "cart" });
+            return Response.json({ ok: true, cartId, cartToken, storeId });
           }
           const cartId = String(body.cartId ?? "");
           if (!isPcxCartId(cartId)) return Response.json({ ok: false, error: "cart" });
+          // Owner check: the cart id alone is not enough to read or add.
+          if (!ownsCart(shopper, cartId, body.cartToken)) return Response.json({ ok: false, error: "owner" });
           if (action === "get") {
             const lines = await getPcxCart({ banner, cartId });
             return Response.json({ ok: Boolean(lines), cartId, lines: lines ?? [] });
