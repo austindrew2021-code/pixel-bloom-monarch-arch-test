@@ -32,7 +32,7 @@ export function giftUntilFrom(todayIso: string, days = 30): string {
   return dt.toISOString().slice(0, 10);
 }
 
-export function interacMemo(kind: string, testerKey: string): string {
+export function interacMemo(kind: string): string {
   const k = kind.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toUpperCase();
-  return `SPOONFUL ${k} ${testerKey}`;
+  return `SPOONFUL ${k}`;
 }

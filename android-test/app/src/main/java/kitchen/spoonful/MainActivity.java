@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.PowerManager;
 import android.media.AudioAttributes;
 import android.speech.tts.TextToSpeech;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static final int FILE_CHOOSER = 7;
     private static final int HEALTH_PERMS = 8;
     private static final int CAMERA_PERMS = 9;
+    private static final int GEO_PERMS = 10;
     private static final int NOTIFY_PERMS = 11;
     private PowerManager.WakeLock shopLock;
     private static final String[] STORE_PACKAGES = {

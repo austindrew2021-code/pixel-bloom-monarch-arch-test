@@ -726,7 +726,7 @@ function Checkout({
   const once = addon.period === "once";
   const year = addon.id === "table-year";
   const country = useSpoonful((s) => s.country);
-  const memo = interacMemo(addon.name, TESTER_KEY);
+  const memo = interacMemo(addon.name);
   const interac = country === "CA";
   // Cards are off until the kitchen has Stripe keys. Until then this sheet is
   // exactly what it was: an Interac memo and a local unlock.
